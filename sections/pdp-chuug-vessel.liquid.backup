@@ -147,8 +147,267 @@
       <div class="tw-border-t-white tw-border-t-4 tw-border-dotted tw-h-0">&nbsp;</div>
       <div class="tw-bg-chuug-yankees-blue tw-p-4 tw-rounded-[1.25em] tw-flex tw-flex-col tw-gap-y-4 ">
         <!-- POMC System Integration -->
-        {% render 'pomc-system', product: product, section: section %}
+        {% render 'pomc-system', product: product %}
       </div>
+              <label
+                class="tw-cursor-pointer"
+              >
+                <div
+                  onclick="setProductAmount('1')" class="product_amount_label_1 tw-h-[7rem] tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+
+                >
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                    >1X</span
+                  >
+                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                    <span
+                      class="product_amount_label_1_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      no_engraving_compare_at_price="{{ section.settings.one_chuug_product.compare_at_price | money }}"
+                      engraving_compare_at_price="{{  section.settings.one_chuug_product.variants[1].compare_at_price | money }}"
+                    >
+                      {{ section.settings.one_chuug_product.variants[0].compare_at_price | money }}
+                    </span>
+                    <span
+                      class="product_amount_label_1_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      no_engraving_price="{{ section.settings.one_chuug_product.price | money }}"
+                      engraving_price="{{ section.settings.one_chuug_product.variants[1].price | money }}"
+                    >
+                      {{ section.settings.one_chuug_product.variants[0].price | money }}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div class="tw-w-full">
+              <label
+                onclick="setProductAmount('2')"
+                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;
+              >
+                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                    >2X</span
+                  >
+                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                    <span
+                      class="product_amount_label_2_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      no_engraving_compare_at_price="{{ section.settings.two_chuug_product.compare_at_price | money }}"
+                      engraving_compare_at_price="{{ section.settings.two_chuug_product.variants[1].compare_at_price | money }}"
+                    >
+                      {{ section.settings.two_chuug_product.variants[0].compare_at_price | money }}
+                    </span>
+                    <span
+                      class="product_amount_label_2_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      no_engraving_price="{{ section.settings.two_chuug_product.price | money }}"
+                      engraving_price="{{ section.settings.two_chuug_product.variants[1].price | money }}"
+                    >
+                      {{- section.settings.two_chuug_product.variants[0].price | money -}}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div class="tw-w-full">
+              <label
+                onclick="setProductAmount('3')"
+                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;"
+              >
+                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                    >3X</span
+                  >
+                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                    <span
+                      class="product_amount_label_3_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      no_engraving_compare_at_price="{{ section.settings.three_chuug_product.compare_at_price | money }}"
+                      engraving_compare_at_price="{{ section.settings.three_chuug_product.variants[1].compare_at_price | money }}"
+                    >
+                      {{ section.settings.three_chuug_product.variants[0].compare_at_price | money }}
+                    </span>
+                    <span
+                      class="product_amount_label_3_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      no_engraving_price="{{ section.settings.three_chuug_product.price | money }}"
+                      engraving_price="{{ section.settings.three_chuug_product.variants[1].price | money }}"
+                    >
+                      {{- section.settings.three_chuug_product.variants[0].price | money -}}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
+          <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
+            <span>{{ section.settings.engraving_question }}</span>
+            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.engraving_question_tooltip_text %}
+          </div>
+
+          <div class="tw-flex tw-items-center tw-gap-x-[0.62em] tw-px-2">
+            <div class="tw-w-full">
+              <label
+                class="tw-cursor-pointer"
+              >
+                <div
+                  class="product_variant_0 active tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+                  onclick="setEngraving(0);"
+                >
+                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">NO</span>
+                </div>
+              </label>
+            </div>
+            <div class="tw-w-full">
+              <label
+                class="tw-cursor-pointer"
+              >
+                <div
+                  class="product_variant_1 tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+                  onclick="setEngraving(1);"
+                >
+                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">YES</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="customize-your-vessel tw-flex tw-flex-col tw-gap-y-2 tw-text-white tw-text-[1.6rem] tw-font-semibold">
+          <div class="tw-flex tw-gap-[1rem]">
+            <span>{{ section.settings.customise_vessel_question }}</span>
+            {% for block in section.blocks %}
+              {%- case block.type -%}
+                {%- when 'modal' -%}
+                  <button id="openModal">See options</button>
+                  {% render 'pdp-chuug-vessel-modal', block: block %}
+              {%- endcase -%}
+            {% endfor %}
+          </div>
+
+          {% for i in (1..3) %}
+            <div
+              class="tw-flex tw-flex-col tw-gap-y-1 vessel_number_{{ forloop.index }}"
+
+              {% if forloop.index == 3 %}
+                style="display: none;"
+              {% endif %}
+            >
+              <span>Vessel #{{ forloop.index }}</span>
+              <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
+                <div
+                  class="inputs tw-flex tw-w-full tw-gap-x-[1rem]"
+                  variant_id=""
+                  variant_monogram_initials_id=""
+                  variant_index="0"
+                  product_amount="3"
+                  monogram_initials=""
+                >
+                  <div
+                    id="select_{{ forloop.index }}_material"
+                    class="js-dropdown-container material tw-w-1/2 tw-bg-chuug-rackley input tw-relative tw-mx-auto tw-rounded-2xl tw-h-[4.8rem] hover:tw-cursor-pointer"
+                  >
+                    <div class="wood-type tw-bg-chuug-rackley tw-px-4 tw-py-2 tw-border tw-border-white tw-rounded-2xl tw-cursor-pointer js-dropdown-trigger">
+                      <span class="tw-text-white js-selected-option">WOOD FINISH</span>
+                      {% render 'icon-arrow-down' %}
+                    </div>
+
+                    <div class="wood-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
+                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
+                        <input type="radio" name="wood_material" value="DUSK" class="tw-hidden js-option">
+                        <span class="wood-type-name tw-uppercase">DUSK</span>
+                        {% if section.settings.wood_finish_dusk_wood != blank %}
+                          <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+
+                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
+                        <input type="radio" name="wood_material" value="DAWN" class="tw-hidden js-option">
+                        <span class="wood-type-name tw-uppercase">DAWN</span>
+                        {% if section.settings.wood_finish_dawn_wood != blank %}
+                          <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+
+                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
+                        <input type="radio" name="wood_material" value="MIDNIGHT" class="tw-hidden js-option">
+                        <span class="wood-type-name tw-uppercase">MIDNIGHT</span>
+                        {% if section.settings.wood_finish_midnight_wood != blank %}
+                          <img
+                            src="{{ section.settings.wood_finish_midnight_wood | image_url }}"
+                            width="180"
+                            height="48"
+                          >
+                        {% endif %}
+                      </label>
+                    </div>
+                  </div>
+
+                  <div
+                    id="select_{{ forloop.index }}_rope"
+                    disabled
+                    class="js-dropdown-container rope tw-w-1/2 tw-bg-chuug-rackley input tw-relative tw-mx-auto tw-rounded-2xl tw-h-[4.8rem]"
+                  >
+                    <div class="rope-type tw-bg-chuug-rackley tw-px-4 tw-py-2 tw-border tw-border-white tw-rounded-2xl js-dropdown-trigger">
+                      <span class="tw-text-white js-selected-option">ROPE TYPE</span>
+                      {% render 'icon-arrow-down' %}
+                    </div>
+
+                    <div class="rope-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
+                      <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2">
+                        <input type="radio" name="rope_material" value="CHARCOAL" class="tw-hidden js-option">
+                        <span class="rope-type-name tw-uppercase">CHARCOAL</span>
+                        {% if section.settings.charcoal_rope != blank %}
+                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+
+                      <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow">
+                        <input type="radio" name="rope_material" value="NATURAL" class="tw-hidden js-option">
+                        <span class="rope-type-name tw-uppercase">NATURAL</span>
+                        {% if section.settings.natural_rope != blank %}
+                          <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <input
+                  class="monogram_initials tw-hidden tw-w-full tw-h-[4.8rem] tw-text-center input tw-uppercase tw-bg-chuug-rackley tw-mx-auto tw-rounded-2xl tw-px-4 tw-py-2 tw-border tw-border-white tw-appearance-none tw-placeholder-white hover:tw-cursor-pointer focus:tw-outline-none focus:tw-ring-0 active:tw-outline-none active:tw-ring-0 md:tw-w-1/3 lg:!tw-w-[15.5rem] xl:!tw-w-[18.5rem]"
+                  type="text"
+                  maxlength="3"
+                  placeholder="ENTER Initials"
+                  name="properties[Monogram Initials]"
+                  disabled
+                >
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="tw-flex tw-flex-col">
+          <button
+            id="add-multiple-products"
+            onclick="handleATCbutton()"
+            type="submit"
+            name="add"
+            disabled
+            class="product-form__submit tw-whitespace-nowrap tw-flex tw-justify-center tw-items-center tw-gap-x-[0.8rem] cta-button tw-mt-[2rem] tw-uppercase tw-text-white tw-text-[2rem] tw-font-bold tw-w-full tw-bg-no-repeat tw-h-[7rem] tw-rounded-[1.25em] lg:tw-mt-[4rem]"
+          >
+            {{ section.settings.button_text }} |
+            <div
+              class="cta-product-price tw-whitespace-nowrap"
+            ></div>
+          </button>
+          <p class="incompleted-inputs-text">All fields must be filled out before adding products to the cart.</p>
+
+          <div class="tw-flex tw-items-center tw-gap-x-2 tw-justify-center tw-text-white tw-mt-[1.2rem]">
+            <div class="tw-bg-chuug-rose tw-rounded-[0.29375em] tw-py-[0.27125em] tw-px-[0.5425em] tw-flex tw-items-center tw-justify-center">
+              <svg width="49" height="13" viewBox="0 0 49 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M46.4233 7.95711C46.4233 6.81202 45.454 5.88498 44.2583 5.88498C43.0626 5.88498 42.0933 6.81343 42.0933 7.95711C42.0933 9.10079 43.064 10.0278 44.2597 10.0278C45.4554 10.0278 46.4233 9.10079 46.4233 7.95711ZM46.4317 3.92961H48.8204V11.9832H46.4317V11.4683C45.7353 11.9491 44.909 12.2062 44.0628 12.2055C41.7374 12.2055 39.8524 10.3036 39.8524 7.95711C39.8524 5.61066 41.7374 3.70875 44.0628 3.70875C44.942 3.70875 45.7565 3.98025 46.4317 4.44588V3.92961ZM27.3113 4.97904V3.93101H24.865V11.9832H27.3169V8.22298C27.3169 6.9541 28.6786 6.27324 29.624 6.27324H29.6521V3.93101C28.6814 3.93101 27.791 4.35022 27.3113 4.97904ZM21.2173 7.95711C21.2173 6.81202 20.248 5.88498 19.0523 5.88498C17.8566 5.88498 16.8873 6.81343 16.8873 7.95711C16.8873 9.10079 17.858 10.0278 19.0537 10.0278C20.2494 10.0278 21.2173 9.10079 21.2173 7.95711ZM21.2257 3.92961H23.6158V11.9832H21.2257V11.4683C20.5505 11.9326 19.736 12.2055 18.8568 12.2055C16.5314 12.2055 14.6464 10.3036 14.6464 7.95711C14.6464 5.61066 16.5314 3.70875 18.8568 3.70875C19.736 3.70875 20.5505 3.98025 21.2257 4.44588V3.92961ZM35.6068 3.71437C34.6531 3.71437 33.7499 4.0126 33.145 4.83696V3.93101H30.7662V11.9832H33.1746V7.75172C33.1746 6.52786 33.9877 5.92718 34.9682 5.92718C36.0176 5.92718 36.6225 6.56021 36.6225 7.73484V11.9832H39.0083V6.86266C39.0083 4.98888 37.5312 3.71437 35.6068 3.71437ZM11.1661 11.9832H13.6673V0.342414H11.1661V11.9832ZM0.179443 11.986H2.82834V0.3396H0.18085L0.179443 11.986ZM9.44424 0.3396C9.44424 2.86048 8.47078 5.20693 6.73486 6.94988L10.3952 11.986H7.12453L3.14767 6.51379L4.17459 5.73727C5.01058 5.10852 5.68793 4.29295 6.1525 3.35573C6.61708 2.41852 6.85602 1.38563 6.85021 0.3396H9.44143H9.44424Z" fill="#0C061D"/>
+              </svg>
+            </div>
+            <span class="tw-text-[1.2rem] tw-leading-[1.5]">Not happy? We’ll refund you. No questions asked.</span>
+          </div>
+        </div>
+      </div>
+
       {% for block in section.blocks %}
         {%- case block.type -%}
           {%- when 'accordion' -%}
