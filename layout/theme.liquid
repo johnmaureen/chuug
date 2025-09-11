@@ -398,7 +398,8 @@ head.appendChild(script);
 
   {% render 'shogun-head' %}
     
-  {{ 'application.css' | asset_url | stylesheet_tag }}    
+  {{ 'application.css' | asset_url | stylesheet_tag }}
+  {{ 'vessel-tabs.css' | asset_url | stylesheet_tag }}    
 {% include 'hulk_po_vd' %}</head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">

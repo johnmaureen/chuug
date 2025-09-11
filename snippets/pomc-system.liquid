@@ -93,7 +93,7 @@
         </div>
       </div>
     </div>
-    <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
+    {% comment %} <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
       <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
         <span>{{ section.settings.engraving_question }}</span>
         {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.engraving_question_tooltip_text %}
@@ -125,7 +125,7 @@
           </label>
         </div>
       </div>
-    </div>
+    </div> {% endcomment %}
     <div class="customize-your-vessel tw-flex tw-flex-col tw-gap-y-2 tw-text-white tw-text-[1.6rem] tw-font-semibold">
       <div class="tw-flex tw-gap-[1rem]">
         <span>{{ section.settings.customise_vessel_question }}</span>
@@ -137,6 +137,119 @@
           {%- endcase -%}
         {% endfor %}
       </div>
+      <div class="customise-vessel-tab" data-tabs>
+        <!-- Tab headers -->
+        <div class="vessel-tab-container">
+
+          {% for i in (1..3) %}
+            <button 
+              class="vessel-tab-button  {% if forloop.index == 2 %} active {% else %} inactive {% endif %} vessel_number_{{ forloop.index }} " 
+             
+              data-tab="tab{{ forloop.index }}"
+            >
+              Vessel #{{ forloop.index }}
+            </button>
+          {% endfor %}
+         
+        </div>
+
+        <!-- Tab content -->
+        <div class="vessel-tab-content">
+
+          {% for i in (1..3) %}
+            <div 
+              id="tab{{ forloop.index }}" 
+              class="vessel-tab-panel  {% if forloop.index == 2 %} active {% endif %} vessel_number_{{ forloop.index }} "
+           
+            >
+              <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
+                <div
+                  class="inputs tw-flex tw-w-full tw-flex-col tw-gap-y-[1rem]"
+                  variant_id=""
+                  variant_monogram_initials_id=""
+                  variant_index="0"
+                  product_amount="3"
+                  monogram_initials=""
+                >
+                  <div>
+                    <p class="tw-text-white ">WOOD FINISH</p>
+
+                    <div class="block-wrap">
+                      <label class="wood-type-label block-label tw-cursor-pointer  ">
+                        <input type="radio" name="wood_material" value="DUSK" class="tw-hidden js-option">
+                        {% if section.settings.wood_finish_dusk_wood != blank %}
+                         <div class="img-wrap">
+                           <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48">
+                         </div>
+                        {% endif %}
+                        <span class="wood-type-name tw-uppercase type-name">DUSK</span>
+                      </label>
+
+                      <label class="wood-type-label block-label tw-cursor-pointer active">
+                        <input type="radio" name="wood_material" value="DAWN" class="tw-hidden js-option">
+                        {% if section.settings.wood_finish_dawn_wood != blank %}
+                         <div class="img-wrap">
+                            <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48">
+                         </div>
+                        {% endif %}
+                        <span class="wood-type-name tw-uppercase type-name">DAWN</span>
+                      </label>
+
+                      <label class="wood-type-label block-label tw-cursor-pointer">
+                        <input type="radio" name="wood_material" value="MIDNIGHT" class="tw-hidden js-option">
+                        {% if section.settings.wood_finish_midnight_wood != blank %}
+                         <div class="img-wrap">
+                          <img
+                            src="{{ section.settings.wood_finish_midnight_wood | image_url }}"
+                            width="180"
+                            height="48"
+                          >
+                         </div>
+                        {% endif %}
+                        <span class="wood-type-name tw-uppercase type-name">MIDNIGHT</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p class="tw-text-white ">ROPE TYPE</p>
+
+                    <div class="block-wrap">
+                      <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2">
+                        <input type="radio" name="rope_material" value="CHARCOAL" class="tw-hidden js-option">
+                        <span class="rope-type-name tw-uppercase type-name">CHARCOAL</span>
+                        {% if section.settings.charcoal_rope != blank %}
+                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+
+                      <label class="block-label  rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow">
+                        <input type="radio" name="rope_material" value="NATURAL" class="tw-hidden js-option">
+                        <span class="rope-type-name tw-uppercase type-name">NATURAL</span>
+                        {% if section.settings.natural_rope != blank %}
+                          <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <input
+                  class="monogram_initials tw-hidden tw-w-full tw-h-[4.8rem] tw-text-center input tw-uppercase tw-bg-chuug-rackley tw-mx-auto tw-rounded-2xl tw-px-4 tw-py-2 tw-border tw-border-white tw-appearance-none tw-placeholder-white hover:tw-cursor-pointer focus:tw-outline-none focus:tw-ring-0 active:tw-outline-none active:tw-ring-0 md:tw-w-1/3 lg:!tw-w-[15.5rem] xl:!tw-w-[18.5rem]"
+                  type="text"
+                  maxlength="3"
+                  placeholder="ENTER Initials"
+                  name="properties[Monogram Initials]"
+                  disabled
+                >
+              </div>
+            </div>
+
+          {% endfor %}
+          
+        </div>
+      </div>
+
 
       {% for i in (1..3) %}
         <div
@@ -263,3 +376,32 @@
         <span class="tw-text-[1.2rem] tw-leading-[1.5]">Not happy? We’ll refund you. No questions asked.</span>
       </div>
     </div>
+
+<script>
+  document.querySelectorAll("[data-tabs]").forEach(tabComponent => {
+    const tabs = tabComponent.querySelectorAll("[data-tab]");
+    const contents = tabComponent.querySelectorAll("[id^='tab']");
+
+    tabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-tab");
+
+        // update active tab styles only inside this component
+        tabs.forEach(b => {
+          b.classList.remove("active");
+          b.classList.add("inactive");
+        });
+        btn.classList.remove("inactive");
+        btn.classList.add("active");
+
+        // toggle content only inside this component
+        contents.forEach(c => {
+          c.classList.remove("active");
+          if (c.id === target) {
+            c.classList.add("active");
+          }
+        });
+      });
+    });
+  });
+</script>

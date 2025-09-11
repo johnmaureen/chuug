@@ -1,0 +1,107 @@
+/* Custom Vessel Tab Styling */
+.customise-vessel-tab {
+	width: 100%;
+	margin: 0 auto;
+}
+
+.vessel-tab-container {
+	display: flex;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.vessel-tab-button {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	padding: 11px 30px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-family: "Gabarito", sans-serif;
+	font-size: 18.121px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	border-bottom: 3px solid transparent;
+	transition: all 0.3s ease;
+}
+
+.vessel-tab-button.active {
+	color: #dbe188;
+	border-bottom-color: #dbe188;
+}
+
+.vessel-tab-button.inactive {
+	color: rgba(255, 255, 255, 0.3);
+	border-bottom-color: transparent;
+}
+
+.vessel-tab-button.inactive:hover {
+	color: #dbe188;
+	border-bottom-color: #dbe188;
+}
+
+.vessel-tab-content {
+	padding: 1rem;
+}
+
+.vessel-tab-panel {
+	display: none;
+}
+
+.vessel-tab-panel.active {
+	display: block;
+}
+
+.block-wrap {
+	display: flex;
+	flex-direction: row;
+	gap: 5.5px;
+	margin-top: 10px;
+}
+
+.block-wrap .block-label {
+	display: flex;
+	width: 180px;
+	padding: 10px;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	height: auto;
+	border-radius: 10px;
+	background: #0d2026;
+	border: 1px solid #0d2026;
+	transition: border 0.3s ease;
+}
+.block-wrap .block-label :hover,
+.block-wrap .block-label .active {
+	background: #0d2026;
+	border: 1px solid #dbe188;
+}
+
+.block-wrap .block-label .img-wrap {
+	display: flex;
+	width: 45px;
+	height: 45px;
+	justify-content: center;
+	align-items: center;
+	border-radius: 45px;
+	border: 1px solid #fff;
+	overflow: hidden;
+}
+.block-wrap .block-label .img-wrap img {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover;
+}
+.block-wrap .block-label .type-name {
+	color: #fff;
+	text-align: center;
+	font-family: Gabarito;
+	font-size: 16.107px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
