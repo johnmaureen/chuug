@@ -1,0 +1,74 @@
+<div
+    class="accordion-pdp-chuug-vessel tw-block tw-rounded-[2rem] tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white"
+    onclick="toggleHeroAccordion(this)"
+  >
+    <div
+      class="accordion-header tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer"
+    >
+      <span class="tw-text-[1.6rem] tw-font-bold tw-leading-[1.1] tw-tracking-[0.05em] tw-uppercase">
+        {{ block.settings.accordion_title }}
+      </span>
+      <i class="accordion-arrow tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="10"
+          height="6"
+          viewBox="0 0 10 6"
+          fill="none"
+          class="arrow-icon tw-transition-transform tw-ease-in-out tw-duration-500"
+        >
+          <path
+            d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z"
+            fill="white"
+          />
+        </svg>
+      </i>
+    </div>
+    <div class="accordion-content tw-px-5 tw-text-black tw-text-base tw-leading-6 tw-max-h-0 tw-overflow-hidden tw-transition-all tw-duration-500 tw-ease-in-out">
+      <p>{{ block.settings.accordion_text }}</p>
+    </div>
+  </div>
+  
+  <script>
+    function toggleHeroAccordion(element) {
+      element.classList.toggle('active');
+    }
+  </script>
+  
+  <style>
+    .accordion-pdp-chuug-vessel {
+      max-height: 5.6rem;
+      transition: max-height 0.5s ease-in-out;
+      background-color: #dfdfd8;
+    }
+    .accordion-pdp-chuug-vessel .accordion-content {
+      max-height: 0;
+      padding: 0 2rem;
+      padding-bottom: 2.5rem;
+      transition: max-height 0.5s ease-in-out;
+      overflow: hidden;
+    }
+  
+    .accordion-pdp-chuug-vessel.active,
+    .accordion-pdp-chuug-vessel.active .accordion-content {
+      max-height: 1000px;
+    }
+  
+    .accordion-pdp-chuug-vessel  .accordion-arrow {
+      transition: transform 0.5s ease-in-out;
+    }
+  
+    .accordion-pdp-chuug-vessel.active .accordion-arrow {
+      transform: rotate(180deg);
+    }
+    .accordion-pdp-chuug-vessel .accordion-content ol li:not(:first-child) {
+      margin-top: 12px;
+    }  
+  
+    .accordion-pdp-chuug-vessel  .accordion-content ul {
+      margin-top: 12px;
+      list-style-type: disc;
+      margin-left: 2rem;
+    }
+  </style>
+  

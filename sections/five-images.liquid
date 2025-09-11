@@ -1,0 +1,301 @@
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<section class="five-images tw-bg-chuug-dark-navy tw-text-white tw-overflow-hidden tw-px-[1rem] tw-py-[4rem] tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 md:tw-pt-24 tw-pb-[6rem] md:tw-pb-[12rem]">
+  <div class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-[1rem] md:tw-gap-y-20">
+    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4">
+      <div class="tw-text-6xl tw-font-bold tw-leading-[52.8px] tw-text-center tw-text-white">
+        {{ section.settings.section_title }}
+      </div>
+      <div class="tw-text-center tw-text-lg tw-leading-[1.6875em] tw-text-white">
+        {{ section.settings.section_subtitle }}
+      </div>
+    </header>
+    <div class="tw-container tw-grid tw-grid-cols-3 tw-text-white tw-gap-y-20 tw-gap-x-10 tw-w-full">
+      {% for block in section.blocks %}
+        {% case forloop.index %}
+          {% when 1 %}
+            {% if block.settings.block_image != blank %}
+              <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
+                <img
+                  src="{{ block.settings.block_image | image_url }}"
+                  alt="Chuug Vessel"
+                  width="80"
+                  height="80"
+                  class="tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain"
+                >
+                <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
+                  {{ block.settings.block_title }}
+                </h2>
+                <p class="tw-text-center tw-text-[1.6rem] tw-leading-[1.5] tw-mt-[2rem]">
+                  {{ block.settings.block_subtitle }}
+                </p>
+              </div>
+            {% endif %}
+        {% endcase %}
+      {% endfor %}
+      <div class="tw-row-span-2 tw-flex-1 tw-text-center tw-flex tw-justify-center tw-items-center tw-w-[calc(100vw-20px)] md:tw-w-full">
+        {% if section.settings.main_image != blank %}
+          <div class="tw-relative tw-h-fit tw-w-fit ">
+            <img
+              src="{{ section.settings.main_image | image_url }}"
+              alt="Chuug Vessel"
+              width="100%"
+              height="100%"
+              class="main-image tw-w-[28rem] tw-h-[27rem] md:tw-w-full md:tw-h-full"
+            >
+            <div class="badge-container tw-absolute tw-top-0 tw-right-0 tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]">
+              <div class="tw-relative md:!tw-flex md:tw-justify-center md:tw-items-center">
+                <img
+                  src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/badge.png?v=1729107293"
+                  alt="Badge"
+                  width="100%"
+                  height="100%"
+                  class="tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]"
+                >
+                <p class="tw-absolute tw-text-center tw-text-black tw-top-[0.7rem] tw-leading-[1.8rem] tw-font-bold tw-text-[1.4rem] md:tw-mt-[0.8rem] md:tw-w-[6rem] ">
+                  UP TO <span class="discount">{{ section.settings.discount_number }}%</span> OFF
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      {% for block in section.blocks %}
+        {% case forloop.index %}
+          {% when 2 %}
+            {% if block.settings.block_image != blank %}
+              <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
+                <img
+                  src="{{ block.settings.block_image | image_url }}"
+                  alt="Chuug Vessel"
+                  width="80"
+                  height="80"
+                  class="tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
+                >
+                <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
+                  {{ block.settings.block_title }}
+                </h2>
+                <p class="tw-text-center tw-text-[1.6rem] tw-leading-[1.5] tw-mt-[2rem]">
+                  {{ block.settings.block_subtitle }}
+                </p>
+              </div>
+            {% endif %}
+          {% when 3 %}
+            {% if block.settings.block_image != blank %}
+              <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
+                <img
+                  src="{{ block.settings.block_image | image_url }}"
+                  alt="Chuug Vessel"
+                  width="80"
+                  height="80"
+                  class="tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
+                >
+                <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
+                  {{ block.settings.block_title }}
+                </h2>
+                <p class="tw-text-center tw-text-[1.6rem] tw-leading-[1.5] tw-mt-[2rem]">
+                  {{ block.settings.block_subtitle }}
+                </p>
+              </div>
+            {% endif %}
+          {% when 4 %}
+            {% if block.settings.block_image != blank %}
+              <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
+                <img
+                  src="{{ block.settings.block_image | image_url }}"
+                  alt="Chuug Vessel"
+                  width="80"
+                  height="80"
+                  class="tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
+                >
+                <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
+                  {{ block.settings.block_title }}
+                </h2>
+                <p class="tw-text-center tw-text-[1.6rem] tw-leading-[1.5] tw-mt-[2rem]">
+                  {{ block.settings.block_subtitle }}
+                </p>
+              </div>
+            {% endif %}
+        {% endcase %}
+      {% endfor %}
+    </div>
+
+    <div class="swiper five-images-swiper tw-w-full tw-h-[24rem] md:!tw-hidden">
+      <div class="swiper-wrapper tw-h-[20rem]">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">
+            <img
+              src="{{ block.settings.block_image | image_url }}"
+              alt="Chuug Vessel"
+              width="80"
+              height="80"
+              class="tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain"
+            >
+            <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
+              {{ block.settings.block_title }}
+            </h2>
+            <p class="tw-text-center tw-text-[1.6rem] tw-leading-[1.5] tw-mt-[2rem]">
+              {{ block.settings.block_subtitle }}
+            </p>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="swiper-pagination !tw-block"></div>
+    </div>
+    <a
+      href="#hero-section"
+      type="submit"
+      class="cta-button tw-container tw-text-[2rem] tw-leading-[1] tw-font-bold tw-p-0 tw-uppercase tw-bg-no-repeat tw-w-full tw-max-w-[36rem] tw-h-[4.375em] tw-rounded-[1.25em] tw-flex tw-justify-center tw-items-center tw-mt-[3rem] md:tw-mt-0"
+      style="
+        background-image: url('https://cdn.shopify.com/s/files/1/0799/4307/4111/files/cta-button.png?v=1729102728');
+        background-size: contain;
+        background-position: center;
+      "
+    >
+      {{ section.settings.button_text }}
+    </a>
+  </div>
+</section>
+
+<script>
+  var swiper = new Swiper('.five-images-swiper', {
+    pagination: {
+      clickable: true,
+      el: '.swiper-pagination',
+    },
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      const elements = document.querySelectorAll('.five-images .bss_pl_img');
+      elements.forEach(function (element) {
+        element.remove();
+      });
+    }, 1000);
+  });
+</script>
+
+<style>
+  .five-images-swiper .swiper-pagination .swiper-pagination-bullet {
+    height: 1rem;
+    width: 4.5rem;
+    border-radius: 75px;
+    background-color: #a5a5a5;
+  }
+  .five-images-swiper .swiper-pagination .swiper-pagination-bullet-active {
+    background-color: #fdff96;
+  }
+
+  .discount {
+    font-size: 18px;
+  }
+
+  @media screen and (min-width: 768px) and (max-width: 1536px) {
+    .main-image {
+      object-fit: contain;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .five-images .badge-container {
+      top: -30px;
+      right: 20px;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .five-images .badge-container {
+      top: -20px;
+      right: 55px;
+    }
+
+    .discount {
+      font-size: 20px;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    .five-images .badge-container {
+      top: -10px;
+      right: 90px;
+    }
+  }
+
+  @media screen and (min-width: 1536px) {
+    .five-images .badge-container {
+      top: 0px;
+      right: 110px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Main Image with Blocks",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "section_title",
+      "default": "<h1>Drinking Beer Just Got Cooler</h1>",
+      "label": "Section Title"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Section Subtitle",
+      "default": "Out-do your neighbour at the next awkward BBQ that you’d rather not attend"
+    },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Main Image"
+    },
+    {
+      "type": "text",
+      "id": "discount_number",
+      "default": "XX",
+      "label": "Discount Number"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "default": "Customize Now",
+      "label": "Button text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image_block",
+      "name": "Image Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "block_image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "block_title",
+          "label": "Title",
+          "default": "Default Title"
+        },
+        {
+          "type": "text",
+          "id": "block_subtitle",
+          "label": "Subtitle",
+          "default": "Default Subtitle"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main Image with Blocks"
+    }
+  ]
+}
+{% endschema %}

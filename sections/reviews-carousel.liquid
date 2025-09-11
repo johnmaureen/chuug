@@ -1,0 +1,219 @@
+<section class="tw-w-full tw-bg-chuug-dark-navy tw-pl-[0.625rem] tw-pb-[13rem] md:tw-pl-[0.625rem] md:tw-pb-[17rem]">
+  <div id="review-swiper" class="swiper tw-h-fit tw-w-full">
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide !tw-flex tw-flex-col !tw-gap-y-4 !tw-h-[49.5rem] !tw-w-[22.5em] tw-shrink-0">
+          {% if block.settings.image_position == 'first' %}
+            <div class="tw-h-[12.5em] tw-w-full tw-overflow-hidden tw-rounded-2xl">
+              {% if block.settings.review_image == blank %}
+                {{ 'image' | placeholder_svg_tag: 'tw-h-[12.5em] tw-w-full tw-rounded-2xl tw-border tw-border-black' }}
+              {% else %}
+                <img
+                  src="{{ block.settings.review_image | image_url }}"
+                  class="tw-w-full tw-h-full"
+                  alt="{{ block.settings.title }}"
+                  width="100%"
+                  height="100%"
+                >
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            {% if block.settings.stars == 'five' %}
+              <img
+                src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/five-stars.png?v=1728937309"
+                class="tw-w-[7.375rem] tw-h-[1.375rem]"
+                alt="five stars"
+                width="118"
+                height="22"
+              >
+            {% else %}
+              <img
+                src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/four-stars.png?v=1728937309"
+                class="tw-w-[7.375rem] tw-h-[1.375rem]"
+                alt="four stars"
+                width="118"
+                height="22"
+              >
+            {% endif %}
+            <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              {{ block.settings.title }}
+            </h4>
+            <p class="tw-flex-1 tw-text-[#DCDCDC] tw-text-center tw-text-balance tw-font-medium tw-text-[1.5rem] tw-leading-6 tw-text-white">
+              {{ block.settings.text }}
+            </p>
+            <div class="tw-flex tw-text-[#DCDCDC] tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full tw-text-white">
+              <span>{{ block.settings.name }}</span>
+              <span>{{ block.settings.date }}</span>
+            </div>
+          </div>
+
+          {% if block.settings.image_position == 'last' %}
+            <div class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl tw-order-last">
+              {% if block.settings.review_image == blank %}
+                {{ 'image' | placeholder_svg_tag: 'tw-h-[12.5em] tw-w-full tw-rounded-2xl tw-border tw-border-black' }}
+              {% else %}
+                <img
+                  src="{{ block.settings.review_image | image_url }}"
+                  class="tw-w-full tw-h-full"
+                  alt="{{ block.settings.title }}"
+                  width="100%"
+                  height="100%"
+                >
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="tw-flex tw-justify-end tw-items-center tw-container tw-mt-[1.88em]">
+    <button
+      onclick="handleToggleReviewSwiperState(this)"
+      title="pause"
+      data-play="true"
+      class="tw-bg-chuug-pastel-yellow tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-10 tw-h-10 tw-group"
+    >
+      <svg
+        class="tw-hidden group-[&[data-play='true']]:tw-block"
+        xmlns="http://www.w3.org/2000/svg"
+        width="15"
+        height="15"
+        viewBox="0 0 15 15"
+        fill="none"
+      >
+        <g clip-path="url(#clip0_1_2880)">
+          <path d="M5.82945 12.4222C5.82945 13.4622 4.98629 14.3053 3.94634 14.3053C2.90639 14.3053 2.06323 13.4622 2.06323 12.4222V2.66875C2.06323 1.6288 2.90639 0.785645 3.94634 0.785645C4.98629 0.785645 5.82945 1.6288 5.82945 2.66875V12.4222Z" fill="#0D2026"/>
+          <path d="M12.8968 12.4222C12.8968 13.4622 12.0537 14.3053 11.0137 14.3053C9.97377 14.3053 9.13062 13.4622 9.13062 12.4222V2.66875C9.1309 1.6288 9.97405 0.785645 11.0137 0.785645C12.0537 0.785645 12.8968 1.6288 12.8968 2.66875V12.4222Z" fill="#0D2026"/>
+        </g>
+        <defs>
+          <clipPath id="clip0_1_2880">
+            <rect width="13.5197" height="13.5197" fill="white" transform="translate(0.720459 0.785645)"/>
+          </clipPath>
+        </defs>
+      </svg>
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        class="play-icon"
+        style="display: none; margin-left: 2px;"
+      >
+        <path d="M2.69075 0.305027C1.42857 -0.418977 0.405273 0.174136 0.405273 1.62872V12.3629C0.405273 13.819 1.42857 14.4113 2.69075 13.688L12.073 8.30735C13.3356 7.58309 13.3356 6.40968 12.073 5.68559L2.69075 0.305027Z" fill="#331B18"></path>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<script>
+  const reviewSwiper = new Swiper('#review-swiper', {
+    slidesPerView: 'auto',
+    spaceBetween: 16,
+    loop: true,
+    simulateTouch: false,
+    centeredSlides: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+  });
+
+  function handleToggleReviewSwiperState(elm) {
+    if (reviewSwiper.autoplay.running) {
+      reviewSwiper.autoplay.stop();
+      elm.title = 'play';
+      elm.dataset.play = 'false';
+      elm.querySelector('.play-icon').style.display = 'block';
+    } else {
+      reviewSwiper.autoplay.start();
+      elm.title = 'pause';
+      elm.dataset.play = 'true';
+      elm.querySelector('.play-icon').style.display = 'none';
+    }
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Reviews Carousel",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "review_image",
+          "label": "Review Image"
+        },
+        {
+          "type": "select",
+          "id": "stars",
+          "label": "Stars amount",
+          "options": [
+            {
+              "value": "five",
+              "label": "Five"
+            },
+            {
+              "value": "four",
+              "label": "Four"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "“A little bit of special”"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "“It’s bespoke and something that is mine to treasure for years to come, that is the key, it feels special and looks amazing and is comfortable to hold so what’s not like!”"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Jason Ellis"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date",
+          "default": "August 20, 2024"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Image Position",
+          "options": [
+            {
+              "value": "first",
+              "label": "First"
+            },
+            {
+              "value": "last",
+              "label": "Last"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews Carousel",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

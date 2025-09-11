@@ -1,0 +1,63 @@
+{% comment %}
+  --depict-theme-resource-version: v1
+  ------------------------------------------------------------
+   Place your product card rendering code here.
+   This code will be used to render each product card in the grid.
+   You have access to the following variables:
+   - product: The product object to render
+   - forloop: The forloop object of the loop that loops over the products
+   - default_image: The default image object (the image that is displayed when the product is not being hovered)
+   - hover_image: The hover image object (the image that is displayed when the product is being hovered)
+
+   - section: The section object that contains the settings for the grid
+   - collection: The collection object in which the grid is being displayed (in which the products are being displayed)
+  ------------------------------------------------------------
+
+  Example:
+  ```
+  {% assign lazy_load = false %}
+  {%- if forloop.index > 2 -%}
+      {%- assign lazy_load = true -%}
+  {%- endif -%}
+
+  {% render "card-product",
+          card_product: product,
+          media_aspect_ratio: section.settings.image_ratio,
+          show_secondary_image: section.settings.show_secondary_image,
+          show_vendor: section.settings.show_vendor,
+          show_rating: section.settings.show_rating,
+          lazy_load: lazy_load,
+          show_quick_add: section.settings.enable_quick_add,
+          section_id: section.id,
+          default_image: default_image,
+          hover_image: hover_image
+  %}
+  ```
+{% endcomment %}
+
+{% assign lazy_load = false %}
+{%- if forloop.index > 2 -%}
+  {%- assign lazy_load = true -%}
+{%- endif -%}
+
+<div
+  class="{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+  {% if settings.animations_reveal_on_scroll %}
+    data-cascade
+    style="--animation-order: {{ forloop.index }};"
+  {% endif %}
+>
+  {% render "depict-patched-card-product",
+    card_product: product,
+    media_aspect_ratio: section.settings.image_ratio,
+    image_shape: section.settings.image_shape,
+    show_secondary_image: section.settings.show_secondary_image,
+    show_vendor: section.settings.show_vendor,
+    show_rating: section.settings.show_rating,
+    lazy_load: lazy_load,
+    show_quick_add: section.settings.enable_quick_add,
+    section_id: section.id,
+    default_image: default_image,
+    hover_image: hover_image
+  %}
+</div>

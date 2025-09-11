@@ -1,0 +1,103 @@
+/*
+* --depict-theme-resource-version: v1
+* ------------------------------------------------------------
+* IMPORTANT: The contents of this file are auto-generated.
+*
+* This file may be updated by the Depict App.
+* Please exercise caution as any changes
+* made to this file may be overwritten.
+*
+* ------------------------------------------------------------
+*/
+.depict-grid {
+  display: grid !important;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr)) !important;
+  gap: var(--grid-gap) !important;
+  row-gap: var(--row-gap, var(--grid-gap)) !important;
+  align-items: unset !important;
+  grid-auto-flow: dense !important;
+  grid-template-rows: var(--grid-template-rows);
+  --default-row-height: minmax(var(--sample-product-height), auto);
+  grid-auto-rows: var(--default-row-height) !important;
+}
+@media (max-width: 990px) {
+  .depict-grid {
+    gap: var(--mobile-grid-gap) !important;
+    row-gap: var(--mobile-row-gap, var(--mobile-grid-gap)) !important;
+  }
+  .depict-grid.mobile-custom-margin {
+    margin: var(--mobile-custom-margin);
+  }
+}
+@media (min-width: 991px) {
+  .depict-grid.desktop-custom-margin {
+    margin: var(--desktop-custom-margin);
+  }
+}
+.depict-grid::before, .depict-grid::after {
+  display: none !important;
+}
+.depict-grid > * {
+  width: 100% !important;
+  max-width: unset !important;
+  margin: 0 !important;
+  order: var(--order) !important;
+}
+.depict-grid > *:not(.depict-content-block) {
+  grid-row: unset !important;
+  grid-column: unset !important;
+  grid-template-rows: unset !important;
+}
+
+#depict-grid-rendering-script,
+depict-grid-start-beacon,
+depict-grid-end-beacon {
+  display: none !important;
+}
+
+.depict-content-block {
+  grid-column: span var(--grid-column-span);
+  grid-row: span var(--grid-row-span);
+  display: flex;
+  aspect-ratio: var(--content-aspect-ratio, auto);
+}
+.depict-content-block:not(:hover) .depict-block-image.hover-image {
+  opacity: 0;
+}
+.depict-content-block:has(.depict-block-image.hover-image):hover .depict-block-image:not(.hover-image) {
+  opacity: 0;
+}
+
+.depict-block-media {
+  position: relative;
+  flex-grow: 1;
+  flex-basis: 100%;
+  contain: strict;
+  align-items: stretch;
+  align-self: stretch;
+  max-width: 100%;
+  margin-bottom: var(--bottom-alignment-spacing, 0px);
+  margin-top: var(--top-alignment-spacing, 0px);
+}
+.depict-block-media, .depict-block-media:empty {
+  display: flex !important;
+}
+.depict-block-media video {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+}
+.depict-block-media video::-webkit-media-controls-panel {
+  display: none !important;
+}
+.depict-block-media .depict-block-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}

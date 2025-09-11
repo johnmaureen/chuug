@@ -1,0 +1,105 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "custom_liquid_8xdjR6": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<!-- TrustBox widget - Micro TrustScore -->\n<div class=\"trustpilot-widget\" data-locale=\"en-GB\" data-template-id=\"5419b637fa0340045cd0c936\" data-businessunit-id=\"669e6bda97a240b236b5ef94\" data-style-height=\"20px\" data-style-width=\"100%\" data-theme=\"light\">\n  <a href=\"https://uk.trustpilot.com/review/chuug.com\" target=\"_blank\" rel=\"noopener\">Trustpilot</a>\n</div>\n<!-- End TrustBox widget -->",
+        "color_scheme": "",
+        "padding_top": 8,
+        "padding_bottom": 12
+      }
+    },
+    "main-collection-banner": {
+      "type": "main-collection-banner",
+      "custom_css": [],
+      "settings": {
+        "show_collection_description": false,
+        "show_collection_image": false,
+        "color_scheme": "background-1"
+      }
+    },
+    "image_banner_dK9BN3": {
+      "type": "image-banner",
+      "settings": {
+        "image": "shopify://shop_images/auto-30-pounds-off.jpg",
+        "image_overlay_opacity": 0,
+        "image_height": "adapt",
+        "desktop_content_position": "middle-center",
+        "show_text_box": false,
+        "desktop_content_alignment": "center",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "stack_images_on_mobile": false,
+        "show_text_below": false
+      }
+    },
+    "shogun_custom_html_qBNNWc": {
+      "type": "shogun-custom-html",
+      "disabled": true,
+      "custom_css": [
+        ".elfsight-app-2845ded4-8d5b-4c70-9e7b-28c7537e7f85 {padding-top: 5px; padding-bottom: 5px;}"
+      ],
+      "settings": {
+        "html": "<script src=\"https://static.elfsight.com/platform/platform.js\" data-use-service-core=\"\" defer></script>\n<div class=\"elfsight-app-2845ded4-8d5b-4c70-9e7b-28c7537e7f85\" data-elfsight-app-lazy=\"\"></div>"
+      }
+    },
+    "main-collection-product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 24,
+        "columns_desktop": 3,
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": false,
+        "filter_type": "horizontal",
+        "enable_sorting": false,
+        "columns_mobile": "2",
+        "padding_top": 40,
+        "padding_bottom": 36
+      }
+    },
+    "17225312168a857e7d": {
+      "type": "apps",
+      "blocks": {
+        "klarna_on_site_messaging_app_block_tBfghp": {
+          "type": "shopify://apps/klarna-on-site-messaging/blocks/app-block/b95936a9-74b6-4a95-8103-6a1b6459c25e",
+          "settings": {
+            "data_key": "footer-promotion-auto-size",
+            "theme": "default",
+            "topPadding": "0",
+            "bottomPadding": "0",
+            "messagePrefix": ""
+          }
+        }
+      },
+      "block_order": [
+        "klarna_on_site_messaging_app_block_tBfghp"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    }
+  },
+  "order": [
+    "custom_liquid_8xdjR6",
+    "main-collection-banner",
+    "image_banner_dK9BN3",
+    "shogun_custom_html_qBNNWc",
+    "main-collection-product-grid",
+    "17225312168a857e7d"
+  ]
+}

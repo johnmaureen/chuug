@@ -1,0 +1,73 @@
+<div
+    class="accordion {{ custom_class }} tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white "
+    onclick="toggleAccordion(this)"
+  >
+    <div
+      class="tw-overflow-hidden tw-peer tw-group"
+    >
+      <div class="tw-py-[2rem] tw-px-[2.5rem] tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
+        <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase">
+          {{ title }}
+        </span>
+        <i class="accordion-arrow tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="10"
+            height="6"
+            viewBox="0 0 10 6"
+            fill="none"
+            class="-tw-rotate-90 group-open:tw-rotate-90 tw-transition-transform tw-ease-in-out tw-duration-500"
+          >
+            <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
+          </svg>
+        </i>
+      </div>
+    </div>
+    <div class="accordion-content tw-px-[2.5rem] tw-pb-[1.5rem] peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+      <p>{{ text }}</p>
+    </div>
+  </div>
+  
+  <script>
+    function toggleAccordion(element) {
+      element.classList.toggle('active');
+    }
+  </script>
+  
+  <style>
+    .accordion {
+      max-height: 6rem;
+      transition: max-height 0.5s ease-in-out;
+    }
+  
+    .accordion h1 {
+      color: white;
+    }
+    .accordion .accordion-arrow {
+      transform: rotate(90deg);
+    }
+    .accordion {
+      background-color: #dfdfd8;
+    }
+    .accordion.active {
+      background-color: #1b333b;
+      border: 0px;
+    }
+    .accordion.active span {
+      color: white;
+    }
+    .accordion.active p {
+      color: #dfdfd8;
+    }
+    .accordion.active .accordion-arrow {
+      transform: rotate(270deg);
+    }
+    .accordion.active {
+      height: unset;
+    }
+    .accordion.active,
+    .accordion.active .accordion-content {
+      max-height: 1000px;
+    }
+  </style>
+  

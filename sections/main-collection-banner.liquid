@@ -1,0 +1,165 @@
+{% capture redirectScript %}{% render 'bsscommerce-redirect-product-page-logic', product: product, collection: collection %}{% endcapture %}{% assign redirectScript = redirectScript | strip %}{% unless redirectScript contains "Liquid error" %}{% if redirectScript != "" %}<script id="bss-redirect" type="text/javascript">window.location.replace("{{ redirectScript }}")</script>{% endif %}{% endunless %}{% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
+{{ 'component-collection-hero.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  @media screen and (max-width: 749px) {
+    .collection-hero--with-image .collection-hero__inner {
+      padding-bottom: calc({{ settings.media_shadow_vertical_offset | at_least: 0 }}px + 2rem);
+    }
+  }
+  .collection-hero__title {
+      font-size: 2em; /* Twice the size */
+  }
+  #countdown-timer {
+      font-size: 2em; /* Twice the size */
+  }
+{%- endstyle -%}
+
+<div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %} color-{{ section.settings.color_scheme }} gradient">
+  <div class="collection-hero__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    <div class="collection-hero__text-wrapper">
+      <h1 class="collection-hero__title">
+        <span class="visually-hidden">{{ 'sections.collection_template.title' | t }}: </span>
+        {{- collection.title | escape -}}
+<br>
+        
+{% if collection.handle == 'choose-your-vessel' or collection.handle == 'promotions-and-discounts' or collection.handle == 'choose-your-chuugs' or collection.handle == 'choose-your-mugs' or collection.handle == 'choose-your-vessel-us' or collection.handle == 'aus-lightning-sale' or collection.handle == 'uk-test-collection'%}
+<div id="countdown-timer">
+    <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set the countdown time (2 hours 7 minutes) in seconds
+    const initialTime = 2 * 60 * 60 + 7 * 60; // 2 hours and 7 minutes in seconds
+
+    // Function to calculate the time remaining based on previous session
+    function getTimeRemaining() {
+        const savedTime = localStorage.getItem('countdownTimer');
+        const currentTime = Math.floor(Date.now() / 1000); // current time in seconds
+
+        if (savedTime) {
+            const remainingTime = initialTime - (currentTime - savedTime);
+            return remainingTime > 0 ? remainingTime : 0;
+        } else {
+            // Store the start time if not already set
+            localStorage.setItem('countdownTimer', currentTime);
+            return initialTime;
+        }
+    }
+
+    let timeRemaining = getTimeRemaining();
+
+    // Function to update the countdown timer display
+    function updateCountdownDisplay(hours, minutes, seconds) {
+        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    // Countdown logic
+    function startCountdown() {
+        let countdownInterval = setInterval(function() {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+
+                // Convert time to HH:MM:SS
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = timeRemaining % 60;
+
+                updateCountdownDisplay(hours, minutes, seconds);
+            } else {
+                // Restart the timer when it reaches zero
+                timeRemaining = initialTime;
+                localStorage.setItem('countdownTimer', Math.floor(Date.now() / 1000)); // Reset the start time
+            }
+        }, 1000);
+    }
+
+    startCountdown();
+});
+</script>
+
+<style>
+  /* Center the countdown timer and make the text H1 size */
+  #countdown-timer {
+      text-align: center; /* Center the text horizontally */
+      font-weight: bold; /* Make the text bold like an H1 */
+      margin: 20px 0; /* Add some margin for spacing */
+      background-color: #b22418; /* Background color */
+      color: #ffffff; /* Text color */
+      padding: 20px; /* Add padding to give the background more space */
+      display: inline-block; /* Ensure the background fits snugly around the text */
+      border-radius: 8px; /* Optional: Add rounded corners to the background */
+  }
+</style>
+{% endif %}
+
+      </h1>
+
+      {%- if section.settings.show_collection_description -%}
+        <div class="collection-hero__description rte">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+
+    {%- if section.settings.show_collection_image and collection.image -%}
+      <div class="collection-hero__image-container media gradient">
+        <img
+          srcset="
+            {%- if collection.image.width >= 165 -%}{{ collection.image | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if collection.image.width >= 360 -%}{{ collection.image | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if collection.image.width >= 535 -%}{{ collection.image | image_url: width: 535 }} 535w,{%- endif -%}
+            {%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if collection.image.width >= 1070 -%}{{ collection.image | image_url: width: 1070 }} 1070w,{%- endif -%}
+            {%- if collection.image.width >= 1500 -%}{{ collection.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {{ collection.image | image_url }} {{ collection.image.width }}w
+          "
+          src="{{ collection.image | image_url: width: 750 }}"
+          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 2 }}px, (min-width: 750px) calc(50vw - 130px), calc(50vw - 55px)"
+          alt=""
+          width="{{ collection.image.width }}"
+          height="{{ collection.image.height }}"
+        >
+        
+      </div>
+    {%- endif -%}
+    
+  </div>
+  
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-banner.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.main-collection-banner.settings.paragraph.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_collection_description.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "default": false,
+      "label": "t:sections.main-collection-banner.settings.show_collection_image.label",
+      "info": "t:sections.main-collection-banner.settings.show_collection_image.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "background-1"
+    }
+  ]
+}
+{% endschema %}

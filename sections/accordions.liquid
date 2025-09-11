@@ -1,0 +1,171 @@
+<section class="accordions tw-bg-chuug-dark-navy tw-text-white tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-py-[4rem] tw-px-[1rem] md:tw-pt-24  md:tw-pb-32">
+  <div class="tw-container tw-flex tw-flex-col tw-justify-center tw-items-center tw-px-0">
+    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4 tw-flex-1 tw-mb-[2rem] md:tw-mb-[6rem]">
+      <h2 class="tw-text-[3.2rem] tw-px-[1rem] tw-leading-[1.1] tw-font-bold tw-text-white tw-text-center md:tw-text-[4.8rem]">
+        {{ section.settings.section_title }}
+      </h2>
+      <p class="tw-text-[1.6rem] tw-leading-[1.5rem] tw-mt-[1.5rem] tw-px-[4rem] tw-text-white tw-text-center md:tw-text-[1.8rem]">
+        {{ section.settings.section_subtitle }}
+      </p>
+    </header>
+    <div
+      id="faq-tab"
+      class="tw-group tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-[2rem] tw-max-w-[52.5em] md:tw-gap-y-[4rem]"
+      data-tab="1"
+    >
+      <div class="tw-flex tw-items-center tw-bg-chuug-yankees-blue tw-p-2 tw-rounded-[1.25em] tw-gap-x-[0.62em] tw-w-full tw-max-w-[54rem] tw-mx-auto">
+        <button
+          onclick="handleChangeFaqTab(1)"
+          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='1']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='1']]:tw-text-black group-[&[data-tab='1']]:tw-opacity-100 group-[&[data-tab='1']]:tw-border-chuug-pastel-yellow"
+        >
+          {{ section.settings.tab_1_title }}
+        </button>
+        <button
+          onclick="handleChangeFaqTab(2)"
+          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='2']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='2']]:tw-text-black group-[&[data-tab='2']]:tw-opacity-100 group-[&[data-tab='2']]:tw-border-chuug-pastel-yellow"
+        >
+          {{ section.settings.tab_2_title }}
+        </button>
+      </div>
+
+      <div class="tw-flex tw-flex-col tw-gap-[2rem]">
+        {% for block in section.blocks %}
+          {% if block.type == 'accordion_tab_1' %}
+            {% render 'accordion',
+              title: block.settings.accordion_title_tab_1,
+              text: block.settings.accordion_text_tab_1,
+              custom_class: 'tw-block tab_1'
+            %}
+          {% elsif block.type == 'accordion_tab_2' %}
+            {% render 'accordion',
+              title: block.settings.accordion_title_tab_2,
+              text: block.settings.accordion_text_tab_2,
+              custom_class: 'tw-hidden tab_2'
+            %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    <a
+      href="#hero-section"
+      type="submit"
+      class="cta-button tw-container tw-text-[2rem] tw-leading-[1] tw-font-bold tw-p-0 tw-uppercase tw-bg-no-repeat tw-w-full tw-max-w-[34.5rem] tw-h-[4.375em] tw-rounded-[1.25em] tw-flex tw-justify-center tw-items-center tw-mt-[2rem] md:tw-mt-[6rem]"
+      style="
+        background-image: url('https://cdn.shopify.com/s/files/1/0799/4307/4111/files/cta-button.png?v=1729102728');
+        background-size: contain;
+        background-position: center;
+      "
+    >
+      {{ section.settings.button_text }}
+    </a>
+  </div>
+</section>
+
+<script>
+  function handleChangeFaqTab(tab) {
+    const advantageTab = document.querySelector('#faq-tab');
+    advantageTab.dataset.tab = tab.toString();
+
+    const tab1Elements = document.querySelectorAll('.tab_1');
+    const tab2Elements = document.querySelectorAll('.tab_2');
+
+    if (tab == 1) {
+      tab1Elements.forEach(element => {
+        element.classList.remove('tw-hidden');
+      });
+      tab2Elements.forEach(element => {
+        element.classList.add('tw-hidden');
+      });
+    } else {
+      tab1Elements.forEach(element => {
+        element.classList.add('tw-hidden');
+      });
+      tab2Elements.forEach(element => {
+        element.classList.remove('tw-hidden');
+      });
+    }
+  }
+</script>
+
+
+
+{% schema %}
+{
+  "name": "Accordions",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "section_title",
+      "default": "<h1>Let's Clear a Few Things Up</h1>",
+      "label": "Section Title"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Section Subtitle",
+      "default": "If you still have questions, don’t hesitate to contact us"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_title",
+      "label": "Tab 1 Title",
+      "default": "CHUUG Tankard"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_title",
+      "label": "Tab 2 Title",
+      "default": "Delivery & Returns"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Add to cart"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion_tab_1",
+      "name": "Accordion Tab 1",
+      "settings": [
+        {
+          "type": "text",
+          "id": "accordion_title_tab_1",
+          "label": "Accordion Title for Tab 1",
+          "default": "Accordion Title for Tab 1"
+        },
+        {
+          "type": "textarea",
+          "id": "accordion_text_tab_1",
+          "label": "Accordion Text for Tab 1",
+          "default": "Accordion Text for Tab 1"
+        }
+      ]
+    },
+    {
+      "type": "accordion_tab_2",
+      "name": "Accordion Tab 2",
+      "settings": [
+        {
+          "type": "text",
+          "id": "accordion_title_tab_2",
+          "label": "Accordion Title for Tab 2",
+          "default": "Accordion Title for Tab 2"
+        },
+        {
+          "type": "textarea",
+          "id": "accordion_text_tab_2",
+          "label": "Accordion Text for Tab 2",
+          "default": "Accordion Text for Tab 2"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordions"
+    }
+  ]
+}
+{% endschema %}

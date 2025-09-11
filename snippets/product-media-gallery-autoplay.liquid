@@ -1,0 +1,32 @@
+<media-gallery
+  id="MediaGallery-{{ section.id }}"
+  role="region"
+  {% if section.settings.enable_sticky_info %}
+    class="product__column-sticky"
+  {% endif %}
+  aria-label="{{ 'products.product.media.gallery_viewer' | t }}"
+  data-desktop-layout="{{ section.settings.gallery_layout }}"
+>
+  <ul
+    id="Slider-Gallery-{{ section.id }}"
+    class="product__media-list contains-media grid grid--peek list-unstyled slider slider--mobile"
+    role="list"
+  >
+    {% for media in product.media %}
+      <li
+        id="Slide-{{ section.id }}-{{ media.id }}"
+        class="product__media-item grid__item slider__slide {% if media.media_type != 'image' %} product__media-item--full{% endif %}"
+        data-media-id="{{ section.id }}-{{ media.id }}"
+      >
+        {% if media.media_type == 'video' %}
+          <video autoplay muted loop playsinline style="width: 100%; height: auto;">
+            <source src="{{ media.sources[0].url }}" type="{{ media.sources[0].mime_type }}">
+            Your browser does not support the video tag.
+          </video>
+        {% else %}
+          {{ media | media_tag }}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</media-gallery>

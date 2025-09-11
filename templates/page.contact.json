@@ -1,0 +1,86 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "rich_text_nhPU89": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_ihdhkp": {
+          "type": "heading",
+          "settings": {
+            "heading": "Contact Us",
+            "heading_size": "h1"
+          }
+        },
+        "text_Qqrij4": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Get in touch with us using the form below and expect a speedy response within 24 hours.<br/>Your enquiries are our top priority.</p>"
+          }
+        },
+        "button_yNgzjt": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        },
+        "text_HUr964": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>Company Name:</strong> Chuug Limited<br/><strong>Registration Number:</strong> 15049927<br/><strong>Registered Address:</strong> Unit 20-23 Withey Court, Western Industrial Estate, Caerphilly, CF83 1BF<br/><strong>Customer Services Email: </strong>info@chuug.com<br/><strong>Customer Services Telephone:</strong> 0345 319 0345<br/></p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_ihdhkp",
+        "text_Qqrij4",
+        "button_yNgzjt",
+        "text_HUr964"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "contact-form": {
+      "type": "contact-form",
+      "disabled": true,
+      "settings": {
+        "heading": "",
+        "heading_size": "h1",
+        "color_scheme": "background-1",
+        "padding_top": 36,
+        "padding_bottom": 68
+      }
+    }
+  },
+  "order": [
+    "rich_text_nhPU89",
+    "main",
+    "contact-form"
+  ]
+}

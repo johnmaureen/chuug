@@ -1,0 +1,1461 @@
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+  rel="stylesheet"
+>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+{{ 'pdp-chuug-vessel.css' | asset_url | stylesheet_tag }}
+
+{% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
+{% assign dusk_natural = all_products[section.settings.dusk_natural] %}
+{% assign dawn_charcoal = all_products[section.settings.dawn_charcoal] %}
+{% assign dawn_natural = all_products[section.settings.dawn_natural] %}
+{% assign midnight_charcoal = all_products[section.settings.midnight_charcoal] %}
+{% assign midnight_natural = all_products[section.settings.midnight_natural] %}
+
+<script>
+  window.pdp_chuug_vessel = {
+    src: [
+      {{ section.settings.one_chuug_initials | json }},
+      {{ section.settings.one_chuug_no_initials | json }},
+      {{ section.settings.two_chuug_initials | json }},
+      {{ section.settings.two_chuug_no_initials | json }},
+      {{ section.settings.three_chuug_initials | json }},
+      {{ section.settings.three_chuug_no_initials | json}},
+    ],
+  };
+
+  const duskCharcoalAvailable = {{ dusk_charcoal.available | json }};
+  const duskNaturalAvailable = {{ dusk_natural.available | json }};
+  const dawnCharcoalAvailable = {{ dawn_charcoal.available | json }};
+  const dawnNaturalAvailable = {{ dawn_natural.available | json }};
+  const midnightCharcoalAvailable = {{ midnight_charcoal.available | json }};
+  const midnightNaturalAvailable = {{ midnight_natural.available | json }};
+</script>
+
+<section
+  id="hero-section"
+  class="tw-bg-chuug-dark-navy tw-pt-5 md:tw-pt-24 tw-pb-[3rem] md:tw-pb-[12rem] tw-overflow-hidden"
+>
+  <div class="tw-flex tw-flex-col tw-gap-x-20 tw-container lg:tw-flex-row lg:tw-justify-center lg:tw-gap-x-[1rem] xl:tw-gap-x-20">
+    <div class="tw-flex tw-flex-col tw-w-full lg:tw-w-[32.5em] tw-gap-y-[2rem]">
+      <div class="tw-relative tw-w-fit tw-mx-auto">
+        <div
+          class="swiper pdp-chuug-vessel-main-swiper tw-w-[35.5rem] tw-h-[37.5rem] md:tw-w-[52rem] md:tw-h-[52rem]"
+        >
+          <div class="swiper-wrapper">
+            {% for block in section.blocks %}
+              {%- case block.type -%}
+                {%- when 'main_carousel_image' -%}
+                  <div class="swiper-slide tw-cursor-pointer tw-rounded-2xl">
+                    <img
+                      src="{{ block.settings.carousel_image | image_url}}"
+                      class="{%- if forloop.first -%}main_carousel_first_image{% endif %} tw-w-full tw-h-full tw-rounded-2xl"
+                      alt="{{ section.settings.hero_image_alt }}"
+                      width="100%"
+                      height="100%"
+                    >
+                  </div>
+              {%- endcase -%}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="badge-container tw-z-50 tw-absolute tw-top-[-1.5rem] tw-left-[-2.5rem] tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]">
+          <div class="tw-relative md:!tw-flex md:tw-justify-center md:tw-items-center">
+            <img
+              src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/badge.png?v=1729107293"
+              alt="Badge"
+              width="100%"
+              height="100%"
+              class="tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]"
+            >
+            <p class="tw-absolute tw-text-center tw-text-black tw-top-[0.7rem] tw-leading-[1.8rem] tw-font-bold tw-text-[1.4rem] md:tw-mt-[0.8rem] md:tw-w-[6rem] ">
+              UP TO <span class="discount">{{ section.settings.discount_number }}%</span> OFF
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="swiper thumbsSlider tw-w-[35.5rem] tw-h-[5rem] md:tw-w-[52rem] md:tw-h-[7rem]">
+        <div class="swiper-wrapper">
+          {% for block in section.blocks %}
+            {%- case block.type -%}
+              {%- when 'main_carousel_image' -%}
+                <div class="swiper-slide tw-cursor-pointer tw-rounded">
+                  <img
+                    src="{{ block.settings.carousel_image | image_url }}"
+                    class="{%- if forloop.first -%}thumbnails_carousel_first_image{% endif %} tw-cursor-pointer tw-w-[5rem] tw-h-[5rem] tw-rounded md:tw-w-[7rem] md:tw-h-[7rem]"
+                    alt="{{ block.settings.image_alt }}"
+                    width="100%"
+                    height="100%"
+                  >
+                </div>
+            {%- endcase -%}
+          {% endfor %}
+        </div>
+      </div>
+      {% render 'icon-title-and-text',
+        block: section.blocks,
+        custom_classes: 'tw-hidden tw-mt-[1.2rem] md:tw-flex md:tw-max-w-[52rem] md:tw-mx-auto md:tw-mb-[2rem]'
+      %}
+    </div>
+    <div class="tw-flex-1 tw-flex tw-flex-col tw-gap-y-[2rem] tw-mt-[2rem] md:tw-gap-y-8 lg:tw-w-full lg:tw-max-w-[60rem]">
+      <div class="tw-flex tw-flex-col tw-gap-y-4 md:tw-text-center lg:tw-text-left">
+        <a
+          class="tw-flex tw-items-center tw-gap-x-2 md:tw-justify-center lg:tw-justify-start"
+          href="{{ section.settings.review_url }}"
+          target="_blank"
+        >
+          <img
+            class="tw-w-[18rem] tw-h-[3rem] tw-object-contain md:tw-w-[24rem]"
+            src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/pdp-chuug-vessel-trustpilot.png?v=1729625666"
+            alt="Review logo"
+            width="113"
+            height="29"
+          >
+          <span class="tw-text-white tw-text-[1.4rem] tw-leading-[1] tw-whitespace-nowrap lg:tw-text-[1.6rem] lg:tw-leading-[1.5]">
+            {{- section.settings.review_text -}}
+          </span>
+        </a>
+        <h1 class="tw-text-white tw-text-[2.4rem] tw-leading-[1.1] tw-font-bold md:tw-text-[3.6rem]">
+          {{ section.settings.product_title }}
+        </h1>
+      </div>
+      <ul class="tw-flex tw-flex-col tw-gap-y-4 md:tw-items-center lg:tw-items-start">
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when 'benefits' -%}
+              <li class="tw-bg-[url(https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-ul-list-icon.svg?v=1727978730)] tw-h-fit tw-bg-left tw-bg-no-repeat tw-pl-8 tw-text-white tw-text-[1.6rem] tw-leading-[1.5] md:tw-h-[2.6rem]">
+                {{ block.settings.benefit_text }}
+              </li>
+          {%- endcase -%}
+        {% endfor %}
+      </ul>
+      <div class="tw-border-t-white tw-border-t-4 tw-border-dotted tw-h-0">&nbsp;</div>
+      <div class="tw-bg-chuug-yankees-blue tw-p-4 tw-rounded-[1.25em] tw-flex tw-flex-col tw-gap-y-4 ">
+        <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
+          <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
+            <span>{{ section.settings.vessel_question }}</span>
+            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
+          </div>
+
+          <div class="tw-flex tw-flex-wrap tw-items-end tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-px-2 md:tw-flex-nowrap">
+            <div class="tw-w-full">
+              <label
+                class="tw-cursor-pointer"
+              >
+                <div
+                  onclick="setProductAmount('1')" class="product_amount_label_1 tw-h-[7rem] tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+
+                >
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                    >1X</span
+                  >
+                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                    <span
+                      class="product_amount_label_1_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      no_engraving_compare_at_price="{{ section.settings.one_chuug_product.compare_at_price | money }}"
+                      engraving_compare_at_price="{{  section.settings.one_chuug_product.variants[1].compare_at_price | money }}"
+                    >
+                      {{ section.settings.one_chuug_product.variants[0].compare_at_price | money }}
+                    </span>
+                    <span
+                      class="product_amount_label_1_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      no_engraving_price="{{ section.settings.one_chuug_product.price | money }}"
+                      engraving_price="{{ section.settings.one_chuug_product.variants[1].price | money }}"
+                    >
+                      {{ section.settings.one_chuug_product.variants[0].price | money }}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div class="tw-w-full">
+              <label
+                onclick="setProductAmount('2')"
+                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;
+              >
+                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                    >2X</span
+                  >
+                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                    <span
+                      class="product_amount_label_2_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      no_engraving_compare_at_price="{{ section.settings.two_chuug_product.compare_at_price | money }}"
+                      engraving_compare_at_price="{{ section.settings.two_chuug_product.variants[1].compare_at_price | money }}"
+                    >
+                      {{ section.settings.two_chuug_product.variants[0].compare_at_price | money }}
+                    </span>
+                    <span
+                      class="product_amount_label_2_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      no_engraving_price="{{ section.settings.two_chuug_product.price | money }}"
+                      engraving_price="{{ section.settings.two_chuug_product.variants[1].price | money }}"
+                    >
+                      {{- section.settings.two_chuug_product.variants[0].price | money -}}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div class="tw-w-full">
+              <label
+                onclick="setProductAmount('3')"
+                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;"
+              >
+                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                    >3X</span
+                  >
+                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                    <span
+                      class="product_amount_label_3_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      no_engraving_compare_at_price="{{ section.settings.three_chuug_product.compare_at_price | money }}"
+                      engraving_compare_at_price="{{ section.settings.three_chuug_product.variants[1].compare_at_price | money }}"
+                    >
+                      {{ section.settings.three_chuug_product.variants[0].compare_at_price | money }}
+                    </span>
+                    <span
+                      class="product_amount_label_3_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      no_engraving_price="{{ section.settings.three_chuug_product.price | money }}"
+                      engraving_price="{{ section.settings.three_chuug_product.variants[1].price | money }}"
+                    >
+                      {{- section.settings.three_chuug_product.variants[0].price | money -}}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
+          <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
+            <span>{{ section.settings.engraving_question }}</span>
+            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.engraving_question_tooltip_text %}
+          </div>
+
+          <div class="tw-flex tw-items-center tw-gap-x-[0.62em] tw-px-2">
+            <div class="tw-w-full">
+              <label
+                class="tw-cursor-pointer"
+              >
+                <div
+                  class="product_variant_0 active tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+                  onclick="setEngraving(0);"
+                >
+                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">NO</span>
+                </div>
+              </label>
+            </div>
+            <div class="tw-w-full">
+              <label
+                class="tw-cursor-pointer"
+              >
+                <div
+                  class="product_variant_1 tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+                  onclick="setEngraving(1);"
+                >
+                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">YES</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="customize-your-vessel tw-flex tw-flex-col tw-gap-y-2 tw-text-white tw-text-[1.6rem] tw-font-semibold">
+          <div class="tw-flex tw-gap-[1rem]">
+            <span>{{ section.settings.customise_vessel_question }}</span>
+            {% for block in section.blocks %}
+              {%- case block.type -%}
+                {%- when 'modal' -%}
+                  <button id="openModal">See options</button>
+                  {% render 'pdp-chuug-vessel-modal', block: block %}
+              {%- endcase -%}
+            {% endfor %}
+          </div>
+
+          {% for i in (1..3) %}
+            <div
+              class="tw-flex tw-flex-col tw-gap-y-1 vessel_number_{{ forloop.index }}"
+
+              {% if forloop.index == 3 %}
+                style="display: none;"
+              {% endif %}
+            >
+              <span>Vessel #{{ forloop.index }}</span>
+              <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
+                <div
+                  class="inputs tw-flex tw-w-full tw-gap-x-[1rem]"
+                  variant_id=""
+                  variant_monogram_initials_id=""
+                  variant_index="0"
+                  product_amount="3"
+                  monogram_initials=""
+                >
+                  <div
+                    id="select_{{ forloop.index }}_material"
+                    class="js-dropdown-container material tw-w-1/2 tw-bg-chuug-rackley input tw-relative tw-mx-auto tw-rounded-2xl tw-h-[4.8rem] hover:tw-cursor-pointer"
+                  >
+                    <div class="wood-type tw-bg-chuug-rackley tw-px-4 tw-py-2 tw-border tw-border-white tw-rounded-2xl tw-cursor-pointer js-dropdown-trigger">
+                      <span class="tw-text-white js-selected-option">WOOD FINISH</span>
+                      {% render 'icon-arrow-down' %}
+                    </div>
+
+                    <div class="wood-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
+                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
+                        <input type="radio" name="wood_material" value="DUSK" class="tw-hidden js-option">
+                        <span class="wood-type-name tw-uppercase">DUSK</span>
+                        {% if section.settings.wood_finish_dusk_wood != blank %}
+                          <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+
+                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
+                        <input type="radio" name="wood_material" value="DAWN" class="tw-hidden js-option">
+                        <span class="wood-type-name tw-uppercase">DAWN</span>
+                        {% if section.settings.wood_finish_dawn_wood != blank %}
+                          <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+
+                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
+                        <input type="radio" name="wood_material" value="MIDNIGHT" class="tw-hidden js-option">
+                        <span class="wood-type-name tw-uppercase">MIDNIGHT</span>
+                        {% if section.settings.wood_finish_midnight_wood != blank %}
+                          <img
+                            src="{{ section.settings.wood_finish_midnight_wood | image_url }}"
+                            width="180"
+                            height="48"
+                          >
+                        {% endif %}
+                      </label>
+                    </div>
+                  </div>
+
+                  <div
+                    id="select_{{ forloop.index }}_rope"
+                    disabled
+                    class="js-dropdown-container rope tw-w-1/2 tw-bg-chuug-rackley input tw-relative tw-mx-auto tw-rounded-2xl tw-h-[4.8rem]"
+                  >
+                    <div class="rope-type tw-bg-chuug-rackley tw-px-4 tw-py-2 tw-border tw-border-white tw-rounded-2xl js-dropdown-trigger">
+                      <span class="tw-text-white js-selected-option">ROPE TYPE</span>
+                      {% render 'icon-arrow-down' %}
+                    </div>
+
+                    <div class="rope-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
+                      <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2">
+                        <input type="radio" name="rope_material" value="CHARCOAL" class="tw-hidden js-option">
+                        <span class="rope-type-name tw-uppercase">CHARCOAL</span>
+                        {% if section.settings.charcoal_rope != blank %}
+                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+
+                      <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow">
+                        <input type="radio" name="rope_material" value="NATURAL" class="tw-hidden js-option">
+                        <span class="rope-type-name tw-uppercase">NATURAL</span>
+                        {% if section.settings.natural_rope != blank %}
+                          <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <input
+                  class="monogram_initials tw-hidden tw-w-full tw-h-[4.8rem] tw-text-center input tw-uppercase tw-bg-chuug-rackley tw-mx-auto tw-rounded-2xl tw-px-4 tw-py-2 tw-border tw-border-white tw-appearance-none tw-placeholder-white hover:tw-cursor-pointer focus:tw-outline-none focus:tw-ring-0 active:tw-outline-none active:tw-ring-0 md:tw-w-1/3 lg:!tw-w-[15.5rem] xl:!tw-w-[18.5rem]"
+                  type="text"
+                  maxlength="3"
+                  placeholder="ENTER Initials"
+                  name="properties[Monogram Initials]"
+                  disabled
+                >
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="tw-flex tw-flex-col">
+          <button
+            id="add-multiple-products"
+            onclick="handleATCbutton()"
+            type="submit"
+            name="add"
+            disabled
+            class="product-form__submit tw-whitespace-nowrap tw-flex tw-justify-center tw-items-center tw-gap-x-[0.8rem] cta-button tw-mt-[2rem] tw-uppercase tw-text-white tw-text-[2rem] tw-font-bold tw-w-full tw-bg-no-repeat tw-h-[7rem] tw-rounded-[1.25em] lg:tw-mt-[4rem]"
+          >
+            {{ section.settings.button_text }} |
+            <div
+              class="cta-product-price tw-whitespace-nowrap"
+            ></div>
+          </button>
+          <p class="incompleted-inputs-text">All fields must be filled out before adding products to the cart.</p>
+
+          <div class="tw-flex tw-items-center tw-gap-x-2 tw-justify-center tw-text-white tw-mt-[1.2rem]">
+            <div class="tw-bg-chuug-rose tw-rounded-[0.29375em] tw-py-[0.27125em] tw-px-[0.5425em] tw-flex tw-items-center tw-justify-center">
+              <svg width="49" height="13" viewBox="0 0 49 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M46.4233 7.95711C46.4233 6.81202 45.454 5.88498 44.2583 5.88498C43.0626 5.88498 42.0933 6.81343 42.0933 7.95711C42.0933 9.10079 43.064 10.0278 44.2597 10.0278C45.4554 10.0278 46.4233 9.10079 46.4233 7.95711ZM46.4317 3.92961H48.8204V11.9832H46.4317V11.4683C45.7353 11.9491 44.909 12.2062 44.0628 12.2055C41.7374 12.2055 39.8524 10.3036 39.8524 7.95711C39.8524 5.61066 41.7374 3.70875 44.0628 3.70875C44.942 3.70875 45.7565 3.98025 46.4317 4.44588V3.92961ZM27.3113 4.97904V3.93101H24.865V11.9832H27.3169V8.22298C27.3169 6.9541 28.6786 6.27324 29.624 6.27324H29.6521V3.93101C28.6814 3.93101 27.791 4.35022 27.3113 4.97904ZM21.2173 7.95711C21.2173 6.81202 20.248 5.88498 19.0523 5.88498C17.8566 5.88498 16.8873 6.81343 16.8873 7.95711C16.8873 9.10079 17.858 10.0278 19.0537 10.0278C20.2494 10.0278 21.2173 9.10079 21.2173 7.95711ZM21.2257 3.92961H23.6158V11.9832H21.2257V11.4683C20.5505 11.9326 19.736 12.2055 18.8568 12.2055C16.5314 12.2055 14.6464 10.3036 14.6464 7.95711C14.6464 5.61066 16.5314 3.70875 18.8568 3.70875C19.736 3.70875 20.5505 3.98025 21.2257 4.44588V3.92961ZM35.6068 3.71437C34.6531 3.71437 33.7499 4.0126 33.145 4.83696V3.93101H30.7662V11.9832H33.1746V7.75172C33.1746 6.52786 33.9877 5.92718 34.9682 5.92718C36.0176 5.92718 36.6225 6.56021 36.6225 7.73484V11.9832H39.0083V6.86266C39.0083 4.98888 37.5312 3.71437 35.6068 3.71437ZM11.1661 11.9832H13.6673V0.342414H11.1661V11.9832ZM0.179443 11.986H2.82834V0.3396H0.18085L0.179443 11.986ZM9.44424 0.3396C9.44424 2.86048 8.47078 5.20693 6.73486 6.94988L10.3952 11.986H7.12453L3.14767 6.51379L4.17459 5.73727C5.01058 5.10852 5.68793 4.29295 6.1525 3.35573C6.61708 2.41852 6.85602 1.38563 6.85021 0.3396H9.44143H9.44424Z" fill="#0C061D"/>
+              </svg>
+            </div>
+            <span class="tw-text-[1.2rem] tw-leading-[1.5]">Not happy? We’ll refund you. No questions asked.</span>
+          </div>
+        </div>
+      </div>
+
+      {% for block in section.blocks %}
+        {%- case block.type -%}
+          {%- when 'accordion' -%}
+            {% render 'accordion-pdp-chuug-vessel', block: block %}
+        {%- endcase -%}
+      {% endfor %}
+
+      {% render 'icon-title-and-text', block: section.blocks, custom_classes: 'tw-block md:tw-hidden' %}
+    </div>
+  </div>
+
+  <div class="tw-flex tw-justify-center tw-items-center tw-w-full tw-mt-[3rem] tw-mb-[4rem] tw-container lg:tw-mt-[6rem]">
+    <div class="tw-bg-chuug-yankees-blue tw-rounded-3xl tw-w-full tw-max-w-[60em] tw-h-[10rem] tw-py-4 tw-px-7 tw-flex tw-items-center tw-gap-x-[3.5em]">
+      <div class="swiper bottom-autoplay-carousel tw-h-[10rem]">
+        <div class="swiper-wrapper">
+          {% for block in section.blocks %}
+            {%- case block.type -%}
+              {%- when 'bottom_carousel_image' -%}
+                <div class="swiper-slide tw-py-[1.5rem] tw-h-full tw-flex tw-items-center">
+                  <img
+                    src="{{ block.settings.bottom_carousel_image | image_url}}"
+                    class="tw-w-full tw-h-full tw-object-contain"
+                    alt="{{ section.settings.botttom_image_alt }}"
+                    width="100%"
+                    height="100%"
+                  >
+                </div>
+            {%- endcase -%}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tw-w-fit tw-h-fit">
+        <button
+          onclick="handleToggleHeroSwiperState(this)"
+          title="pause"
+          data-play="true"
+          class="tw-bg-chuug-pastel-yellow tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-10 tw-h-10 tw-group"
+        >
+          <svg
+            class="tw-hidden group-[&[data-play='true']]:tw-block"
+            xmlns="http://www.w3.org/2000/svg"
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+          >
+            <g clip-path="url(#clip0_1_2880)">
+              <path d="M5.82945 12.4222C5.82945 13.4622 4.98629 14.3053 3.94634 14.3053C2.90639 14.3053 2.06323 13.4622 2.06323 12.4222V2.66875C2.06323 1.6288 2.90639 0.785645 3.94634 0.785645C4.98629 0.785645 5.82945 1.6288 5.82945 2.66875V12.4222Z" fill="#0D2026"/>
+              <path d="M12.8968 12.4222C12.8968 13.4622 12.0537 14.3053 11.0137 14.3053C9.97377 14.3053 9.13062 13.4622 9.13062 12.4222V2.66875C9.1309 1.6288 9.97405 0.785645 11.0137 0.785645C12.0537 0.785645 12.8968 1.6288 12.8968 2.66875V12.4222Z" fill="#0D2026"/>
+            </g>
+            <defs>
+              <clipPath id="clip0_1_2880">
+                <rect width="13.5197" height="13.5197" fill="white" transform="translate(0.720459 0.785645)"/>
+              </clipPath>
+            </defs>
+          </svg>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            class="play-icon"
+            style="display: none; margin-left: 2px;"
+          >
+            <path d="M2.69075 0.305027C1.42857 -0.418977 0.405273 0.174136 0.405273 1.62872V12.3629C0.405273 13.819 1.42857 14.4113 2.69075 13.688L12.073 8.30735C13.3356 7.58309 13.3356 6.40968 12.073 5.68559L2.69075 0.305027Z" fill="#331B18"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style type="text/tailwindcss">
+  @layer base {
+    #hero-section > * {
+      @apply tw-text-white;
+    }
+
+    #MainContent > * {
+      font-size: 16px;
+      line-height: 16px;
+    }
+
+    h1 {
+      @apply tw-text-white;
+      @apply md:tw-text-4xl md:tw-font-bold md:tw-leading-[2.475em];
+    }
+
+    summary {
+      list-style-type: none;
+      font-size: 16px;
+      /* Firefox */
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+      /* Chrome */
+    }
+  }
+
+  @layer components {
+    .input {
+      @apply tw-bg-transparent tw-border tw-border-white tw-rounded-[1.25em] tw-text-center tw-min-h-12 tw-py-4 tw-appearance-none tw-px-2;
+    }
+  }
+</style>
+
+<style>
+  .product_amount_label_2::before {
+    content: "{{ section.settings.second_product_label_text }}";
+  }
+  .product_amount_label_3::before {
+    content: "{{ section.settings.third_product_label_text }}";
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.js-dropdown-container').forEach((container) => {
+    const trigger = container.querySelector('.js-dropdown-trigger');
+    const dropdown = container.querySelector('.js-dropdown');
+    const selectedText = container.querySelector('.js-selected-option');
+    const options = container.querySelectorAll('.js-option');
+
+    trigger.addEventListener('click', () => {
+      if (trigger.parentElement.hasAttribute('disabled')) return;
+      dropdown.classList.toggle('tw-hidden');
+      trigger.classList.toggle('active');
+    });
+
+    options.forEach((option) => {
+      option.addEventListener('click', () => {
+        if (option.hasAttribute('disabled')) return;
+        const label = option.closest('label');
+        const nameSpan = label.querySelector('span');
+        selectedText.textContent = nameSpan.textContent;
+        dropdown.classList.add('tw-hidden');
+        trigger.classList.remove('active');
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!container.contains(event.target)) {
+        dropdown.classList.add('tw-hidden');
+        trigger.classList.remove('active');
+      }
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    addEventListenerToMaterialAndRopeInputs();
+    addEventListenerToMonogramInitialsInput();
+    setProductAmount('2');
+    disableUnavailableMaterials();
+    setEngraving('0');
+
+    setTimeout(function () {
+      const elements = document.querySelectorAll('.bottom-autoplay-carousel .bss_pl_img');
+      elements.forEach(function (element) {
+        element.remove();
+      });
+    }, 1000);
+  });
+
+  function disableUnavailableMaterials() {
+    const options = [];
+  
+    for (let i = 1; i <= 3; i++) {
+      const materialType = document.getElementById(`select_${i}_material`);
+  
+      if (materialType) {
+        const option = {
+          dusk: materialType.querySelector(`input[value="DUSK"]`),
+          dawn: materialType.querySelector(`input[value="DAWN"]`),
+          midnight: materialType.querySelector(`input[value="MIDNIGHT"]`)
+        };
+        options.push(option);
+      }
+    }
+  
+    const availability = {
+      dusk: { charcoal: duskCharcoalAvailable, natural: duskNaturalAvailable },
+      dawn: { charcoal: dawnCharcoalAvailable, natural: dawnNaturalAvailable },
+      midnight: { charcoal: midnightCharcoalAvailable, natural: midnightNaturalAvailable }
+    };
+  
+    options.forEach(optionGroup => {
+      Object.entries(availability).forEach(([key, materials]) => {
+        const option = optionGroup[key];
+        if (option && (!materials.charcoal && !materials.natural)) {
+          option.disabled = true;
+          option.closest("label").classList.add("tw-opacity-50", "tw-pointer-events-none"); 
+        }
+      });
+    });
+  }  
+
+  function addEventListenerToMaterialAndRopeInputs() {
+    for (let i = 1; i <= 3; i++) {
+      const materialInputs = document.querySelectorAll(`#select_${i}_material input[type="radio"]`);
+      const ropeSelect = document.getElementById(`select_${i}_rope`);
+  
+      materialInputs.forEach(input => {
+        input.addEventListener("change", (event) => {
+          updateAvailableRopes(event.target);
+        });
+      });
+  
+      if (ropeSelect) {
+        ropeSelect.addEventListener("change", (event) => {
+          updateSelectedProduct(event.target);
+        });
+      }
+    }
+  }
+  
+  function updateAvailableRopes(selectedMaterial) {
+    const materialContainer = selectedMaterial.closest(".js-dropdown-container.material");
+    const ropeSelect = materialContainer?.nextElementSibling;
+
+    if (!ropeSelect) return;
+  
+    populateAvailableRopes(ropeSelect, selectedMaterial.value);
+  
+    if (ropeSelect.hasAttribute("disabled")) {
+      ropeSelect.removeAttribute("disabled");
+    }
+  }
+  
+  function populateAvailableRopes(ropeSelect, materialValue) {
+    const optionCharcoal = ropeSelect.querySelector(`option[value="charcoal"]`);
+    const optionNatural = ropeSelect.querySelector(`option[value="natural"]`);
+  
+    [optionCharcoal, optionNatural].forEach(option => option?.setAttribute("disabled", "true"));
+  
+    const availability = {
+      dusk: { charcoal: false, natural: false },
+      dawn: { charcoal: dawnCharcoalAvailable, natural: dawnNaturalAvailable },
+      midnight: { charcoal: midnightCharcoalAvailable, natural: midnightNaturalAvailable }
+    };
+  
+    const currentAvailability = availability[materialValue];
+  
+    if (currentAvailability) {
+      if (currentAvailability.charcoal) {
+        optionCharcoal?.removeAttribute("disabled");
+      }
+      if (currentAvailability.natural) {
+        optionNatural?.removeAttribute("disabled");
+      }
+    }
+  }  
+
+  function addEventListenerToMonogramInitialsInput() {
+    const monogram_initials = document.querySelectorAll('.monogram_initials');
+    for (let i = 0; i < monogram_initials.length && i < 3; i++) {
+      monogram_initials[i].addEventListener('change', updateMonogramInitials);
+    }
+  }
+
+  function setProductAmount(productAmount) {
+    const cta_product_price = document.querySelector('.cta-product-price');
+ 
+    changeProductAmount(productAmount, cta_product_price);
+    hideInputs(productAmount);
+    updateCarouselsImages();
+    disableCTAbutton(productAmount);
+  }
+
+  function disableCTAbutton(productAmount) {
+    const cta_button = document.querySelector('.cta-button');
+    const incompleted_inputs_text = document.querySelector('.incompleted-inputs-text');
+
+    if (!thereAreNoIncompleteInputs(productAmount)) {
+      cta_button.setAttribute('disabled', true);
+      if (incompleted_inputs_text && incompleted_inputs_text.classList.contains('tw-hidden')) {
+          incompleted_inputs_text.classList.remove('tw-hidden');
+      }
+    } else {
+      cta_button.removeAttribute('disabled');
+      if (incompleted_inputs_text && !incompleted_inputs_text.classList.contains('tw-hidden')) {
+          incompleted_inputs_text.classList.add('tw-hidden');
+      }
+    }
+  }
+
+
+
+  function setEngraving(index) {
+    const inputs = document.querySelectorAll('.inputs');
+    const currentVariantIndex = parseInt(inputs[0].getAttribute('variant_index'), 10);
+  
+    if (parseInt(index, 10) === currentVariantIndex) return;
+  
+    inputs.forEach(input => {
+      input.setAttribute('variant_index', index);
+
+      if (index === 0) {
+        input.setAttribute('monogram_initials', '');
+      }
+    });
+  
+    const variant0 = document.querySelector('.product_variant_0');
+    const variant1 = document.querySelector('.product_variant_1');
+  
+    if (index === 0) {
+      variant0.classList.add('active');
+      variant1.classList.remove('active');
+    } else if (index === 1) {
+      variant0.classList.remove('active');
+      variant1.classList.add('active');
+    }
+  
+    toggleClass('monogram_initials', 'tw-hidden', true);
+    updateCarouselsImages();
+    updatePrices(index);
+  }
+
+  function handleATCbutton() {
+  const inputs = document.querySelectorAll('.inputs');
+  const variant_index = inputs[0].getAttribute('variant_index');
+  const product_amount = parseInt(inputs[0].getAttribute('product_amount'), 10);
+
+  const variant_ids = Array.from(inputs).map((input) => ({
+    variant_id: input.getAttribute('variant_id'),
+    variant_monogram_initials_id: input.getAttribute('variant_monogram_initials_id')
+  }));
+  const monogram_initials = Array.from(inputs).map((input) => input.getAttribute('monogram_initials'));
+
+  const products = [];
+
+  for (let i = 0; i < product_amount; i++) {
+    const initials = monogram_initials[i] && monogram_initials[i].trim() !== '' ? monogram_initials[i].trim() : 'NONE';
+
+    const product = {
+      id: initials === 'NONE' ? variant_ids[i].variant_id : variant_ids[i].variant_monogram_initials_id,
+      quantity: 1,
+      properties: {
+        "Monogram Initials": initials
+      }
+    };
+
+    products.push(product);
+  }
+
+  addProductsToCart(products);
+}
+
+  function addProductsToCart(products){
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: products }),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Error adding products');
+        return response.json();
+      })
+      .then((data) => {
+        window.location.href = '/cart';
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('There was a problem adding products to the cart.');
+      });
+  }
+
+
+  function handleToggleHeroSwiperState(elm) {
+    if (bottom_autoplay_carousel.autoplay.running) {
+      bottom_autoplay_carousel.autoplay.stop();
+      elm.title = 'play';
+      elm.dataset.play = 'false';
+      elm.querySelector('.play-icon').style.display = 'block';
+    } else {
+      bottom_autoplay_carousel.autoplay.start();
+      elm.title = 'pause';
+      elm.dataset.play = 'true';
+      elm.querySelector('.play-icon').style.display = 'none';
+    }
+  }
+
+  function toggleClass(elementClasses, classToToggle, toggleState) {
+    const classesArray = Array.isArray(elementClasses) ? elementClasses : [elementClasses];
+
+    classesArray.forEach((elementClass) => {
+      if (toggleState) {
+        const elements = document.querySelectorAll(`.${elementClass}`);
+        elements.forEach((element) => {
+          element.classList.toggle(classToToggle);
+        });
+      } else {
+        const element = document.querySelector(`.${elementClass}`);
+        if (element) {
+          element.classList.toggle(classToToggle);
+        }
+      }
+    });
+  }
+
+  function changeProductAmount(productAmount, cta_product_price) {
+    removeActiveClass();
+    const variant_index = parseInt(document.querySelector('.inputs').getAttribute('variant_index'), 10);
+    
+    const one_product_no_engraving_price = "{{ section.settings.one_chuug_product.price | money }}";
+    const one_product_engraving_price = "{{ section.settings.one_chuug_product.variants[1].price | money }}";
+  
+    const two_products_no_engraving_price = "{{ section.settings.two_chuug_product.price | money }}";
+    const two_products_engraving_price = "{{ section.settings.two_chuug_product.variants[1].price | money }}";
+  
+    const three_products_no_engraving_price = "{{ section.settings.three_chuug_product.price | money }}";
+    const three_products_engraving_price = "{{ section.settings.three_chuug_product.variants[1].price | money }}";
+  
+    if (productAmount === '1') {
+        cta_product_price.innerHTML = variant_index === 0 ? one_product_no_engraving_price : one_product_engraving_price;
+        changeProductAmountInputValue('1');
+        document.querySelector('.product_amount_label_1').classList.add('active');
+    } else if (productAmount === '2') {
+        cta_product_price.innerHTML = variant_index === 0 ? two_products_no_engraving_price : two_products_engraving_price;
+        changeProductAmountInputValue('2');
+        document.querySelector('.product_amount_label_2').classList.add('active');
+    } else if (productAmount === '3') {
+        cta_product_price.innerHTML = variant_index === 0 ? three_products_no_engraving_price : three_products_engraving_price;
+        changeProductAmountInputValue('3');
+        document.querySelector('.product_amount_label_3').classList.add('active');
+    }
+  }
+  
+  function removeActiveClass() {
+    document.querySelector('.product_amount_label_1').classList.remove('active');
+    document.querySelector('.product_amount_label_2').classList.remove('active');
+    document.querySelector('.product_amount_label_3').classList.remove('active');
+  }
+
+  function changeProductAmountInputValue(product_amount) {
+    const inputs = document.querySelectorAll('.inputs');
+    inputs.forEach(input => input.setAttribute('product_amount', product_amount));
+  }
+  
+  function updateSelectedProduct(elementId) {
+    const inputs = document.querySelectorAll('.inputs');
+    const productAmount = parseInt(inputs[0].getAttribute('product_amount'), 10);
+    const selectedValues = addSelectedValues(productAmount);
+    const cta_button = document.querySelector('.cta-button');
+    const incompleted_inputs_text = document.querySelector('.incompleted-inputs-text');
+  
+    const updateInputAttributes = (input, selectedProduct) => {
+      if (selectedProduct) {
+        input.setAttribute('variant_id', selectedProduct.variants[0].id);
+        input.setAttribute('variant_monogram_initials_id', selectedProduct.variants[1].id);
+      }
+    };
+    
+    const monogram_initials = elementId.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
+
+    if (monogram_initials?.hasAttribute('disabled')) {
+      monogram_initials.removeAttribute('disabled');
+    }
+
+    inputs.forEach((input, index) => {
+      if (index < productAmount) {
+        const selectedProduct = getSelectedProduct(selectedValues[index]);
+        updateInputAttributes(input, selectedProduct);
+      }
+    });
+
+    if (thereAreNoIncompleteInputs(productAmount)){
+      if (cta_button?.hasAttribute('disabled')) {
+        cta_button.removeAttribute('disabled');
+        if (!incompleted_inputs_text?.classList.contains('tw-hidden')) {
+          incompleted_inputs_text.classList.add('tw-hidden');
+        }
+      }
+    }
+  }  
+
+  function thereAreNoIncompleteInputs(productAmount) {
+    const inputs = document.querySelectorAll('.inputs');
+    for (let i = 0; i < productAmount; i++) {
+      const input = inputs[i];
+      const materialText = input.querySelector('.wood-type')?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+      const ropeText = input.querySelector('.rope-type')?.textContent.trim().toLowerCase().replace(/\s+/g, '-');      
+
+      if (materialText === 'wood-finish' || ropeText === 'rope-type' ) {
+        return false;
+      }
+    }
+    return true;
+  }  
+  
+  function addSelectedValues(productAmount){
+    let selectedValues = [];
+    for (let i = 1; i <= parseInt(productAmount); i++) {
+      const materialContainer = document.getElementById(`select_${i}_material`);
+      const ropeContainer = document.getElementById(`select_${i}_rope`);
+      
+      const materialSelect = materialContainer?.querySelector('.wood-type span');
+      const ropeSelect = ropeContainer?.querySelector('.rope-type span');
+      
+      const materialText = materialSelect?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+      const ropeText = ropeSelect?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+      
+      if (materialText && ropeText) {
+        selectedValues.push([materialText, ropeText]);
+      }
+    }
+    return selectedValues;
+  }
+
+  function hideInputs(productAmount){
+    for (let i = 1; i <= 3; i++) {
+      const vessel = document.querySelector(`.vessel_number_${i}`);
+      vessel.style.display = i <= parseInt(productAmount) ? 'flex' : 'none';
+    }
+  }
+  
+  function updateMonogramInitials() {
+    const inputs = document.querySelectorAll('.inputs');
+    const monogram_initials = document.querySelectorAll('.monogram_initials');
+    for (let i = 0; i < inputs.length && i < monogram_initials.length && i < 3; i++) {
+      const monogram_initials_value = monogram_initials[i].value;
+      inputs[i].setAttribute('monogram_initials', monogram_initials_value);
+    }
+  }
+
+  const possible_product_values = [
+    ['dusk', 'charcoal'],
+    ['dusk', 'natural'],
+    ['dawn', 'charcoal'],
+    ['dawn', 'natural'],
+    ['midnight', 'charcoal'],
+    ['midnight', 'natural'],
+    ['wood-finish', 'rope-type'],
+  ];
+
+  function getSelectedProduct(selectedValues) {
+    let selected_product;
+  
+    for (let i = 0; i < possible_product_values.length; i++) {
+      if (selectedValues[0] !== "" && selectedValues[1] !== "") {
+        if (
+          possible_product_values[i][0] === selectedValues[0] &&
+          possible_product_values[i][1] === selectedValues[1]
+        ) {
+          if(i == '0'){
+            return {{ dusk_charcoal | json }};
+            }else if(i == '1'){
+              return {{ dusk_natural | json }};
+            }else if(i == '2'){
+              return {{ dawn_charcoal | json }};
+            }else if(i == '3'){
+              return {{ dawn_natural | json }};
+            }else if(i == '4'){
+              return {{ midnight_charcoal | json }};
+            }else if(i == '5'){
+              selected_product = {{ midnight_natural | json }};
+              if(selected_product.error) return null
+              return selected_product;
+            }else if(i == '6'){
+              return undefined;
+            }
+        }
+      }
+    }
+    return null;
+  }
+
+  function updateCarouselsImages() {
+    const input = document.querySelector('.inputs');
+    const variant_index = parseInt(input.getAttribute('variant_index'), 10);
+    const product_amount = parseInt(input.getAttribute('product_amount'), 10);
+    const images_src = window.pdp_chuug_vessel.src;
+    let image_index;
+  
+    if (product_amount === 1) {
+      image_index = variant_index === 0 ? 1 : 0;
+    } else if (product_amount === 2) {
+      image_index = variant_index === 0 ? 3 : 2;
+    } else if (product_amount === 3) {
+      image_index = variant_index === 0 ? 5 : 4;
+    }
+  
+    if(images_src[image_index]){
+      document.querySelector('.main_carousel_first_image').src = images_src[image_index];
+      document.querySelector('.thumbnails_carousel_first_image').src = images_src[image_index];
+    }
+  }
+
+  function updatePrices(index) {
+    const cta_product_price = document.querySelector('.cta-product-price');
+    const product_amount = parseInt(document.querySelector('.inputs').getAttribute('product_amount'), 10);
+  
+    const labels = [
+      {
+        compare: document.querySelector('.product_amount_label_1_compare_at_price'),
+        price: document.querySelector('.product_amount_label_1_price')
+      },
+      {
+        compare: document.querySelector('.product_amount_label_2_compare_at_price'),
+        price: document.querySelector('.product_amount_label_2_price')
+      },
+      {
+        compare: document.querySelector('.product_amount_label_3_compare_at_price'),
+        price: document.querySelector('.product_amount_label_3_price')
+      }
+    ];
+  
+    function getTextContentFromHTML(htmlString) {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlString;
+      
+      const dualPriceElement = tempDiv.querySelector('.dualPrice');
+      if (dualPriceElement && dualPriceElement.textContent) {
+        return dualPriceElement.textContent;
+      } else {
+        return htmlString;
+      }
+    }
+  
+    function updateLabelPrices(label, engravingType) {
+      label.compare.innerHTML = getTextContentFromHTML(label.compare.getAttribute(`${engravingType}_compare_at_price`));
+      label.price.innerHTML = getTextContentFromHTML(label.price.getAttribute(`${engravingType}_price`));
+    }
+  
+    const engravingType = index === 0 ? 'no_engraving' : 'engraving';
+    labels.forEach(label => updateLabelPrices(label, engravingType));
+  
+    const selectedLabel = product_amount === 1 ? labels[0] : product_amount === 2 ? labels[1] : labels[2];
+    cta_product_price.innerHTML = selectedLabel.price.innerHTML;
+  }
+</script>
+
+<script>
+  var bottom_autoplay_carousel;
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const thumbs_swiper = new Swiper('.thumbsSlider', {
+      slidesPerView: 5.5,
+      freeMode: true,
+      watchSlidesProgress: true,
+      spaceBetween: 10,
+      breakpoints: {
+        0: {
+          slidesPerView: 5.5,
+        },
+        767: {
+          slidesPerView: 6,
+          spaceBetween: 20,
+        },
+      },
+    });
+
+    const main_swiper = new Swiper('.pdp-chuug-vessel-main-swiper', {
+      slidesPerView: 'auto',
+      spaceBetween: 5,
+      thumbs: {
+        swiper: thumbs_swiper,
+      },
+    });
+
+    bottom_autoplay_carousel = new Swiper('.bottom-autoplay-carousel', {
+      slidesPerView: 1,
+      spaceBetween: 15,
+      loop: true,
+      simulateTouch: false,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      breakpoints: {
+        0: {
+          slidesPerView: 1,
+        },
+        1024: {
+          slidesPerView: 4,
+        },
+      },
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "PDP chuug vessel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "product_title",
+      "label": "Product Title",
+      "default": "The Chuug V2 660ml"
+    },
+    {
+      "type": "text",
+      "id": "review_text",
+      "label": "Review Text",
+      "default": "4.9 - 345 Vessel Vikings"
+    },
+    {
+      "type": "url",
+      "id": "review_url",
+      "label": "Select reviews link"
+    },
+    {
+      "type": "text",
+      "id": "discount_number",
+      "default": "XX",
+      "label": "Discount Number"
+    },
+    {
+      "type": "text",
+      "id": "vessel_question",
+      "label": "Number of Vessels Question",
+      "default": "1. Number of Vessels"
+    },
+    {
+      "type": "text",
+      "id": "engraving_question",
+      "label": "Personalised Engraving Question",
+      "default": "2. Personalised Engraving?"
+    },
+    {
+      "type": "text",
+      "id": "customise_vessel_question",
+      "label": "Customise Your Vessel Question",
+      "default": "3. Customise Your Vessel(s)"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "ADD TO CART"
+    },
+    {
+      "type": "text",
+      "id": "vessel_question_tooltip_text",
+      "label": "Vessel question tooltip text",
+      "default": "Select whether you want to purchase 1, 2, or 3 Chuugs."
+    },
+    {
+      "type": "text",
+      "id": "engraving_question_tooltip_text",
+      "label": "Engraving question tooltip text",
+      "default": "Select YES if you would like to personalize your Chuug with your initials."
+    },
+    {
+      "type": "product",
+      "id": "one_chuug_product",
+      "label": "One Chuug product",
+      "info": "This is the product that we're going to use to display the one chuug prices"
+    },
+    {
+      "type": "product",
+      "id": "two_chuug_product",
+      "label": "Two Chuug product",
+      "info": "This is the product that we're going to use to display the two chuugs prices"
+    },
+    {
+      "type": "product",
+      "id": "three_chuug_product",
+      "label": "Three Chuug product",
+      "info": "This is the product that we're going to use to display the three chuugs prices"
+    },
+    {
+      "type": "image_picker",
+      "id": "one_chuug_no_initials",
+      "label": "Choose an Image",
+      "info": "This is the image for one Chuug with no initials"
+    },
+    {
+      "type": "image_picker",
+      "id": "one_chuug_initials",
+      "label": "Choose an Image",
+      "info": "This is the image for one Chuug with monogram initials"
+    },
+    {
+      "type": "image_picker",
+      "id": "two_chuug_no_initials",
+      "label": "Choose an Image",
+      "info": "This is the image for two Chuugs with no initials"
+    },
+    {
+      "type": "image_picker",
+      "id": "two_chuug_initials",
+      "label": "Choose an Image",
+      "info": "This is the image for two Chuugs with monogram initials"
+    },
+    {
+      "type": "image_picker",
+      "id": "three_chuug_no_initials",
+      "label": "Choose an Image",
+      "info": "This is the image for three Chuugs with no initials"
+    },
+    {
+      "type": "image_picker",
+      "id": "three_chuug_initials",
+      "label": "Choose an Image",
+      "info": "This is the image for three Chuugs with monogram initials"
+    },
+    {
+      "type": "image_picker",
+      "id": "wood_finish_midnight_wood",
+      "label": "Wood finish midnight wood image"
+    },
+    {
+      "type": "image_picker",
+      "id": "wood_finish_dawn_wood",
+      "label": "Wood finish dawn wood image"
+    },
+    {
+      "type": "image_picker",
+      "id": "wood_finish_dusk_wood",
+      "label": "Wood finish dusk wood image"
+    },
+    {
+      "type": "image_picker",
+      "id": "charcoal_rope",
+      "label": "Charcoal rope image"
+    },
+    {
+      "type": "image_picker",
+      "id": "natural_rope",
+      "label": "Natural rope image"
+    },
+    {
+      "type": "product",
+      "id": "dusk_charcoal",
+      "label": "Dusk Charcoal",
+      "info": "This is the product from which we will retrieve the information."
+    },
+    {
+      "type": "product",
+      "id": "dusk_natural",
+      "label": "Dusk Natural",
+      "info": "This is the product from which we will retrieve the information."
+    },
+    {
+      "type": "product",
+      "id": "dawn_charcoal",
+      "label": "Dawn Charcoal",
+      "info": "This is the product from which we will retrieve the information."
+    },
+    {
+      "type": "product",
+      "id": "dawn_natural",
+      "label": "Dawn Natural",
+      "info": "This is the product from which we will retrieve the information."
+    },
+    {
+      "type": "product",
+      "id": "midnight_charcoal",
+      "label": "Midnight Charcoal",
+      "info": "This is the product from which we will retrieve the information."
+    },
+    {
+      "type": "product",
+      "id": "midnight_natural",
+      "label": "Midnight Natural",
+      "info": "This is the product from which we will retrieve the information."
+    },
+      {
+      "type": "text",
+      "id": "second_product_label_text",
+      "label": "Second product label text",
+      "default": "Most Popular"
+    },
+    {
+      "type": "text",
+      "id": "third_product_label_text",
+      "label": "Third product label text",
+      "default": "Best value"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "main_carousel_image",
+      "name": "Carousel Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "carousel_image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Alt Text"
+        }
+      ]
+    },
+    {
+      "type": "image_title_text",
+      "name": "Image title and text",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "block_image",
+          "label": "Block Image"
+        },
+        {
+          "type": "text",
+          "id": "block_image_alt",
+          "label": "Image Alt Text"
+        },
+        {
+          "type": "text",
+          "id": "block_title",
+          "label": "Block Title",
+          "default": "Default Title"
+        },
+        {
+          "type": "text",
+          "id": "block_text",
+          "label": "Block Text",
+          "default": "Default text goes here."
+        }
+      ]
+    },
+    {
+      "type": "benefits",
+      "name": "Benefits",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "benefit_text",
+          "default": "This is a default benefit",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Accordion",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "accordion_title",
+          "default": "This is a default title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "accordion_text",
+          "default": "<p>This is a default texts.</p>",
+          "label": "Text",
+          "info": "If you want to add space bewteen lines of text, you need to make this text a numbered list."
+        }
+      ]
+    },
+    {
+      "type": "bottom_carousel_image",
+      "name": "Bottom Carousel Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "bottom_carousel_image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "botttom_image_alt",
+          "label": "Alt Text"
+        }
+      ]
+    },
+    {
+      "type": "modal",
+      "name": "Modal",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "modal_image_one",
+          "label": "Select an Image"
+        },
+        {
+          "type": "text",
+          "id": "modal_title_one",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "modal_image_two",
+          "label": "Select an Image"
+        },
+        {
+          "type": "text",
+          "id": "modal_title_two",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "modal_image_three",
+          "label": "Select an Image"
+        },
+        {
+          "type": "text",
+          "id": "modal_title_three",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "modal_image_four",
+          "label": "Select an Image"
+        },
+        {
+          "type": "text",
+          "id": "modal_title_four",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "modal_image_five",
+          "label": "Select an Image"
+        },
+        {
+          "type": "text",
+          "id": "modal_title_five",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "modal_image_six",
+          "label": "Select an Image"
+        },
+        {
+          "type": "text",
+          "id": "modal_title_six",
+          "label": "Title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "PDP chuug vessel",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

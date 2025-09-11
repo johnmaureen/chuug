@@ -1,0 +1,588 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "custom_liquid_PBJFNE": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<!-- TrustBox widget - Micro TrustScore -->\n<div class=\"trustpilot-widget\" data-locale=\"en-GB\" data-template-id=\"5419b637fa0340045cd0c936\" data-businessunit-id=\"669e6bda97a240b236b5ef94\" data-style-height=\"20px\" data-style-width=\"100%\" data-theme=\"light\">\n  <a href=\"https://uk.trustpilot.com/review/chuug.com\" target=\"_blank\" rel=\"noopener\">Trustpilot</a>\n</div>\n<!-- End TrustBox widget -->",
+        "color_scheme": "",
+        "padding_top": 8,
+        "padding_bottom": 20
+      }
+    },
+    "image_banner_fERDJU": {
+      "type": "image-banner",
+      "disabled": true,
+      "settings": {
+        "image": "shopify://shop_images/optimised-narrow-pair30.gif",
+        "image_overlay_opacity": 0,
+        "image_height": "adapt",
+        "desktop_content_position": "middle-center",
+        "show_text_box": true,
+        "desktop_content_alignment": "center",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "stack_images_on_mobile": true,
+        "show_text_below": true
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "disabled": true,
+          "settings": {
+            "share_label": "Share"
+          }
+        },
+        "text": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "FREE EXPRESS UK DELIVERY",
+            "text_style": "subtitle"
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "klarna_on_site_messaging_app_block_m7jABy": {
+          "type": "shopify://apps/klarna-on-site-messaging/blocks/app-block/b95936a9-74b6-4a95-8103-6a1b6459c25e",
+          "settings": {
+            "data_key": "credit-promotion-badge",
+            "theme": "custom",
+            "topPadding": "0",
+            "bottomPadding": "0",
+            "messagePrefix": "or"
+          }
+        },
+        "mimeeq_3d_configurator_3d_ar_button_QL4LpK": {
+          "type": "shopify://apps/mimeeq-3d-configurator-3d-ar/blocks/button/244d5f0f-b16c-40ee-99c4-91465983cda4",
+          "disabled": true,
+          "settings": {
+            "label": "Customise Your Chuug in 3D",
+            "button_color": "#6b92a1",
+            "button_hover": "#ffffff",
+            "button_text_color": "#ffffff",
+            "button_hover_color": "#000000",
+            "margin": 0
+          }
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {}
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "disabled": true,
+          "settings": {}
+        },
+        "text_7nqMQw": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<strong>** Limited Stock **</strong>",
+            "text_style": "subtitle"
+          }
+        },
+        "icon_with_text_eMTaxT": {
+          "type": "icon-with-text",
+          "disabled": true,
+          "settings": {
+            "layout": "vertical",
+            "icon_1": "heart",
+            "heading_1": "<strong>1,689</strong> Verified 5-Star Reviews",
+            "icon_2": "none",
+            "heading_2": "",
+            "icon_3": "none",
+            "heading_3": ""
+          }
+        },
+        "custom_liquid_4Bdjcj": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<!-- Placement v2 -->\n<klarna-placement\n  data-key=\"credit-promotion-badge\"\n  data-locale=\"en-GB\"\n  data-purchase-amount=\"\"\n></klarna-placement>\n<!-- end Placement -->"
+          }
+        },
+        "text_wgDyrb": {
+          "type": "text",
+          "settings": {
+            "text": "We are building the next batch. We sell out fast.",
+            "text_style": "body"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": false
+          }
+        },
+        "3b37bfbd-2c95-4bc3-8838-44d0402ce90e": {
+          "type": "icon-with-text",
+          "settings": {
+            "layout": "horizontal",
+            "icon_1": "truck",
+            "heading_1": "Express Delivery",
+            "icon_2": "box",
+            "heading_2": "FREE Gift Pouch",
+            "icon_3": "map_pin",
+            "heading_3": "Built In Britain"
+          }
+        },
+        "a431a9c9-a782-43f1-b51e-d5dbd4f17dfa": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<!-- TrustBox widget - Micro Star -->\n<div class=\"trustpilot-widget\" data-locale=\"en-GB\" data-template-id=\"5419b732fbfb950b10de65e5\" data-businessunit-id=\"669e6bda97a240b236b5ef94\" data-style-height=\"24px\" data-style-width=\"100%\" data-theme=\"light\">\n  <a href=\"https://uk.trustpilot.com/review/chuug.com\" target=\"_blank\" rel=\"noopener\">Trustpilot</a>\n</div>\n<!-- End TrustBox widget -->"
+          }
+        },
+        "391a0e8f-fcf4-4694-9fbe-23146594ce03": {
+          "type": "shopify://apps/amp-product-descriptions/blocks/advanced-description-with-fallback/cffc7d91-64c9-4f4d-88f8-8eb78b420747",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "disabled": true,
+          "settings": {}
+        },
+        "mimeeq_3d_configurator_3d_ar_product_configurator_block_hDMbm4": {
+          "type": "shopify://apps/mimeeq-3d-configurator-3d-ar/blocks/product-configurator-block/244d5f0f-b16c-40ee-99c4-91465983cda4",
+          "disabled": true,
+          "settings": {
+            "product": "{{product}}",
+            "template": "shopify",
+            "margin": 0
+          }
+        },
+        "infinite_options_app_block_z3XUPL": {
+          "type": "shopify://apps/infinite-options/blocks/app-block/7e73b6f9-82b0-45f5-9b9b-04f446ba1a9b",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "share",
+        "text",
+        "variant_picker",
+        "price",
+        "klarna_on_site_messaging_app_block_m7jABy",
+        "mimeeq_3d_configurator_3d_ar_button_QL4LpK",
+        "rating",
+        "quantity_selector",
+        "text_7nqMQw",
+        "icon_with_text_eMTaxT",
+        "custom_liquid_4Bdjcj",
+        "text_wgDyrb",
+        "buy_buttons",
+        "3b37bfbd-2c95-4bc3-8838-44d0402ce90e",
+        "a431a9c9-a782-43f1-b51e-d5dbd4f17dfa",
+        "391a0e8f-fcf4-4694-9fbe-23146594ce03",
+        "description",
+        "mimeeq_3d_configurator_3d_ar_product_configurator_block_hDMbm4",
+        "infinite_options_app_block_z3XUPL"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "media_size": "medium",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "gallery_layout": "thumbnail",
+        "media_position": "left",
+        "image_zoom": "none",
+        "mobile_thumbnails": "show",
+        "hide_variants": true,
+        "enable_video_looping": true,
+        "padding_top": 0,
+        "padding_bottom": 24
+      }
+    },
+    "17225313126f98ff34": {
+      "type": "apps",
+      "blocks": {
+        "klarna_on_site_messaging_app_block_qLAYRD": {
+          "type": "shopify://apps/klarna-on-site-messaging/blocks/app-block/b95936a9-74b6-4a95-8103-6a1b6459c25e",
+          "settings": {
+            "data_key": "footer-promotion-auto-size",
+            "theme": "default",
+            "topPadding": "0",
+            "bottomPadding": "0",
+            "messagePrefix": ""
+          }
+        }
+      },
+      "block_order": [
+        "klarna_on_site_messaging_app_block_qLAYRD"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "rich_text_pHLcGF": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_WijEpw": {
+          "type": "heading",
+          "settings": {
+            "heading": "",
+            "heading_size": "h1"
+          }
+        },
+        "text_6xbUHi": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>1,689</strong> Verified 5-Star Reviews</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_WijEpw",
+        "text_6xbUHi"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "accent-2",
+        "full_width": true,
+        "padding_top": 0,
+        "padding_bottom": 24
+      }
+    },
+    "custom_liquid_NBdUKV": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<!-- TrustBox widget - Grid -->\n<div class=\"trustpilot-widget\" data-locale=\"en-GB\" data-template-id=\"539adbd6dec7e10e686debee\" data-businessunit-id=\"669e6bda97a240b236b5ef94\" data-style-height=\"500px\" data-style-width=\"100%\" data-theme=\"light\" data-stars=\"5\" data-review-languages=\"en\">\n  <a href=\"https://uk.trustpilot.com/review/chuug.com\" target=\"_blank\" rel=\"noopener\">Trustpilot</a>\n</div>\n<!-- End TrustBox widget -->",
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 36
+      }
+    },
+    "image_with_text_UmWYLd": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_tcEKeq": {
+          "type": "heading",
+          "settings": {
+            "heading": "SmartRope™",
+            "heading_size": "h1"
+          }
+        },
+        "text_Hfw9EC": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Our SmartRope™ technology offers the look and feel of traditional hemp while eliminating its drawbacks. Unlike natural hemp, SmartRope™ doesn't absorb water, meaning it won't warp, stretch, or rot over time. This ensures that our CHUUG handles remain durable and comfortable for a lifetime.<br/><br/>Plus, SmartRope™ is easy to maintain, requiring only a simple hand wash with standard dishwashing liquid, making it both practical and long-lasting.</p>",
+            "text_style": "body"
+          }
+        },
+        "button_D6EPf3": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_tcEKeq",
+        "text_Hfw9EC",
+        "button_D6EPf3"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/smart-rope-chuug-rope-handle-tankard_2f2ff26b-53f4-4b31-a1ef-1b4ba8815fad.png",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "content_layout": "no-overlap",
+        "color_scheme": "inverse",
+        "image_behavior": "none",
+        "mobile_content_alignment": "left",
+        "padding_top": 0,
+        "padding_bottom": 36
+      }
+    },
+    "1718730855b2cbf1a3": {
+      "type": "apps",
+      "blocks": {
+        "covet_instagram_feed_reviews_app_block_standard_WAngBe": {
+          "type": "shopify://apps/covet-instagram-feed-reviews/blocks/app-block-standard/577480e8-b5be-4890-968c-06ccfb458c74",
+          "settings": {
+            "gallery_embed_id": 241132,
+            "show_text": true,
+            "title_text": "Customer Pics",
+            "title_color": "#0d2026",
+            "title_size": 32,
+            "subtitle_text": "",
+            "subtitle_color": "#000000",
+            "subtitle_size": 14,
+            "text_alignment": "left",
+            "margin": 23,
+            "custom_html_above": "",
+            "custom_html_below": ""
+          }
+        }
+      },
+      "block_order": [
+        "covet_instagram_feed_reviews_app_block_standard_WAngBe"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "cffb3934-8dbe-425f-ad26-972243f4700f": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "settings": {
+        "custom_liquid": "<!-- TrustBox widget - Mini -->\n<div class=\"trustpilot-widget\" data-locale=\"en-GB\" data-template-id=\"53aa8807dec7e10d38f59f32\" data-businessunit-id=\"5abcba963bb2c6000179c496\" data-style-height=\"150px\" data-style-width=\"100%\" data-theme=\"light\">\n  <a href=\"https://uk.trustpilot.com/review/dustandthings.com\" target=\"_blank\" rel=\"noopener\">Trustpilot</a>\n</div>\n<!-- End TrustBox widget -->",
+        "color_scheme": "accent-1",
+        "padding_top": 32,
+        "padding_bottom": 0
+      }
+    },
+    "7048141c-2f11-4621-ba5c-28f2f7eaf65e": {
+      "type": "collapsible-content",
+      "blocks": {
+        "collapsible_row_KHjEBr": {
+          "type": "collapsible_row",
+          "disabled": true,
+          "settings": {
+            "heading": "How fast is delivery?",
+            "icon": "lightning_bolt",
+            "row_content": "<p>If you're in the UK we'll have your Chuug made and sent within 2 working days. All parcels are sent by Next Day Delivery, so if you order now you can expect to be holding your Chuug 3 days from now!<br/><br/>If you're outside of the UK, you can expect your order within 10 working days.</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_N9F4U8": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Can I put it in the dishwasher?",
+            "icon": "washing",
+            "row_content": "<p>A Chuug is scared of nothing. Except dishwashers.<br/>Hand-wash and hand-dry only and it'll last a lifetime. Do not submerge it in water or you're asking for trouble.</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_4kna6c": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Can I put HOT drinks in it?",
+            "icon": "fire",
+            "row_content": "<p>Yes, absolutely. We have designed and built the Chuug with hot drinks in mind. Not only is it insulated to keep drinks warm, but we use heat-resistant materials and adhesives so nothing can get damaged.</p>",
+            "page": ""
+          }
+        },
+        "template--20128198459711__7048141c-2f11-4621-ba5c-28f2f7eaf65e-collapsible_row-2": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Do you deliver worldwide?",
+            "icon": "truck",
+            "row_content": "<p>Great news! We are delighted to offer worldwide shipping on all our items.<br/><br/>Whether you're located down the street or across the globe, you can enjoy the convenience of having our exquisite rope handle beer tankards delivered right to your doorstep.</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_EgEkFF": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "How do I clean it?",
+            "icon": "washing",
+            "row_content": "<p>We recommend hand-washing with your usual dish soap, but DO NOT submerge it in water!<br/>The wood exterior is sealed to keep water out, but this is still a natural wood product that needs to be looked after with a conscious effort to not let it sit in water.<br/>Treat it well and it will last a lifetime.</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_EDtCrK": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "What is is made from?",
+            "icon": "recycle",
+            "row_content": "<p>We exclusively use sustainable Mango Wood and Stainless Steel for the main Chuug body.<br/>The rope handle is made from a patented <strong>SmartRope</strong> which looks and feels like hemp rope but is in fact synthetic so it will not rot, wrap or stretch over time.</p>",
+            "page": ""
+          }
+        },
+        "bc2d7b27-4026-4116-aada-d39a7402fe6b": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "How do I pronounce \"Chuug\"?",
+            "icon": "chat_bubble",
+            "row_content": "<p>CHUG!</p>",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_row_KHjEBr",
+        "collapsible_row_N9F4U8",
+        "collapsible_row_4kna6c",
+        "template--20128198459711__7048141c-2f11-4621-ba5c-28f2f7eaf65e-collapsible_row-2",
+        "collapsible_row_EgEkFF",
+        "collapsible_row_EDtCrK",
+        "bc2d7b27-4026-4116-aada-d39a7402fe6b"
+      ],
+      "settings": {
+        "caption": "",
+        "heading": "Your Questions Answered",
+        "heading_size": "h2",
+        "heading_alignment": "left",
+        "layout": "none",
+        "color_scheme": "accent-2",
+        "container_color_scheme": "",
+        "open_first_collapsible_row": true,
+        "image_ratio": "adapt",
+        "desktop_layout": "image_second",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "a7aec682-041b-4979-87be-e016fc7626e2": {
+      "type": "multicolumn",
+      "blocks": {
+        "template--20128198459711__a7aec682-041b-4979-87be-e016fc7626e2-column-1": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CHUU4463-Chuug0057-min_8a4f57c8-e13b-4219-980d-535854110fb5.jpg",
+            "title": "Wow.",
+            "text": "<p>\"I can't get enough of it. I went for the Dusk mug with black rope handle and it is amazing. I can't stop looking at it and picking it up.\" - Dave C</p>",
+            "link_label": "Product",
+            "link": "shopify://products/copy-of-the-dusk-chuug®-600ml-with-gift-bag"
+          }
+        },
+        "template--20128198459711__a7aec682-041b-4979-87be-e016fc7626e2-column-2": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CHUU4463-Chuug0056copy-min_a79f18ab-c120-4632-8a5f-31914e4880a4.jpg",
+            "title": "Dawn Tankard",
+            "text": "<p>\"Exceptional product a beautiful tankard and lovely gift .<br/>Very fast dispatch. Can’t recommend enough ! Excellent Thank you\" - Deborah</p>",
+            "link_label": "Product",
+            "link": "shopify://products/the-dawn-chuug®-v2-600ml-with-gift-bag"
+          }
+        },
+        "template--20128198459711__a7aec682-041b-4979-87be-e016fc7626e2-column-3": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CHUU4463-Chuug0057-min_8a4f57c8-e13b-4219-980d-535854110fb5.jpg",
+            "title": "Beautiful handmade mug",
+            "text": "<p>\"Great experience from order to delivery was only 3 days!<br/>Beautiful handmade gift for a very special occasion / very impressed\" - DG</p>",
+            "link_label": "Product",
+            "link": "shopify://products/copy-of-the-dusk-chuug®-600ml-with-gift-bag"
+          }
+        },
+        "3cf81b33-2d94-42df-931f-8f696c102271": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CHUU4463-Chuug0056copy-min_a79f18ab-c120-4632-8a5f-31914e4880a4.jpg",
+            "title": "First time using this company and",
+            "text": "<p>\"First time using this company and I must say absolutely brilliant from start to finish. Amazing item and packaging and very quick postage. Thank you.\" - Jacquie</p>",
+            "link_label": "Product",
+            "link": "shopify://products/the-dawn-chuug®-v2-600ml-with-gift-bag"
+          }
+        }
+      },
+      "block_order": [
+        "template--20128198459711__a7aec682-041b-4979-87be-e016fc7626e2-column-1",
+        "template--20128198459711__a7aec682-041b-4979-87be-e016fc7626e2-column-2",
+        "template--20128198459711__a7aec682-041b-4979-87be-e016fc7626e2-column-3",
+        "3cf81b33-2d94-42df-931f-8f696c102271"
+      ],
+      "settings": {
+        "title": "Recent Reviews",
+        "heading_size": "h2",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "columns_desktop": 4,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "accent-2",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "17187249303ff52017": {
+      "type": "apps",
+      "blocks": {
+        "instafeed_app_block_GdzrWL": {
+          "type": "shopify://apps/instafeed/blocks/app-block/c447db20-095d-4a10-9725-b5977662c9d5",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "title_size_v2": 0,
+            "alignment": "left",
+            "instafeed_margin_top": 0,
+            "instafeed_margin_bottom": 0,
+            "instafeed_margin_sides": 0,
+            "show_instagram_link": false,
+            "link_alignment": "left",
+            "link_color": "#000000",
+            "background_color": "",
+            "feed_id": "",
+            "html_area": ""
+          }
+        }
+      },
+      "block_order": [
+        "instafeed_app_block_GdzrWL"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 3,
+        "columns_desktop": 3,
+        "color_scheme": "inverse",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "1",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    }
+  },
+  "order": [
+    "custom_liquid_PBJFNE",
+    "image_banner_fERDJU",
+    "main",
+    "17225313126f98ff34",
+    "rich_text_pHLcGF",
+    "custom_liquid_NBdUKV",
+    "image_with_text_UmWYLd",
+    "1718730855b2cbf1a3",
+    "cffb3934-8dbe-425f-ad26-972243f4700f",
+    "7048141c-2f11-4621-ba5c-28f2f7eaf65e",
+    "a7aec682-041b-4979-87be-e016fc7626e2",
+    "17187249303ff52017",
+    "related-products"
+  ]
+}

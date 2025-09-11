@@ -1,0 +1,231 @@
+* {
+  font-family: "Gabarito" !important;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h1 *,
+h2 *,
+h3 *,
+h4 *,
+h5 *,
+h6 * {
+  font-family: "Merriweather" !important;
+}
+
+.cta-button:not([disabled]) {
+  transition: transform 0.3s ease;
+}
+
+.cta-button:not([disabled]):hover {
+  transform: scale(1.05);
+}
+
+.cta-button:disabled {
+  opacity: 0.5;
+}
+
+#hero-section .accordion-title {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 1em;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+}
+
+.product-form__submit {
+  background-image: url("https://cdn.shopify.com/s/files/1/0799/4307/4111/files/cta-button-mobile-white.png?v=1729804714");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+
+.product_amount_label_1,
+.product_amount_label_2,
+.product_amount_label_3 {
+  color: white;
+}
+.product_amount_label_1.active,
+.product_amount_label_2.active div,
+.product_amount_label_3.active div {
+  background-color: #fdff96;
+  color: black;
+  opacity: 1;
+}
+
+.product_amount_label_2.active::before,
+.product_amount_label_3.active::before {
+  opacity: 1;
+}
+
+.product_variant_0.active,
+.product_variant_1.active {
+  background-color: #fdff96;
+  color: black;
+  opacity: 1;
+}
+
+#hero-section .badge-container {
+  left: -0.5rem;
+}
+
+#select_1_rope[disabled] + svg,
+#select_2_rope[disabled] + svg,
+#select_3_rope[disabled] + svg {
+  opacity: 0.5;
+}
+
+#select_1_rope[disabled],
+#select_2_rope[disabled],
+#select_3_rope[disabled] {
+  opacity: 0.5;
+}
+
+#select_1_rope:hover,
+#select_2_rope:hover,
+#select_3_rope:hover {
+  cursor: pointer;
+}
+
+#select_1_rope label:hover,
+#select_2_rope label:hover,
+#select_3_rope label:hover {
+  cursor: pointer;
+}
+
+#select_1_rope[disabled]:hover,
+#select_2_rope[disabled]:hover,
+#select_3_rope[disabled]:hover {
+  cursor: not-allowed;
+}
+
+.monogram_initials:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.incompleted-inputs-text {
+  color: red;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+#openModal {
+  text-decoration: underline;
+}
+
+.wood-type,
+.rope-type {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  padding-right: 10px;
+}
+
+.wood-type svg,
+.rope-type svg {
+  transition: transform 0.1s ease-in-out;
+  height: 14px;
+}
+
+.wood-type svg path,
+.rope-type svg path {
+  fill: white;
+}
+
+.wood-type.active,
+.rope-type.active {
+  background-color: white;
+  color: #0d2026;
+}
+
+.wood-type.active svg,
+.rope-type.active svg {
+  transform: rotate(180deg);
+}
+
+.wood-type.active svg path,
+.rope-type.active svg path {
+  fill: #0d2026;
+}
+
+.wood-type.active span,
+.rope-type.active span {
+  color: #0d2026;
+}
+
+.wood-type-name,
+.rope-type-name {
+  color: #0d2026;
+}
+
+.wood-type-label,
+.rope-type-label {
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  height: 65px;
+  padding: 8px;
+  color: #0d2026;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 100%;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.wood-type span,
+.rope-type span {
+  font-size: 14px;
+}
+
+.wood-type-label img,
+.rope-type-label img {
+  width: 180px;
+  height: 48px;
+  border-radius: 5px;
+}
+
+.wood-type-label:hover,
+.rope-type-label:hover {
+  background-color: #e9ebec;
+}
+
+.wood-type-modal,
+.rope-type-modal {
+  width: 315px;
+  padding: 5px;
+}
+
+.js-dropdown-container.rope{
+  position: relative;
+}
+
+@media screen and (max-width: 650px) {
+  .rope-type-modal{
+    position: absolute;
+    right: 0px;
+  }
+}
+
+@media screen and (min-width: 410px) {
+  #hero-section .badge-container {
+    left: -2.5rem;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .product-form__submit {
+    background-image: url("https://cdn.shopify.com/s/files/1/0799/4307/4111/files/cta-button-long-white.png?v=1729785141");
+  }
+
+  .wood-type-modal,
+  .rope-type-modal {
+    width: 365px;
+  }
+}

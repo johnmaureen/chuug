@@ -1,0 +1,49 @@
+<div class="icon-question-mark-tooltip tw-relative hover:tw-cursor-pointer">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="19"
+      height="20"
+      viewBox="0 0 19 20"
+      fill="none"
+    >
+      <g clip-path="url(#clip0_1_2482)">
+        <path d="M9.5 0.5C4.24936 0.5 0 4.74888 0 10C0 15.2506 4.24888 19.5 9.5 19.5C14.7506 19.5 19 15.2511 19 10C19 4.74936 14.7511 0.5 9.5 0.5ZM9.5 18.1744C4.99262 18.1744 1.32558 14.5074 1.32558 10C1.32558 5.49258 4.99262 1.82558 9.5 1.82558C14.0074 1.82558 17.6744 5.49258 17.6744 10C17.6744 14.5074 14.0074 18.1744 9.5 18.1744Z" fill="white"/>
+        <g filter="url(#filter0_d_1_2482)">
+          <path d="M9.22088 12.5225C8.69567 12.5225 8.27051 12.9601 8.27051 13.4853C8.27051 13.998 8.68316 14.4482 9.22088 14.4482C9.75859 14.4482 10.1837 13.998 10.1837 13.4853C10.1837 12.9601 9.74605 12.5225 9.22088 12.5225Z" fill="white"/>
+        </g>
+        <path d="M9.37924 5.23145C7.69106 5.23145 6.91577 6.23188 6.91577 6.90712C6.91577 7.39481 7.32843 7.61992 7.66605 7.61992C8.34133 7.61992 8.06624 6.657 9.34172 6.657C9.96694 6.657 10.4672 6.93213 10.4672 7.50736C10.4672 8.18261 9.76688 8.57025 9.35423 8.92038C8.99156 9.23295 8.51641 9.74569 8.51641 10.8211C8.51641 11.4714 8.69149 11.6589 9.20416 11.6589C9.81687 11.6589 9.94193 11.3838 9.94193 11.1462C9.94193 10.496 9.95443 10.1208 10.6422 9.58311C10.9798 9.32053 12.0427 8.47017 12.0427 7.29473C12.0427 6.11929 10.9798 5.23145 9.37924 5.23145Z" fill="white"/>
+      </g>
+      <defs>
+        <filter id="filter0_d_1_2482" x="4.27051" y="12.5225" width="9.91333" height="9.92578" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+          <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="4"/>
+          <feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="out"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_2482"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_2482" result="shape"/>
+        </filter>
+        <clipPath id="clip0_1_2482">
+          <rect width="19" height="19" fill="white" transform="translate(0 0.5)"/>
+        </clipPath>
+      </defs>
+    </svg>
+  
+    <p class="icon-question-mark-tooltip-text tw-absolute tw-w-[25rem] tw-rounded-2xl tw-bg-chuug-dark-navy tw-left-1/2 tw-transform tw--translate-x-1/2">
+      {{ tooltip_text }}
+    </p>
+  </div>
+  
+  <style>
+    .icon-question-mark-tooltip-text {
+      display: none;
+    }
+    .icon-question-mark-tooltip:hover .icon-question-mark-tooltip-text {
+      display: flex;
+      white-space: normal;
+      z-index: 99;
+      padding: 1rem;
+    }
+  </style>
+  

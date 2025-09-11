@@ -1,0 +1,66 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "parent": "product.chuug-vessel.json",
+  "context": {
+    "market": "usa"
+  },
+  "sections": {
+    "pdp_chuug_vessel_8y8pAk": {
+      "settings": {
+        "one_chuug_product": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag-2",
+        "two_chuug_product": "us-set-of-2-chuug®-v2-660ml-with-gift-bags",
+        "three_chuug_product": "us-set-of-3-chuug®-v2-660ml-with-gift-bags",
+        "dusk_charcoal": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag-2",
+        "dusk_natural": "the-dusk-natural-chuug®-v2-660ml-with-gift-bag-1",
+        "dawn_charcoal": "the-dawn-charcoal-chuug®-v2-660ml-with-gift-bag-2",
+        "dawn_natural": "the-dawn-natural-chuug®-v2-660ml-with-gift-bag-2",
+        "midnight_charcoal": "the-midnight-charcoal-chuug®-v2-660ml-with-gift-bag-2",
+        "midnight_natural": "the-midnight-natural-chuug®-v2-660ml-with-gift-bag-2",
+        "second_product_label_text": "Only $54 each!",
+        "third_product_label_text": "Extra $45 Off!"
+      },
+      "blocks": {
+        "accordion_mCpagc": {
+          "settings": {
+            "accordion_text": "<p>Free express shipping on orders over $120, otherwise just $9.95</p><ul><li>For all US orders, shipping is 2-11 business days</li><li>Free replacements, no questions asked.</li></ul>"
+          }
+        }
+      }
+    },
+    "several_text_and_images_EHXQ8F": {
+      "settings": {},
+      "blocks": {
+        "text_and_image_nJRfHq": {
+          "settings": {
+            "block_text": "The personalization station. We stamp your mark into your tankard to let others know it’s yours and not to be touched."
+          }
+        }
+      }
+    },
+    "five_images_hjC3Jd": {
+      "settings": {
+        "button_text": "Customize Now"
+      },
+      "blocks": {
+        "image_block_fAWXtY": {
+          "settings": {
+            "block_title": "Built in Britain"
+          }
+        },
+        "image_block_catVBx": {
+          "settings": {
+            "block_title": "Fully Customizable"
+          }
+        }
+      }
+    }
+  }
+}

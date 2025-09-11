@@ -1,0 +1,340 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="page-width{% if cart == empty %} is-empty{% endif %}" id="main-cart-footer" data-id="{{ section.id }}">
+  <div>
+    <div class="cart__footer section-{{ section.id }}-padding">
+      {%- if settings.show_cart_note -%}
+        <cart-note class="cart__note field">
+          <label for="Cart-note">{{ 'sections.cart.note' | t }}</label>
+          <textarea
+            class="text-area field__input"
+            name="note"
+            form="cart"
+            id="Cart-note"
+            placeholder="{{ 'sections.cart.note' | t }}"
+          >{{ cart.note }}</textarea>
+        </cart-note>
+      {%- endif -%}
+
+      <div class="cart__blocks">
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+            {%- when 'subtotal' -%}
+              <div class="js-contents" {{ block.shopify_attributes }}>
+                <div>
+                  {%- if cart.cart_level_discount_applications.size > 0 -%}
+                    <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                      {%- for discount in cart.cart_level_discount_applications -%}
+                        <li class="discounts__discount discounts__discount--position">
+                          {%- render 'icon-discount' -%}
+                          {{ discount.title }}
+                          (-{{ discount.total_allocated_amount | money }})
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </div>
+
+                <div class="totals">
+                  <h2 class="totals__total">{{ 'sections.cart.estimated_total' | t }}</h2>
+                  <p class="totals__total-value"><span class="wcp-original-cart-total">{{ cart.total_price | money}}</span>
+                  <span class="wcp-cart-total"></span>
+                  </p>
+                </div>
+                <div class="additional-notes">
+                    <span class="wcp-minimums-note"></span>
+                    <span class="wcp-extra-note "></span>
+                </div>
+                <script>window.wpdPrimaryMarketId = "64221905215";</script>
+               {% render "wcp_multi_currency_msg" %}
+
+                <small class="tax-note caption-large rte">
+                  {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                    {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                  {%- elsif cart.taxes_included -%}
+                    {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+                  {%- elsif shop.shipping_policy.body != blank -%}
+                    {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+                  {%- else -%}
+                    {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+                  {%- endif -%}
+                </small>
+              </div>
+            {%- else -%}
+              <div class="cart__ctas" {{ block.shopify_attributes }}>
+                <noscript>
+                  <button type="submit" class="cart__update-button button button--secondary" form="cart">
+                    {{ 'sections.cart.update' | t }}
+                  </button>
+                </noscript>
+                  
+                <button
+                  type="submit"
+                  id="checkout"
+                  class="cart__checkout-button button"
+                  name="checkout"
+                  {% if cart == empty %}
+                    disabled
+                  {% endif %}
+                  form="cart"
+                >
+                  {{ 'sections.cart.checkout' | t }}
+                </button>
+             
+              </div>
+
+              <div>
+                {% if customer.tags contains "wpdnet" %}
+                    {% if shop.metafields.wcp_net.isNetEnabled == "true" or shop.metafields.wcp_net.isNetEnabled == "1" %}
+                        <div style="margin-top:30px;">
+                            <p>{{shop.metafields.wcp_net.netCartMsg}}</p>
+                            <button id="wcp-30-open" class="button" style="width:100%;">{{shop.metafields.wcp_net.netBtnMsg}}</button>
+                        </div>
+                    {% endif %}
+                {% endif %}
+              </div>
+              {%- if additional_checkout_buttons -%}
+                <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+                  {{ content_for_additional_checkout_buttons }}
+                </div>
+                <script>
+                    var v = setInterval(function()
+                    {
+                        if(typeof window.wcp_data != 'undefined' && typeof window.wcp_data.discounted_hash != 'undefined')
+                        {
+                            if((window.wcp_data.discounted_hash.discount_value || window.wcp_data.discounted_hash.shipping) && $('.additional-checkout-buttons').children(':visible').length > 0)
+                            {
+                                $('.additional-checkout-buttons').html("Other payment options are available at checkout");
+                                clearInterval(v);
+                            }   
+                        }  
+                        
+                    },500);                                 
+                </script>
+              {%- endif -%}
+          {%- endcase -%}
+        {% endfor %}
+
+        <div id="cart-errors"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function isIE() {
+      const ua = window.navigator.userAgent;
+      const msie = ua.indexOf('MSIE ');
+      const trident = ua.indexOf('Trident/');
+
+      return msie > 0 || trident > 0;
+    }
+
+    if (!isIE()) return;
+    const cartSubmitInput = document.createElement('input');
+    cartSubmitInput.setAttribute('name', 'checkout');
+    cartSubmitInput.setAttribute('type', 'hidden');
+    document.querySelector('#cart').appendChild(cartSubmitInput);
+    document.querySelector('#checkout').addEventListener('click', function (event) {
+      document.querySelector('#cart').submit();
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-footer.name",
+  "class": "cart__footer-wrapper",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "subtotal",
+      "name": "t:sections.main-cart-footer.blocks.subtotal.name",
+      "limit": 1
+    },
+    {
+      "type": "buttons",
+      "name": "t:sections.main-cart-footer.blocks.buttons.name",
+      "limit": 1
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Only run this on the cart page
+  if (!window.location.pathname.includes('/cart')) return;
+
+  // Utility: Add working days to a date
+  function addWorkingDays(date, days) {
+    var currentDate = new Date(date);
+    var addedDays = 0;
+    while (addedDays < days) {
+      currentDate.setDate(currentDate.getDate() + 1);
+      if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+        addedDays++;
+      }
+    }
+    return currentDate;
+  }
+
+  // Utility: Ordinal suffix
+  function getOrdinalSuffix(day) {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  }
+
+  // Utility: Format date like "May 7th"
+  function formatDateWithSuffix(dateObj) {
+    const day = dateObj.getDate();
+    const suffix = getOrdinalSuffix(day);
+    const month = dateObj.toLocaleString('default', { month: 'long' });
+    return `${month} ${day}${suffix}`;
+  }
+
+  // Calculate and update cart attribute if needed
+  function ensureEstimatedDeliveryDate() {
+    // Wait for Shopify.country to be defined
+    const country = Shopify && Shopify.country ? Shopify.country : "GB";
+    const isOutsideUK = country !== "GB";
+    const workingDays = isOutsideUK ? 11 : 6;
+    const expectedDate = formatDateWithSuffix(addWorkingDays(new Date(), workingDays));
+
+    fetch('/cart.js')
+      .then(res => res.json())
+      .then(cart => {
+        const existing = cart.attributes && cart.attributes['Estimated Delivery Date'];
+
+        // Only update if missing or outdated
+        if (existing !== expectedDate) {
+          return fetch('/cart/update.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              attributes: {
+                'Estimated Delivery Date': expectedDate
+              }
+            })
+          }).then(() => {
+            console.log('✅ Cart delivery date updated:', expectedDate);
+          });
+        } else {
+          console.log('🟢 Delivery date already set correctly:', existing);
+        }
+      })
+      .catch(err => console.error('Error checking or updating delivery date:', err));
+  }
+
+  ensureEstimatedDeliveryDate();
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Only run once per visit
+  if (window.sessionStorage.getItem('monogram-patch-complete')) return;
+
+  fetch('/cart.js')
+    .then(res => res.json())
+    .then(cart => {
+      const needsFix = cart.items.some(item =>
+        !item.properties || !item.properties["Monogram Initials"]
+      );
+
+      if (!needsFix) {
+        return;
+      }
+
+      const rebuiltItems = cart.items.map(item => ({
+        id: item.variant_id,
+        quantity: item.quantity,
+        properties: {
+          ...(item.properties || {}),
+          "Monogram Initials": item.properties && item.properties["Monogram Initials"] ? item.properties["Monogram Initials"] : "N/A"
+        }
+      }));
+
+      return fetch('/cart/clear.js', { method: 'POST' })
+        .then(() =>
+          fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: rebuiltItems })
+          })
+        )
+        .then(() => {
+          window.sessionStorage.setItem('monogram-patch-complete', 'true');
+          window.location.reload();
+        });
+    })
+    .catch(err => {
+      console.error('Failed to patch cart items:', err);
+    });
+});
+</script>
+
+<script>
+  document.addEventListener('custom:upsell:chuug', function (event) {
+    console.log("📦 Upsell callback event received:", event);
+
+    // Attach Monogram Initials = N/A to the upsell product
+    if (event.detail && typeof event.detail === 'object') {
+      event.detail.properties = {
+        ...(event.detail.properties || {}),
+        "Monogram Initials": "N/A"
+      };
+    }
+  });
+</script>
+
+

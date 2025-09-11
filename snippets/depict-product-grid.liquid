@@ -1,0 +1,211 @@
+{% comment %}
+  --depict-theme-resource-version: v1
+  -------------------------------------------------------------
+  IMPORTANT: The contents of this file are auto-generated.
+
+  This file may be updated by the Depict App.
+  Please exercise caution as any changes
+  made to this file may be overwritten.
+  -------------------------------------------------------------
+
+  Renders the depict product grid
+
+  Accepts:
+  - extra_grid_classes: {String} Optional: Additional CSS classes to apply to the grid container.
+  - grid_id {String} Optional: `id` to apply to the grid container.
+  - grid_data_id {String} Optional: `data-id` to apply to the grid container.
+  - extra_grid_attributes: {String} Optional: Additional attributes to apply to the grid container.
+      Any except 'class', 'id', 'data-id' is allowed.
+        Example: 'data-foo="bar" data-baz="qux"'
+  - grid_element_name {String} Optional: The name of the element to render. defaults to "div"
+  Example:
+    {% render "depict-product-grid",
+      extra_grid_classes: "my-class",
+      grid_id: "my-id",
+      grid_data_id: "section-id"
+      extra_grid_attributes: "data-foo='bar' data-baz='qux'"
+    %}
+{% endcomment %}
+
+{% liquid
+  unless grid_element_name
+    assign grid_element_name = "div"
+  endunless
+
+  assign namespace = "app--93504864257--product-duplicate"
+  assign key = "product_duplicate"
+  assign product_duplicate_metafiled = collection.metafields[namespace][key].value
+
+  assign numberOfProductDuplicatesOnPage = 0
+
+  for duplicated_product in product_duplicate_metafiled
+    assign duplicated_product_gid = duplicated_product.product | split: "/"
+    assign duplicated_product_id = duplicated_product_gid[-1]
+    for product in collection.products
+      assign product_id_string = product.id | append: ""
+      if duplicated_product_id == product_id_string
+        assign numberOfProductDuplicatesOnPage = numberOfProductDuplicatesOnPage | plus: 1
+        break
+      endif
+    endfor
+  endfor
+
+  assign zero_indexed_current_page = paginate.current_page | minus: 1
+  comment
+    To be able to have a metafield that is storefront accessible in a custom namespace one needs to use `$app: namespace` and this is the way to access it from liquid, see https: //shopify.dev/docs/apps/build/custom-data/reserved-prefixes#create-a-metafield-definition-under-a-reserved-namespace
+  endcomment
+  assign namespace = "app--93504864257--content-blocks"
+  assign key = "content_block"
+  assign content_blocks = collection.metafields[namespace][key].value
+
+  unless extra_grid_classes
+    assign extra_grid_classes = ""
+  endunless
+  unless extra_grid_attributes
+    assign extra_grid_attributes = ""
+  endunless
+  unless grid_id
+    assign grid_id = ""
+  endunless
+  unless grid_data_id
+    assign grid_data_id = ""
+  endunless
+
+  assign grid_settings_namespace = "app--93504864257--grid-settings"
+  assign grid_settings_key = "grid_settings"
+  assign grid_settings = shop.metafields[grid_settings_namespace][grid_settings_key].value
+  assign desktop_margin = grid_settings.desktop.margin
+  if desktop_margin and desktop_margin != ""
+    assign desktop_margin_enabled = true
+  else
+    assign desktop_margin_enabled = false
+  endif
+
+  assign mobile_margin = grid_settings.mobile.margin
+  if mobile_margin and mobile_margin != ""
+    assign mobile_margin_enabled = true
+  else
+    assign mobile_margin_enabled = false
+  endif
+
+  render "depict-inline-script", paginate: paginate, grid_settings: grid_settings, content_blocks: content_blocks
+%}
+<{{ grid_element_name }}
+  class="
+    {{ grid_class }} {{ extra_grid_classes }}{% liquid
+    if desktop_margin_enabled
+      echo " desktop-custom-margin"
+    endif
+    if mobile_margin_enabled
+        echo " mobile-custom-margin"
+    endif
+    %}
+  "
+  id="{{ grid_id }}"
+  data-id="{{ grid_data_id }}"
+  {{ extra_grid_attributes }}
+  style="
+     {% if grid_settings %}
+         --grid-gap: {{ grid_settings.desktop.columnSpacing }};
+         --row-gap: {{ grid_settings.desktop.rowSpacing }};
+         --mobile-grid-gap: {{ grid_settings.mobile.columnSpacing }};
+         --mobile-row-gap: {{ grid_settings.mobile.rowSpacing }};
+     {% else %}
+         --grid-gap: {{ section.settings.gap_desktop }};
+         {% if section.settings.row_gap_desktop %}
+             --row-gap: {{ section.settings.row_gap_desktop }};
+         {% else %}
+           --row-gap: var(--grid-gap);
+         {% endif %}
+         --mobile-grid-gap: {{ section.settings.gap_mobile }};
+         {% if section.settings.row_gap_mobile %}
+           --mobile-row-gap: {{ section.settings.row_gap_mobile }};
+         {% else %}
+           --mobile-row-gap: var(--mobile-grid-gap);
+         {% endif %}
+    {% endif %}
+    {% if desktop_margin_enabled %}
+      --desktop-custom-margin: {{ desktop_margin }};
+    {% endif %}
+    {% if mobile_margin_enabled %}
+      --mobile-custom-margin: {{ mobile_margin }};
+    {% endif %}
+  "
+>
+  {% comment %}
+    DO NOT REMOVE THE FOLLOWING ELEMENT. This custom elements is how the typescript finds the grid element (since it can be of any tag to achieve peak original styling compatibility).
+  {% endcomment %}
+  <depict-grid-start-beacon></depict-grid-start-beacon>
+  {% assign namespace = "app--93504864257--image-setting" %}
+  {% assign key = "image_setting" %}
+  {% assign image_config_metafield = collection.metafields[namespace][key].value %}
+
+  {%- for product in collection.products -%}
+    {% assign default_image = product.featured_media %}
+    {% assign hover_image = product.media[1] %}
+
+    {%- for product_image_config in image_config_metafield -%}
+      {% assign config_product_gid = product_image_config.product | split: "/" %}
+      {% assign config_product_id = config_product_gid[-1] %}
+      {% assign product_id_string = product.id | append: "" %}
+
+      {% if config_product_id == product_id_string %}
+        {% assign default_image_file = product_image_config.default_image | file_url %}
+        {% assign default_image_file = default_image_file | split: "?" %}
+        {% assign default_image_file = default_image_file[0] %}
+        {% assign default_image_file = default_image_file | split: "/" %}
+        {% assign default_image_file = default_image_file[-1] %}
+
+        {% assign default_image = images[default_image_file] %}
+
+        {% if product_image_config.hover_image %}
+          {% assign hover_image_file = product_image_config.hover_image | file_url %}
+          {% assign hover_image_file = hover_image_file | split: "?" %}
+          {% assign hover_image_file = hover_image_file[0] %}
+          {% assign hover_image_file = hover_image_file | split: "/" %}
+          {% assign hover_image_file = hover_image_file[-1] %}
+
+          {% assign hover_image = images[hover_image_file] %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% render "depict-render-product-card", product: product, forloop: forloop, paginate: paginate %}
+
+    {%- liquid
+      assign show_duplicate = false
+      assign namespace = "app--93504864257--product-duplicate"
+      assign key = "product_duplicate"
+      assign product_id_string = product.id | append: ""
+      assign product_duplicate_metafiled = collection.metafields[namespace][key].value
+      for duplicated_product in product_duplicate_metafiled
+        assign duplicated_product_gid = duplicated_product.product | split: "/"
+        assign duplicated_product_id = duplicated_product_gid[-1]
+
+        if duplicated_product_id == product_id_string
+          assign default_image_file = duplicated_product.default_image | file_url
+          assign default_image_file = default_image_file | split: "?"
+          assign default_image_file = default_image_file[0]
+          assign default_image_file = default_image_file | split: "/"
+          assign default_image_file = default_image_file[-1]
+
+          assign default_image_duplicate = images[default_image_file]
+
+          if duplicated_product.hover_image
+            assign hover_image_file = duplicated_product.hover_image | file_url
+            assign hover_image_file = hover_image_file | split: "?"
+            assign hover_image_file = hover_image_file[0]
+            assign hover_image_file = hover_image_file | split: "/"
+            assign hover_image_file = hover_image_file[-1]
+
+            assign hover_image_duplicate = images[hover_image_file]
+          endif
+
+          assign show_duplicate = true
+        endif
+      endfor
+    -%}
+
+  {%- endfor -%}
+  <depict-grid-end-beacon></depict-grid-end-beacon>
+</{{ grid_element_name }}>

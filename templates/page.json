@@ -1,0 +1,139 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 76
+      }
+    },
+    "rich_text_XDFGbQ": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_BcLN3E": {
+          "type": "heading",
+          "settings": {
+            "heading": "The Creed",
+            "heading_size": "h1"
+          }
+        },
+        "text_eipjBh": {
+          "type": "text",
+          "settings": {
+            "text": "<p>At Chuug, we are guided by four core brand values that define who we are and how we operate.</p>"
+          }
+        },
+        "button_ckXqP6": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_BcLN3E",
+        "text_eipjBh",
+        "button_ckXqP6"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "inverse",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "multirow_VYAkwk": {
+      "type": "multirow",
+      "blocks": {
+        "row_pj9chm": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/boldness-rune-chuug-2.png",
+            "caption": "The Creed - No. 1",
+            "heading": "Boldness",
+            "text": "<p>Embracing the Courage to Innovate: We believe in challenging the status quo and pushing boundaries. Boldness is the fuel behind our creativity and drives us to explore new horizons in everything we do.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_6tcXcd": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/tradition-rune-chuug-1.png",
+            "caption": "The Creed - No. 2",
+            "heading": "Tradition",
+            "text": "<p>Honoring Heritage: Tradition is the cornerstone of our identity. We pay homage to age-old craftsmanship and time-honored techniques, ensuring that each product reflects our rich heritage and commitment to quality.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_aAnkKF": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/ritual-rune-chuug-4.png",
+            "caption": "The Creed - No. 3",
+            "heading": "Ritual",
+            "text": "<p>Celebrating Meaningful Moments: We understand the importance of rituals in our lives. Whether it's a daily toast or a special occasion, our products are designed to enhance these moments, turning ordinary experiences into cherished memories.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_LjprnQ": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/pers-rune-chuug.png",
+            "caption": "The Creed - No. 4",
+            "heading": "Perseverance",
+            "text": "<p>Strength in Resilience: We believe in the power of perseverance. In the face of challenges, we remain steadfast and determined, continually striving for excellence and never compromising on our commitment to our customers and craft.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "row_pj9chm",
+        "row_6tcXcd",
+        "row_aAnkKF",
+        "row_LjprnQ"
+      ],
+      "disabled": true,
+      "settings": {
+        "image_height": "adapt",
+        "desktop_image_width": "small",
+        "heading_size": "h0",
+        "text_style": "body",
+        "button_style": "secondary",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "image_layout": "alternate-left",
+        "section_color_scheme": "",
+        "row_color_scheme": "",
+        "mobile_content_alignment": "left",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_XDFGbQ",
+    "multirow_VYAkwk"
+  ]
+}
