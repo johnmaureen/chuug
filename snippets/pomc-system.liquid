@@ -126,7 +126,7 @@
         </div>
       </div>
     </div> {% endcomment %}
-    <div class="customize-your-vessel tw-flex tw-flex-col tw-gap-y-2 tw-text-white tw-text-[1.6rem] tw-font-semibold">
+    <div class="customize-your-vessel tw-flex tw-flex-col tw-text-white tw-text-[1.6rem] tw-font-semibold">
       <div class="tw-flex tw-gap-[1rem]">
         <span>{{ section.settings.customise_vessel_question }}</span>
         {% for block in section.blocks %}
@@ -162,7 +162,7 @@
               class="vessel-tab-panel  {% if forloop.index == 2 %} active {% endif %} vessel_number_{{ forloop.index }} "
            
             >
-              <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
+              <div class="tw-flex tw-flex-col tw-items-center md:tw-flex-row">
                 <div
                   class="inputs tw-flex tw-w-full tw-flex-col tw-gap-y-[1rem]"
                   variant_id=""
@@ -172,7 +172,7 @@
                   monogram_initials=""
                 >
                   <div>
-                    <p class="tw-text-white ">WOOD FINISH</p>
+                    <p class="tw-text-white ">Wood Finish</p>
 
                     <div class="block-wrap">
                       <label class="wood-type-label block-label tw-cursor-pointer  ">
@@ -212,22 +212,21 @@
                   </div>
 
                   <div>
-                    <p class="tw-text-white ">ROPE TYPE</p>
+                    <p class="tw-text-white ">Rope Type</p>
 
                     <div class="block-wrap">
-                      <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2">
-                        <input type="radio" name="rope_material" value="CHARCOAL" class="tw-hidden js-option">
-                        <span class="rope-type-name tw-uppercase type-name">CHARCOAL</span>
-                        {% if section.settings.charcoal_rope != blank %}
-                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
-                        {% endif %}
-                      </label>
-
                       <label class="block-label  rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow">
                         <input type="radio" name="rope_material" value="NATURAL" class="tw-hidden js-option">
                         <span class="rope-type-name tw-uppercase type-name">NATURAL</span>
                         {% if section.settings.natural_rope != blank %}
                           <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
+                        {% endif %}
+                      </label>
+                      <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2">
+                        <input type="radio" name="rope_material" value="CHARCOAL" class="tw-hidden js-option">
+                        <span class="rope-type-name tw-uppercase type-name">CHARCOAL</span>
+                        {% if section.settings.charcoal_rope != blank %}
+                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
                         {% endif %}
                       </label>
                     </div>
@@ -250,107 +249,39 @@
         </div>
       </div>
 
+      <div class="your-selection tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
+        <p class="tw-text-white ">Your Selection</p>
+        <!-- if vessels count is 3 class should have result-3 -->
+        <div class="selection-result-wrap result-3 ">
 
-      {% for i in (1..3) %}
-        <div
-          class="tw-flex tw-flex-col tw-gap-y-1 vessel_number_{{ forloop.index }}"
+          <p class="no-selection-text">Your selection will appear here</p>
 
-          {% if forloop.index == 3 %}
-            style="display: none;"
-          {% endif %}
-        >
-          <span>Vessel #{{ forloop.index }}</span>
-          <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
-            <div
-              class="inputs tw-flex tw-w-full tw-gap-x-[1rem]"
-              variant_id=""
-              variant_monogram_initials_id=""
-              variant_index="0"
-              product_amount="3"
-              monogram_initials=""
-            >
-              <div
-                id="select_{{ forloop.index }}_material"
-                class="js-dropdown-container material tw-w-1/2 tw-bg-chuug-rackley input tw-relative tw-mx-auto tw-rounded-2xl tw-h-[4.8rem] hover:tw-cursor-pointer"
-              >
-                <div class="wood-type tw-bg-chuug-rackley tw-px-4 tw-py-2 tw-border tw-border-white tw-rounded-2xl tw-cursor-pointer js-dropdown-trigger">
-                  <span class="tw-text-white js-selected-option">WOOD FINISH</span>
-                  {% render 'icon-arrow-down' %}
-                </div>
-
-                <div class="wood-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
-                  <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
-                    <input type="radio" name="wood_material" value="DUSK" class="tw-hidden js-option">
-                    <span class="wood-type-name tw-uppercase">DUSK</span>
-                    {% if section.settings.wood_finish_dusk_wood != blank %}
-                      <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48">
-                    {% endif %}
-                  </label>
-
-                  <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
-                    <input type="radio" name="wood_material" value="DAWN" class="tw-hidden js-option">
-                    <span class="wood-type-name tw-uppercase">DAWN</span>
-                    {% if section.settings.wood_finish_dawn_wood != blank %}
-                      <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48">
-                    {% endif %}
-                  </label>
-
-                  <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
-                    <input type="radio" name="wood_material" value="MIDNIGHT" class="tw-hidden js-option">
-                    <span class="wood-type-name tw-uppercase">MIDNIGHT</span>
-                    {% if section.settings.wood_finish_midnight_wood != blank %}
-                      <img
-                        src="{{ section.settings.wood_finish_midnight_wood | image_url }}"
-                        width="180"
-                        height="48"
-                      >
-                    {% endif %}
-                  </label>
-                </div>
-              </div>
-
-              <div
-                id="select_{{ forloop.index }}_rope"
-                disabled
-                class="js-dropdown-container rope tw-w-1/2 tw-bg-chuug-rackley input tw-relative tw-mx-auto tw-rounded-2xl tw-h-[4.8rem]"
-              >
-                <div class="rope-type tw-bg-chuug-rackley tw-px-4 tw-py-2 tw-border tw-border-white tw-rounded-2xl js-dropdown-trigger">
-                  <span class="tw-text-white js-selected-option">ROPE TYPE</span>
-                  {% render 'icon-arrow-down' %}
-                </div>
-
-                <div class="rope-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
-                  <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2">
-                    <input type="radio" name="rope_material" value="CHARCOAL" class="tw-hidden js-option">
-                    <span class="rope-type-name tw-uppercase">CHARCOAL</span>
-                    {% if section.settings.charcoal_rope != blank %}
-                      <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
-                    {% endif %}
-                  </label>
-
-                  <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow">
-                    <input type="radio" name="rope_material" value="NATURAL" class="tw-hidden js-option">
-                    <span class="rope-type-name tw-uppercase">NATURAL</span>
-                    {% if section.settings.natural_rope != blank %}
-                      <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
-                    {% endif %}
-                  </label>
-                </div>
-              </div>
+          {% comment %} <div class="result-item">
+            <div class="img-wrap">
+              <img src="{{ 'dusk_natural.png' | asset_url }}" alt="Dusk Natural Vessel" />
             </div>
-
-            <input
-              class="monogram_initials tw-hidden tw-w-full tw-h-[4.8rem] tw-text-center input tw-uppercase tw-bg-chuug-rackley tw-mx-auto tw-rounded-2xl tw-px-4 tw-py-2 tw-border tw-border-white tw-appearance-none tw-placeholder-white hover:tw-cursor-pointer focus:tw-outline-none focus:tw-ring-0 active:tw-outline-none active:tw-ring-0 md:tw-w-1/3 lg:!tw-w-[15.5rem] xl:!tw-w-[18.5rem]"
-              type="text"
-              maxlength="3"
-              placeholder="ENTER Initials"
-              name="properties[Monogram Initials]"
-              disabled
-            >
+            <p>DUSK • NATURAL</p>
           </div>
+
+          <div class="result-item">
+            <div class="img-wrap">
+              <img src="{{ 'midnight_charcoal.png' | asset_url }}" alt="Midnight Charcoal Vessel" />
+            </div>
+            <p>MIDNIGHT • CHARCOAL</p>
+          </div>
+          <div class="result-item">
+            <div class="img-wrap">
+              <img src="{{ 'midnight_charcoal.png' | asset_url }}" alt="Midnight Charcoal Vessel" />
+            </div>
+            <p>MIDNIGHT • CHARCOAL</p>
+          </div> {% endcomment %}
         </div>
-      {% endfor %}
+      </div>
+
+
+    
     </div>
+
     <div class="tw-flex tw-flex-col">
       <button
         id="add-multiple-products"
