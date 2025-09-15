@@ -949,6 +949,34 @@
       }
     }
     
+    // Clear selections for vessels beyond the new vessel count
+    for (let i = vesselCountNum + 1; i <= 3; i++) {
+      if (vesselSelections[i] && (vesselSelections[i].woodType || vesselSelections[i].ropeType)) {
+        console.log(`🧹 Clearing selections for hidden vessel ${i}:`, vesselSelections[i]);
+        vesselSelections[i] = { woodType: null, ropeType: null };
+        
+        // Also clear any radio button selections for this vessel
+        const vesselWoodInputs = document.querySelectorAll(`input[name="wood_material_${i}"]`);
+        const vesselRopeInputs = document.querySelectorAll(`input[name="rope_material_${i}"]`);
+        
+        vesselWoodInputs.forEach(input => {
+          input.checked = false;
+          input.closest('label').classList.remove('active');
+        });
+        
+        vesselRopeInputs.forEach(input => {
+          input.checked = false;
+          input.closest('label').classList.remove('active');
+        });
+        
+        console.log(`✅ Cleared vessel ${i} selections and UI state`);
+      }
+    }
+    
+    // Save the updated selections to localStorage
+    localStorage.setItem('vesselSelections', JSON.stringify(vesselSelections));
+    console.log('💾 Saved updated vessel selections to localStorage');
+    
     // Update selection display to reflect new vessel count
     updateSelectionDisplay(false); // false indicates this is not a tab switch
   }
