@@ -789,7 +789,7 @@
       // Complete selection - show actual image
       const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
       newAltText = `${selection.woodType} ${selection.ropeType} Vessel #${vesselNum}`;
-      newTextContent = `Vessel #${vesselNum}\n${selection.woodType} • ${selection.ropeType}`;
+      newTextContent = `${selection.woodType} • ${selection.ropeType}`;
       
       // Check if this image is already loaded in the DOM to avoid loading state
       const existingImg = document.querySelector(`img[src*="${imageName}"]`);
@@ -811,7 +811,7 @@
       const selectedParts = [];
       if (selection.woodType) selectedParts.push(selection.woodType);
       if (selection.ropeType) selectedParts.push(selection.ropeType);
-      newTextContent = `Vessel #${vesselNum}\n${selectedParts.join(' • ')} • ...`;
+      newTextContent = `${selectedParts.join(' • ')} • ...`;
     } else {
       // No selections
       newImageSrc = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
@@ -863,14 +863,7 @@
     
     // Always update text content to ensure vessel number is displayed
     if (selection.woodType || selection.ropeType) {
-      // For complete or partial selections, create structured content
-      const vesselLabel = document.createElement('div');
-      vesselLabel.style.fontSize = '12px';
-      vesselLabel.style.fontWeight = 'bold';
-      vesselLabel.style.opacity = '0.8';
-      vesselLabel.style.marginBottom = '4px';
-      vesselLabel.textContent = `Vessel #${vesselNum}`;
-      
+      // For complete or partial selections, show only the selection text (no vessel label)
       const selectionText = document.createElement('div');
       if (selection.woodType && selection.ropeType) {
         selectionText.textContent = `${selection.woodType} • ${selection.ropeType}`;
@@ -882,7 +875,6 @@
       }
       
       text.innerHTML = '';
-      text.appendChild(vesselLabel);
       text.appendChild(selectionText);
       text.style.opacity = '';
     } else {
