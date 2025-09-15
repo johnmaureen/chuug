@@ -322,6 +322,33 @@
   // Debug: Watch for changes to vesselSelections
   console.log('🚀 Initial vesselSelections:', vesselSelections);
   let activeVessel = 1; // Default active vessel
+
+  // Function to clear all pre-selected options
+  function clearAllPreselectedOptions() {
+    console.log('🧹 Clearing all pre-selected wood and rope options...');
+    
+    // Clear all wood type selections
+    const allWoodInputs = document.querySelectorAll('input[name^="wood_material_"]');
+    allWoodInputs.forEach(input => {
+      input.checked = false;
+      const label = input.closest('label');
+      if (label) {
+        label.classList.remove('active');
+      }
+    });
+    
+    // Clear all rope type selections
+    const allRopeInputs = document.querySelectorAll('input[name^="rope_material_"]');
+    allRopeInputs.forEach(input => {
+      input.checked = false;
+      const label = input.closest('label');
+      if (label) {
+        label.classList.remove('active');
+      }
+    });
+    
+    console.log(`✅ Cleared ${allWoodInputs.length} wood inputs and ${allRopeInputs.length} rope inputs`);
+  }
   let updateTimeout; // For debouncing updates
   let validationTimeout; // For debouncing validation
 
@@ -457,6 +484,9 @@
   document.addEventListener('DOMContentLoaded', function() {
     // Initialize vessel count to 3 by default
     currentVesselCount = 3;
+    
+    // Clear any pre-selected options on page load
+    clearAllPreselectedOptions();
     // Add event listeners for wood type selection
     const woodInputs = document.querySelectorAll('input[name^="wood_material_"]');
     console.log(`🔍 Found ${woodInputs.length} wood type inputs:`, Array.from(woodInputs).map(input => input.name));
@@ -976,6 +1006,11 @@
     // Save the updated selections to localStorage
     localStorage.setItem('vesselSelections', JSON.stringify(vesselSelections));
     console.log('💾 Saved updated vessel selections to localStorage');
+    
+    // Clear any pre-selected options after vessel count change
+    setTimeout(() => {
+      clearAllPreselectedOptions();
+    }, 100); // Small delay to ensure DOM is updated
     
     // Update selection display to reflect new vessel count
     updateSelectionDisplay(false); // false indicates this is not a tab switch
