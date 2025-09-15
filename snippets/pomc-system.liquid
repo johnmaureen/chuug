@@ -93,39 +93,6 @@
         </div>
       </div>
     </div>
-    {% comment %} <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
-      <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
-        <span>{{ section.settings.engraving_question }}</span>
-        {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.engraving_question_tooltip_text %}
-      </div>
-
-      <div class="tw-flex tw-items-center tw-gap-x-[0.62em] tw-px-2">
-        <div class="tw-w-full">
-          <label
-            class="tw-cursor-pointer"
-          >
-            <div
-              class="product_variant_0 active tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
-              onclick="setEngraving(0);"
-            >
-              <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">NO</span>
-            </div>
-          </label>
-        </div>
-        <div class="tw-w-full">
-          <label
-            class="tw-cursor-pointer"
-          >
-            <div
-              class="product_variant_1 tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
-              onclick="setEngraving(1);"
-            >
-              <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">YES</span>
-            </div>
-          </label>
-        </div>
-      </div>
-    </div> {% endcomment %}
     <div class="customize-your-vessel tw-flex tw-flex-col tw-text-white tw-text-[1.6rem] tw-font-semibold">
       <div class="tw-flex tw-gap-[1rem]">
         <span>{{ section.settings.customise_vessel_question }}</span>
@@ -256,25 +223,6 @@
 
           <p class="no-selection-text">Your selection will appear here</p>
 
-          {% comment %} <div class="result-item">
-            <div class="img-wrap">
-              <img src="{{ 'dusk_natural.png' | asset_url }}" alt="Dusk Natural Vessel" />
-            </div>
-            <p>DUSK • NATURAL</p>
-          </div>
-
-          <div class="result-item">
-            <div class="img-wrap">
-              <img src="{{ 'midnight_charcoal.png' | asset_url }}" alt="Midnight Charcoal Vessel" />
-            </div>
-            <p>MIDNIGHT • CHARCOAL</p>
-          </div>
-          <div class="result-item">
-            <div class="img-wrap">
-              <img src="{{ 'midnight_charcoal.png' | asset_url }}" alt="Midnight Charcoal Vessel" />
-            </div>
-            <p>MIDNIGHT • CHARCOAL</p>
-          </div> {% endcomment %}
         </div>
       </div>
 
@@ -304,442 +252,419 @@
             <path d="M46.4233 7.95711C46.4233 6.81202 45.454 5.88498 44.2583 5.88498C43.0626 5.88498 42.0933 6.81343 42.0933 7.95711C42.0933 9.10079 43.064 10.0278 44.2597 10.0278C45.4554 10.0278 46.4233 9.10079 46.4233 7.95711ZM46.4317 3.92961H48.8204V11.9832H46.4317V11.4683C45.7353 11.9491 44.909 12.2062 44.0628 12.2055C41.7374 12.2055 39.8524 10.3036 39.8524 7.95711C39.8524 5.61066 41.7374 3.70875 44.0628 3.70875C44.942 3.70875 45.7565 3.98025 46.4317 4.44588V3.92961ZM27.3113 4.97904V3.93101H24.865V11.9832H27.3169V8.22298C27.3169 6.9541 28.6786 6.27324 29.624 6.27324H29.6521V3.93101C28.6814 3.93101 27.791 4.35022 27.3113 4.97904ZM21.2173 7.95711C21.2173 6.81202 20.248 5.88498 19.0523 5.88498C17.8566 5.88498 16.8873 6.81343 16.8873 7.95711C16.8873 9.10079 17.858 10.0278 19.0537 10.0278C20.2494 10.0278 21.2173 9.10079 21.2173 7.95711ZM21.2257 3.92961H23.6158V11.9832H21.2257V11.4683C20.5505 11.9326 19.736 12.2055 18.8568 12.2055C16.5314 12.2055 14.6464 10.3036 14.6464 7.95711C14.6464 5.61066 16.5314 3.70875 18.8568 3.70875C19.736 3.70875 20.5505 3.98025 21.2257 4.44588V3.92961ZM35.6068 3.71437C34.6531 3.71437 33.7499 4.0126 33.145 4.83696V3.93101H30.7662V11.9832H33.1746V7.75172C33.1746 6.52786 33.9877 5.92718 34.9682 5.92718C36.0176 5.92718 36.6225 6.56021 36.6225 7.73484V11.9832H39.0083V6.86266C39.0083 4.98888 37.5312 3.71437 35.6068 3.71437ZM11.1661 11.9832H13.6673V0.342414H11.1661V11.9832ZM0.179443 11.986H2.82834V0.3396H0.18085L0.179443 11.986ZM9.44424 0.3396C9.44424 2.86048 8.47078 5.20693 6.73486 6.94988L10.3952 11.986H7.12453L3.14767 6.51379L4.17459 5.73727C5.01058 5.10852 5.68793 4.29295 6.1525 3.35573C6.61708 2.41852 6.85602 1.38563 6.85021 0.3396H9.44143H9.44424Z" fill="#0C061D"/>
           </svg>
         </div>
-        <span class="tw-text-[1.2rem] tw-leading-[1.5]">Not happy? We’ll refund you. No questions asked.</span>
+        <span class="tw-text-[1.2rem] tw-leading-[1.5]">Not happy? We'll refund you. No questions asked.</span>
       </div>
     </div>
 
 <script>
-  // Default vessel selections
-  const defaultVesselSelections = {
-    1: { woodType: null, ropeType: null }, // No pre-selections
+(function() {
+  'use strict';
+
+  // ========================================
+  // CONSTANTS AND INITIAL STATE
+  // ========================================
+  const STORAGE_KEY = 'chuug_vessel_selections';
+  const DEFAULT_VESSEL_COUNT = 3;
+  const DEBOUNCE_DELAY = 100;
+  const VALIDATION_DELAY = 200;
+  
+  const DEFAULT_VESSEL_SELECTIONS = {
+    1: { woodType: null, ropeType: null },
     2: { woodType: null, ropeType: null },
     3: { woodType: null, ropeType: null }
   };
 
-  // Global state to track vessel selections
-  let vesselSelections = { ...defaultVesselSelections };
-  
-  // Debug: Watch for changes to vesselSelections
-  console.log('🚀 Initial vesselSelections:', vesselSelections);
-  let activeVessel = 1; // Default active vessel
+  // ========================================
+  // STATE MANAGEMENT
+  // ========================================
+  let state = {
+    vesselSelections: { ...DEFAULT_VESSEL_SELECTIONS },
+    activeVessel: 1,
+    currentVesselCount: DEFAULT_VESSEL_COUNT,
+    updateTimeout: null,
+    validationTimeout: null,
+    imageCache: new Map(),
+    domCache: new Map(),
+    vesselUIState: new Map() // Track UI state per vessel
+  };
 
-  // Function to clear all pre-selected options
-  function clearAllPreselectedOptions() {
-    console.log('🧹 Clearing all pre-selected wood and rope options...');
-    
-    // Clear all wood type selections
-    const allWoodInputs = document.querySelectorAll('input[name^="wood_material_"]');
-    allWoodInputs.forEach(input => {
-      input.checked = false;
-      const label = input.closest('label');
-      if (label) {
-        label.classList.remove('active');
-      }
-    });
-    
-    // Clear all rope type selections
-    const allRopeInputs = document.querySelectorAll('input[name^="rope_material_"]');
-    allRopeInputs.forEach(input => {
-      input.checked = false;
-      const label = input.closest('label');
-      if (label) {
-        label.classList.remove('active');
-      }
-    });
-    
-    console.log(`✅ Cleared ${allWoodInputs.length} wood inputs and ${allRopeInputs.length} rope inputs`);
+  // ========================================
+  // UTILITY FUNCTIONS
+  // ========================================
+  function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
   }
-  let updateTimeout; // For debouncing updates
-  let validationTimeout; // For debouncing validation
 
-  // localStorage key for vessel selections
-  const STORAGE_KEY = 'chuug_vessel_selections';
-  let currentVesselCount = 3; // Track current vessel count
-
-  // Function to save vessel selections to localStorage
-  function saveVesselSelections() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(vesselSelections));
-    } catch (error) {
-      console.warn('Could not save vessel selections to localStorage:', error);
+  function getFromCache(key, selector) {
+    if (!state.domCache.has(key)) {
+      const element = document.querySelector(selector);
+      if (element) state.domCache.set(key, element);
     }
+    return state.domCache.get(key);
   }
 
-  // Function to load vessel selections from localStorage
-  function loadVesselSelections() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        console.log('📥 Loaded from localStorage:', parsed);
-        // Merge with defaults to ensure all vessels exist
-        vesselSelections = { ...defaultVesselSelections, ...parsed };
-        console.log('🔄 After merge with defaults:', vesselSelections);
-        return true;
-      }
-    } catch (error) {
-      console.warn('Could not load vessel selections from localStorage:', error);
+  function getAllFromCache(key, selector) {
+    if (!state.domCache.has(key)) {
+      const elements = document.querySelectorAll(selector);
+      if (elements.length) state.domCache.set(key, elements);
     }
-    return false;
+    return state.domCache.get(key) || [];
   }
 
-  // Function to clear vessel selections from localStorage
-  function clearVesselSelections() {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      vesselSelections = { ...defaultVesselSelections };
-      
-      // Remove all result items when clearing selections
-      const selectionWrap = document.querySelector('.selection-result-wrap');
-      if (selectionWrap) {
-        selectionWrap.querySelectorAll('.result-item').forEach(item => item.remove());
-        const noSelectionText = selectionWrap.querySelector('.no-selection-text');
-        if (noSelectionText) {
-          noSelectionText.style.display = 'block';
+  function clearDomCache() {
+    state.domCache.clear();
+  }
+
+  // ========================================
+  // STORAGE FUNCTIONS
+  // ========================================
+  const storage = {
+    save() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.vesselSelections));
+      } catch (error) {
+        // Silent fail for storage issues
+      }
+    },
+
+    load() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state.vesselSelections = { ...DEFAULT_VESSEL_SELECTIONS, ...parsed };
+          return true;
         }
+      } catch (error) {
+        // Silent fail for storage issues
       }
-      
-      console.log('Vessel selections cleared from localStorage');
-    } catch (error) {
-      console.warn('Could not clear vessel selections from localStorage:', error);
+      return false;
+    },
+
+    clear() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        state.vesselSelections = { ...DEFAULT_VESSEL_SELECTIONS };
+      } catch (error) {
+        // Silent fail for storage issues
+      }
     }
+  };
+
+  // ========================================
+  // SELECTION MANAGEMENT
+  // ========================================
+  function updateVesselSelection(vesselNumber, type, value) {
+    state.vesselSelections[vesselNumber][type] = value;
+    
+    // Maintain UI state for this vessel
+    maintainVesselUIState(vesselNumber);
+    
+    // Clear timeouts and debounce updates
+    clearTimeout(state.updateTimeout);
+    clearTimeout(state.validationTimeout);
+    
+    state.updateTimeout = setTimeout(() => {
+      storage.save();
+      updateSelectionDisplay(false);
+    }, DEBOUNCE_DELAY);
+    
+    state.validationTimeout = setTimeout(() => {
+      const validation = validateVesselSelections();
+      showValidationFeedback(validation);
+    }, VALIDATION_DELAY);
   }
 
-  // Function to remove a specific vessel's result item and clear its selections
-  function clearVesselSelection(vesselNumber) {
-    vesselSelections[vesselNumber] = { woodType: null, ropeType: null };
+  function maintainVesselUIState(vesselNumber) {
+    const vesselPanel = document.getElementById(`tab${vesselNumber}`);
+    if (!vesselPanel) return;
+
+    const selection = state.vesselSelections[vesselNumber];
     
-    const selectionWrap = document.querySelector('.selection-result-wrap');
-    const resultItem = selectionWrap.querySelector(`.result-item[data-vessel="${vesselNumber}"]`);
-    if (resultItem) {
-      console.log(`Removing result item for vessel ${vesselNumber} (selection cleared)`);
-      resultItem.remove();
-    }
-    
-    // Update the display
-    updateSelectionDisplay(false);
-    saveVesselSelections();
-  }
+    // Store current UI state for this vessel
+    const uiState = {
+      woodType: selection.woodType,
+      ropeType: selection.ropeType,
+      woodInputs: [],
+      ropeInputs: []
+    };
 
-  // Initialize vessel selection functionality
-  document.querySelectorAll("[data-tabs]").forEach(tabComponent => {
-    const tabs = tabComponent.querySelectorAll("[data-tab]");
-    const contents = tabComponent.querySelectorAll("[id^='tab']");
-
-    tabs.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const target = btn.getAttribute("data-tab");
-        const vesselNumber = parseInt(target.replace('tab', ''));
-        
-        console.log(`🚢 Vessel tab clicked: switching from vessel ${activeVessel} to vessel ${vesselNumber}`);
-
-        // update active tab styles only inside this component
-        tabs.forEach(b => {
-          b.classList.remove("active");
-          b.classList.add("inactive");
-        });
-        btn.classList.remove("inactive");
-        btn.classList.add("active");
-
-        // toggle content only inside this component
-        contents.forEach(c => {
-          c.classList.remove("active");
-          if (c.id === target) {
-            c.classList.add("active");
-            console.log(`✅ Activated panel: ${c.id}`);
-          }
-        });
-
-        // Update active vessel
-        const previousActiveVessel = activeVessel;
-        activeVessel = vesselNumber;
-        console.log(`🎯 Active vessel updated: ${previousActiveVessel} → ${activeVessel}`);
-        
-        // Debug: Check which panels are visible
-        const allPanels = document.querySelectorAll('.vessel-tab-panel');
-        console.log('🔍 Panel visibility check:');
-        allPanels.forEach(panel => {
-          const computed = window.getComputedStyle(panel);
-          console.log(`Panel ${panel.id}: display=${computed.display}, hasActive=${panel.classList.contains('active')}`);
-        });
-        
-        // 🔧 FORCE CORRECT VISIBILITY - Manually override CSS
-        console.log('🔧 Force correcting panel visibility...');
-        allPanels.forEach(panel => {
-          if (panel.classList.contains('active')) {
-            panel.style.display = 'block';
-            console.log(`✅ Forced ${panel.id} to display: block`);
-          } else {
-            panel.style.display = 'none';
-            console.log(`❌ Forced ${panel.id} to display: none`);
-          }
-        });
-        
-        updateSelectionDisplay(true); // true indicates this is a tab switch
+    // Capture wood type input states
+    const woodInputs = vesselPanel.querySelectorAll('input[name^="wood_material_"]');
+    woodInputs.forEach(input => {
+      uiState.woodInputs.push({
+        value: input.value,
+        checked: input.checked,
+        labelActive: input.closest('.wood-type-label').classList.contains('active')
       });
     });
-  });
 
-  // Handle wood type selection
-  document.addEventListener('DOMContentLoaded', function() {
-    // Initialize vessel count to 3 by default
-    currentVesselCount = 3;
-    
-    // Clear any pre-selected options on page load
-    clearAllPreselectedOptions();
-    // Add event listeners for wood type selection
-    const woodInputs = document.querySelectorAll('input[name^="wood_material_"]');
-    console.log(`🔍 Found ${woodInputs.length} wood type inputs:`, Array.from(woodInputs).map(input => input.name));
-    console.log('🔍 Wood inputs parents:', Array.from(woodInputs).map(input => {
-      const panel = input.closest('.vessel-tab-panel');
-      return {
-        name: input.name,
-        panelId: panel ? panel.id : 'null',
-        isVisible: panel ? window.getComputedStyle(panel).display !== 'none' : false
-      };
-    }));
-    
-    woodInputs.forEach(input => {
-      input.addEventListener('change', function() {
-        const woodType = this.value;
-        const vesselPanel = this.closest('.vessel-tab-panel');
-        console.log(`🔍 Debug vessel detection:`, {
-          inputName: this.name,
-          inputValue: this.value,
-          vesselPanelId: vesselPanel ? vesselPanel.id : 'null',
-          vesselPanelClasses: vesselPanel ? vesselPanel.className : 'null'
-        });
-        const vesselNumber = parseInt(vesselPanel.id.replace('tab', ''));
-        
-        console.log(`🌳 Wood type selected: ${woodType} for vessel ${vesselNumber}`);
-        console.log(`🔍 Before update - vesselSelections[${vesselNumber}]:`, vesselSelections[vesselNumber]);
-        vesselSelections[vesselNumber].woodType = woodType;
-        console.log(`✅ After update - vesselSelections[${vesselNumber}]:`, vesselSelections[vesselNumber]);
-        
-        // Update active state for wood type labels
+    // Capture rope type input states
+    const ropeInputs = vesselPanel.querySelectorAll('input[name^="rope_material_"]');
+    ropeInputs.forEach(input => {
+      uiState.ropeInputs.push({
+        value: input.value,
+        checked: input.checked,
+        labelActive: input.closest('.rope-type-label').classList.contains('active')
+      });
+    });
+
+    state.vesselUIState.set(vesselNumber, uiState);
+  }
+
+  function restoreVesselUIState(vesselNumber) {
+    const uiState = state.vesselUIState.get(vesselNumber);
+    if (!uiState) return;
+
+    const vesselPanel = document.getElementById(`tab${vesselNumber}`);
+    if (!vesselPanel) return;
+
+    // Restore wood type selections
+    if (uiState.woodType) {
+      const woodInput = vesselPanel.querySelector(`input[name="wood_material_${vesselNumber}"][value="${uiState.woodType}"]`);
+      if (woodInput) {
+        woodInput.checked = true;
         vesselPanel.querySelectorAll('.wood-type-label').forEach(label => {
           label.classList.remove('active');
         });
-        this.closest('.wood-type-label').classList.add('active');
-        
-        // Debounced updates for performance
-        clearTimeout(updateTimeout);
-        clearTimeout(validationTimeout);
-        
-        updateTimeout = setTimeout(() => {
-          saveVesselSelections();
-          updateSelectionDisplay(false); // false indicates this is an actual selection, not tab switch
-        }, 100);
-        
-        validationTimeout = setTimeout(() => {
-          const validation = validateVesselSelections();
-          showValidationFeedback(validation);
-        }, 300);
-      });
-    });
+        woodInput.closest('.wood-type-label').classList.add('active');
+      }
+    }
 
-    // Add event listeners for rope type selection
-    const ropeInputs = document.querySelectorAll('input[name^="rope_material_"]');
-    console.log(`🔍 Found ${ropeInputs.length} rope type inputs:`, Array.from(ropeInputs).map(input => input.name));
-    console.log('🔍 Rope inputs parents:', Array.from(ropeInputs).map(input => {
-      const panel = input.closest('.vessel-tab-panel');
-      return {
-        name: input.name,
-        panelId: panel ? panel.id : 'null',
-        isVisible: panel ? window.getComputedStyle(panel).display !== 'none' : false
-      };
-    }));
-    
-    ropeInputs.forEach(input => {
-      input.addEventListener('change', function() {
-        const ropeType = this.value;
-        const vesselPanel = this.closest('.vessel-tab-panel');
-        console.log(`🔍 Debug vessel detection:`, {
-          inputName: this.name,
-          inputValue: this.value,
-          vesselPanelId: vesselPanel ? vesselPanel.id : 'null',
-          vesselPanelClasses: vesselPanel ? vesselPanel.className : 'null'
-        });
-        const vesselNumber = parseInt(vesselPanel.id.replace('tab', ''));
-        
-        console.log(`🪢 Rope type selected: ${ropeType} for vessel ${vesselNumber}`);
-        console.log(`🔍 Before update - vesselSelections[${vesselNumber}]:`, vesselSelections[vesselNumber]);
-        vesselSelections[vesselNumber].ropeType = ropeType;
-        console.log(`✅ After update - vesselSelections[${vesselNumber}]:`, vesselSelections[vesselNumber]);
-        
-        // Update active state for rope type labels
+    // Restore rope type selections
+    if (uiState.ropeType) {
+      const ropeInput = vesselPanel.querySelector(`input[name="rope_material_${vesselNumber}"][value="${uiState.ropeType}"]`);
+      if (ropeInput) {
+        ropeInput.checked = true;
         vesselPanel.querySelectorAll('.rope-type-label').forEach(label => {
           label.classList.remove('active');
         });
-        this.closest('.rope-type-label').classList.add('active');
-        
-        // Debounced updates for performance
-        clearTimeout(updateTimeout);
-        clearTimeout(validationTimeout);
-        
-        updateTimeout = setTimeout(() => {
-          saveVesselSelections();
-          updateSelectionDisplay(false); // false indicates this is an actual selection, not tab switch
-        }, 100);
-        
-        validationTimeout = setTimeout(() => {
-          const validation = validateVesselSelections();
-          showValidationFeedback(validation);
-        }, 300);
-      });
-    });
-
-    // Load saved selections or show empty state
-    const hasLoadedSelections = loadVesselSelections();
-    if (hasLoadedSelections) {
-      // Restore UI state from saved selections
-      restoreUIFromSelections();
-    }
-    updateSelectionDisplay(false); // false indicates this is not a tab switch
-
-    // Clear localStorage when user navigates away from the page
-    window.addEventListener('beforeunload', function() {
-      clearVesselSelections();
-    });
-
-    // Also clear on page visibility change (when user switches tabs)
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        clearVesselSelections();
-      }
-    });
-  });
-
-  // Function to restore UI from saved selections
-  function restoreUIFromSelections() {
-    for (let vesselNum = 1; vesselNum <= 3; vesselNum++) {
-      const selection = vesselSelections[vesselNum];
-      const vesselPanel = document.getElementById(`tab${vesselNum}`);
-      
-      if (vesselPanel && selection) {
-        // Restore wood type selection
-        if (selection.woodType) {
-          const woodInput = vesselPanel.querySelector(`input[name="wood_material_${vesselNum}"][value="${selection.woodType}"]`);
-          if (woodInput) {
-            woodInput.checked = true;
-            vesselPanel.querySelectorAll('.wood-type-label').forEach(label => {
-              label.classList.remove('active');
-            });
-            woodInput.closest('.wood-type-label').classList.add('active');
-          }
-        }
-        
-        // Restore rope type selection
-        if (selection.ropeType) {
-          const ropeInput = vesselPanel.querySelector(`input[name="rope_material_${vesselNum}"][value="${selection.ropeType}"]`);
-          if (ropeInput) {
-            ropeInput.checked = true;
-            vesselPanel.querySelectorAll('.rope-type-label').forEach(label => {
-              label.classList.remove('active');
-            });
-            ropeInput.closest('.rope-type-label').classList.add('active');
-          }
-        }
+        ropeInput.closest('.rope-type-label').classList.add('active');
       }
     }
   }
 
+  function clearAllPreselectedOptions() {
+    const allInputs = getAllFromCache('allInputs', 'input[name^="wood_material_"], input[name^="rope_material_"]');
+    allInputs.forEach(input => {
+      input.checked = false;
+      const label = input.closest('label');
+      if (label) label.classList.remove('active');
+    });
+  }
 
-  // Function to update the selection display
-  function updateSelectionDisplay(isTabSwitch = false) {
-    const selectionWrap = document.querySelector('.selection-result-wrap');
-    const noSelectionText = selectionWrap.querySelector('.no-selection-text');
+  function restoreUIFromSelections() {
+    for (let vesselNum = 1; vesselNum <= 3; vesselNum++) {
+      const selection = state.vesselSelections[vesselNum];
+      const vesselPanel = document.getElementById(`tab${vesselNum}`);
+      
+      if (!vesselPanel || !selection) continue;
+
+      // Restore wood type selection
+      if (selection.woodType) {
+        const woodInput = vesselPanel.querySelector(`input[name="wood_material_${vesselNum}"][value="${selection.woodType}"]`);
+        if (woodInput) {
+          woodInput.checked = true;
+          vesselPanel.querySelectorAll('.wood-type-label').forEach(label => {
+            label.classList.remove('active');
+          });
+          woodInput.closest('.wood-type-label').classList.add('active');
+        }
+      }
+      
+      // Restore rope type selection
+      if (selection.ropeType) {
+        const ropeInput = vesselPanel.querySelector(`input[name="rope_material_${vesselNum}"][value="${selection.ropeType}"]`);
+        if (ropeInput) {
+          ropeInput.checked = true;
+          vesselPanel.querySelectorAll('.rope-type-label').forEach(label => {
+            label.classList.remove('active');
+          });
+          ropeInput.closest('.rope-type-label').classList.add('active');
+        }
+      }
+
+      // Store initial UI state for this vessel
+      maintainVesselUIState(vesselNum);
+    }
+  }
+
+  // ========================================
+  // TAB MANAGEMENT
+  // ========================================
+  function initializeTabs() {
+    const tabComponent = getFromCache('tabComponent', '[data-tabs]');
+    if (!tabComponent) return;
+
+    const tabs = getAllFromCache('tabs', '[data-tab]');
+    const contents = getAllFromCache('contents', '[id^="tab"]');
+
+    // Use event delegation for better performance
+    tabComponent.addEventListener('click', function(e) {
+      const btn = e.target.closest('[data-tab]');
+      if (!btn) return;
+
+      const target = btn.getAttribute('data-tab');
+      const vesselNumber = parseInt(target.replace('tab', ''));
+      
+      // Update active tab styles
+      tabs.forEach(b => {
+        b.classList.remove('active');
+        b.classList.add('inactive');
+      });
+      btn.classList.remove('inactive');
+      btn.classList.add('active');
+
+      // Toggle content
+      contents.forEach(c => {
+        c.classList.remove('active');
+        c.style.display = 'none';
+        if (c.id === target) {
+          c.classList.add('active');
+          c.style.display = 'block';
+        }
+      });
+
+      // Update active vessel
+      state.activeVessel = vesselNumber;
+      
+      // Restore UI state for the newly active vessel
+      restoreVesselUIState(vesselNumber);
+      
+      updateSelectionDisplay(true);
+    });
+  }
+
+  // ========================================
+  // SELECTION INPUT HANDLERS
+  // ========================================
+  function initializeSelectionInputs() {
+    const customizeVessel = getFromCache('customizeVessel', '.customize-your-vessel');
+    if (!customizeVessel) return;
+
+    // Use event delegation for better performance
+    customizeVessel.addEventListener('change', function(e) {
+      const input = e.target;
+      
+      if (input.name && input.name.startsWith('wood_material_')) {
+        handleWoodSelection(input);
+      } else if (input.name && input.name.startsWith('rope_material_')) {
+        handleRopeSelection(input);
+      }
+    });
+  }
+
+  function handleWoodSelection(input) {
+    const vesselPanel = input.closest('.vessel-tab-panel');
+    if (!vesselPanel) return;
+
+    const vesselNumber = parseInt(vesselPanel.id.replace('tab', ''));
+    const woodType = input.value;
     
+    // Update active state for wood type labels
+    vesselPanel.querySelectorAll('.wood-type-label').forEach(label => {
+      label.classList.remove('active');
+    });
+    input.closest('.wood-type-label').classList.add('active');
+    
+    updateVesselSelection(vesselNumber, 'woodType', woodType);
+  }
+
+  function handleRopeSelection(input) {
+    const vesselPanel = input.closest('.vessel-tab-panel');
+    if (!vesselPanel) return;
+
+    const vesselNumber = parseInt(vesselPanel.id.replace('tab', ''));
+    const ropeType = input.value;
+    
+    // Update active state for rope type labels
+    vesselPanel.querySelectorAll('.rope-type-label').forEach(label => {
+      label.classList.remove('active');
+    });
+    input.closest('.rope-type-label').classList.add('active');
+    
+    updateVesselSelection(vesselNumber, 'ropeType', ropeType);
+  }
+
+  // ========================================
+  // DISPLAY FUNCTIONS
+  // ========================================
+  function updateSelectionDisplay(isTabSwitch = false) {
+    const selectionWrap = getFromCache('selectionWrap', '.selection-result-wrap');
+    const noSelectionText = getFromCache('noSelectionText', '.no-selection-text');
+    
+    if (!selectionWrap || !noSelectionText) return;
+
     // Clear CSS classes
     selectionWrap.classList.remove('result-1', 'result-2', 'result-3');
     
-    // Check if we have any selections (complete or partial)
+    // Check if we have any selections
     let hasAnySelections = false;
-    let hasCompleteSelections = false;
-    
-    // First pass: check what we have
     for (let vesselNum = 1; vesselNum <= 3; vesselNum++) {
-      const selection = vesselSelections[vesselNum];
+      const selection = state.vesselSelections[vesselNum];
       if (selection.woodType || selection.ropeType) {
         hasAnySelections = true;
-      }
-      if (selection.woodType && selection.ropeType) {
-        hasCompleteSelections = true;
+        break;
       }
     }
     
-    // Hide the "Your selection will appear here" text if we have any selections or if we're updating the active vessel
-    if (hasAnySelections || vesselSelections[activeVessel].woodType || vesselSelections[activeVessel].ropeType) {
+    // Show/hide no selection text
+    if (hasAnySelections || state.vesselSelections[state.activeVessel].woodType || state.vesselSelections[state.activeVessel].ropeType) {
       noSelectionText.style.display = 'none';
     } else {
-      // If no selections at all, show the "Your selection will appear here" text
       noSelectionText.style.display = 'block';
       return;
     }
-    
-    console.log('updateSelectionDisplay:', {
-      currentVesselCount,
-      activeVessel,
-      vesselSelections,
-      hasAnySelections,
-      hasCompleteSelections
-    });
 
-    // Update/create result items for ALL vessels in the current count, maintaining their order
-    for (let vesselNum = 1; vesselNum <= currentVesselCount; vesselNum++) {
-      const selection = vesselSelections[vesselNum];
-      console.log(`Checking vessel ${vesselNum}:`, selection);
+    // Update result items for current vessel count
+    for (let vesselNum = 1; vesselNum <= state.currentVesselCount; vesselNum++) {
+      const selection = state.vesselSelections[vesselNum];
       
-      // Create/update result item for this vessel (regardless of whether it has selections)
       let resultItem = selectionWrap.querySelector(`.result-item[data-vessel="${vesselNum}"]`);
       
       if (!resultItem) {
-        console.log(`Creating new result item for vessel ${vesselNum}`);
-        // Create new result item if it doesn't exist
-        resultItem = document.createElement('div');
-        resultItem.className = 'result-item';
-        resultItem.setAttribute('data-vessel', vesselNum);
-        
-          // Make result item clickable to switch to that vessel
-          resultItem.addEventListener('click', function() {
-            console.log(`🖱️ Result item clicked for vessel ${vesselNum}`);
-            switchToVessel(vesselNum);
-          });
-        
-        // Insert at the correct position based on vessel number
+        resultItem = createResultItem(vesselNum);
         insertResultItemAtPosition(selectionWrap, resultItem, vesselNum);
-      } else {
-        console.log(`Result item already exists for vessel ${vesselNum}, updating content`);
       }
       
-      // Always update the content of the result item (will show placeholder if no selections)
       updateResultItemContent(resultItem, selection, vesselNum, isTabSwitch);
     }
     
-    // Only remove result items that are beyond the current vessel count
+    // Remove result items beyond current vessel count
     const allResultItems = selectionWrap.querySelectorAll('.result-item');
     allResultItems.forEach(item => {
       const itemVesselNum = parseInt(item.getAttribute('data-vessel'));
-      if (itemVesselNum > currentVesselCount) {
-        console.log(`Removing result item for vessel ${itemVesselNum} (beyond current count)`);
+      if (itemVesselNum > state.currentVesselCount) {
         item.remove();
       }
     });
     
-    // Apply the correct CSS class based on number of vessels shown
+    // Apply CSS class based on number of vessels shown
     const vesselCount = selectionWrap.querySelectorAll('.result-item').length;
-    console.log(`Final result: ${vesselCount} result items displayed`);
     if (vesselCount > 0) {
       selectionWrap.classList.add(`result-${vesselCount}`);
     }
   }
 
-  // Function to insert result item at the correct position
+  function createResultItem(vesselNum) {
+    const resultItem = document.createElement('div');
+    resultItem.className = 'result-item';
+    resultItem.setAttribute('data-vessel', vesselNum);
+    
+    // Add click handler to switch vessels
+    resultItem.addEventListener('click', () => switchToVessel(vesselNum));
+    
+    return resultItem;
+  }
+
   function insertResultItemAtPosition(container, newItem, vesselNum) {
     const existingItems = container.querySelectorAll('.result-item');
     let insertBefore = null;
     
-    // Find the correct position based on vessel number
     for (let i = 0; i < existingItems.length; i++) {
       const existingVesselNum = parseInt(existingItems[i].getAttribute('data-vessel'));
       if (vesselNum < existingVesselNum) {
@@ -755,14 +680,12 @@
     }
   }
 
-  // Function to update the content of a result item
   function updateResultItemContent(resultItem, selection, vesselNum, isTabSwitch) {
     // Get or create existing elements
     let imgWrap = resultItem.querySelector('.img-wrap');
     let img = resultItem.querySelector('.img-wrap img');
     let text = resultItem.querySelector('p');
     
-    // If elements don't exist, create them
     if (!imgWrap) {
       imgWrap = document.createElement('div');
       imgWrap.className = 'img-wrap';
@@ -779,119 +702,52 @@
       resultItem.appendChild(text);
     }
     
-    // Determine what content should be displayed
+    // Determine content
     let newImageSrc = '';
     let newAltText = '';
-    let newTextContent = '';
     let shouldShowLoading = false;
     
     if (selection.woodType && selection.ropeType) {
-      // Complete selection - show actual image
+      // Complete selection
       const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
       newAltText = `${selection.woodType} ${selection.ropeType} Vessel #${vesselNum}`;
-      newTextContent = `${selection.woodType} • ${selection.ropeType}`;
       
-      // Check if this image is already loaded in the DOM to avoid loading state
-      const existingImg = document.querySelector(`img[src*="${imageName}"]`);
-      if (existingImg && existingImg.complete) {
-        // Image already exists and is loaded, use it directly
-        newImageSrc = existingImg.src;
+      // Check cache first
+      if (state.imageCache.has(imageName)) {
+        newImageSrc = state.imageCache.get(imageName);
       } else {
-        // Need to load the image
         newImageSrc = `{{ 'dusk_natural.png' | asset_url }}`.replace('dusk_natural.png', imageName);
-        shouldShowLoading = !isTabSwitch && vesselNum === activeVessel;
+        shouldShowLoading = !isTabSwitch && vesselNum === state.activeVessel;
       }
-    } else if (selection.woodType || selection.ropeType) {
-      // Partial selection
-      newImageSrc = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
-      newAltText = (isTabSwitch || vesselNum !== activeVessel) ? 'Partial selection' : 'Loading...';
-      shouldShowLoading = !isTabSwitch && vesselNum === activeVessel;
-      
-      // Show partial selection text with vessel number
-      const selectedParts = [];
-      if (selection.woodType) selectedParts.push(selection.woodType);
-      if (selection.ropeType) selectedParts.push(selection.ropeType);
-      newTextContent = `${selectedParts.join(' • ')} • ...`;
     } else {
-      // No selections
+      // Partial or no selection
       newImageSrc = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
-      newAltText = 'No selection';
-      newTextContent = `Vessel #${vesselNum}`;
+      newAltText = (isTabSwitch || vesselNum !== state.activeVessel) ? 'Partial selection' : 'Loading...';
+      shouldShowLoading = !isTabSwitch && vesselNum === state.activeVessel;
     }
     
-    // Only update elements if content has actually changed
+    // Update image efficiently
     if (img.src !== newImageSrc) {
-      if (selection.woodType && selection.ropeType) {
-        // For complete selections, check if we can reuse existing loaded image
-        const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
-        const existingImg = document.querySelector(`img[src*="${imageName}"]`);
-        if (existingImg && existingImg.complete) {
-          img.src = existingImg.src;
-          img.style.display = 'block';
-        } else {
-          // Load new image
-          img.style.display = 'none';
-          const preloadImg = new Image();
-          preloadImg.onload = function() {
-            img.src = preloadImg.src;
-            img.style.display = 'block';
-            if (shouldShowLoading) {
-              resultItem.classList.remove('loading');
-            }
-          };
-          preloadImg.onerror = function() {
-            img.style.display = 'block';
-            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
-            if (shouldShowLoading) {
-              resultItem.classList.remove('loading');
-            }
-            console.error('Failed to load image:', imageName);
-          };
-          preloadImg.src = newImageSrc;
-        }
+      if (selection.woodType && selection.ropeType && !state.imageCache.has(`${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`)) {
+        loadImageOptimized(img, newImageSrc, selection, shouldShowLoading, resultItem);
       } else {
-        // For partial selections or placeholders, set directly
         img.src = newImageSrc;
         img.style.display = 'block';
       }
     }
     
-    // Update alt text if changed
-    if (img.alt !== newAltText) {
-      img.alt = newAltText;
-    }
+    img.alt = newAltText;
     
-    // Always update text content to ensure vessel number is displayed
-    if (selection.woodType || selection.ropeType) {
-      // For complete or partial selections, show only the selection text (no vessel label)
-      const selectionText = document.createElement('div');
-      if (selection.woodType && selection.ropeType) {
-        selectionText.textContent = `${selection.woodType} • ${selection.ropeType}`;
-      } else {
-        const selectedParts = [];
-        if (selection.woodType) selectedParts.push(selection.woodType);
-        if (selection.ropeType) selectedParts.push(selection.ropeType);
-        selectionText.textContent = `${selectedParts.join(' • ')} • ...`;
-      }
-      
-      text.innerHTML = '';
-      text.appendChild(selectionText);
-      text.style.opacity = '';
-    } else {
-      // For empty vessels, just show vessel number
-      text.innerHTML = '';
-      text.textContent = `Vessel #${vesselNum}`;
-      text.style.opacity = '0.5';
-    }
+    // Update text content
+    updateTextContent(text, selection, vesselNum);
     
-    // Update loading state
+    // Update loading and active states
     if (shouldShowLoading) {
       resultItem.classList.add('loading');
     } else {
       resultItem.classList.remove('loading');
     }
     
-    // Update active vessel class
     if (!selection.woodType && !selection.ropeType) {
       resultItem.classList.add('active-vessel');
     } else {
@@ -899,46 +755,62 @@
     }
   }
 
-  // Function to switch to a specific vessel
-  function switchToVessel(vesselNumber) {
-    console.log(`🔄 switchToVessel called: requesting switch to vessel ${vesselNumber}`);
-    if (vesselNumber >= 1 && vesselNumber <= 3) {
-      // Find and click the corresponding vessel tab button
-      const tabButton = document.querySelector(`[data-tab="tab${vesselNumber}"]`);
-      if (tabButton) {
-        console.log(`📝 Found tab button for vessel ${vesselNumber}, clicking it`);
-        tabButton.click();
+  function loadImageOptimized(img, src, selection, shouldShowLoading, resultItem) {
+    const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
+    
+    img.style.display = 'none';
+    const preloadImg = new Image();
+    
+    preloadImg.onload = function() {
+      state.imageCache.set(imageName, preloadImg.src);
+      img.src = preloadImg.src;
+      img.style.display = 'block';
+      if (shouldShowLoading) resultItem.classList.remove('loading');
+    };
+    
+    preloadImg.onerror = function() {
+      img.style.display = 'block';
+      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
+      if (shouldShowLoading) resultItem.classList.remove('loading');
+    };
+    
+    preloadImg.src = src;
+  }
+
+  function updateTextContent(text, selection, vesselNum) {
+    if (selection.woodType || selection.ropeType) {
+      if (selection.woodType && selection.ropeType) {
+        text.textContent = `${selection.woodType} • ${selection.ropeType}`;
       } else {
-        console.warn(`❌ Tab button not found for vessel ${vesselNumber}`);
+        const selectedParts = [];
+        if (selection.woodType) selectedParts.push(selection.woodType);
+        if (selection.ropeType) selectedParts.push(selection.ropeType);
+        text.textContent = `${selectedParts.join(' • ')} • ...`;
       }
+      text.style.opacity = '';
     } else {
-      console.warn(`❌ Invalid vessel number: ${vesselNumber}`);
+      text.textContent = `Vessel #${vesselNum}`;
+      text.style.opacity = '0.5';
     }
   }
 
-  // Function to switch to vessel #1 (called when vessel count changes)
-  function switchToVesselOne() {
-    switchToVessel(1);
+  function switchToVessel(vesselNumber) {
+    if (vesselNumber >= 1 && vesselNumber <= 3) {
+      const tabButton = document.querySelector(`[data-tab="tab${vesselNumber}"]`);
+      if (tabButton) tabButton.click();
+    }
   }
 
-  // Function to update vessel tab visibility based on count
+  // ========================================
+  // VESSEL COUNT MANAGEMENT
+  // ========================================
   function updateVesselTabVisibility(vesselCount) {
     const vesselCountNum = parseInt(vesselCount);
-    currentVesselCount = vesselCountNum; // Update global vessel count
-    
-    console.log('updateVesselTabVisibility called:', {
-      vesselCount,
-      vesselCountNum,
-      currentActiveVessel: activeVessel,
-      currentVesselCount,
-      previousVesselCount: currentVesselCount
-    });
+    state.currentVesselCount = vesselCountNum;
     
     // Check if current active vessel is beyond the new count
-    if (activeVessel > vesselCountNum) {
-      console.log('Active vessel beyond count, switching to vessel #1');
-      // If active vessel is beyond new count, switch to vessel #1
-      activeVessel = 1;
+    if (state.activeVessel > vesselCountNum) {
+      state.activeVessel = 1;
     }
     
     // Update vessel tab buttons visibility
@@ -949,21 +821,16 @@
       if (tabButton && tabPanel) {
         if (i <= vesselCountNum) {
           tabButton.style.display = 'flex';
-          // Show only the active vessel panel, hide others
-          if (i === activeVessel) {
-            console.log(`🎯 Setting vessel ${i} as ACTIVE (matches activeVessel ${activeVessel})`);
+          if (i === state.activeVessel) {
             tabPanel.style.display = 'block';
             tabButton.classList.remove('inactive');
             tabButton.classList.add('active');
           } else {
-            console.log(`📋 Setting vessel ${i} as INACTIVE (activeVessel is ${activeVessel})`);
             tabPanel.style.display = 'none';
             tabButton.classList.remove('active');
             tabButton.classList.add('inactive');
           }
         } else {
-          console.log(`🚫 Hiding vessel ${i} (beyond vessel count ${vesselCountNum})`);
-          // Hide tabs beyond the vessel count
           tabButton.style.display = 'none';
           tabPanel.style.display = 'none';
           tabButton.classList.remove('active', 'inactive');
@@ -973,233 +840,203 @@
     
     // Clear selections for vessels beyond the new vessel count
     for (let i = vesselCountNum + 1; i <= 3; i++) {
-      if (vesselSelections[i] && (vesselSelections[i].woodType || vesselSelections[i].ropeType)) {
-        console.log(`🧹 Clearing selections for hidden vessel ${i}:`, vesselSelections[i]);
-        vesselSelections[i] = { woodType: null, ropeType: null };
+      if (state.vesselSelections[i] && (state.vesselSelections[i].woodType || state.vesselSelections[i].ropeType)) {
+        state.vesselSelections[i] = { woodType: null, ropeType: null };
         
-        // Also clear any radio button selections for this vessel
-        const vesselWoodInputs = document.querySelectorAll(`input[name="wood_material_${i}"]`);
-        const vesselRopeInputs = document.querySelectorAll(`input[name="rope_material_${i}"]`);
+        // Clear UI state for this vessel
+        state.vesselUIState.delete(i);
         
-        vesselWoodInputs.forEach(input => {
+        // Clear radio button selections for this vessel
+        const vesselInputs = document.querySelectorAll(`input[name^="wood_material_${i}"], input[name^="rope_material_${i}"]`);
+        vesselInputs.forEach(input => {
           input.checked = false;
           input.closest('label').classList.remove('active');
         });
-        
-        vesselRopeInputs.forEach(input => {
-          input.checked = false;
-          input.closest('label').classList.remove('active');
-        });
-        
-        console.log(`✅ Cleared vessel ${i} selections and UI state`);
       }
     }
     
-    // Save the updated selections to localStorage
-    localStorage.setItem('vesselSelections', JSON.stringify(vesselSelections));
-    console.log('💾 Saved updated vessel selections to localStorage');
+    storage.save();
     
-    // Clear any pre-selected options after vessel count change
-    setTimeout(() => {
+    // Clear pre-selected options after vessel count change
+    requestAnimationFrame(() => {
       clearAllPreselectedOptions();
-    }, 100); // Small delay to ensure DOM is updated
-    
-    // Update selection display to reflect new vessel count
-    updateSelectionDisplay(false); // false indicates this is not a tab switch
+      updateSelectionDisplay(false);
+    });
   }
 
-  // Setup function override after a delay to ensure original function is loaded
-  function setupSetProductAmountOverride() {
-    console.log('Setting up setProductAmount override...');
-    
-    // Store the original function
-    if (typeof window.setProductAmount === 'function') {
-      console.log('Found original setProductAmount, storing backup');
-      window.originalSetProductAmount = window.setProductAmount;
-    } else {
-      console.log('Original setProductAmount not found yet');
-      return false;
-    }
-
-    // Override the function
-    window.setProductAmount = function(amount) {
-      console.log('🔧 POMC setProductAmount called with:', amount);
-      
-      // Call the original function
-      if (window.originalSetProductAmount) {
-        console.log('Calling original setProductAmount');
-        window.originalSetProductAmount(amount);
-      }
-      
-      // Update vessel tab visibility
-      console.log('Updating vessel tab visibility for amount:', amount);
-      updateVesselTabVisibility(amount);
-    };
-    
-    console.log('✅ setProductAmount override complete');
-    return true;
-  }
-
-  // Try to setup override immediately
-  if (!setupSetProductAmountOverride()) {
-    // If it fails, try again after delays
-    setTimeout(function() {
-      if (!setupSetProductAmountOverride()) {
-        setTimeout(function() {
-          if (!setupSetProductAmountOverride()) {
-            console.warn('⚠️ Could not override setProductAmount after multiple attempts');
-          }
-        }, 1000);
-      }
-    }, 100);
-  }
-
-  // Function to get current vessel selection
-  function getCurrentVesselSelection() {
-    return vesselSelections[activeVessel];
-  }
-
-  // Function to validate vessel selections
+  // ========================================
+  // VALIDATION
+  // ========================================
   function validateVesselSelections() {
-    const errors = [];
     const warnings = [];
     
     for (let vesselNum = 1; vesselNum <= 3; vesselNum++) {
-      const selection = vesselSelections[vesselNum];
+      const selection = state.vesselSelections[vesselNum];
       
-      // Check for partial selections
       if ((selection.woodType && !selection.ropeType) || (!selection.woodType && selection.ropeType)) {
         warnings.push(`Vessel #${vesselNum} has incomplete selection`);
       }
-      
-      // Check for invalid combinations (if any business rules exist)
-      if (selection.woodType && selection.ropeType) {
-        // Add any specific validation rules here
-        // Example: if (selection.woodType === 'MIDNIGHT' && selection.ropeType === 'NATURAL') {
-        //   warnings.push(`Vessel #${vesselNum} has unusual combination`);
-        // }
-      }
     }
     
-    return { errors, warnings };
+    return { errors: [], warnings };
   }
 
-  // Function to show validation feedback
   function showValidationFeedback(validation) {
-    // Remove existing feedback
     const existingFeedback = document.querySelector('.validation-feedback');
-    if (existingFeedback) {
-      existingFeedback.remove();
-    }
+    if (existingFeedback) existingFeedback.remove();
     
     if (validation.warnings.length > 0) {
       const feedback = document.createElement('div');
       feedback.className = 'validation-feedback tw-mt-2 tw-p-2 tw-bg-yellow-100 tw-text-yellow-800 tw-rounded tw-text-sm';
       feedback.innerHTML = validation.warnings.map(warning => `⚠️ ${warning}`).join('<br>');
       
-      const selectionWrap = document.querySelector('.selection-result-wrap');
-      selectionWrap.parentNode.insertBefore(feedback, selectionWrap.nextSibling);
+      const selectionWrap = getFromCache('selectionWrap', '.selection-result-wrap');
+      if (selectionWrap && selectionWrap.parentNode) {
+        selectionWrap.parentNode.insertBefore(feedback, selectionWrap.nextSibling);
+      }
     }
   }
 
-  // Function to set vessel selection programmatically
-  function setVesselSelection(vesselNumber, woodType, ropeType) {
-    if (vesselNumber >= 1 && vesselNumber <= 3) {
-      vesselSelections[vesselNumber].woodType = woodType;
-      vesselSelections[vesselNumber].ropeType = ropeType;
-      
-      // Update the UI for that vessel
-      const vesselPanel = document.getElementById(`tab${vesselNumber}`);
-      if (vesselPanel) {
-        // Update wood type selection
-        const woodInput = vesselPanel.querySelector(`input[name="wood_material_${vesselNumber}"][value="${woodType}"]`);
-        if (woodInput) {
-          woodInput.checked = true;
-          vesselPanel.querySelectorAll('.wood-type-label').forEach(label => {
-            label.classList.remove('active');
-          });
-          woodInput.closest('.wood-type-label').classList.add('active');
+  // ========================================
+  // PRODUCT AMOUNT OVERRIDE
+  // ========================================
+  function setupSetProductAmountOverride() {
+    if (typeof window.setProductAmount === 'function') {
+      window.originalSetProductAmount = window.setProductAmount;
+    } else {
+      return false;
+    }
+
+    window.setProductAmount = function(amount) {
+      if (window.originalSetProductAmount) {
+        window.originalSetProductAmount(amount);
+      }
+      updateVesselTabVisibility(amount);
+    };
+    
+    return true;
+  }
+
+  // ========================================
+  // INITIALIZATION
+  // ========================================
+  function initialize() {
+    // Initialize state
+    state.currentVesselCount = DEFAULT_VESSEL_COUNT;
+    
+    // Clear any pre-selected options
+    clearAllPreselectedOptions();
+    
+    // Initialize components
+    initializeTabs();
+    initializeSelectionInputs();
+    
+    // Load saved selections
+    const hasLoadedSelections = storage.load();
+    if (hasLoadedSelections) {
+      restoreUIFromSelections();
+    }
+    updateSelectionDisplay(false);
+    
+    // Setup cleanup on page unload
+    const cleanup = debounce(storage.clear, 100);
+    window.addEventListener('beforeunload', cleanup);
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) cleanup();
+    });
+  }
+
+  // ========================================
+  // ENTRY POINT
+  // ========================================
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+  } else {
+    initialize();
+  }
+
+  // Setup product amount override with fallback attempts
+  if (!setupSetProductAmountOverride()) {
+    const retrySetup = debounce(() => {
+      if (!setupSetProductAmountOverride()) {
+        setTimeout(() => setupSetProductAmountOverride(), 1000);
+      }
+    }, 100);
+    retrySetup();
+  }
+
+  // ========================================
+  // PUBLIC API
+  // ========================================
+  window.pomcSystem = {
+    getCurrentVesselSelection: () => state.vesselSelections[state.activeVessel],
+    getAllVesselSelections: () => ({ ...state.vesselSelections }),
+    getVesselSelection: (vesselNumber) => state.vesselSelections[vesselNumber] || null,
+    setVesselSelection: function(vesselNumber, woodType, ropeType) {
+      if (vesselNumber >= 1 && vesselNumber <= 3) {
+        state.vesselSelections[vesselNumber].woodType = woodType;
+        state.vesselSelections[vesselNumber].ropeType = ropeType;
+        
+        const vesselPanel = document.getElementById(`tab${vesselNumber}`);
+        if (vesselPanel) {
+          // Update wood type selection
+          const woodInput = vesselPanel.querySelector(`input[name="wood_material_${vesselNumber}"][value="${woodType}"]`);
+          if (woodInput) {
+            woodInput.checked = true;
+            vesselPanel.querySelectorAll('.wood-type-label').forEach(label => {
+              label.classList.remove('active');
+            });
+            woodInput.closest('.wood-type-label').classList.add('active');
+          }
+          
+          // Update rope type selection
+          const ropeInput = vesselPanel.querySelector(`input[name="rope_material_${vesselNumber}"][value="${ropeType}"]`);
+          if (ropeInput) {
+            ropeInput.checked = true;
+            vesselPanel.querySelectorAll('.rope-type-label').forEach(label => {
+              label.classList.remove('active');
+            });
+            ropeInput.closest('.rope-type-label').classList.add('active');
+          }
         }
         
-        // Update rope type selection
-        const ropeInput = vesselPanel.querySelector(`input[name="rope_material_${vesselNumber}"][value="${ropeType}"]`);
-        if (ropeInput) {
-          ropeInput.checked = true;
-          vesselPanel.querySelectorAll('.rope-type-label').forEach(label => {
-            label.classList.remove('active');
-          });
-          ropeInput.closest('.rope-type-label').classList.add('active');
-        }
+        // Maintain UI state for this vessel
+        maintainVesselUIState(vesselNumber);
+        
+        const validation = validateVesselSelections();
+        showValidationFeedback(validation);
+        updateSelectionDisplay(false);
       }
-      
-      // Validate and show feedback
-      const validation = validateVesselSelections();
-      showValidationFeedback(validation);
-      
-      updateSelectionDisplay(false); // false indicates this is not a tab switch
-    }
-  }
+    },
+    clearVesselSelection: function(vesselNumber) {
+      if (vesselNumber >= 1 && vesselNumber <= 3) {
+        state.vesselSelections[vesselNumber] = { woodType: null, ropeType: null };
+        state.vesselUIState.delete(vesselNumber);
+        
+        const vesselPanel = document.getElementById(`tab${vesselNumber}`);
+        if (vesselPanel) {
+          // Clear all selections for this vessel
+          const vesselInputs = vesselPanel.querySelectorAll('input[name^="wood_material_"], input[name^="rope_material_"]');
+          vesselInputs.forEach(input => {
+            input.checked = false;
+            input.closest('label').classList.remove('active');
+          });
+        }
+        
+        storage.save();
+        updateSelectionDisplay(false);
+      }
+    },
+    clearSelections: function() {
+      storage.clear();
+      state.vesselUIState.clear();
+      clearAllPreselectedOptions();
+      updateSelectionDisplay(false);
+    },
+    switchToVessel: switchToVessel,
+    maintainVesselState: maintainVesselUIState,
+    restoreVesselState: restoreVesselUIState
+  };
 
-  // ========================================
-  // SCENARIO 5: ACCESSIBILITY FEATURES
-  // ========================================
-  // PLACEHOLDER STRUCTURE - DO NOT IMPLEMENT YET
-  // 
-  // Future accessibility features to implement:
-  // 
-  // 1. Keyboard Navigation Support:
-  //    - Tab navigation between vessel tabs
-  //    - Arrow keys for option selection
-  //    - Enter/Space for activation
-  //    - Escape to cancel
-  // 
-  // 2. Screen Reader Optimizations:
-  //    - ARIA labels for all interactive elements
-  //    - Live regions for dynamic updates
-  //    - Role attributes for custom components
-  //    - Descriptions for complex interactions
-  // 
-  // 3. Focus Management:
-  //    - Visible focus indicators
-  //    - Logical tab order
-  //    - Focus trapping in modals
-  //    - Focus restoration after actions
-  // 
-  // 4. High Contrast Support:
-  //    - Enhanced color contrast ratios
-  //    - Alternative visual indicators
-  //    - Reduced motion options
-  // 
-  // 5. Voice Control Support:
-  //    - Voice commands for navigation
-  //    - Speech recognition for selections
-  //    - Audio feedback for actions
-  // 
-  // Implementation structure when ready:
-  // 
-  // function initializeAccessibility() {
-  //   // Add keyboard event listeners
-  //   // Set up ARIA attributes
-  //   // Configure focus management
-  //   // Enable screen reader support
-  // }
-  // 
-  // function handleKeyboardNavigation(event) {
-  //   // Arrow key navigation
-  //   // Tab order management
-  //   // Enter/Space activation
-  // }
-  // 
-  // function updateAriaLabels() {
-  //   // Dynamic ARIA updates
-  //   // Live region announcements
-  //   // State descriptions
-  // }
-  // 
-  // function enableHighContrastMode() {
-  //   // Enhanced visual indicators
-  //   // Alternative color schemes
-  //   // Reduced motion support
-  // }
-  // ========================================
+})();
 </script>
