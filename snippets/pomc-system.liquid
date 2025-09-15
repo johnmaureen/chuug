@@ -457,6 +457,56 @@
     });
   }
 
+  function clearPreselectedOptionsForHiddenVessels(maxVesselCount) {
+    // Only clear options for vessels beyond the current count
+    for (let i = maxVesselCount + 1; i <= 3; i++) {
+      const vesselInputs = document.querySelectorAll(`input[name^="wood_material_${i}"], input[name^="rope_material_${i}"]`);
+      vesselInputs.forEach(input => {
+        input.checked = false;
+        const label = input.closest('label');
+        if (label) label.classList.remove('active');
+      });
+    }
+  }
+
+  function restoreValidVesselStates(maxVesselCount) {
+    // Restore UI state for vessels that are still visible
+    for (let vesselNum = 1; vesselNum <= maxVesselCount; vesselNum++) {
+      const selection = state.vesselSelections[vesselNum];
+      if (selection && (selection.woodType || selection.ropeType)) {
+        const vesselPanel = document.getElementById(`tab${vesselNum}`);
+        if (!vesselPanel) continue;
+
+        // Restore wood type selection
+        if (selection.woodType) {
+          const woodInput = vesselPanel.querySelector(`input[name="wood_material_${vesselNum}"][value="${selection.woodType}"]`);
+          if (woodInput) {
+            woodInput.checked = true;
+            vesselPanel.querySelectorAll('.wood-type-label').forEach(label => {
+              label.classList.remove('active');
+            });
+            woodInput.closest('.wood-type-label').classList.add('active');
+          }
+        }
+        
+        // Restore rope type selection
+        if (selection.ropeType) {
+          const ropeInput = vesselPanel.querySelector(`input[name="rope_material_${vesselNum}"][value="${selection.ropeType}"]`);
+          if (ropeInput) {
+            ropeInput.checked = true;
+            vesselPanel.querySelectorAll('.rope-type-label').forEach(label => {
+              label.classList.remove('active');
+            });
+            ropeInput.closest('.rope-type-label').classList.add('active');
+          }
+        }
+
+        // Update the UI state for this vessel
+        maintainVesselUIState(vesselNum);
+      }
+    }
+  }
+
   function restoreUIFromSelections() {
     for (let vesselNum = 1; vesselNum <= 3; vesselNum++) {
       const selection = state.vesselSelections[vesselNum];
@@ -811,6 +861,8 @@
     // Check if current active vessel is beyond the new count
     if (state.activeVessel > vesselCountNum) {
       state.activeVessel = 1;
+      // Immediately switch to vessel 1 to ensure proper state restoration
+      switchToVessel(1);
     }
     
     // Update vessel tab buttons visibility
@@ -857,9 +909,16 @@
     
     storage.save();
     
-    // Clear pre-selected options after vessel count change
+    // Clear pre-selected options only for vessels beyond the current count, then restore valid vessels
     requestAnimationFrame(() => {
-      clearAllPreselectedOptions();
+      clearPreselectedOptionsForHiddenVessels(vesselCountNum);
+      restoreValidVesselStates(vesselCountNum);
+      
+      // Ensure the current active vessel's state is properly restored
+      if (state.activeVessel <= vesselCountNum) {
+        restoreVesselUIState(state.activeVessel);
+      }
+      
       updateSelectionDisplay(false);
     });
   }
