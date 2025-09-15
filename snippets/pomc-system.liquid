@@ -251,8 +251,8 @@
 
       <div class="your-selection tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
         <p class="tw-text-white ">Your Selection</p>
-        <!-- if vessels count is 3 class should have result-3 -->
-        <div class="selection-result-wrap result-3 ">
+        <!-- Dynamic vessel count - class will be set by JavaScript -->
+        <div class="selection-result-wrap">
 
           <p class="no-selection-text">Your selection will appear here</p>
 
@@ -320,9 +320,11 @@
   let vesselSelections = { ...defaultVesselSelections };
   let activeVessel = 1; // Default active vessel
   let updateTimeout; // For debouncing updates
+  let validationTimeout; // For debouncing validation
 
   // localStorage key for vessel selections
   const STORAGE_KEY = 'chuug_vessel_selections';
+  let currentVesselCount = 3; // Track current vessel count
 
   // Function to save vessel selections to localStorage
   function saveVesselSelections() {
@@ -354,7 +356,7 @@
     try {
       localStorage.removeItem(STORAGE_KEY);
       vesselSelections = { ...defaultVesselSelections };
-      updateSelectionDisplay();
+      updateSelectionDisplay(false); // false indicates this is not a tab switch
       console.log('Vessel selections cleared from localStorage');
     } catch (error) {
       console.warn('Could not clear vessel selections from localStorage:', error);
@@ -389,13 +391,15 @@
 
         // Update active vessel
         activeVessel = vesselNumber;
-        updateSelectionDisplay();
+        updateSelectionDisplay(true); // true indicates this is a tab switch
       });
     });
   });
 
   // Handle wood type selection
   document.addEventListener('DOMContentLoaded', function() {
+    // Initialize vessel count to 3 by default
+    currentVesselCount = 3;
     // Add event listeners for wood type selection
     document.querySelectorAll('input[name="wood_material"]').forEach(input => {
       input.addEventListener('change', function() {
@@ -411,9 +415,19 @@
         });
         this.closest('.wood-type-label').classList.add('active');
         
-        // Save to localStorage
-        saveVesselSelections();
-        updateSelectionDisplay();
+        // Debounced updates for performance
+        clearTimeout(updateTimeout);
+        clearTimeout(validationTimeout);
+        
+        updateTimeout = setTimeout(() => {
+          saveVesselSelections();
+          updateSelectionDisplay(false); // false indicates this is an actual selection, not tab switch
+        }, 100);
+        
+        validationTimeout = setTimeout(() => {
+          const validation = validateVesselSelections();
+          showValidationFeedback(validation);
+        }, 300);
       });
     });
 
@@ -432,9 +446,19 @@
         });
         this.closest('.rope-type-label').classList.add('active');
         
-        // Save to localStorage
-        saveVesselSelections();
-        updateSelectionDisplay();
+        // Debounced updates for performance
+        clearTimeout(updateTimeout);
+        clearTimeout(validationTimeout);
+        
+        updateTimeout = setTimeout(() => {
+          saveVesselSelections();
+          updateSelectionDisplay(false); // false indicates this is an actual selection, not tab switch
+        }, 100);
+        
+        validationTimeout = setTimeout(() => {
+          const validation = validateVesselSelections();
+          showValidationFeedback(validation);
+        }, 300);
       });
     });
 
@@ -444,7 +468,7 @@
       // Restore UI state from saved selections
       restoreUIFromSelections();
     }
-    updateSelectionDisplay();
+    updateSelectionDisplay(false); // false indicates this is not a tab switch
 
     // Clear localStorage when user navigates away from the page
     window.addEventListener('beforeunload', function() {
@@ -495,12 +519,18 @@
 
 
   // Function to update the selection display
-  function updateSelectionDisplay() {
+  function updateSelectionDisplay(isTabSwitch = false) {
     const selectionWrap = document.querySelector('.selection-result-wrap');
     const noSelectionText = selectionWrap.querySelector('.no-selection-text');
     
-    // Clear existing results
-    selectionWrap.querySelectorAll('.result-item').forEach(item => item.remove());
+    // Only remove the active vessel's result item, preserve others
+    const activeResultItem = selectionWrap.querySelector(`.result-item[data-vessel="${activeVessel}"]`);
+    if (activeResultItem) {
+      activeResultItem.remove();
+    }
+    
+    // Clear CSS classes
+    selectionWrap.classList.remove('result-1', 'result-2', 'result-3');
     
     // Check if we have any selections (complete or partial)
     let hasAnySelections = false;
@@ -517,92 +547,130 @@
       }
     }
     
-    // If no selections at all, just show the "Your selection will appear here" text
-    if (!hasAnySelections) {
+    // Hide the "Your selection will appear here" text if we have any selections or if we're updating the active vessel
+    if (hasAnySelections || vesselSelections[activeVessel].woodType || vesselSelections[activeVessel].ropeType) {
+      noSelectionText.style.display = 'none';
+    } else {
+      // If no selections at all, show the "Your selection will appear here" text
       noSelectionText.style.display = 'block';
       return;
     }
     
-    // Hide the "Your selection will appear here" text
-    noSelectionText.style.display = 'none';
+    console.log('updateSelectionDisplay:', {
+      currentVesselCount,
+      activeVessel,
+      vesselSelections
+    });
+
+    // Only create/update the active vessel's result item
+    const vesselNum = activeVessel;
+    const selection = vesselSelections[vesselNum];
     
-    // Show vessels that have selections OR are currently active
-    for (let vesselNum = 1; vesselNum <= 3; vesselNum++) {
-      const selection = vesselSelections[vesselNum];
+    // Create result item for this vessel
+    const resultItem = document.createElement('div');
+    resultItem.className = 'result-item';
+    resultItem.setAttribute('data-vessel', vesselNum);
+    
+    // Create image element
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'img-wrap';
+    
+    const img = document.createElement('img');
+    
+    // Create text element
+    const text = document.createElement('p');
+    
+    if (selection.woodType && selection.ropeType) {
+      // Complete selection - show actual image
+      const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
       
-      // Skip vessels with no selections unless they're the active vessel
-      if (!selection.woodType && !selection.ropeType && vesselNum !== activeVessel) {
-        continue;
-      }
-      
-      // Create result item for this vessel
-      const resultItem = document.createElement('div');
-      resultItem.className = 'result-item';
-      resultItem.setAttribute('data-vessel', vesselNum);
-      
-      // Apply opacity to non-active vessels
-      if (vesselNum !== activeVessel) {
-        resultItem.style.opacity = '0.8';
-        resultItem.style.transition = 'opacity 0.3s ease';
-      }
-      
-      // Create image element
-      const imgWrap = document.createElement('div');
-      imgWrap.className = 'img-wrap';
-      
-      const img = document.createElement('img');
-      
-      // Create text element
-      const text = document.createElement('p');
-      
-      if (selection.woodType && selection.ropeType) {
-        // Complete selection - show actual image
-        const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
-        img.src = `{{ 'dusk_natural.png' | asset_url }}`.replace('dusk_natural.png', imageName);
-        img.alt = `${selection.woodType} ${selection.ropeType} Vessel`;
-        text.textContent = `${selection.woodType} • ${selection.ropeType}`;
+      // Set alt text
+      img.alt = `${selection.woodType} ${selection.ropeType} Vessel`;
+      text.textContent = `${selection.woodType} • ${selection.ropeType}`;
         
-        // Add loading state while image loads
-        resultItem.classList.add('loading');
-        img.onload = function() {
-          resultItem.classList.remove('loading');
+      // Check if this image is already loaded in the DOM to avoid loading state
+      const existingImg = document.querySelector(`img[src*="${imageName}"]`);
+      if (existingImg && existingImg.complete) {
+        // Image already exists and is loaded, use it directly
+        img.src = existingImg.src;
+        img.style.display = 'block';
+      } else {
+        // Hide image initially and load it
+        img.style.display = 'none';
+        
+        // Only add loading state if this is not just a tab switch AND this is the active vessel
+        if (!isTabSwitch && vesselNum === activeVessel) {
+          resultItem.classList.add('loading');
+        }
+          
+        // Create a new image to preload
+        const preloadImg = new Image();
+        preloadImg.onload = function() {
+          // Image loaded successfully, show it
+          img.src = preloadImg.src;
+          img.style.display = 'block';
+          if (!isTabSwitch && vesselNum === activeVessel) {
+            resultItem.classList.remove('loading');
+          }
         };
-        img.onerror = function() {
-          resultItem.classList.remove('loading');
+        preloadImg.onerror = function() {
+          // Image failed to load, show placeholder
+          img.style.display = 'block';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
+          if (!isTabSwitch && vesselNum === activeVessel) {
+            resultItem.classList.remove('loading');
+          }
           console.error('Failed to load image:', imageName);
         };
-      } else if (selection.woodType || selection.ropeType) {
-        // Partial selection - show loading state
-        resultItem.classList.add('loading');
-        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
-        img.alt = 'Loading...';
         
-        // Show partial selection text
-        const selectedParts = [];
-        if (selection.woodType) selectedParts.push(selection.woodType);
-        if (selection.ropeType) selectedParts.push(selection.ropeType);
-        text.textContent = `${selectedParts.join(' • ')} • ...`;
-      } else {
-        // No selections but this is the active vessel - show placeholder
-        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
-        img.alt = 'No selection';
-        text.textContent = `Vessel #${vesselNum}`;
-        text.style.opacity = '0.5';
-        
-        // Mark as active vessel (for opacity logic)
-        resultItem.classList.add('active-vessel');
+        // Start loading the image
+        preloadImg.src = `{{ 'dusk_natural.png' | asset_url }}`.replace('dusk_natural.png', imageName);
       }
+    } else if (selection.woodType || selection.ropeType) {
+      // Partial selection - show loading state only if not a tab switch AND this is the active vessel
+      if (!isTabSwitch && vesselNum === activeVessel) {
+        resultItem.classList.add('loading');
+      }
+      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
+      img.alt = (isTabSwitch || vesselNum !== activeVessel) ? 'Partial selection' : 'Loading...';
       
-      imgWrap.appendChild(img);
-      resultItem.appendChild(imgWrap);
-      resultItem.appendChild(text);
+      // Show partial selection text
+      const selectedParts = [];
+      if (selection.woodType) selectedParts.push(selection.woodType);
+      if (selection.ropeType) selectedParts.push(selection.ropeType);
+      text.textContent = `${selectedParts.join(' • ')} • ...`;
+    } else {
+      // No selections but this is the active vessel - show placeholder
+      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
+      img.alt = 'No selection';
+      text.textContent = `Vessel #${vesselNum}`;
+      text.style.opacity = '0.5';
       
-      // Make result item clickable to switch to that vessel
-      resultItem.addEventListener('click', function() {
-        switchToVessel(vesselNum);
-      });
+      // Mark as active vessel (for opacity logic and indicator)
+      resultItem.classList.add('active-vessel');
       
-      selectionWrap.appendChild(resultItem);
+      // Add simple editing indicator
+      {% comment %} const editingIndicator = document.createElement('div');
+      editingIndicator.className = 'editing-indicator';
+      editingIndicator.textContent = 'EDITING';
+      resultItem.appendChild(editingIndicator); {% endcomment %}
+    }
+    
+    imgWrap.appendChild(img);
+    resultItem.appendChild(imgWrap);
+    resultItem.appendChild(text);
+      
+    // Make result item clickable to switch to that vessel
+    resultItem.addEventListener('click', function() {
+      switchToVessel(vesselNum);
+    });
+    
+    selectionWrap.appendChild(resultItem);
+    
+    // Apply the correct CSS class based on number of vessels shown
+    const vesselCount = selectionWrap.querySelectorAll('.result-item').length;
+    if (vesselCount > 0) {
+      selectionWrap.classList.add(`result-${vesselCount}`);
     }
   }
 
@@ -617,9 +685,127 @@
     }
   }
 
+  // Function to switch to vessel #1 (called when vessel count changes)
+  function switchToVesselOne() {
+    switchToVessel(1);
+  }
+
+  // Function to update vessel tab visibility based on count
+  function updateVesselTabVisibility(vesselCount) {
+    const vesselCountNum = parseInt(vesselCount);
+    currentVesselCount = vesselCountNum; // Update global vessel count
+    
+    console.log('updateVesselTabVisibility called:', {
+      vesselCount,
+      vesselCountNum,
+      currentActiveVessel: activeVessel,
+      currentVesselCount
+    });
+    
+    // Check if current active vessel is beyond the new count
+    if (activeVessel > vesselCountNum) {
+      console.log('Active vessel beyond count, switching to vessel #1');
+      // If active vessel is beyond new count, switch to vessel #1
+      activeVessel = 1;
+    }
+    
+    // Update vessel tab buttons visibility
+    for (let i = 1; i <= 3; i++) {
+      const tabButton = document.querySelector(`.vessel_number_${i}`);
+      const tabPanel = document.querySelector(`#tab${i}`);
+      
+      if (tabButton && tabPanel) {
+        if (i <= vesselCountNum) {
+          tabButton.style.display = 'flex';
+          // Show only the active vessel panel, hide others
+          if (i === activeVessel) {
+            tabPanel.style.display = 'block';
+            tabButton.classList.remove('inactive');
+            tabButton.classList.add('active');
+          } else {
+            tabPanel.style.display = 'none';
+            tabButton.classList.remove('active');
+            tabButton.classList.add('inactive');
+          }
+        } else {
+          // Hide tabs beyond the vessel count
+          tabButton.style.display = 'none';
+          tabPanel.style.display = 'none';
+          tabButton.classList.remove('active', 'inactive');
+        }
+      }
+    }
+    
+    // Update selection display to reflect new vessel count
+    updateSelectionDisplay(false); // false indicates this is not a tab switch
+  }
+
+  // Store the original setProductAmount function if it exists
+  if (typeof window.setProductAmount === 'function') {
+    window.originalSetProductAmount = window.setProductAmount;
+  }
+
+  // Override the global setProductAmount function to switch to vessel #1
+  window.setProductAmount = function(amount) {
+    console.log('setProductAmount called with:', amount);
+    
+    // Call the original function if it exists
+    if (window.originalSetProductAmount) {
+      window.originalSetProductAmount(amount);
+    } else {
+      console.log('Original setProductAmount not found, handling vessel count change directly');
+    }
+    
+    // Update vessel tab visibility and switch to vessel #1 immediately
+    updateVesselTabVisibility(amount);
+  };
+
   // Function to get current vessel selection
   function getCurrentVesselSelection() {
     return vesselSelections[activeVessel];
+  }
+
+  // Function to validate vessel selections
+  function validateVesselSelections() {
+    const errors = [];
+    const warnings = [];
+    
+    for (let vesselNum = 1; vesselNum <= 3; vesselNum++) {
+      const selection = vesselSelections[vesselNum];
+      
+      // Check for partial selections
+      if ((selection.woodType && !selection.ropeType) || (!selection.woodType && selection.ropeType)) {
+        warnings.push(`Vessel #${vesselNum} has incomplete selection`);
+      }
+      
+      // Check for invalid combinations (if any business rules exist)
+      if (selection.woodType && selection.ropeType) {
+        // Add any specific validation rules here
+        // Example: if (selection.woodType === 'MIDNIGHT' && selection.ropeType === 'NATURAL') {
+        //   warnings.push(`Vessel #${vesselNum} has unusual combination`);
+        // }
+      }
+    }
+    
+    return { errors, warnings };
+  }
+
+  // Function to show validation feedback
+  function showValidationFeedback(validation) {
+    // Remove existing feedback
+    const existingFeedback = document.querySelector('.validation-feedback');
+    if (existingFeedback) {
+      existingFeedback.remove();
+    }
+    
+    if (validation.warnings.length > 0) {
+      const feedback = document.createElement('div');
+      feedback.className = 'validation-feedback tw-mt-2 tw-p-2 tw-bg-yellow-100 tw-text-yellow-800 tw-rounded tw-text-sm';
+      feedback.innerHTML = validation.warnings.map(warning => `⚠️ ${warning}`).join('<br>');
+      
+      const selectionWrap = document.querySelector('.selection-result-wrap');
+      selectionWrap.parentNode.insertBefore(feedback, selectionWrap.nextSibling);
+    }
   }
 
   // Function to set vessel selection programmatically
@@ -652,7 +838,74 @@
         }
       }
       
-      updateSelectionDisplay();
+      // Validate and show feedback
+      const validation = validateVesselSelections();
+      showValidationFeedback(validation);
+      
+      updateSelectionDisplay(false); // false indicates this is not a tab switch
     }
   }
+
+  // ========================================
+  // SCENARIO 5: ACCESSIBILITY FEATURES
+  // ========================================
+  // PLACEHOLDER STRUCTURE - DO NOT IMPLEMENT YET
+  // 
+  // Future accessibility features to implement:
+  // 
+  // 1. Keyboard Navigation Support:
+  //    - Tab navigation between vessel tabs
+  //    - Arrow keys for option selection
+  //    - Enter/Space for activation
+  //    - Escape to cancel
+  // 
+  // 2. Screen Reader Optimizations:
+  //    - ARIA labels for all interactive elements
+  //    - Live regions for dynamic updates
+  //    - Role attributes for custom components
+  //    - Descriptions for complex interactions
+  // 
+  // 3. Focus Management:
+  //    - Visible focus indicators
+  //    - Logical tab order
+  //    - Focus trapping in modals
+  //    - Focus restoration after actions
+  // 
+  // 4. High Contrast Support:
+  //    - Enhanced color contrast ratios
+  //    - Alternative visual indicators
+  //    - Reduced motion options
+  // 
+  // 5. Voice Control Support:
+  //    - Voice commands for navigation
+  //    - Speech recognition for selections
+  //    - Audio feedback for actions
+  // 
+  // Implementation structure when ready:
+  // 
+  // function initializeAccessibility() {
+  //   // Add keyboard event listeners
+  //   // Set up ARIA attributes
+  //   // Configure focus management
+  //   // Enable screen reader support
+  // }
+  // 
+  // function handleKeyboardNavigation(event) {
+  //   // Arrow key navigation
+  //   // Tab order management
+  //   // Enter/Space activation
+  // }
+  // 
+  // function updateAriaLabels() {
+  //   // Dynamic ARIA updates
+  //   // Live region announcements
+  //   // State descriptions
+  // }
+  // 
+  // function enableHighContrastMode() {
+  //   // Enhanced visual indicators
+  //   // Alternative color schemes
+  //   // Reduced motion support
+  // }
+  // ========================================
 </script>

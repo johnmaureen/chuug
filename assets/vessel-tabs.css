@@ -160,6 +160,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	position: relative;
 }
 
 .selection-result-wrap .result-item .img-wrap {
@@ -193,6 +194,10 @@
 	position: relative;
 	background: #1a1a1a;
 	border-radius: 8px;
+	min-height: 152px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .selection-result-wrap .result-item.loading .img-wrap::after {
@@ -210,11 +215,18 @@
 }
 
 .selection-result-wrap .result-item.loading .img-wrap img {
-	opacity: 0.3;
+	opacity: 0;
+	display: none;
 }
 
 .selection-result-wrap .result-item.loading p {
 	opacity: 0.5;
+}
+
+/* Hide alt text when image is loading or not loaded */
+.selection-result-wrap .result-item .img-wrap img[style*="display: none"] {
+	opacity: 0;
+	visibility: hidden;
 }
 
 @keyframes spin {
@@ -222,13 +234,40 @@
 	100% { transform: rotate(360deg); }
 }
 
+.selection-result-wrap.result-1 {
+	gap: 0;
+	justify-content: center;
+}
+
+.selection-result-wrap.result-2 {
+	gap: 30px;
+	justify-content: center;
+}
+
 .selection-result-wrap.result-3 {
 	gap: 20px;
+	justify-content: center;
 }
 
 /* Active vessel styles - just opacity control */
 .selection-result-wrap .result-item.active-vessel {
 	opacity: 1 !important;
+}
+
+/* Simple editing indicator */
+.selection-result-wrap .result-item .editing-indicator {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	background: #dbe188;
+	color: #0d2026;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 2px 6px;
+	border-radius: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	z-index: 3;
 }
 
 /* Hover effects for better UX */
