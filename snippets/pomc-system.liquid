@@ -1,31 +1,32 @@
+
 <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
-      <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
-        <span>{{ section.settings.vessel_question }}</span>
-        {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
+      <div class="tw-flex tw-whitespace-nowrap">
+        <div class="label-text"><span>1</span>{{ section.settings.vessel_question }} 
+          {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
+        </div>
       </div>
 
-      <div class="tw-flex tw-flex-wrap tw-items-end tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-px-2 md:tw-flex-nowrap">
+      <div class="vessel-number-wrap tw-flex tw-flex-wrap tw-items-end tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-px-2 md:tw-flex-nowrap">
         <div class="tw-w-full">
           <label
             class="tw-cursor-pointer"
           >
             <div
-              onclick="setProductAmount('1')" class="product_amount_label_1 tw-h-[7rem] tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
-
+              onclick="setProductAmount('1')" class="vessel_number_item product_amount_label_1"
             >
-              <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+              <span class="vessel-multiplier tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
                 >1X</span
               >
-              <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+              <div class="vessel-price-wrap tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
                 <span
-                  class="product_amount_label_1_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                  class="product_amount_original_price product_amount_label_1_compare_at_price tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
                   no_engraving_compare_at_price="{{ section.settings.one_chuug_product.compare_at_price | money }}"
                   engraving_compare_at_price="{{  section.settings.one_chuug_product.variants[1].compare_at_price | money }}"
                 >
                   {{ section.settings.one_chuug_product.variants[0].compare_at_price | money }}
                 </span>
                 <span
-                  class="product_amount_label_1_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                  class="product_amount_price product_amount_label_1_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
                   no_engraving_price="{{ section.settings.one_chuug_product.price | money }}"
                   engraving_price="{{ section.settings.one_chuug_product.variants[1].price | money }}"
                 >
@@ -37,57 +38,91 @@
         </div>
         <div class="tw-w-full">
           <label
-            onclick="setProductAmount('2')"
-            class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;
+            class="tw-cursor-pointer"
           >
-            <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-              <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+            <div onclick="setProductAmount('2')"
+            class="vessel_number_item product_amount_label_2">
+              <span class="promo-label">MOST POPULAR</span>
+              <span class="vessel-multiplier tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
                 >2X</span
               >
-              <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+              <div class="vessel-price-wrap tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
                 <span
-                  class="product_amount_label_2_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                  class="product_amount_original_price product_amount_label_2_compare_at_price tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
                   no_engraving_compare_at_price="{{ section.settings.two_chuug_product.compare_at_price | money }}"
                   engraving_compare_at_price="{{ section.settings.two_chuug_product.variants[1].compare_at_price | money }}"
                 >
                   {{ section.settings.two_chuug_product.variants[0].compare_at_price | money }}
                 </span>
                 <span
-                  class="product_amount_label_2_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                  class="product_amount_price product_amount_label_2_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
                   no_engraving_price="{{ section.settings.two_chuug_product.price | money }}"
                   engraving_price="{{ section.settings.two_chuug_product.variants[1].price | money }}"
                 >
                   {{- section.settings.two_chuug_product.variants[0].price | money -}}
                 </span>
               </div>
+              <span class="discount-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
+                  <g clip-path="url(#clip0_2058_1100)">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.206055 5.61713L5.20605 0.617126H10.2061V5.61713L5.20605 10.6171L0.206055 5.61713ZM7.39355 4.36713C6.87579 4.36713 6.45605 3.9474 6.45605 3.42963C6.45605 2.91186 6.87579 2.49213 7.39355 2.49213C7.91132 2.49213 8.33105 2.91186 8.33105 3.42963C8.33105 3.9474 7.91132 4.36713 7.39355 4.36713Z" fill="#A43223"/>
+                  </g>
+                  <defs>
+                  <clipPath id="clip0_2058_1100">
+                  <rect width="10" height="10" fill="white" transform="matrix(-1 0 0 1 10.2061 0.617126)"/>
+                  </clipPath>
+                  </defs>
+                </svg>
+                ONLY £39 EACH!
+              </span>
             </div>
+            
+
           </label>
         </div>
         <div class="tw-w-full">
           <label
-            onclick="setProductAmount('3')"
-            class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;"
+            class="tw-cursor-pointer"
           >
-            <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-              <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+            <div
+            onclick="setProductAmount('3')"
+            class="vessel_number_item product_amount_label_3">
+              <span class="promo-label">BEST VALUE</span>
+
+              <span class="vessel-multiplier tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
                 >3X</span
               >
-              <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+              <div class="vessel-price-wrap tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
                 <span
-                  class="product_amount_label_3_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                  class="product_amount_original_price product_amount_label_3_compare_at_price tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
                   no_engraving_compare_at_price="{{ section.settings.three_chuug_product.compare_at_price | money }}"
                   engraving_compare_at_price="{{ section.settings.three_chuug_product.variants[1].compare_at_price | money }}"
                 >
                   {{ section.settings.three_chuug_product.variants[0].compare_at_price | money }}
                 </span>
                 <span
-                  class="product_amount_label_3_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                  class="product_amount_price product_amount_label_3_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
                   no_engraving_price="{{ section.settings.three_chuug_product.price | money }}"
                   engraving_price="{{ section.settings.three_chuug_product.variants[1].price | money }}"
                 >
                   {{- section.settings.three_chuug_product.variants[0].price | money -}}
                 </span>
               </div>
+
+              <span class="discount-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
+                  <g clip-path="url(#clip0_2058_1100)">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M0.206055 5.61713L5.20605 0.617126H10.2061V5.61713L5.20605 10.6171L0.206055 5.61713ZM7.39355 4.36713C6.87579 4.36713 6.45605 3.9474 6.45605 3.42963C6.45605 2.91186 6.87579 2.49213 7.39355 2.49213C7.91132 2.49213 8.33105 2.91186 8.33105 3.42963C8.33105 3.9474 7.91132 4.36713 7.39355 4.36713Z" fill="#A43223"/>
+                  </g>
+                  <defs>
+                  <clipPath id="clip0_2058_1100">
+                  <rect width="10" height="10" fill="white" transform="matrix(-1 0 0 1 10.2061 0.617126)"/>
+                  </clipPath>
+                  </defs>
+                </svg>
+                EXTRA £45 OFF!
+              </span>
+
             </div>
           </label>
         </div>
@@ -95,7 +130,7 @@
     </div>
     <div class="customize-your-vessel tw-flex tw-flex-col tw-text-white tw-text-[1.6rem] tw-font-semibold">
       <div class="tw-flex tw-gap-[1rem]">
-        <span>{{ section.settings.customise_vessel_question }}</span>
+        <div class="label-text"><span>2</span>{{ section.settings.customise_vessel_question }}</div>
         {% for block in section.blocks %}
           {%- case block.type -%}
             {%- when 'modal' -%}
@@ -233,13 +268,13 @@
     <div class="tw-flex tw-flex-col">
       <button
         id="add-multiple-products"
-        onclick="handleATCbutton()"
+        onclick="handlePersonalizeVessel()"
         type="submit"
         name="add"
         disabled
-        class="product-form__submit tw-whitespace-nowrap tw-flex tw-justify-center tw-items-center tw-gap-x-[0.8rem] cta-button tw-mt-[2rem] tw-uppercase tw-text-white tw-text-[2rem] tw-font-bold tw-w-full tw-bg-no-repeat tw-h-[7rem] tw-rounded-[1.25em] lg:tw-mt-[4rem]"
+        class="product-form__submit tw-whitespace-nowrap tw-flex tw-justify-center tw-items-center tw-gap-x-[0.8rem] cta-button  tw-uppercase tw-text-white tw-text-[2rem] tw-font-bold tw-w-full tw-bg-no-repeat tw-h-[7rem] tw-rounded-[1.25em] "
       >
-        {{ section.settings.button_text }} |
+        PERSONALIZE YOURS |
         <div
           class="cta-product-price tw-whitespace-nowrap"
         ></div>
@@ -259,6 +294,10 @@
 <script>
 (function() {
   'use strict';
+
+
+
+  
 
   // ========================================
   // CONSTANTS AND INITIAL STATE
