@@ -291,6 +291,78 @@
       </div>
     </div>
 
+<!-- Include Modal CSS -->
+{{ 'pomc-system.css' | asset_url | stylesheet_tag }}
+
+<!-- Mini ATC Modal -->
+<div id="mini-atc-modal" class="mini-atc-modal">
+  <div class="mini-atc-modal__overlay"></div>
+  <div class="mini-atc-modal__container">
+    <!-- Fixed Header -->
+    <div class="mini-atc-modal__header">
+      <h2 class="mini-atc-modal__title">Personalise Your CHUUG</h2>
+      <button class="mini-atc-modal__close" onclick="closeMiniATCModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Scrollable Content -->
+    <div class="mini-atc-modal__content">
+      <!-- Product Image -->
+      <div class="mini-atc-modal__product-image">
+        <img id="mini-atc-product-img" src="" alt="CHUUG Vessel" />
+        <div class="mini-atc-modal__image-dots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+      
+      <!-- Personalization Options -->
+      <div class="mini-atc-modal__personalization">
+        <div class="mini-atc-modal__personalization-header">
+          <div class="mini-atc-modal__personalization-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 1L12.5 6.5L18.5 7.5L14.5 12L15.5 18L10 15L4.5 18L5.5 12L1.5 7.5L7.5 6.5L10 1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Add a Personalised Coin Engraving?</h3>
+          <a href="#" class="mini-atc-modal__design-link">Can I see the design?</a>
+        </div>
+        
+        <div class="mini-atc-modal__toggle-container">
+          <label class="mini-atc-modal__toggle">
+            <input type="checkbox" id="engraving-toggle" checked>
+            <span class="mini-atc-modal__toggle-slider"></span>
+          </label>
+        </div>
+        
+        <button class="mini-atc-modal__complete-set-btn">Complete Set</button>
+      </div>
+    </div>
+    
+    <!-- Fixed Footer -->
+    <div class="mini-atc-modal__footer">
+      <div class="mini-atc-modal__subtotal">
+        <span class="mini-atc-modal__subtotal-label">Subtotal</span>
+        <div class="mini-atc-modal__pricing">
+          <span class="mini-atc-modal__current-price" id="mini-atc-current-price">$78.00</span>
+          <span class="mini-atc-modal__original-price" id="mini-atc-original-price">$190.00</span>
+        </div>
+        <div class="mini-atc-modal__savings">
+          <span class="mini-atc-modal__savings-text">You Saved $45.64</span>
+        </div>
+      </div>
+      
+      <button class="mini-atc-modal__add-to-cart-btn" onclick="addToCartFromModal()">
+        ADD TO CART
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function() {
   'use strict';
@@ -1062,6 +1134,78 @@
     }, 100);
     retrySetup();
   }
+
+  // ========================================
+  // MINI ATC MODAL FUNCTIONS
+  // ========================================
+  function handlePersonalizeVessel() {
+    // Get current vessel selections to populate modal
+    const currentSelections = state.vesselSelections[state.activeVessel];
+    const vesselCount = state.currentVesselCount;
+    
+    // Calculate pricing based on current selections
+    updateModalPricing(vesselCount, currentSelections);
+    
+    // Update product image based on current selection
+    updateModalProductImage(currentSelections);
+    
+    // Show the modal
+    showMiniATCModal();
+  }
+
+  function showMiniATCModal() {
+    const modal = document.getElementById('mini-atc-modal');
+    if (modal) {
+      modal.classList.add('mini-atc-modal--active');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+  }
+
+  function closeMiniATCModal() {
+    const modal = document.getElementById('mini-atc-modal');
+    if (modal) {
+      modal.classList.remove('mini-atc-modal--active');
+      document.body.style.overflow = ''; // Restore scrolling
+    }
+  }
+
+  function updateModalPricing(vesselCount, selections) {
+    // This would integrate with your existing pricing logic
+    // For now, using placeholder values
+    const currentPriceEl = document.getElementById('mini-atc-current-price');
+    const originalPriceEl = document.getElementById('mini-atc-original-price');
+    
+    if (currentPriceEl && originalPriceEl) {
+      // You can integrate this with your existing price calculation logic
+      currentPriceEl.textContent = '$78.00';
+      originalPriceEl.textContent = '$190.00';
+    }
+  }
+
+  function updateModalProductImage(selections) {
+    const productImg = document.getElementById('mini-atc-product-img');
+    if (productImg && selections.woodType && selections.ropeType) {
+      const imageName = `${selections.woodType.toLowerCase()}_${selections.ropeType.toLowerCase()}.png`;
+      productImg.src = `{{ 'dusk_natural.png' | asset_url }}`.replace('dusk_natural.png', imageName);
+    } else {
+      // Default image
+      productImg.src = `{{ 'dusk_natural.png' | asset_url }}`;
+    }
+  }
+
+  function addToCartFromModal() {
+    // This would integrate with your existing add to cart logic
+    // For now, just close the modal
+    closeMiniATCModal();
+    
+    // You can add your cart logic here
+    console.log('Adding to cart from modal...');
+  }
+
+  // Make functions globally available
+  window.handlePersonalizeVessel = handlePersonalizeVessel;
+  window.closeMiniATCModal = closeMiniATCModal;
+  window.addToCartFromModal = addToCartFromModal;
 
   // ========================================
   // PUBLIC API
