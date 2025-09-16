@@ -57,20 +57,25 @@
 .mini-atc-modal__header {
 	position: sticky;
 	top: 0;
-	background: #2d5a6b;
-	color: white;
-	padding: 1.5rem 2rem;
+	z-index: 10;
 	display: flex;
+	height: 64px;
+	padding: 20px 27px;
 	justify-content: space-between;
 	align-items: center;
-	z-index: 10;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	align-self: stretch;
+	border-radius: 0 0 10px 10px;
+	background: #0d2026;
 }
 
 .mini-atc-modal__title {
-	font-size: 1.5rem;
-	font-weight: 600;
 	margin: 0;
+	color: #fff;
+	font-family: Gabarito;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
 }
 
 .mini-atc-modal__close {
@@ -94,13 +99,16 @@
 .mini-atc-modal__content {
 	flex: 1;
 	overflow-y: auto;
-	padding: 2rem;
-	background: white;
+	padding: 23px;
+	background: #f2f2ee;
+	box-shadow: -20px 0 24px 0 rgba(0, 0, 0, 0.2);
+	gap: 20px;
 }
 
 .mini-atc-modal__product-image {
 	text-align: center;
 	margin-bottom: 2rem;
+	position: relative;
 }
 
 .mini-atc-modal__product-image img {
@@ -109,64 +117,94 @@
 	border-radius: 1rem;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
+.personalization-cards {
+	display: flex;
+	gap: 20px;
+	flex-direction: column;
+}
 .mini-atc-modal__image-dots {
 	display: flex;
 	justify-content: center;
 	gap: 0.5rem;
 	margin-top: 1rem;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 31px;
 }
 
 .mini-atc-modal__image-dots .dot {
-	width: 8px;
-	height: 8px;
+	width: 11.305px;
+	height: 11.305px;
 	border-radius: 50%;
-	background: #e5e5e5;
+	background: #a3a3a3;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 }
 
 .mini-atc-modal__image-dots .dot.active {
-	background: #2d5a6b;
+	background: #000;
+	width: 28.262px;
+	height: 11.305px;
 }
 
 /* Personalization Section */
 .mini-atc-modal__personalization {
-	background: #f8f9fa;
-	border-radius: 1rem;
-	padding: 1.5rem;
-	margin-bottom: 2rem;
+	display: flex;
+	padding: 20px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 20px;
+	border-radius: 10px;
+	background: #fff;
+	box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
 }
 
 .mini-atc-modal__personalization-header {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 0.75rem;
 	margin-bottom: 1rem;
 }
 
 .mini-atc-modal__personalization-icon {
-	color: #2d5a6b;
 	display: flex;
 	align-items: center;
+	width: 60px;
+	height: 60px;
+	margin-top: -8px;
 }
 
 .mini-atc-modal__personalization-header h3 {
-	font-size: 1.1rem;
-	font-weight: 600;
-	color: #333;
-	margin: 0;
-	flex: 1;
+	color: #0d2026;
+	font-family: Merriweather;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 130%; /* 26px */
+	margin-top: -5px;
+}
+.mini-atc-modal__personalization-header .icon-question-mark-tooltip p {
+	color: #fff;
+}
+.mini-atc-modal__personalization-header .icon-question-mark-tooltip svg,
+.mini-atc-modal__personalization-header .icon-question-mark-tooltip svg path {
+	fill: #000 !important;
 }
 
 .mini-atc-modal__design-link {
-	color: #2d5a6b;
-	text-decoration: none;
-	font-size: 0.9rem;
-	font-weight: 500;
-	display: flex;
-	align-items: center;
-	gap: 0.25rem;
+	color: #568594;
+	font-family: Gabarito;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 100%; /* 16px */
+	text-decoration-line: underline;
+	text-decoration-style: solid;
+	text-decoration-skip-ink: none;
+	text-decoration-thickness: auto;
+	text-underline-offset: auto;
+	text-underline-position: from-font;
 }
 
 .mini-atc-modal__design-link:hover {
@@ -197,7 +235,7 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: #ccc;
+	background: #a7a7a7;
 	border-radius: 24px;
 	transition: 0.3s;
 }
@@ -215,7 +253,7 @@
 }
 
 .mini-atc-modal__toggle input:checked + .mini-atc-modal__toggle-slider {
-	background: #4caf50;
+	background: #dbe188;
 }
 
 .mini-atc-modal__toggle input:checked + .mini-atc-modal__toggle-slider:before {
@@ -223,21 +261,35 @@
 }
 
 .mini-atc-modal__complete-set-btn {
+	display: flex;
+	padding: 10px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	border-radius: 5px;
 	background: #d4a574;
-	color: white;
-	border: none;
-	padding: 0.75rem 1.5rem;
-	border-radius: 0.5rem;
-	font-weight: 600;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 	width: 100%;
+	width: fit-content;
+	color: #fff;
+	font-family: Gabarito;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: 100%; /* 16px */
 }
 
 .mini-atc-modal__complete-set-btn:hover {
 	background: #c1965f;
 }
 
+.mini-atc-modal__complete-set-btn.bg-green {
+	background: #7fa86f;
+}
+.mini-atc-modal__complete-set-btn.bg-green:hover {
+	background: #6a905b;
+}
 /* Fixed Footer */
 .mini-atc-modal__footer {
 	position: sticky;
@@ -312,6 +364,21 @@
 
 .mini-atc-modal__add-to-cart-btn:active {
 	transform: translateY(0);
+}
+
+.product-image-wrap {
+}
+
+.product-image-wrap .img-wrap {
+	width: 100%;
+	height: 100%;
+	max-height: 550px;
+}
+
+.product-image-wrap .img-wrap img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
 /* Responsive Design */
