@@ -212,7 +212,7 @@
 }
 
 .mini-atc-modal__toggle-container {
-	margin-bottom: 1rem;
+	margin-bottom: 0;
 }
 
 .mini-atc-modal__toggle {
@@ -286,6 +286,87 @@
 
 .mini-atc-modal__complete-set-btn.bg-green {
 	background: #7fa86f;
+}
+
+/* Vessel Personalization Styles */
+.modal__personalization-vessel-name-wrap {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.vessel-personalization-row {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	width: 100%;
+}
+
+.vessel-info {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	flex: 1;
+}
+
+.vessel-label {
+	color: #0d2026;
+	font-family: Gabarito;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 100%;
+	min-width: 80px;
+}
+
+.vessel-input-container {
+	max-width: 330px;
+	width: 100%;
+}
+
+.vessel-name-input {
+	width: 100%;
+	height: 55px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 20px;
+	border-radius: 5px;
+	border: 2px solid #dbe188;
+	background: #fff;
+	color: #0d2026;
+	font-family: Gabarito;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: 100%;
+	transition: all 0.3s ease;
+}
+
+.vessel-name-input::placeholder {
+	color: rgba(0, 0, 0, 0.5);
+	font-family: Gabarito;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: 100%;
+}
+
+.vessel-name-input:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.vessel-name-input:focus {
+	outline: none;
+	border-color: #c5d05a;
+	box-shadow: 0 0 0 2px rgba(219, 225, 136, 0.2);
+}
+
+.vessel-name-input:enabled {
+	opacity: 1;
 }
 .mini-atc-modal__complete-set-btn.bg-green:hover {
 	background: #6a905b;
@@ -381,6 +462,34 @@
 	object-fit: cover;
 }
 
+/* Recommendation Separator Styles */
+.recommendation-separator {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 15px;
+	margin: 20px 0;
+}
+
+.recommendation-separator::before,
+.recommendation-separator::after {
+	content: "";
+	flex: 1;
+	height: 2px;
+	background-color: rgba(0, 0, 0, 0.2);
+	max-width: 140px;
+}
+
+.recommendation-separator-text {
+	color: #000000;
+	font-family: Gabarito;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.3em;
+	opacity: 0.7;
+	white-space: nowrap;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
 	.mini-atc-modal__container {
@@ -403,5 +512,225 @@
 	.mini-atc-modal__add-to-cart-btn {
 		font-size: 1rem;
 		padding: 0.875rem 1.5rem;
+	}
+
+	.recommendation-separator-text {
+		font-size: 18px;
+	}
+
+	.recommendation-separator::before,
+	.recommendation-separator::after {
+		max-width: 100px;
+	}
+}
+
+/* ============================================
+   Premium Gift Box & Wrap Component
+   ============================================ */
+
+.premium-gift-box {
+	width: 100%;
+	max-width: 550px;
+	margin: 0 auto;
+}
+
+.premium-gift-box__container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	padding: 20px;
+	background: #ffffff;
+	border-radius: 10px;
+	box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	height: auto;
+}
+
+.premium-gift-box__image {
+	flex-shrink: 0;
+	width: 70px;
+	height: 70px;
+	border-radius: 5px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f8f8f8;
+}
+
+.premium-gift-box__image img {
+	width: 100%;
+	height: auto;
+	max-width: 71.33px;
+	max-height: 89.16px;
+	object-fit: cover;
+}
+
+.premium-gift-box__content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 419px;
+	gap: 53px;
+}
+
+.premium-gift-box__details {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 262.84px;
+	height: 70px;
+}
+
+.premium-gift-box__text {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	align-self: stretch;
+}
+
+.premium-gift-box__title {
+	margin: 0;
+	color: #1b333b;
+	font-family: "Merriweather", serif;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.4;
+	text-align: left;
+}
+
+.premium-gift-box__subtitle {
+	margin: 0;
+	color: #1b333b;
+	font-family: "Merriweather", serif;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.4;
+	text-align: left;
+}
+
+.premium-gift-box__price {
+	color: #1b333b;
+	font-family: "Gabarito", sans-serif;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1;
+	text-align: left;
+}
+
+.premium-gift-box__toggle-section {
+	display: flex;
+	align-items: center;
+	gap: 23px;
+}
+
+.premium-gift-box__toggle-container {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.premium-gift-box__toggle {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 24px;
+	cursor: pointer;
+}
+
+.premium-gift-box__toggle-input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+}
+
+.premium-gift-box__toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #a7a7a7;
+	border-radius: 12px;
+	padding: 2px;
+	transition: background-color 0.3s ease;
+	display: flex;
+	align-items: center;
+}
+
+.premium-gift-box__toggle-slider:before {
+	content: "";
+	position: absolute;
+	height: 20px;
+	width: 20px;
+	left: 2px;
+	background-color: #fcfcfd;
+	border-radius: 50%;
+	transition: transform 0.3s ease;
+	box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.06),
+		0px 1px 3px 0px rgba(16, 24, 40, 0.1);
+}
+
+.premium-gift-box__toggle-input:checked + .premium-gift-box__toggle-slider {
+	background-color: #4caf50;
+}
+
+.premium-gift-box__toggle-input:checked
+	+ .premium-gift-box__toggle-slider:before {
+	transform: translateX(26px);
+}
+
+.premium-gift-box__toggle-slider:hover {
+	opacity: 0.9;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 550px) {
+	.premium-gift-box__container {
+		padding: 15px;
+		gap: 15px;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.premium-gift-box__content {
+		gap: 20px;
+		width: 100%;
+		flex: 1;
+	}
+
+	.premium-gift-box__details {
+		width: auto;
+		flex: 1;
+		height: auto;
+	}
+
+	.premium-gift-box__image {
+		width: 60px;
+		height: 60px;
+	}
+
+	.premium-gift-box__title,
+	.premium-gift-box__subtitle,
+	.premium-gift-box__price {
+		font-size: 14px;
+	}
+
+	.premium-gift-box__toggle {
+		width: 45px;
+		height: 22px;
+	}
+
+	.premium-gift-box__toggle-slider:before {
+		height: 18px;
+		width: 18px;
+	}
+
+	.premium-gift-box__toggle-input:checked
+		+ .premium-gift-box__toggle-slider:before {
+		transform: translateX(23px);
 	}
 }
