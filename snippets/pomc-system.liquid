@@ -333,15 +333,18 @@
               </div>
               <h3>Add a Personalised <br/>Coin Engraving?</h3>
             </div>
-            <a href="#" class="mini-atc-modal__design-link">Can I see the design?</a>
-            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
-            <div class="mini-atc-modal__toggle-container">
-              <label class="mini-atc-modal__toggle">
-                <input type="checkbox" id="engraving-toggle" checked>
-                <span class="mini-atc-modal__toggle-slider"></span>
-              </label>
+            <div class="mini-atc-modal__personalization-header-content_right">
+              <a href="#" class="mini-atc-modal__design-link">Can I see the design?</a>
+              {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
+              <div class="mini-atc-modal__toggle-container">
+                <label class="mini-atc-modal__toggle">
+                  <input type="checkbox" id="engraving-toggle" checked>
+                  <span class="mini-atc-modal__toggle-slider"></span>
+                </label>
+              </div>
+              </div>
             </div>
-          </div>
+            
           <button class="mini-atc-modal__complete-set-btn">Complete Set</button>
           <div class="modal__personalization-vessel-name-wrap">
             <!-- Vessel #1 -->
@@ -402,15 +405,17 @@
               </div>
               <h3>Add Extra Insulated Cups?</h3>
             </div>
-            <a href="#" class="mini-atc-modal__design-link">See preview</a>
-            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
-            <div class="mini-atc-modal__toggle-container">
-              <label class="mini-atc-modal__toggle">
-                <input type="checkbox" id="mix-match-toggle" checked>
-                <span class="mini-atc-modal__toggle-slider"></span>
-              </label>
+            <div class="mini-atc-modal__personalization-header-content_right">
+                <a href="#" class="mini-atc-modal__design-link">See preview</a>
+                {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
+                <div class="mini-atc-modal__toggle-container">
+                  <label class="mini-atc-modal__toggle">
+                    <input type="checkbox" id="mix-match-toggle" checked>
+                    <span class="mini-atc-modal__toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
             </div>
-          </div>
           
           <button class="mini-atc-modal__complete-set-btn bg-green">Mix & Match Set</button>
           
