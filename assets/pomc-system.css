@@ -288,6 +288,18 @@
 	gap: 20px;
 	flex-direction: column;
 	width: 100%;
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, max-height 0.3s ease-in-out;
+	max-height: 1000px;
+	overflow: hidden;
+}
+
+.mini-atc-modal__complete-options--hidden {
+	opacity: 0;
+	visibility: hidden;
+	max-height: 0;
+	pointer-events: none;
 }
 
 .mini-atc-modal__complete-set-btn {

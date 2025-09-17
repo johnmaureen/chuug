@@ -1633,24 +1633,30 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!toggle || !completeOptions) return;
       
       // Set initial state based on toggle
-      completeOptions.style.display = toggle.checked ? 'flex' : 'none';
+      if (toggle.checked) {
+        completeOptions.classList.remove('mini-atc-modal__complete-options--hidden');
+      } else {
+        completeOptions.classList.add('mini-atc-modal__complete-options--hidden');
+      }
       
       // Add event listener for toggle
       toggle.addEventListener('change', function() {
         if (this.checked) {
-          // Show the complete options
-          completeOptions.style.display = 'flex';
+          // Show the complete options with fade in
+          completeOptions.classList.remove('mini-atc-modal__complete-options--hidden');
           
           // Update pricing when toggle is turned on
           if (toggle.id === 'mix-match-toggle') {
             updateMixMatchPricing();
           }
         } else {
-          // Hide the complete options
-          completeOptions.style.display = 'none';
+          // Hide the complete options with fade out
+          completeOptions.classList.add('mini-atc-modal__complete-options--hidden');
           
-          // Handle specific section cleanup
-          handleSectionToggleOff(section, toggle.id);
+          // Handle specific section cleanup after animation
+          setTimeout(() => {
+            handleSectionToggleOff(section, toggle.id);
+          }, 300); // Match the CSS transition duration
         }
       });
     });
