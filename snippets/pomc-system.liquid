@@ -1623,7 +1623,21 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize mix & match counter functionality
   initMixMatchCounters();
+  
+  // Initialize variant prices on page load
+  initializeVariantPrices();
 });
+
+// Initialize variant prices based on initial counter values
+function initializeVariantPrices() {
+  const counters = document.querySelectorAll('.mini-atc-modal__mix-match-variants .mini-atc-modal__counter');
+  
+  counters.forEach(counter => {
+    const valueEl = counter.querySelector('.mini-atc-modal__counter-value');
+    const initialValue = parseInt(valueEl.textContent) || 1;
+    updateVariantPrice(counter, initialValue);
+  });
+}
 
 // Mix & Match Counter Functionality
 function initMixMatchCounters() {
@@ -1653,6 +1667,9 @@ function initMixMatchCounters() {
     
     valueEl.textContent = currentValue;
     
+    // Update the individual variant price based on counter value
+    updateVariantPrice(counter, currentValue);
+    
     // Add visual feedback
     valueEl.style.transform = 'scale(1.1)';
     setTimeout(() => {
@@ -1662,6 +1679,24 @@ function initMixMatchCounters() {
     // Trigger any pricing updates or other logic here
     updateMixMatchPricing();
   });
+}
+
+// Update individual variant price based on counter value
+function updateVariantPrice(counter, quantity) {
+  const variantRow = counter.closest('.mini-atc-modal__variant-row');
+  const priceElement = variantRow.querySelector('.mini-atc-modal__variant-price');
+  const basePrice = 12.99; // Base price per item
+  
+  if (priceElement) {
+    const totalPrice = quantity * basePrice;
+    if (quantity === 0) {
+      priceElement.textContent = '£0.00';
+    } else if (quantity === 1) {
+      priceElement.textContent = '£12.99';
+    } else {
+      priceElement.textContent = `£${totalPrice.toFixed(2)}`;
+    }
+  }
 }
 
 // Update pricing based on mix & match selections
