@@ -136,7 +136,7 @@
 .mini-atc-modal__image-dots .dot {
 	width: 11.305px;
 	height: 11.305px;
-	border-radius: 50%;
+	border-radius: 84.785px;
 	background: #a3a3a3;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
@@ -163,8 +163,14 @@
 .mini-atc-modal__personalization-header {
 	display: flex;
 	align-items: flex-start;
-	/* gap: 0.75rem; */
+	gap: 0.75rem;
 	margin-bottom: 1rem;
+}
+
+.mini-atc-modal__personalization-header-content {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
 }
 
 .mini-atc-modal__personalization-icon {
@@ -391,79 +397,151 @@
 .mini-atc-modal__footer {
 	position: sticky;
 	bottom: 0;
-	background: #2d5a6b;
-	padding: 1.5rem 2rem;
-	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	background: #ffffff;
+	padding: 16px 20px 36px;
+	box-shadow: 0px 4px 40px 0px rgba(0, 0, 0, 0.04),
+		0px -4px 16px 0px rgba(182, 52, 154, 0.04);
+	border-radius: 10px 10px 0px 0px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	width: 600px;
+	max-width: 100%;
 }
 
-.mini-atc-modal__subtotal {
-	margin-bottom: 1rem;
+.mini-atc-modal__subtotal-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	align-self: stretch;
+	gap: 12px;
+	width: 100%;
+}
+
+.mini-atc-modal__right-section {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	gap: 12px;
+}
+
+.mini-atc-modal__subtotal-section {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 27px;
+	width: 539px;
+	max-width: 100%;
 }
 
 .mini-atc-modal__subtotal-label {
-	color: white;
-	font-size: 1rem;
-	font-weight: 500;
-	display: block;
-	margin-bottom: 0.5rem;
+	color: #0d0c0d;
+	font-family: "Gabarito", sans-serif;
+	font-weight: 600;
+	font-size: 28px;
+	line-height: 0.7142857142857143em;
+	letter-spacing: -0.35714286246470045%;
+	text-align: left;
+	white-space: nowrap;
+	flex-shrink: 0;
 }
 
 .mini-atc-modal__pricing {
 	display: flex;
+	justify-content: flex-end;
 	align-items: center;
-	gap: 1rem;
-	margin-bottom: 0.5rem;
+	gap: 10px;
+	width: 221px;
+	flex-shrink: 0;
 }
 
 .mini-atc-modal__current-price {
-	color: white;
-	font-size: 1.5rem;
-	font-weight: bold;
+	color: #3e3b3f;
+	font-family: "Gabarito", sans-serif;
+	font-weight: 500;
+	font-size: 24px;
+	line-height: 0.8333333333333334em;
+	letter-spacing: -0.4166666728754838%;
+	text-align: left;
+	white-space: nowrap;
 }
 
 .mini-atc-modal__original-price {
-	color: rgba(255, 255, 255, 0.6);
-	font-size: 1.2rem;
+	color: #969393;
+	font-family: "Gabarito", sans-serif;
+	font-weight: 500;
+	font-size: 20px;
+	line-height: 1em;
+	letter-spacing: -0.5000000074505806%;
+	text-align: left;
 	text-decoration: line-through;
+	white-space: nowrap;
 }
 
 .mini-atc-modal__savings {
-	background: #a43223;
-	color: white;
-	padding: 0.25rem 0.75rem;
-	border-radius: 1rem;
-	font-size: 0.8rem;
-	font-weight: 600;
-	display: inline-block;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 3px;
+	padding: 3px 10px;
+	background: rgba(255, 255, 255, 0.3);
+	border: 1px solid #a43223;
+	border-radius: 50px;
+	white-space: nowrap;
+}
+
+.mini-atc-modal__savings-icon {
+	width: 15px;
+	height: 15px;
+	flex-shrink: 0;
+}
+
+.mini-atc-modal__savings-text {
+	color: #a43223;
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 20px;
+	line-height: 1.2em;
+	text-align: center;
 }
 
 .mini-atc-modal__add-to-cart-btn {
+	position: relative;
 	width: 100%;
-	background: #8b4513;
-	color: white;
-	border: 3px solid #d4a574;
-	padding: 1rem 2rem;
-	border-radius: 1rem;
-	font-size: 1.2rem;
-	font-weight: bold;
+	height: 81.78px;
+	max-width: 100%;
+	background-image: url("./cta-button-bg.png");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	border: none;
+	color: #ffffff;
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 1.2000000476837158em;
+	text-align: center;
 	text-transform: uppercase;
 	cursor: pointer;
-	transition: all 0.2s ease;
-	position: relative;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
 	overflow: hidden;
 }
 
 .mini-atc-modal__add-to-cart-btn:hover {
-	background: #7a3a0f;
-	transform: translateY(-1px);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	transform: scale(1.05);
 }
 
 .mini-atc-modal__add-to-cart-btn:active {
-	transform: translateY(0);
+	transform: scale(0.98);
 }
 
 .product-image-wrap {
+	display: block;
 }
 
 .product-image-wrap .img-wrap {
@@ -748,5 +826,266 @@
 	.premium-gift-box__toggle-input:checked
 		+ .premium-gift-box__toggle-slider:before {
 		transform: translateX(23px);
+	}
+}
+
+/* ============================================
+   Mini ATC Modal Mix & Match Styles
+   ============================================ */
+
+.mini-atc-modal__mix-match-content {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	width: 100%;
+	margin-top: 16px;
+}
+
+/* Info Box Styles */
+.mini-atc-modal__mix-match-info {
+	display: flex;
+	align-items: flex-start;
+	height: 93px;
+	background: #d68a3a;
+	border-radius: 10px 2px 2px 10px;
+	position: relative;
+}
+
+.mini-atc-modal__mix-match-info-content {
+	position: absolute;
+	left: 14px;
+	top: 0;
+	width: 500px;
+	height: 93px;
+	background: #f7f3ed;
+	display: flex;
+	align-items: center;
+	padding: 18.5px 14px;
+	box-sizing: border-box;
+}
+
+.mini-atc-modal__mix-match-info-content p {
+	margin: 0;
+	color: rgba(0, 0, 0, 0.5);
+	font-family: Gabarito;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1.2;
+	width: 483px;
+	height: 56px;
+}
+
+/* Product Variants Container */
+.mini-atc-modal__mix-match-variants {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+	width: 100%;
+}
+
+/* Variant Row Styles */
+.mini-atc-modal__variant-row {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	width: 509px;
+	height: auto;
+}
+
+.mini-atc-modal__variant-image {
+	display: flex;
+	align-items: center;
+	gap: 3.75px;
+	width: 90px;
+	height: 90px;
+	padding: 10.875px 27px;
+	background: #e7e7e7;
+	border-radius: 3.75px;
+	flex-shrink: 0;
+	justify-content: center;
+}
+
+.mini-atc-modal__variant-image img {
+	width: auto;
+	height: auto;
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+.mini-atc-modal__variant-details {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 53px;
+	width: 369px;
+	height: auto;
+}
+
+.mini-atc-modal__variant-info {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	width: 166px;
+}
+
+.mini-atc-modal__variant-name {
+	margin: 0;
+	color: #1b333b;
+	font-family: Merriweather;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1em;
+	text-align: left;
+}
+
+.mini-atc-modal__variant-description {
+	margin: 0;
+	color: #969393;
+	font-family: Gabarito;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1em;
+	text-align: left;
+}
+
+.mini-atc-modal__variant-controls {
+	display: flex;
+	align-items: center;
+	gap: 23px;
+}
+
+/* Counter Styles */
+.mini-atc-modal__counter {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.mini-atc-modal__counter-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24.54px;
+	height: 24.54px;
+	background: transparent;
+	border: 0;
+	border-radius: 40px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	padding: 0;
+}
+
+.mini-atc-modal__counter-btn svg {
+	width: 100%;
+	height: 100%;
+}
+
+.mini-atc-modal__counter-btn:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+.mini-atc-modal__counter-value {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 35.43px;
+	height: 43.74px;
+	padding: 16.36px;
+	background: #f9fafb;
+	color: #000000;
+	font-family: Gabarito;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.4em;
+	text-align: center;
+	box-sizing: border-box;
+	transition: transform 0.15s ease;
+}
+
+.mini-atc-modal__variant-price {
+	color: #1b333b;
+	font-family: Gabarito;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1em;
+	text-align: left;
+}
+
+/* Variant Divider */
+.mini-atc-modal__variant-divider {
+	width: 486.52px;
+	height: 2px;
+	background: #e7e7e7;
+	display: block !important;
+}
+
+/* Responsive Design for Mix & Match */
+@media screen and (max-width: 768px) {
+	.mini-atc-modal__mix-match-info-content {
+		width: 100%;
+		left: 10px;
+		padding: 15px 10px;
+	}
+
+	.mini-atc-modal__mix-match-info-content p {
+		width: 100%;
+		font-size: 16px;
+		height: auto;
+	}
+
+	.mini-atc-modal__variant-row {
+		width: 100%;
+		gap: 15px;
+	}
+
+	.mini-atc-modal__variant-details {
+		width: 100%;
+		flex: 1;
+		gap: 20px;
+	}
+
+	.mini-atc-modal__variant-info {
+		width: auto;
+		flex: 1;
+	}
+
+	.mini-atc-modal__variant-divider {
+		width: 100%;
+	}
+
+	.mini-atc-modal__variant-image {
+		width: 70px;
+		height: 70px;
+		padding: 8px 20px;
+	}
+
+	.mini-atc-modal__variant-name {
+		font-size: 16px;
+	}
+
+	.mini-atc-modal__variant-description {
+		font-size: 14px;
+	}
+
+	.mini-atc-modal__variant-price {
+		font-size: 16px;
+	}
+
+	.mini-atc-modal__counter-btn {
+		width: 22px;
+		height: 22px;
+	}
+
+	.mini-atc-modal__counter-btn svg {
+		width: 18px;
+		height: 18px;
+	}
+
+	.mini-atc-modal__counter-value {
+		width: 30px;
+		padding: 12px;
+		font-size: 16px;
 	}
 }
