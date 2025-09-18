@@ -312,9 +312,29 @@
     <div class="mini-atc-modal__content">
       <!-- Product Image -->
       <div class="mini-atc-modal__product-image">
-        <div class="product-image-wrap">
-          <div class="img-wrap">
-            <img id="mini-atc-product-img" src="{{ 'vessel-sample.png' | asset_url }}" alt="CHUUG Vessel" width="400" height="400" />
+        <div class="swiper mini-atc-product-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="product-image-wrap">
+                <div class="img-wrap">
+                  <img src="{{ 'vessel-sample.png' | asset_url }}" alt="CHUUG Vessel" width="400" height="400" />
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="product-image-wrap">
+                <div class="img-wrap">
+                  <img src="{{ 'dusk_natural.png' | asset_url }}" alt="CHUUG Vessel - Dusk Natural" width="400" height="400" />
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="product-image-wrap">
+                <div class="img-wrap">
+                  <img src="{{ 'dawn_charcoal.png' | asset_url }}" alt="CHUUG Vessel - Dawn Charcoal" width="400" height="400" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="mini-atc-modal__image-dots">
@@ -1441,6 +1461,13 @@
       modal.offsetHeight;
       modal.classList.add('mini-atc-modal--active');
       document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      
+      // Initialize swiper after modal is shown (with a small delay to ensure DOM is ready)
+      setTimeout(() => {
+        if (!window.miniATCProductSwiper) {
+          window.miniATCProductSwiper = initProductSwiper();
+        }
+      }, 100);
     }
   }
 
@@ -1476,13 +1503,27 @@
   }
 
   function updateModalProductImage(selections) {
-    const productImg = document.getElementById('mini-atc-product-img');
-    if (productImg && selections.woodType && selections.ropeType) {
+    const swiper = window.miniATCProductSwiper;
+    if (!swiper || !swiper.slides) return;
+    
+    if (selections.woodType && selections.ropeType) {
+      // Update the first slide with the selected combination
       const imageName = `${selections.woodType.toLowerCase()}_${selections.ropeType.toLowerCase()}.png`;
-      productImg.src = `{{ 'dusk_natural.png' | asset_url }}`.replace('dusk_natural.png', imageName);
+      const firstSlideImg = swiper.slides[0]?.querySelector('img');
+      if (firstSlideImg) {
+        firstSlideImg.src = `{{ 'dusk_natural.png' | asset_url }}`.replace('dusk_natural.png', imageName);
+        firstSlideImg.alt = `CHUUG Vessel - ${selections.woodType} ${selections.ropeType}`;
+      }
+      
+      // Slide to the first image to show the selection
+      swiper.slideTo(0);
     } else {
-      // Default image
-      productImg.src = `{{ 'vessel-sample.png' | asset_url }}`;
+      // Show default image on first slide
+      const firstSlideImg = swiper.slides[0]?.querySelector('img');
+      if (firstSlideImg) {
+        firstSlideImg.src = `{{ 'vessel-sample.png' | asset_url }}`;
+        firstSlideImg.alt = 'CHUUG Vessel';
+      }
     }
   }
 
@@ -1812,5 +1853,50 @@ function updateMixMatchPricing() {
   }
   
   console.log(`Mix & Match: ${totalItems} items, Total: £${totalPrice.toFixed(2)}`);
+}
+
+// Initialize product image swiper
+function initProductSwiper() {
+  const productSwiper = new Swiper('.mini-atc-product-swiper', {
+    // Enable loop if we have more than 1 slide
+    loop: false,
+    
+    // Navigation with custom dots
+    pagination: {
+      el: '.mini-atc-modal__image-dots',
+      clickable: true,
+      bulletClass: 'dot',
+      bulletActiveClass: 'active',
+      renderBullet: function (index, className) {
+        return '<span class="' + className + '"></span>';
+      },
+    },
+    
+    // Enable touch/swipe
+    touchRatio: 1,
+    touchAngle: 45,
+    grabCursor: true,
+    
+    // Smooth transitions
+    speed: 300,
+    effect: 'slide',
+    
+    // Accessibility
+    a11y: {
+      prevSlideMessage: 'Previous product image',
+      nextSlideMessage: 'Next product image',
+    },
+    
+    // Auto height to maintain aspect ratio
+    autoHeight: false,
+    
+    // Keyboard control
+    keyboard: {
+      enabled: true,
+      onlyInViewport: true,
+    },
+  });
+  
+  return productSwiper;
 }
 </script>
