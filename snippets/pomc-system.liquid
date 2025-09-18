@@ -295,6 +295,9 @@
 {{ 'pomc-system.css' | asset_url | stylesheet_tag }}
 {{ 'checkout-products-wrap.css' | asset_url | stylesheet_tag }}
 
+<!-- Include Cart Manager JavaScript -->
+{{ 'cart-manager.js' | asset_url | script_tag }}
+
 <!-- Mini ATC Modal -->
 <div id="mini-atc-modal" class="mini-atc-modal">
   <div class="mini-atc-modal__overlay"></div>
@@ -651,7 +654,7 @@
         </div>
 
         
-        <div class="cart-items">
+        <div class="checkout-products-container">
           {% for item in cart.items %}
             {% render 'checkout-products-wrap', item: item %}
           {% endfor %}
