@@ -2,6 +2,30 @@
    Mini ATC Modal Styles
    ============================================ */
 
+/* Content wrapper base styles for transitions */
+.mini-atc-modal__content-wrap {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateX(20px);
+	transition: opacity 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+		transform 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+		visibility 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+	pointer-events: none;
+}
+
+.mini-atc-modal__content-wrap--active {
+	opacity: 1;
+	visibility: visible;
+	transform: translateX(0);
+	pointer-events: auto;
+	position: relative;
+}
+
 .mini-atc-modal {
 	position: fixed;
 	top: 0;
@@ -103,7 +127,10 @@
 	background: #f2f2ee;
 	box-shadow: -20px 0 24px 0 rgba(0, 0, 0, 0.2);
 	gap: 20px;
+	position: relative;
 }
+
+/* Personalise and Checkout Wrap Elements inherit content wrapper styles */
 
 .mini-atc-modal__product-image {
 	text-align: center;
@@ -624,7 +651,7 @@
 	justify-content: center;
 	align-items: center;
 	gap: 15px;
-	/* margin: 20px 0; */
+	margin: 20px 0;
 }
 
 .recommendation-separator::before,
@@ -725,7 +752,7 @@
 
 .premium-gift-box__content {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
 	width: 419px;
 	gap: 53px;
@@ -1159,4 +1186,373 @@
 		padding: 12px;
 		font-size: 16px;
 	}
+}
+
+/* ============================================
+   Step Process Indicator Styles
+   ============================================ */
+
+.step-process-indicator {
+	width: 550px;
+	padding: 20px 25px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	position: relative;
+	background: #ffffff;
+	border-radius: 10px;
+	box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.step-process-indicator__header {
+	color: #0d2026;
+	font-family: Merriweather;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.257em;
+	text-align: center;
+	margin: 0;
+	letter-spacing: 0.1px;
+}
+
+.step-process-indicator__header span {
+	color: #a43223;
+}
+
+.step-process-indicator__progress-bar {
+	width: 494px;
+	height: 39px;
+	position: relative;
+	border: 3px solid #dbe188;
+	border-radius: 5px;
+	background: transparent;
+	overflow: hidden;
+}
+
+.step-process-indicator__progress-fill {
+	position: absolute;
+	left: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 320px;
+	height: 18.64px;
+	background: #dbe188;
+	border-radius: 2px;
+	transition: width 0.3s ease-in-out;
+	display: block !important;
+}
+
+.step-process-indicator__steps {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 32px;
+	width: 472px;
+}
+
+.step-process-indicator__step {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	width: 135px;
+}
+
+.step-process-indicator__step-icon {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4.24px;
+}
+
+.step-process-indicator__step-circle {
+	width: 32.02px;
+	height: 32.02px;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+/* Completed step styling */
+.step-process-indicator__step--completed .step-process-indicator__step-circle {
+	background: #dbe188;
+}
+
+.step-process-indicator__step--completed
+	.step-process-indicator__step-circle
+	svg {
+	width: 14.8px;
+	height: 10.02px;
+	position: absolute;
+	left: 8.61px;
+	top: 11px;
+}
+
+/* Active step styling */
+.step-process-indicator__step--active .step-process-indicator__step-circle {
+	background: #969393;
+}
+
+.step-process-indicator__step--active .step-process-indicator__pound-symbol {
+	color: #ffffff;
+	font-family: Gabarito;
+	font-size: 25.42px;
+	font-weight: 400;
+	line-height: 1em;
+	position: absolute;
+	left: 9.66px;
+	top: 3.3px;
+	width: 13px;
+	height: 25px;
+}
+
+/* Pending step styling */
+.step-process-indicator__step--pending .step-process-indicator__step-circle {
+	background: #dbe188;
+}
+
+.step-process-indicator__step-text {
+	color: #1b333b;
+	text-align: center;
+	font-family: Gabarito;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.2em;
+	white-space: nowrap;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+	.step-process-indicator {
+		width: 100%;
+		max-width: 100%;
+		padding: 15px 20px;
+	}
+
+	.step-process-indicator__header {
+		font-size: 16px;
+		line-height: 1.3em;
+	}
+
+	.step-process-indicator__progress-bar {
+		width: 100%;
+		max-width: 400px;
+		height: 35px;
+	}
+
+	.step-process-indicator__progress-fill {
+		height: 16px;
+		top: 9px;
+	}
+
+	.step-process-indicator__steps {
+		width: 100%;
+		max-width: 380px;
+		gap: 20px;
+	}
+
+	.step-process-indicator__step {
+		width: auto;
+		min-width: 100px;
+		gap: 8px;
+	}
+
+	.step-process-indicator__step-text {
+		font-size: 14px;
+		line-height: 1.2em;
+	}
+
+	.step-process-indicator__step-circle {
+		width: 28px;
+		height: 28px;
+	}
+
+	.step-process-indicator__step--completed
+		.step-process-indicator__step-circle
+		svg {
+		width: 12px;
+		height: 8px;
+		left: 8px;
+		top: 10px;
+	}
+
+	.step-process-indicator__step--active .step-process-indicator__pound-symbol {
+		font-size: 20px;
+		left: 8px;
+		top: 2px;
+		width: 12px;
+		height: 20px;
+	}
+}
+
+/* ============================================
+   Countdown Timer Styles
+   ============================================ */
+
+.countdown-timer {
+	width: 555px;
+	padding: 15px 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: #a43223;
+	border-radius: 10px;
+	margin: 20px auto 0;
+	box-sizing: border-box;
+}
+
+.countdown-timer__text {
+	color: #ffffff;
+	font-family: Gabarito;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.2em;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.countdown-timer__time {
+	font-weight: 700;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+	.countdown-timer {
+		width: 100%;
+		max-width: 100%;
+		padding: 12px 20px;
+		margin: 15px auto 0;
+	}
+
+	.countdown-timer__text {
+		font-size: 16px;
+		line-height: 1.3em;
+	}
+}
+
+@media (max-width: 480px) {
+	.countdown-timer {
+		padding: 10px 15px;
+	}
+
+	.countdown-timer__text {
+		font-size: 14px;
+		white-space: normal;
+		text-align: center;
+	}
+}
+
+/* ============================================
+   Checkout-specific Styles
+   ============================================ */
+
+/* Content wrapper styling for crossfade functionality */
+/* Additional checkout-specific styles */
+.mini-atc-modal__checkout-wrap {
+	padding: 0;
+}
+
+.mini-atc-modal__checkout-summary h3 {
+	font-size: 1.5rem;
+	font-weight: bold;
+	margin-bottom: 1rem;
+	color: #333;
+}
+
+.mini-atc-modal__checkout-items {
+	border: 1px solid #e5e5e5;
+	border-radius: 8px;
+	padding: 1rem;
+	background: #f9f9f9;
+}
+
+.mini-atc-modal__checkout-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem 0;
+}
+
+.mini-atc-modal__checkout-item-image img {
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mini-atc-modal__checkout-item-details {
+	flex: 1;
+}
+
+.mini-atc-modal__checkout-item-details h4 {
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	color: #333;
+}
+
+.mini-atc-modal__checkout-item-details p {
+	font-size: 0.9rem;
+	color: #666;
+	margin-bottom: 0.25rem;
+}
+
+.mini-atc-modal__checkout-item-price {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #333;
+}
+
+.mini-atc-modal__checkout-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.mini-atc-modal__continue-checkout-btn {
+	background: #007bff;
+	color: white;
+	border: none;
+	padding: 1rem 2rem;
+	border-radius: 8px;
+	font-size: 1.1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.mini-atc-modal__continue-checkout-btn:hover {
+	background: #0056b3;
+}
+
+.mini-atc-modal__back-btn {
+	background: transparent;
+	color: #666;
+	border: 1px solid #ddd;
+	padding: 0.75rem 2rem;
+	border-radius: 8px;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mini-atc-modal__back-btn:hover {
+	background: #f5f5f5;
+	color: #333;
+}
+
+/* Ensure content container is positioned relatively for absolute positioning of wrappers */
+.mini-atc-modal__content {
+	position: relative;
+	min-height: 400px;
+}
+
+.cart-items-wrap {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	gap: 20px;
+	padding: 20px 0;
 }

@@ -293,6 +293,7 @@
 
 <!-- Include Modal CSS -->
 {{ 'pomc-system.css' | asset_url | stylesheet_tag }}
+{{ 'checkout-products-wrap.css' | asset_url | stylesheet_tag }}
 
 <!-- Mini ATC Modal -->
 <div id="mini-atc-modal" class="mini-atc-modal">
@@ -310,328 +311,390 @@
     
     <!-- Scrollable Content -->
     <div class="mini-atc-modal__content">
-      <!-- Product Image -->
-      <div class="mini-atc-modal__product-image">
-        <div class="swiper mini-atc-product-swiper">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <div class="product-image-wrap">
-                <div class="img-wrap">
-                  <img src="{{ 'vessel-sample.png' | asset_url }}" alt="CHUUG Vessel" width="400" height="400" />
+      <!-- Personalise Content Wrapper -->
+      <div class="mini-atc-modal__personalise-wrap mini-atc-modal__content-wrap--active">
+        <!-- Product Image -->
+        <div class="mini-atc-modal__product-image">
+          <div class="swiper mini-atc-product-swiper">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="product-image-wrap">
+                  <div class="img-wrap">
+                    <img src="{{ 'vessel-sample.png' | asset_url }}" alt="CHUUG Vessel" width="400" height="400" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-image-wrap">
-                <div class="img-wrap">
-                  <img src="{{ 'dusk_natural.png' | asset_url }}" alt="CHUUG Vessel - Dusk Natural" width="400" height="400" />
+              <div class="swiper-slide">
+                <div class="product-image-wrap">
+                  <div class="img-wrap">
+                    <img src="{{ 'dusk_natural.png' | asset_url }}" alt="CHUUG Vessel - Dusk Natural" width="400" height="400" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-image-wrap">
-                <div class="img-wrap">
-                  <img src="{{ 'dawn_charcoal.png' | asset_url }}" alt="CHUUG Vessel - Dawn Charcoal" width="400" height="400" />
+              <div class="swiper-slide">
+                <div class="product-image-wrap">
+                  <div class="img-wrap">
+                    <img src="{{ 'dawn_charcoal.png' | asset_url }}" alt="CHUUG Vessel - Dawn Charcoal" width="400" height="400" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="mini-atc-modal__image-dots">
-          <span class="dot active"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
-      </div>
-      <div class="personalization-cards">
-        <!-- Personalization Options -->
-        <div class="mini-atc-modal__personalization mini-vessel-names">
-          <div class="mini-atc-modal__personalization-header">
-            <div class="mini-atc-modal__personalization-header-content">
-              <div class="mini-atc-modal__personalization-icon">
-                {% render 'personalization-icon', icon_type: 'pencil' %}
-              </div>
-              <h3>Add a Personalised <br/>Coin Engraving?</h3>
-            </div>
-            <div class="mini-atc-modal__personalization-header-content_right">
-              <a href="#" class="mini-atc-modal__design-link">Can I see the design?</a>
-              {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
-              <div class="mini-atc-modal__toggle-container">
-                <label class="mini-atc-modal__toggle">
-                  <input type="checkbox" id="engraving-toggle" checked>
-                  <span class="mini-atc-modal__toggle-slider"></span>
-                </label>
-              </div>
-              </div>
-            </div>
-          <div class="mini-atc-modal__complete-options">
-            <button class="mini-atc-modal__complete-set-btn">Complete Set</button>
-            <div class="modal__personalization-vessel-name-wrap">
-              <!-- Vessel #1 -->
-              <div class="vessel-personalization-row">
-                <div class="vessel-info">
-                  <span class="vessel-label">Vessel #1</span>
-                  <div class="mini-atc-modal__toggle-container">
-                    <label class="mini-atc-modal__toggle">
-                      <input type="checkbox" id="vessel-1-toggle" checked>
-                      <span class="mini-atc-modal__toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-                <div class="vessel-input-container">
-                  <input 
-                    type="text" 
-                    id="vessel-1-name" 
-                    class="vessel-name-input" 
-                    placeholder="Maximum of 3 Letters"
-                    maxlength="3"
-                    disabled
-                  >
-                </div>
-              </div>
-
-              <!-- Vessel #2 -->
-              <div class="vessel-personalization-row">
-                <div class="vessel-info">
-                  <span class="vessel-label">Vessel #2</span>
-                  <div class="mini-atc-modal__toggle-container">
-                    <label class="mini-atc-modal__toggle">
-                      <input type="checkbox" id="vessel-2-toggle" checked>
-                      <span class="mini-atc-modal__toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-                <div class="vessel-input-container">
-                  <input 
-                    type="text" 
-                    id="vessel-2-name" 
-                    class="vessel-name-input" 
-                    placeholder="Maximum of 3 Letters"
-                    maxlength="3"
-                    disabled
-                  >
-                </div>
-              </div>
-            </div>
+          <div class="mini-atc-modal__image-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
           </div>
-         
         </div>
-
-
-        <!-- Mix & Match Container -->
-        <div class="mini-atc-modal__personalization mini-atc-modal__mix-match">
-          <div class="mini-atc-modal__personalization-header">
-            <div class="mini-atc-modal__personalization-header-content">
-              <div class="mini-atc-modal__personalization-icon">
-                {% render 'personalization-icon', icon_type: 'cup' %}
+        <div class="personalization-cards">
+          <!-- Personalization Options -->
+          <div class="mini-atc-modal__personalization mini-vessel-names">
+            <div class="mini-atc-modal__personalization-header">
+              <div class="mini-atc-modal__personalization-header-content">
+                <div class="mini-atc-modal__personalization-icon">
+                  {% render 'personalization-icon', icon_type: 'pencil' %}
+                </div>
+                <h3>Add a Personalised <br/>Coin Engraving?</h3>
               </div>
-              <h3>Add Extra Insulated Cups?</h3>
-            </div>
-            <div class="mini-atc-modal__personalization-header-content_right">
-                <a href="#" class="mini-atc-modal__design-link">See preview</a>
+              <div class="mini-atc-modal__personalization-header-content_right">
+                <a href="#" class="mini-atc-modal__design-link">Can I see the design?</a>
                 {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
                 <div class="mini-atc-modal__toggle-container">
                   <label class="mini-atc-modal__toggle">
-                    <input type="checkbox" id="mix-match-toggle" checked>
+                    <input type="checkbox" id="engraving-toggle" checked>
                     <span class="mini-atc-modal__toggle-slider"></span>
+                  </label>
+                </div>
+                </div>
+              </div>
+            <div class="mini-atc-modal__complete-options">
+              <button class="mini-atc-modal__complete-set-btn">Complete Set</button>
+              <div class="modal__personalization-vessel-name-wrap">
+                <!-- Vessel #1 -->
+                <div class="vessel-personalization-row">
+                  <div class="vessel-info">
+                    <span class="vessel-label">Vessel #1</span>
+                    <div class="mini-atc-modal__toggle-container">
+                      <label class="mini-atc-modal__toggle">
+                        <input type="checkbox" id="vessel-1-toggle" checked>
+                        <span class="mini-atc-modal__toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="vessel-input-container">
+                    <input 
+                      type="text" 
+                      id="vessel-1-name" 
+                      class="vessel-name-input" 
+                      placeholder="Maximum of 3 Letters"
+                      maxlength="3"
+                      disabled
+                    >
+                  </div>
+                </div>
+
+                <!-- Vessel #2 -->
+                <div class="vessel-personalization-row">
+                  <div class="vessel-info">
+                    <span class="vessel-label">Vessel #2</span>
+                    <div class="mini-atc-modal__toggle-container">
+                      <label class="mini-atc-modal__toggle">
+                        <input type="checkbox" id="vessel-2-toggle" checked>
+                        <span class="mini-atc-modal__toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="vessel-input-container">
+                    <input 
+                      type="text" 
+                      id="vessel-2-name" 
+                      class="vessel-name-input" 
+                      placeholder="Maximum of 3 Letters"
+                      maxlength="3"
+                      disabled
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+           
+          </div>
+
+
+          <!-- Mix & Match Container -->
+          <div class="mini-atc-modal__personalization mini-atc-modal__mix-match">
+            <div class="mini-atc-modal__personalization-header">
+              <div class="mini-atc-modal__personalization-header-content">
+                <div class="mini-atc-modal__personalization-icon">
+                  {% render 'personalization-icon', icon_type: 'cup' %}
+                </div>
+                <h3>Add Extra Insulated Cups?</h3>
+              </div>
+              <div class="mini-atc-modal__personalization-header-content_right">
+                  <a href="#" class="mini-atc-modal__design-link">See preview</a>
+                  {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
+                  <div class="mini-atc-modal__toggle-container">
+                    <label class="mini-atc-modal__toggle">
+                      <input type="checkbox" id="mix-match-toggle" checked>
+                      <span class="mini-atc-modal__toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            <div class="mini-atc-modal__complete-options">
+              <button class="mini-atc-modal__complete-set-btn bg-green">Mix & Match Set</button>
+              <!-- Mix & Match Content -->
+              <div class="mini-atc-modal__mix-match-content">
+                <!-- Info Box -->
+                <div class="mini-atc-modal__mix-match-info">
+                  <div class="mini-atc-modal__mix-match-info-content">
+                    <p>💡 You already get 1 free silver insulated cup with each CHUUG. Add backup insulated cups so you're never without your CHUUG!</p>
+                  </div>
+                </div>
+                
+                <!-- Product Variants -->
+                <div class="mini-atc-modal__mix-match-variants">
+                  <!-- Midnight Black -->
+                  <div class="mini-atc-modal__variant-row">
+                    <div class="mini-atc-modal__variant-image">
+                      <img src="{{ 'midnight_charcoal.png' | asset_url }}" alt="Midnight Black Cup" width="37" height="64" />
+                    </div>
+                    <div class="mini-atc-modal__variant-details">
+                      <div class="mini-atc-modal__variant-info">
+                        <h4 class="mini-atc-modal__variant-name">Midnight Black</h4>
+                        <p class="mini-atc-modal__variant-description">Matches most CHUUGs</p>
+                      </div>
+                      <div class="mini-atc-modal__variant-controls">
+                        <div class="mini-atc-modal__counter">
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                          <div class="mini-atc-modal__counter-value">1</div>
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="mini-atc-modal__variant-price">£12.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Divider -->
+                  <div class="mini-atc-modal__variant-divider"></div>
+                  
+                  <!-- Bronze -->
+                  <div class="mini-atc-modal__variant-row">
+                    <div class="mini-atc-modal__variant-image">
+                      <img src="{{ 'dusk_charcoal.png' | asset_url }}" alt="Bronze Cup" width="37" height="64" />
+                    </div>
+                    <div class="mini-atc-modal__variant-details">
+                      <div class="mini-atc-modal__variant-info">
+                        <h4 class="mini-atc-modal__variant-name">Bronze</h4>
+                        <p class="mini-atc-modal__variant-description">Premium finish</p>
+                      </div>
+                      <div class="mini-atc-modal__variant-controls">
+                        <div class="mini-atc-modal__counter">
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                          <div class="mini-atc-modal__counter-value">1</div>
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="mini-atc-modal__variant-price">£12.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Divider -->
+                  <div class="mini-atc-modal__variant-divider"></div>
+                  
+                  <!-- Rose Gold -->
+                  <div class="mini-atc-modal__variant-row">
+                    <div class="mini-atc-modal__variant-image">
+                      <img src="{{ 'dawn_charcoal.png' | asset_url }}" alt="Rose Gold Cup" width="37" height="64" />
+                    </div>
+                    <div class="mini-atc-modal__variant-details">
+                      <div class="mini-atc-modal__variant-info">
+                        <h4 class="mini-atc-modal__variant-name">Rose Gold</h4>
+                        <p class="mini-atc-modal__variant-description">Elegant choice</p>
+                      </div>
+                      <div class="mini-atc-modal__variant-controls">
+                        <div class="mini-atc-modal__counter">
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                          <div class="mini-atc-modal__counter-value">1</div>
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="mini-atc-modal__variant-price">£12.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Divider -->
+                  <div class="mini-atc-modal__variant-divider"></div>
+                  
+                  <!-- Silver -->
+                  <div class="mini-atc-modal__variant-row">
+                    <div class="mini-atc-modal__variant-image">
+                      <img src="{{ 'dawn_natural.png' | asset_url }}" alt="Silver Cup" width="37" height="64" />
+                    </div>
+                    <div class="mini-atc-modal__variant-details">
+                      <div class="mini-atc-modal__variant-info">
+                        <h4 class="mini-atc-modal__variant-name">Silver</h4>
+                        <p class="mini-atc-modal__variant-description">Classic style</p>
+                      </div>
+                      <div class="mini-atc-modal__variant-controls">
+                        <div class="mini-atc-modal__counter">
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                          <div class="mini-atc-modal__counter-value">1</div>
+                          <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                              <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                              <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="mini-atc-modal__variant-price">£12.99</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Checkout Content Wrapper -->
+      <div class="mini-atc-modal__checkout-wrap mini-atc-modal__content-wrap">
+        <!-- Step Process Indicator -->
+        <div class="step-process-indicator">
+          <h3 class="step-process-indicator__header">🔥 You're only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span></h3>
+          <div class="step-process-indicator__progress-bar">
+            <div class="step-process-indicator__progress-fill"></div>
+          </div>
+          <div class="step-process-indicator__steps">
+            <!-- Step 1: Buy More & Save -->
+            <div class="step-process-indicator__step step-process-indicator__step--completed">
+              <div class="step-process-indicator__step-icon">
+                <div class="step-process-indicator__step-circle">
+                  <svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="step-process-indicator__step-text">Buy More & Save</div>
+            </div>
+            
+            <!-- Step 2: Free Shipping -->
+            <div class="step-process-indicator__step step-process-indicator__step--completed">
+              <div class="step-process-indicator__step-icon">
+                <div class="step-process-indicator__step-circle">
+                  <svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="step-process-indicator__step-text">Free Shipping</div>
+            </div>
+            
+            <!-- Step 3: Unlock Extra £30 OFF -->
+            <div class="step-process-indicator__step step-process-indicator__step--active">
+              <div class="step-process-indicator__step-icon">
+                <div class="step-process-indicator__step-circle">
+                  <span class="step-process-indicator__pound-symbol">£</span>
+                </div>
+              </div>
+              <div class="step-process-indicator__step-text">Unlock Extra £30 OFF</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Countdown Timer -->
+        <div class="countdown-timer">
+          <span class="countdown-timer__text">⏰ Extra £30 off ends in: <span class="countdown-timer__time">XX:XX:XX</span></span>
+        </div>
+
+        
+        <div class="cart-items">
+          {% for item in cart.items %}
+            {% render 'checkout-products-wrap', item: item %}
+          {% endfor %}
+        </div>
+      </div>
+
+
+
+
+      <div class="recommendation-separator">
+        <span class="recommendation-separator-text">Recommended Add-Ons</span>
+      </div>
+      <div class="mini-atc-modal__recommendation">
+        <!-- Premium Gift Box & Wrap Component -->
+        <div class="premium-gift-box">
+          <div class="premium-gift-box__container">
+            <!-- Product Image -->
+            <div class="premium-gift-box__image">
+              <img src="{{ 'premium-gift-box.png' | asset_url }}" alt="Premium Gift Box & Wrap" width="71" height="89" />
+            </div>
+            
+            <!-- Content Area -->
+            <div class="premium-gift-box__content">
+              <div class="premium-gift-box__details">
+                <div class="premium-gift-box__text">
+                  <h4 class="premium-gift-box__title">Premium Gift Box & Wrap<br>With All CHUUG Orders</h4>
+                </div>
+                <div class="premium-gift-box__price">£2.00</div>
+              </div>
+              
+              <!-- Toggle Section -->
+              <div class="premium-gift-box__toggle-section">
+                <div class="premium-gift-box__toggle-container">
+                  <label class="premium-gift-box__toggle">
+                    <input type="checkbox" id="premium-gift-box-toggle" class="premium-gift-box__toggle-input">
+                    <span class="premium-gift-box__toggle-slider"></span>
                   </label>
                 </div>
               </div>
             </div>
-          <div class="mini-atc-modal__complete-options">
-            <button class="mini-atc-modal__complete-set-btn bg-green">Mix & Match Set</button>
-            <!-- Mix & Match Content -->
-            <div class="mini-atc-modal__mix-match-content">
-              <!-- Info Box -->
-              <div class="mini-atc-modal__mix-match-info">
-                <div class="mini-atc-modal__mix-match-info-content">
-                  <p>💡 You already get 1 free silver insulated cup with each CHUUG. Add backup insulated cups so you're never without your CHUUG!</p>
-                </div>
-              </div>
-              
-              <!-- Product Variants -->
-              <div class="mini-atc-modal__mix-match-variants">
-                <!-- Midnight Black -->
-                <div class="mini-atc-modal__variant-row">
-                  <div class="mini-atc-modal__variant-image">
-                    <img src="{{ 'midnight_charcoal.png' | asset_url }}" alt="Midnight Black Cup" width="37" height="64" />
-                  </div>
-                  <div class="mini-atc-modal__variant-details">
-                    <div class="mini-atc-modal__variant-info">
-                      <h4 class="mini-atc-modal__variant-name">Midnight Black</h4>
-                      <p class="mini-atc-modal__variant-description">Matches most CHUUGs</p>
-                    </div>
-                    <div class="mini-atc-modal__variant-controls">
-                      <div class="mini-atc-modal__counter">
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                        <div class="mini-atc-modal__counter-value">1</div>
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="mini-atc-modal__variant-price">£12.99</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Divider -->
-                <div class="mini-atc-modal__variant-divider"></div>
-                
-                <!-- Bronze -->
-                <div class="mini-atc-modal__variant-row">
-                  <div class="mini-atc-modal__variant-image">
-                    <img src="{{ 'dusk_charcoal.png' | asset_url }}" alt="Bronze Cup" width="37" height="64" />
-                  </div>
-                  <div class="mini-atc-modal__variant-details">
-                    <div class="mini-atc-modal__variant-info">
-                      <h4 class="mini-atc-modal__variant-name">Bronze</h4>
-                      <p class="mini-atc-modal__variant-description">Premium finish</p>
-                    </div>
-                    <div class="mini-atc-modal__variant-controls">
-                      <div class="mini-atc-modal__counter">
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                        <div class="mini-atc-modal__counter-value">1</div>
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="mini-atc-modal__variant-price">£12.99</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Divider -->
-                <div class="mini-atc-modal__variant-divider"></div>
-                
-                <!-- Rose Gold -->
-                <div class="mini-atc-modal__variant-row">
-                  <div class="mini-atc-modal__variant-image">
-                    <img src="{{ 'dawn_charcoal.png' | asset_url }}" alt="Rose Gold Cup" width="37" height="64" />
-                  </div>
-                  <div class="mini-atc-modal__variant-details">
-                    <div class="mini-atc-modal__variant-info">
-                      <h4 class="mini-atc-modal__variant-name">Rose Gold</h4>
-                      <p class="mini-atc-modal__variant-description">Elegant choice</p>
-                    </div>
-                    <div class="mini-atc-modal__variant-controls">
-                      <div class="mini-atc-modal__counter">
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                        <div class="mini-atc-modal__counter-value">1</div>
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="mini-atc-modal__variant-price">£12.99</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Divider -->
-                <div class="mini-atc-modal__variant-divider"></div>
-                
-                <!-- Silver -->
-                <div class="mini-atc-modal__variant-row">
-                  <div class="mini-atc-modal__variant-image">
-                    <img src="{{ 'dawn_natural.png' | asset_url }}" alt="Silver Cup" width="37" height="64" />
-                  </div>
-                  <div class="mini-atc-modal__variant-details">
-                    <div class="mini-atc-modal__variant-info">
-                      <h4 class="mini-atc-modal__variant-name">Silver</h4>
-                      <p class="mini-atc-modal__variant-description">Classic style</p>
-                    </div>
-                    <div class="mini-atc-modal__variant-controls">
-                      <div class="mini-atc-modal__counter">
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                        <div class="mini-atc-modal__counter-value">1</div>
-                        <button class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" type="button">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
-                            <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                            <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="mini-atc-modal__variant-price">£12.99</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        
-        </div>
-
-
-
-        <div class="recommendation-separator">
-          <span class="recommendation-separator-text">Recommended Add-Ons</span>
-        </div>
-        <div class="mini-atc-modal__recommendation">
-          <!-- Premium Gift Box & Wrap Component -->
-          <div class="premium-gift-box">
-            <div class="premium-gift-box__container">
-              <!-- Product Image -->
-              <div class="premium-gift-box__image">
-                <img src="{{ 'premium-gift-box.png' | asset_url }}" alt="Premium Gift Box & Wrap" width="71" height="89" />
-              </div>
-              
-              <!-- Content Area -->
-              <div class="premium-gift-box__content">
-                <div class="premium-gift-box__details">
-                  <div class="premium-gift-box__text">
-                    <h4 class="premium-gift-box__title">Premium Gift Box & Wrap<br>With All CHUUG Orders</h4>
-                  </div>
-                  <div class="premium-gift-box__price">£2.00</div>
-                </div>
-                
-                <!-- Toggle Section -->
-                <div class="premium-gift-box__toggle-section">
-                  <div class="premium-gift-box__toggle-container">
-                    <label class="premium-gift-box__toggle">
-                      <input type="checkbox" id="premium-gift-box-toggle" class="premium-gift-box__toggle-input">
-                      <span class="premium-gift-box__toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
-
-
     </div>
     
     <!-- Fixed Footer -->
@@ -1457,6 +1520,9 @@
   function showMiniATCModal() {
     const modal = document.getElementById('mini-atc-modal');
     if (modal) {
+      // Reset modal to personalise view
+      resetModalToPersonaliseView(modal);
+      
       // Force reflow to ensure initial state is applied
       modal.offsetHeight;
       modal.classList.add('mini-atc-modal--active');
@@ -1469,6 +1535,27 @@
         }
       }, 100);
     }
+  }
+
+  function resetModalToPersonaliseView(modal) {
+    const header = modal.querySelector('.mini-atc-modal__title');
+    const personaliseWrap = modal.querySelector('.mini-atc-modal__personalise-wrap');
+    const checkoutWrap = modal.querySelector('.mini-atc-modal__checkout-wrap');
+    
+    if (!personaliseWrap || !checkoutWrap || !header) return;
+    
+    // Reset header text
+    header.textContent = 'Personalise Your CHUUG';
+    
+    // Reset content wrappers
+    personaliseWrap.classList.add('mini-atc-modal__content-wrap--active');
+    checkoutWrap.classList.remove('mini-atc-modal__content-wrap--active');
+    
+    // Reset styles
+    personaliseWrap.style.opacity = '1';
+    personaliseWrap.style.transform = 'translateX(0)';
+    checkoutWrap.style.opacity = '0';
+    checkoutWrap.style.transform = 'translateX(20px)';
   }
 
   function closeMiniATCModal() {
@@ -1528,18 +1615,107 @@
   }
 
   function addToCartFromModal() {
-    // This would integrate with your existing add to cart logic
-    // For now, just close the modal
-    closeMiniATCModal();
+    // Switch to checkout view instead of closing modal
+    switchToCheckoutView();
     
     // You can add your cart logic here
-    console.log('Adding to cart from modal...');
+    console.log('Switching to checkout view...');
+  }
+
+  function switchToCheckoutView() {
+    const modal = document.getElementById('mini-atc-modal');
+    const header = modal.querySelector('.mini-atc-modal__title');
+    const personaliseWrap = modal.querySelector('.mini-atc-modal__personalise-wrap');
+    const checkoutWrap = modal.querySelector('.mini-atc-modal__checkout-wrap');
+    
+    if (!personaliseWrap || !checkoutWrap || !header) return;
+    
+    // Update header text
+    header.textContent = 'Proceed to Checkout';
+    
+    // Start crossfade animation
+    personaliseWrap.style.opacity = '0';
+    personaliseWrap.style.transform = 'translateX(-20px)';
+    
+    setTimeout(() => {
+      // Hide personalise content and show checkout content
+      personaliseWrap.classList.remove('mini-atc-modal__content-wrap--active');
+      checkoutWrap.classList.add('mini-atc-modal__content-wrap--active');
+      
+      // Reset and animate checkout content
+      checkoutWrap.style.opacity = '0';
+      checkoutWrap.style.transform = 'translateX(20px)';
+      
+      // Force reflow
+      checkoutWrap.offsetHeight;
+      
+      // Animate in
+      checkoutWrap.style.opacity = '1';
+      checkoutWrap.style.transform = 'translateX(0)';
+      
+      // Populate checkout content
+      populateCheckoutSummary();
+    }, 300);
+  }
+
+  function goBackToPersonalise() {
+    const modal = document.getElementById('mini-atc-modal');
+    const header = modal.querySelector('.mini-atc-modal__title');
+    const personaliseWrap = modal.querySelector('.mini-atc-modal__personalise-wrap');
+    const checkoutWrap = modal.querySelector('.mini-atc-modal__checkout-wrap');
+    
+    if (!personaliseWrap || !checkoutWrap || !header) return;
+    
+    // Update header text
+    header.textContent = 'Personalise Your CHUUG';
+    
+    // Start crossfade animation
+    checkoutWrap.style.opacity = '0';
+    checkoutWrap.style.transform = 'translateX(20px)';
+    
+    setTimeout(() => {
+      // Hide checkout content and show personalise content
+      checkoutWrap.classList.remove('mini-atc-modal__content-wrap--active');
+      personaliseWrap.classList.add('mini-atc-modal__content-wrap--active');
+      
+      // Reset and animate personalise content
+      personaliseWrap.style.opacity = '0';
+      personaliseWrap.style.transform = 'translateX(-20px)';
+      
+      // Force reflow
+      personaliseWrap.offsetHeight;
+      
+      // Animate in
+      personaliseWrap.style.opacity = '1';
+      personaliseWrap.style.transform = 'translateX(0)';
+    }, 300);
+  }
+
+  function populateCheckoutSummary() {
+    // Get current selections to populate checkout summary
+    const currentSelections = state.vesselSelections;
+    const vesselCount = state.currentVesselCount;
+    
+    // This would be implemented to show the actual selections
+    // For now, just update the summary with current data
+    console.log('Populating checkout summary with:', currentSelections, vesselCount);
+  }
+
+  function proceedToFullCheckout() {
+    // This would proceed to the full Shopify checkout
+    // For now, just close the modal and redirect
+    closeMiniATCModal();
+    
+    // You can add your checkout logic here
+    console.log('Proceeding to full checkout...');
   }
 
   // Make functions globally available
   window.handlePersonalizeVessel = handlePersonalizeVessel;
   window.closeMiniATCModal = closeMiniATCModal;
   window.addToCartFromModal = addToCartFromModal;
+  window.goBackToPersonalise = goBackToPersonalise;
+  window.proceedToFullCheckout = proceedToFullCheckout;
 
   // ========================================
   // PUBLIC API
@@ -1899,4 +2075,63 @@ function initProductSwiper() {
   
   return productSwiper;
 }
+
+// ========================================
+// COUNTDOWN TIMER FUNCTIONALITY
+// ========================================
+function initCountdownTimer() {
+  const countdownElement = document.querySelector('.countdown-timer__time');
+  if (!countdownElement) return;
+
+  // Set countdown duration (24 hours in seconds)
+  const countdownDuration = 24 * 60 * 60; // 24 hours
+  
+  // Get or set the start time in localStorage
+  const storageKey = 'chuug_countdown_start';
+  let startTime = localStorage.getItem(storageKey);
+  
+  if (!startTime) {
+    startTime = Math.floor(Date.now() / 1000);
+    localStorage.setItem(storageKey, startTime);
+  } else {
+    startTime = parseInt(startTime);
+  }
+
+  function updateCountdown() {
+    const currentTime = Math.floor(Date.now() / 1000);
+    const elapsed = currentTime - startTime;
+    const remaining = Math.max(0, countdownDuration - elapsed);
+
+    if (remaining <= 0) {
+      // Reset the countdown when it reaches zero
+      startTime = Math.floor(Date.now() / 1000);
+      localStorage.setItem(storageKey, startTime);
+      countdownElement.textContent = '24:00:00';
+      return;
+    }
+
+    // Calculate hours, minutes, and seconds
+    const hours = Math.floor(remaining / 3600);
+    const minutes = Math.floor((remaining % 3600) / 60);
+    const seconds = remaining % 60;
+
+    // Format with leading zeros
+    const formattedTime = 
+      String(hours).padStart(2, '0') + ':' +
+      String(minutes).padStart(2, '0') + ':' +
+      String(seconds).padStart(2, '0');
+
+    countdownElement.textContent = formattedTime;
+  }
+
+  // Update immediately and then every second
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+}
+
+// Initialize countdown timer when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize countdown timer
+  initCountdownTimer();
+});
 </script>

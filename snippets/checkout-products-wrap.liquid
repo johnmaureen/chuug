@@ -1,0 +1,119 @@
+{% comment %}
+  Checkout Products Wrap Component
+  
+  A pixel-perfect implementation of the checkout product toggle component
+  based on Figma design specifications.
+  
+  Usage:
+  {% render 'checkout-products-wrap', item: cart_item %}
+{% endcomment %}
+
+<div class="checkout-products-wrap">
+  <div class="checkout-products-wrap__container">
+    <!-- Product Image Section -->
+    <div class="checkout-products-wrap__image">
+      <div class="checkout-products-wrap__image-container">
+        {% if item.image %}
+          <img 
+            src="{{ item.image | image_url: width: 128, height: 128 }}"
+            alt="{{ item.image.alt | escape }}"
+            width="128"
+            height="128"
+            loading="lazy"
+            class="checkout-products-wrap__product-image"
+          />
+        {% else %}
+          <div class="checkout-products-wrap__placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Product Details Section -->
+    <div class="checkout-products-wrap__details">
+      <!-- Product Title and Delete Button -->
+      <div class="checkout-products-wrap__header">
+        <h3 class="checkout-products-wrap__title">
+          {{ item.product.title }}
+        </h3>
+        <button 
+          type="button" 
+          class="checkout-products-wrap__delete"
+          onclick="removeCartItem('{{ item.key }}')"
+          aria-label="Remove {{ item.product.title }} from cart"
+        >
+          <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Product Options/Chips -->
+      <div class="checkout-products-wrap__options">
+        {% if item.properties.size > 0 %}
+          {% for property in item.properties %}
+            {% unless property.first contains '_' %}
+              <div class="checkout-products-wrap__option-chip">
+                {{ property.first }}: {{ property.last }}
+              </div>
+            {% endunless %}
+          {% endfor %}
+        {% endif %}
+        
+        <!-- Default options for CHUUG products -->
+        {% if item.product.title contains 'CHUUG' or item.product.title contains 'Chuug' %}
+          <div class="checkout-products-wrap__option-chip">
+            🔨 Engraved Initials, [TXT]
+          </div>
+          <div class="checkout-products-wrap__option-chip">
+            🍺 Silver Insulated Cup
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Pricing Section -->
+      <div class="checkout-products-wrap__pricing">
+        {% if item.original_price != item.final_price %}
+          <span class="checkout-products-wrap__current-price">
+            {{ item.final_price | money }}
+          </span>
+          <span class="checkout-products-wrap__original-price">
+            {{ item.original_price | money }}
+          </span>
+        {% else %}
+          <span class="checkout-products-wrap__current-price">
+            {{ item.original_price | money }}
+          </span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function removeCartItem(itemKey) {
+  // Remove item from cart
+  fetch('/cart/change.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id: itemKey,
+      quantity: 0
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Reload the page to update cart
+    window.location.reload();
+  })
+  .catch(error => {
+    console.error('Error removing item from cart:', error);
+  });
+}
+</script>
