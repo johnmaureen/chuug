@@ -1,0 +1,20 @@
+{
+  "name": "chuug-checkout-extensions",
+  "version": "1.0.0",
+  "description": "Shopify app with checkout UI extensions for Chuug",
+  "main": "index.js",
+  "scripts": {
+    "build": "shopify app build",
+    "dev": "shopify app dev",
+    "deploy": "shopify app deploy",
+    "generate": "shopify app generate"
+  },
+  "dependencies": {
+    "@shopify/cli": "^3.0.0"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^3.0.0"
+  },
+  "author": "Chuug",
+  "license": "MIT"
+}

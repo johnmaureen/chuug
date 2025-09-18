@@ -1,0 +1,51 @@
+api_version = "2025-07"
+
+[[extensions]]
+name = "checkout-banner"
+handle = "checkout-banner"
+uid = "68651933-d67b-5cc4-f075-88466d105dd0eb7b7e99"
+type = "ui_extension"
+
+[[extensions.targeting]]
+target = "purchase.checkout.block.render"
+module = "./src/CheckoutBanner.jsx"
+
+[extensions.capabilities]
+network_access = false
+block_progress = false
+
+[extensions.settings]
+[[extensions.settings.fields]]
+key = "banner_type"
+type = "single_line_text_field"
+name = "Banner Type"
+description = "Type of banner to display (info, success, warning, critical)"
+default = "info"
+
+[[extensions.settings.fields]]
+key = "banner_title"
+type = "single_line_text_field"
+name = "Banner Title"
+description = "Title text for the banner"
+default = "Important Information"
+
+[[extensions.settings.fields]]
+key = "banner_message"
+type = "multi_line_text_field"
+name = "Banner Message"
+description = "Main message content for the banner"
+default = "This is an important message for your customers."
+
+[[extensions.settings.fields]]
+key = "is_dismissible"
+type = "boolean"
+name = "Dismissible"
+description = "Allow customers to dismiss the banner"
+default = true
+
+[[extensions.settings.fields]]
+key = "is_collapsible"
+type = "boolean"
+name = "Collapsible"
+description = "Allow customers to collapse/expand the banner"
+default = false

@@ -1,0 +1,19 @@
+{
+  "name": "checkout-banner-extension",
+  "version": "1.0.0",
+  "description": "Shopify Checkout UI Extension with Banner component",
+  "main": "src/CheckoutBanner.jsx",
+  "scripts": {
+    "build": "shopify app build",
+    "dev": "shopify app dev",
+    "deploy": "shopify app deploy"
+  },
+  "dependencies": {
+    "@shopify/ui-extensions-react": "^2025.7.0"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^3.0.0"
+  },
+  "author": "Chuug",
+  "license": "MIT"
+}

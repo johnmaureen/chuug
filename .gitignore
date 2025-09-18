@@ -1,1 +1,4 @@
 .shopify
+node_modules
+checkout-components/node_modules
+checkout-components/extensions/checkout-banner/node_modules
