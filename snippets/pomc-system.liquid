@@ -698,6 +698,28 @@
           </div>
         </div>
       </div>
+        <!-- Add Extra Insulated Cups Component -->
+      <div class="mini-atc-modal__personalization mini-atc-modal__add-extra-cups">
+        <div class="mini-atc-modal__personalization-header">
+          <div class="mini-atc-modal__personalization-header-content">
+            <div class="mini-atc-modal__personalization-icon">
+              {% render 'personalization-icon', icon_type: 'cup' %}
+            </div>
+            <h3>Add Extra Insulated Cups?</h3>
+          </div>
+          <div class="mini-atc-modal__personalization-header-content_right">
+            <a href="#" class="mini-atc-modal__design-link">See preview</a>
+            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
+            <div class="mini-atc-modal__toggle-container">
+              <label class="mini-atc-modal__toggle">
+                <input type="checkbox" id="extra-cups-toggle">
+                <span class="mini-atc-modal__toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+     
+      </div>
     </div>
     
     <!-- Fixed Footer -->
@@ -1550,15 +1572,9 @@
     // Reset header text
     header.textContent = 'Personalise Your CHUUG';
     
-    // Reset content wrappers
+    // Show personalise content, hide checkout content
     personaliseWrap.classList.add('mini-atc-modal__content-wrap--active');
     checkoutWrap.classList.remove('mini-atc-modal__content-wrap--active');
-    
-    // Reset styles
-    personaliseWrap.style.opacity = '1';
-    personaliseWrap.style.transform = 'translateX(0)';
-    checkoutWrap.style.opacity = '0';
-    checkoutWrap.style.transform = 'translateX(20px)';
   }
 
   function closeMiniATCModal() {
@@ -1630,35 +1646,28 @@
     const header = modal.querySelector('.mini-atc-modal__title');
     const personaliseWrap = modal.querySelector('.mini-atc-modal__personalise-wrap');
     const checkoutWrap = modal.querySelector('.mini-atc-modal__checkout-wrap');
+    const modalContent = modal.querySelector('.mini-atc-modal__content');
     
     if (!personaliseWrap || !checkoutWrap || !header) return;
+    
+    console.log('Switching to checkout view');
     
     // Update header text
     header.textContent = 'Proceed to Checkout';
     
-    // Start crossfade animation
-    personaliseWrap.style.opacity = '0';
-    personaliseWrap.style.transform = 'translateX(-20px)';
+    // Hide personalise content and show checkout content instantly
+    personaliseWrap.classList.remove('mini-atc-modal__content-wrap--active');
+    checkoutWrap.classList.add('mini-atc-modal__content-wrap--active');
     
-    setTimeout(() => {
-      // Hide personalise content and show checkout content
-      personaliseWrap.classList.remove('mini-atc-modal__content-wrap--active');
-      checkoutWrap.classList.add('mini-atc-modal__content-wrap--active');
-      
-      // Reset and animate checkout content
-      checkoutWrap.style.opacity = '0';
-      checkoutWrap.style.transform = 'translateX(20px)';
-      
-      // Force reflow
-      checkoutWrap.offsetHeight;
-      
-      // Animate in
-      checkoutWrap.style.opacity = '1';
-      checkoutWrap.style.transform = 'translateX(0)';
-      
-      // Populate checkout content
-      populateCheckoutSummary();
-    }, 300);
+    // Scroll to top of modal content
+    if (modalContent) {
+      modalContent.scrollTop = 0;
+    }
+    
+    // Populate checkout content
+    populateCheckoutSummary();
+    
+    console.log('Switched to checkout view - personalise content is now hidden');
   }
 
   function goBackToPersonalise() {
@@ -1669,29 +1678,16 @@
     
     if (!personaliseWrap || !checkoutWrap || !header) return;
     
+    console.log('Switching back to personalise view');
+    
     // Update header text
     header.textContent = 'Personalise Your CHUUG';
     
-    // Start crossfade animation
-    checkoutWrap.style.opacity = '0';
-    checkoutWrap.style.transform = 'translateX(20px)';
+    // Hide checkout content and show personalise content instantly
+    checkoutWrap.classList.remove('mini-atc-modal__content-wrap--active');
+    personaliseWrap.classList.add('mini-atc-modal__content-wrap--active');
     
-    setTimeout(() => {
-      // Hide checkout content and show personalise content
-      checkoutWrap.classList.remove('mini-atc-modal__content-wrap--active');
-      personaliseWrap.classList.add('mini-atc-modal__content-wrap--active');
-      
-      // Reset and animate personalise content
-      personaliseWrap.style.opacity = '0';
-      personaliseWrap.style.transform = 'translateX(-20px)';
-      
-      // Force reflow
-      personaliseWrap.offsetHeight;
-      
-      // Animate in
-      personaliseWrap.style.opacity = '1';
-      personaliseWrap.style.transform = 'translateX(0)';
-    }, 300);
+    console.log('Switched back to personalise view - checkout content is now hidden');
   }
 
   function populateCheckoutSummary() {
@@ -1902,20 +1898,33 @@ document.addEventListener('DOMContentLoaded', function() {
       // Update input disabled states based on individual toggles
       if (vessel1Input) vessel1Input.disabled = !vessel1Toggle.checked;
       if (vessel2Input) vessel2Input.disabled = !vessel2Toggle.checked;
-    } else if (toggleId === 'mix-match-toggle') {
-      // Handle mix & match section cleanup
-      const counters = section.querySelectorAll('.mini-atc-modal__counter-value');
-      counters.forEach(counter => {
-        counter.textContent = '1'; // Reset to default value
-        // Update pricing for this counter
-        const counterContainer = counter.closest('.mini-atc-modal__counter');
-        if (counterContainer) {
-          updateVariantPrice(counterContainer, 1);
-        }
-      });
-      // Update overall mix & match pricing
-      updateMixMatchPricing();
-    }
+          } else if (toggleId === 'mix-match-toggle') {
+            // Handle mix & match section cleanup
+            const counters = section.querySelectorAll('.mini-atc-modal__counter-value');
+            counters.forEach(counter => {
+              counter.textContent = '1'; // Reset to default value
+              // Update pricing for this counter
+              const counterContainer = counter.closest('.mini-atc-modal__counter');
+              if (counterContainer) {
+                updateVariantPrice(counterContainer, 1);
+              }
+            });
+            // Update overall mix & match pricing
+            updateMixMatchPricing();
+          } else if (toggleId === 'extra-cups-toggle') {
+            // Handle extra cups section cleanup
+            const counters = section.querySelectorAll('.mini-atc-modal__counter-value');
+            counters.forEach(counter => {
+              counter.textContent = '0'; // Reset to 0 for extra cups
+              // Update pricing for this counter
+              const counterContainer = counter.closest('.mini-atc-modal__counter');
+              if (counterContainer) {
+                updateVariantPrice(counterContainer, 0);
+              }
+            });
+            // Update overall extra cups pricing
+            updateExtraCupsPricing();
+          }
   }
 
   // Initialize when DOM is ready
@@ -1933,11 +1942,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize variant prices based on initial counter values
 function initializeVariantPrices() {
-  const counters = document.querySelectorAll('.mini-atc-modal__mix-match-variants .mini-atc-modal__counter');
+  const mixMatchCounters = document.querySelectorAll('.mini-atc-modal__mix-match-variants .mini-atc-modal__counter');
+  const extraCupsCounters = document.querySelectorAll('.mini-atc-modal__extra-cups-variants .mini-atc-modal__counter');
   
-  counters.forEach(counter => {
+  // Initialize mix & match counters with default value of 1
+  mixMatchCounters.forEach(counter => {
     const valueEl = counter.querySelector('.mini-atc-modal__counter-value');
     const initialValue = parseInt(valueEl.textContent) || 1;
+    updateVariantPrice(counter, initialValue);
+  });
+  
+  // Initialize extra cups counters with default value of 0
+  extraCupsCounters.forEach(counter => {
+    const valueEl = counter.querySelector('.mini-atc-modal__counter-value');
+    const initialValue = parseInt(valueEl.textContent) || 0;
     updateVariantPrice(counter, initialValue);
   });
 }
@@ -1945,42 +1963,51 @@ function initializeVariantPrices() {
 // Mix & Match Counter Functionality
 function initMixMatchCounters() {
   const mixMatchContainer = document.querySelector('.mini-atc-modal__mix-match-variants');
+  const extraCupsContainer = document.querySelector('.mini-atc-modal__extra-cups-variants');
   
-  if (!mixMatchContainer) return;
+  if (!mixMatchContainer && !extraCupsContainer) return;
   
-  // Use event delegation for better performance
-  mixMatchContainer.addEventListener('click', function(e) {
-    const btn = e.target.closest('.mini-atc-modal__counter-btn');
-    if (!btn) return;
-    
-    e.preventDefault();
-    
-    const counter = btn.closest('.mini-atc-modal__counter');
-    const valueEl = counter.querySelector('.mini-atc-modal__counter-value');
-    const isIncrement = btn.classList.contains('mini-atc-modal__counter-increment');
-    const isDecrement = btn.classList.contains('mini-atc-modal__counter-decrement');
-    
-    let currentValue = parseInt(valueEl.textContent) || 0;
-    
-    if (isIncrement) {
-      currentValue = Math.min(currentValue + 1, 99); // Max 99
-    } else if (isDecrement) {
-      currentValue = Math.max(currentValue - 1, 0); // Min 0
-    }
-    
-    valueEl.textContent = currentValue;
-    
-    // Update the individual variant price based on counter value
-    updateVariantPrice(counter, currentValue);
-    
-    // Add visual feedback
-    valueEl.style.transform = 'scale(1.1)';
-    setTimeout(() => {
-      valueEl.style.transform = 'scale(1)';
-    }, 150);
-    
-    // Trigger any pricing updates or other logic here
-    updateMixMatchPricing();
+  // Use event delegation for better performance - handle both containers
+  const containers = [mixMatchContainer, extraCupsContainer].filter(Boolean);
+  
+  containers.forEach(container => {
+    container.addEventListener('click', function(e) {
+      const btn = e.target.closest('.mini-atc-modal__counter-btn');
+      if (!btn) return;
+      
+      e.preventDefault();
+      
+      const counter = btn.closest('.mini-atc-modal__counter');
+      const valueEl = counter.querySelector('.mini-atc-modal__counter-value');
+      const isIncrement = btn.classList.contains('mini-atc-modal__counter-increment');
+      const isDecrement = btn.classList.contains('mini-atc-modal__counter-decrement');
+      
+      let currentValue = parseInt(valueEl.textContent) || 0;
+      
+      if (isIncrement) {
+        currentValue = Math.min(currentValue + 1, 99); // Max 99
+      } else if (isDecrement) {
+        currentValue = Math.max(currentValue - 1, 0); // Min 0
+      }
+      
+      valueEl.textContent = currentValue;
+      
+      // Update the individual variant price based on counter value
+      updateVariantPrice(counter, currentValue);
+      
+      // Add visual feedback
+      valueEl.style.transform = 'scale(1.1)';
+      setTimeout(() => {
+        valueEl.style.transform = 'scale(1)';
+      }, 150);
+      
+      // Trigger pricing updates based on container type
+      if (container === mixMatchContainer) {
+        updateMixMatchPricing();
+      } else if (container === extraCupsContainer) {
+        updateExtraCupsPricing();
+      }
+    });
   });
 }
 
@@ -2032,6 +2059,38 @@ function updateMixMatchPricing() {
   }
   
   console.log(`Mix & Match: ${totalItems} items, Total: £${totalPrice.toFixed(2)}`);
+}
+
+// Update pricing based on extra cups selections
+function updateExtraCupsPricing() {
+  const extraCupsToggle = document.getElementById('extra-cups-toggle');
+  const counters = document.querySelectorAll('.mini-atc-modal__extra-cups-variants .mini-atc-modal__counter-value');
+  let totalItems = 0;
+  let totalPrice = 0;
+  const itemPrice = 12.99; // Base price per item (same as mix & match)
+  
+  // Only calculate variant prices if extra-cups toggle is enabled
+  if (extraCupsToggle && extraCupsToggle.checked) {
+    counters.forEach(counter => {
+      const quantity = parseInt(counter.textContent) || 0;
+      totalItems += quantity;
+      totalPrice += quantity * itemPrice;
+    });
+  }
+  
+  // Update modal pricing if needed
+  const currentPriceEl = document.getElementById('mini-atc-current-price');
+  const originalPriceEl = document.getElementById('mini-atc-original-price');
+  
+  if (currentPriceEl && originalPriceEl) {
+    // This would integrate with your existing pricing logic
+    // For now, just adding the extra cups items to base price
+    const basePrice = 78.00; // Base CHUUG price
+    const newTotal = basePrice + totalPrice;
+    currentPriceEl.textContent = `£${newTotal.toFixed(2)}`;
+  }
+  
+  console.log(`Extra Cups: ${totalItems} items, Total: £${totalPrice.toFixed(2)}`);
 }
 
 // Initialize product image swiper

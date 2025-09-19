@@ -2,7 +2,11 @@
    Mini ATC Modal Styles
    ============================================ */
 
-/* Content wrapper base styles for transitions */
+/* Content wrapper base styles - no transitions */
+.mini-atc-modal__personalise-wrap,
+.mini-atc-modal__checkout-wrap {
+	display: none;
+}
 .mini-atc-modal__content-wrap {
 	position: absolute;
 	top: 0;
@@ -12,19 +16,25 @@
 	height: auto;
 	opacity: 0;
 	visibility: hidden;
-	transform: translateX(20px);
-	transition: opacity 0.3s cubic-bezier(0.19, 1, 0.22, 1),
-		transform 0.3s cubic-bezier(0.19, 1, 0.22, 1),
-		visibility 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 	pointer-events: none;
+	z-index: 1;
+	display: none; /* Completely hide inactive content */
 }
 
 .mini-atc-modal__content-wrap--active {
 	opacity: 1;
 	visibility: visible;
-	transform: translateX(0);
 	pointer-events: auto;
 	position: relative;
+	z-index: 2;
+	display: block; /* Show active content */
+}
+
+/* Content container positioning */
+.mini-atc-modal__content {
+	position: relative;
+	min-height: 400px;
+	overflow: hidden;
 }
 
 .mini-atc-modal {
@@ -124,6 +134,7 @@
 .mini-atc-modal__content {
 	flex: 1;
 	overflow-y: auto;
+	overflow-x: hidden;
 	padding: 23px;
 	background: #f2f2ee;
 	box-shadow: -20px 0 24px 0 rgba(0, 0, 0, 0.2);
@@ -672,6 +683,31 @@
 	line-height: 1.3em;
 	opacity: 0.7;
 	white-space: nowrap;
+}
+
+.mini-atc-modal__add-extra-cups {
+	margin-top: 20px;
+}
+
+.mini-atc-modal__add-extra-cups .mini-atc-modal__personalization-header {
+	margin-bottom: 0 !important;
+	align-items: center !important;
+}
+.mini-atc-modal__add-extra-cups .mini-atc-modal__personalization-header h3 {
+	font-size: 16px;
+}
+.mini-atc-modal__add-extra-cups
+	.mini-atc-modal__personalization-header
+	.mini-atc-modal__personalization-header-content {
+	align-items: center !important;
+}
+
+.mini-atc-modal__add-extra-cups .mini-atc-modal__personalization-icon {
+	margin-top: -4px !important;
+}
+
+.mini-atc-modal__add-extra-cups .mini-atc-modal__design-link {
+	margin-right: 12px;
 }
 
 /* Responsive Design */
@@ -1695,8 +1731,4 @@
 	color: #333;
 }
 
-/* Ensure content container is positioned relatively for absolute positioning of wrappers */
-.mini-atc-modal__content {
-	position: relative;
-	min-height: 400px;
-}
+/* Content container positioning is handled above */
