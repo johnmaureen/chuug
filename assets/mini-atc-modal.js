@@ -528,6 +528,9 @@
         this.countdown = new CountdownTimer(countdownElement);
       }
 
+      // Initialize vessel inputs based on toggle states
+      this.initializeVesselInputs();
+
       // Initial pricing calculation
       this.calculatePricing();
     }
@@ -541,6 +544,26 @@
       if (closeButton) {
         closeButton.setAttribute('aria-label', closeButton.getAttribute('aria-label') || 'Close modal');
       }
+    }
+
+    initializeVesselInputs() {
+      // Find all vessel toggles and sync their corresponding inputs
+      const vesselToggles = this.modal.querySelectorAll('[data-vessel-toggle]');
+      
+      vesselToggles.forEach(toggle => {
+        const vesselId = toggle.getAttribute('data-vessel-toggle');
+        const input = toggle.closest('.vessel-personalization-row')?.querySelector('.vessel-name-input');
+        
+        if (input) {
+          // Enable/disable input based on toggle state
+          input.disabled = !toggle.checked;
+          
+          // If toggle is checked, ensure input is enabled
+          if (toggle.checked) {
+            input.removeAttribute('disabled');
+          }
+        }
+      });
     }
 
     handleModalClick(event) {
