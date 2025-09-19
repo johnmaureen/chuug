@@ -1,0 +1,340 @@
+{% comment %}
+  Mini Add-to-Cart Modal Section
+  
+  A semantic, accessible modal component for personalizing CHUUG products.
+  Designed for modularity and future Shopify cart/product integration.
+  
+  Features:
+  - Semantic HTML5 structure
+  - Full accessibility compliance (ARIA attributes)
+  - Modular CSS and JavaScript
+  - Future-ready integration points
+{% endcomment %}
+
+{%- liquid
+  assign modal_id = 'mini-atc-modal-' | append: section.id
+  assign swiper_id = 'mini-atc-product-swiper-' | append: section.id
+-%}
+
+<!-- Mini ATC Modal Section Styles -->
+{{ 'mini-atc-modal.css' | asset_url | stylesheet_tag }}
+
+<section 
+  id="{{ modal_id }}" 
+  class="mini-atc-modal" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-labelledby="{{ modal_id }}-title"
+  aria-hidden="true"
+  data-modal-id="{{ section.id }}"
+  {% comment %} Future integration point {% endcomment %}
+  data-product-context="personalization"
+>
+  <!-- Modal Overlay -->
+  <div 
+    class="mini-atc-modal__overlay" 
+    role="presentation"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Modal Container -->
+  <aside class="mini-atc-modal__container" role="document">
+    
+    <!-- Modal Header -->
+    <header class="mini-atc-modal__header">
+      <h2 
+        id="{{ modal_id }}-title" 
+        class="mini-atc-modal__title"
+      >
+        {{ section.settings.modal_title | default: 'Personalise Your CHUUG' }}
+      </h2>
+      
+      <button 
+        type="button"
+        class="mini-atc-modal__close" 
+        aria-label="{{ 'accessibility.close' | t }}"
+        data-modal-close
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+    
+    <!-- Modal Content -->
+    <main class="mini-atc-modal__content">
+      
+      <!-- Personalization View -->
+      <div 
+        class="mini-atc-modal__view mini-atc-modal__personalise-view mini-atc-modal__view--active" 
+        data-view="personalize"
+        role="tabpanel"
+        aria-labelledby="{{ modal_id }}-personalize-tab"
+      >
+        {% render 'mini-atc-modal-personalize', 
+          section: section, 
+          modal_id: modal_id,
+          swiper_id: swiper_id 
+        %}
+      </div>
+
+      <!-- Checkout View -->
+      <div 
+        class="mini-atc-modal__view mini-atc-modal__checkout-view" 
+        data-view="checkout"
+        role="tabpanel" 
+        aria-labelledby="{{ modal_id }}-checkout-tab"
+        aria-hidden="true"
+      >
+        {% render 'mini-atc-modal-checkout', 
+          section: section, 
+          modal_id: modal_id 
+        %}
+      </div>
+
+    </main>
+    
+    <!-- Modal Footer -->
+    <footer class="mini-atc-modal__footer">
+      {% render 'mini-atc-modal-footer', 
+        section: section, 
+        modal_id: modal_id 
+      %}
+    </footer>
+    
+  </aside>
+</section>
+
+<!-- Modal JavaScript -->
+<script src="{{ 'mini-atc-modal.js' | asset_url }}" defer></script>
+
+{% comment %} Future integration points for Shopify objects {% endcomment %}
+<script type="application/json" data-mini-atc-config="{{ modal_id }}">
+{
+  "modalId": "{{ modal_id }}",
+  "swiperId": "{{ swiper_id }}",
+  "sectionId": "{{ section.id }}",
+  "productContext": {
+    "baseProductId": null,
+    "variantIds": [],
+    "personalizationOptions": []
+  },
+  "cartContext": {
+    "cartUrl": "{{ routes.cart_url }}",
+    "addUrl": "{{ routes.cart_add_url }}",
+    "changeUrl": "{{ routes.cart_change_url }}"
+  },
+  "settings": {
+    "enablePersonalization": {{ section.settings.enable_personalization | default: true }},
+    "enableMixMatch": {{ section.settings.enable_mix_match | default: true }},
+    "enableExtraCups": {{ section.settings.enable_extra_cups | default: true }},
+    "enableGiftWrap": {{ section.settings.enable_gift_wrap | default: true }}
+  }
+}
+</script>
+
+{% schema %}
+{
+  "name": "Mini Add-to-Cart Modal",
+  "tag": "section",
+  "class": "mini-atc-modal-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Modal Settings"
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Modal Title",
+      "default": "Personalise Your CHUUG"
+    },
+    {
+      "type": "text",
+      "id": "checkout_title",
+      "label": "Checkout View Title",
+      "default": "Proceed to Checkout"
+    },
+    {
+      "type": "header",
+      "content": "Feature Controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_personalization",
+      "label": "Enable Coin Engraving Personalization",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mix_match",
+      "label": "Enable Mix & Match Cups",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_extra_cups",
+      "label": "Enable Extra Insulated Cups",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_gift_wrap",
+      "label": "Enable Gift Wrap Option",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_1",
+      "label": "Product Image 1",
+      "info": "Default product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_2",
+      "label": "Product Image 2",
+      "info": "Alternative product view"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_3",
+      "label": "Product Image 3",
+      "info": "Additional product view"
+    },
+    {
+      "type": "header",
+      "content": "Tooltips and Help Text"
+    },
+    {
+      "type": "textarea",
+      "id": "vessel_question_tooltip",
+      "label": "Vessel Question Tooltip Text",
+      "default": "Learn more about vessel personalization options"
+    },
+    {
+      "type": "textarea",
+      "id": "mix_match_info_text",
+      "label": "Mix & Match Info Text",
+      "default": "💡 You already get 1 free silver insulated cup with each CHUUG. Add backup insulated cups so you're never without your CHUUG!"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "personalization_option",
+      "name": "Personalization Option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Option Title"
+        },
+        {
+          "type": "text",
+          "id": "icon_type",
+          "label": "Icon Type",
+          "info": "Icon identifier for rendering"
+        },
+        {
+          "type": "checkbox",
+          "id": "enabled_by_default",
+          "label": "Enabled by Default",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "product_variant",
+      "name": "Product Variant",
+      "settings": [
+        {
+          "type": "text",
+          "id": "variant_name",
+          "label": "Variant Name"
+        },
+        {
+          "type": "text",
+          "id": "variant_description",
+          "label": "Variant Description"
+        },
+        {
+          "type": "image_picker",
+          "id": "variant_image",
+          "label": "Variant Image"
+        },
+        {
+          "type": "number",
+          "id": "variant_price",
+          "label": "Variant Price (in cents)",
+          "default": 1299
+        },
+        {
+          "type": "text",
+          "id": "variant_sku",
+          "label": "Variant SKU",
+          "info": "For future product integration"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mini Add-to-Cart Modal",
+      "blocks": [
+        {
+          "type": "personalization_option",
+          "settings": {
+            "title": "Add a Personalised Coin Engraving?",
+            "icon_type": "pencil",
+            "enabled_by_default": true
+          }
+        },
+        {
+          "type": "personalization_option",
+          "settings": {
+            "title": "Add Extra Insulated Cups?",
+            "icon_type": "cup",
+            "enabled_by_default": true
+          }
+        },
+        {
+          "type": "product_variant",
+          "settings": {
+            "variant_name": "Midnight Black",
+            "variant_description": "Matches most CHUUGs",
+            "variant_price": 1299
+          }
+        },
+        {
+          "type": "product_variant",
+          "settings": {
+            "variant_name": "Bronze",
+            "variant_description": "Premium finish",
+            "variant_price": 1299
+          }
+        },
+        {
+          "type": "product_variant",
+          "settings": {
+            "variant_name": "Rose Gold",
+            "variant_description": "Elegant choice",
+            "variant_price": 1299
+          }
+        },
+        {
+          "type": "product_variant",
+          "settings": {
+            "variant_name": "Silver",
+            "variant_description": "Classic style",
+            "variant_price": 1299
+          }
+        }
+      ]
+    }
+  ],
+  "limit": 1
+}
+{% endschema %}

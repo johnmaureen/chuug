@@ -1,0 +1,74 @@
+{% comment %}
+  Mini ATC Modal - Footer Component
+  
+  Semantic footer with pricing display and primary action button.
+{% endcomment %}
+
+<div class="mini-atc-modal__subtotal-row" role="region" aria-labelledby="{{ modal_id }}-pricing-heading">
+  <h3 id="{{ modal_id }}-pricing-heading" class="visually-hidden">Order Pricing</h3>
+  
+  <div class="mini-atc-modal__left-section">
+    <span class="mini-atc-modal__subtotal-label">Subtotal</span>
+  </div>
+  
+  <div class="mini-atc-modal__right-section">
+    <div class="mini-atc-modal__pricing">
+      <div class="mini-atc-modal__prices">
+        <span 
+          class="mini-atc-modal__current-price" 
+          data-current-price
+          aria-label="Current total price"
+        >
+          {% comment %} Dynamic pricing integration point {% endcomment %}
+          £78.00
+        </span>
+        <span 
+          class="mini-atc-modal__original-price" 
+          data-original-price
+          aria-label="Original price before discounts"
+        >
+          £190.00
+        </span>
+      </div>
+    </div>
+    
+    <div class="mini-atc-modal__savings" aria-label="Total savings amount">
+      <svg 
+        class="mini-atc-modal__savings-icon" 
+        width="15" 
+        height="15" 
+        viewBox="0 0 15 15" 
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M7.5 0L9.18 5.18L15 5.18L10.41 8.32L12.09 13.5L7.5 10.36L2.91 13.5L4.59 8.32L0 5.18L5.82 5.18L7.5 0Z" fill="#A43223"/>
+      </svg>
+      <span class="mini-atc-modal__savings-text" data-savings-amount>
+        You Saved £45.64
+      </span>
+    </div>
+  </div>
+</div>
+
+<button 
+  type="button"
+  class="mini-atc-modal__add-to-cart-btn" 
+  data-modal-action="add-to-cart"
+  aria-describedby="{{ modal_id }}-cart-description"
+  {% comment %} Future cart integration {% endcomment %}
+  data-cart-action="add"
+  data-cart-redirect="{{ routes.cart_url }}"
+>
+  <span class="mini-atc-modal__btn-text">ADD TO CART</span>
+</button>
+
+<div id="{{ modal_id }}-cart-description" class="visually-hidden">
+  Add all selected items to your shopping cart and proceed to checkout
+</div>
+
+{% comment %} 
+  Future integration points for cart data:
+  - data-cart-items: JSON of selected items
+  - data-cart-totals: Pricing calculation data
+  - data-cart-properties: Custom properties for personalization
+{% endcomment %}

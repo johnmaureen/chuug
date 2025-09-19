@@ -298,7 +298,32 @@
 <!-- Include Cart Manager JavaScript -->
 {{ 'cart-manager.js' | asset_url | script_tag }}
 
-<!-- Mini ATC Modal -->
+{% comment %}
+  🚨 REFACTORED IMPLEMENTATION AVAILABLE
+  
+  The mini-atc-modal has been refactored into a semantic, accessible Shopify section.
+  See MINI-ATC-MODAL-INTEGRATION.md for migration guide.
+  
+  New Implementation:
+  - sections/mini-atc-modal.liquid (main section with schema)
+  - snippets/mini-atc-modal-*.liquid (modular components)
+  - assets/mini-atc-modal.css (organized styles)
+  - assets/mini-atc-modal.js (modular JavaScript)
+  
+  To use the new implementation:
+  1. Add {% section 'mini-atc-modal' %} to your template
+  2. Configure via theme editor
+  3. Replace old function calls with new API
+  
+  Benefits:
+  ✅ Semantic HTML5 & ARIA compliance
+  ✅ Modular architecture
+  ✅ Shopify best practices
+  ✅ Future integration ready
+  ✅ Performance optimized
+{% endcomment %}
+
+<!-- Mini ATC Modal (Legacy Implementation) -->
 <div id="mini-atc-modal" class="mini-atc-modal">
   <div class="mini-atc-modal__overlay"></div>
   <div class="mini-atc-modal__container">
@@ -2196,4 +2221,19 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize countdown timer
   initCountdownTimer();
 });
+
+{% comment %}
+  🚨 END OF LEGACY IMPLEMENTATION
+  
+  The above JavaScript (lines 754-2199) has been refactored into:
+  assets/mini-atc-modal.js
+  
+  New implementation features:
+  - Modular class-based architecture
+  - Event-driven communication
+  - Proper error handling
+  - Memory leak prevention
+  - Performance optimizations
+  - Future Shopify integration points
+{% endcomment %}
 </script>

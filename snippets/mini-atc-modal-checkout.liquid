@@ -1,0 +1,149 @@
+{% comment %}
+  Mini ATC Modal - Checkout View
+  
+  Semantic checkout summary view with order details and progression indicators.
+{% endcomment %}
+
+<!-- Step Process Indicator -->
+<section class="step-process-section" aria-labelledby="{{ modal_id }}-progress-heading">
+  <h3 id="{{ modal_id }}-progress-heading" class="visually-hidden">Checkout Progress</h3>
+  
+  <div class="step-process-indicator" role="progressbar" aria-valuenow="2" aria-valuemin="1" aria-valuemax="3">
+    <h4 class="step-process-indicator__header">
+      🔥 You're only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>
+    </h4>
+    
+    <div class="step-process-indicator__progress-bar" aria-hidden="true">
+      <div class="step-process-indicator__progress-fill"></div>
+    </div>
+    
+    <ol class="step-process-indicator__steps">
+      <li class="step-process-indicator__step step-process-indicator__step--completed">
+        <div class="step-process-indicator__step-icon" aria-hidden="true">
+          <div class="step-process-indicator__step-circle">
+            <svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step-process-indicator__step-text">Buy More & Save</div>
+      </li>
+      
+      <li class="step-process-indicator__step step-process-indicator__step--completed">
+        <div class="step-process-indicator__step-icon" aria-hidden="true">
+          <div class="step-process-indicator__step-circle">
+            <svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step-process-indicator__step-text">Free Shipping</div>
+      </li>
+      
+      <li class="step-process-indicator__step step-process-indicator__step--active">
+        <div class="step-process-indicator__step-icon" aria-hidden="true">
+          <div class="step-process-indicator__step-circle">
+            <span class="step-process-indicator__pound-symbol">£</span>
+          </div>
+        </div>
+        <div class="step-process-indicator__step-text">Unlock Extra £30 OFF</div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- Countdown Timer -->
+<section class="countdown-section" aria-labelledby="{{ modal_id }}-countdown-heading">
+  <h3 id="{{ modal_id }}-countdown-heading" class="visually-hidden">Limited Time Offer</h3>
+  
+  <div class="countdown-timer" role="timer" aria-live="polite" aria-atomic="true">
+    <span class="countdown-timer__text">
+      ⏰ Extra £30 off ends in: 
+      <time class="countdown-timer__time" data-countdown-timer>XX:XX:XX</time>
+    </span>
+  </div>
+</section>
+
+<!-- Order Summary -->
+<section class="checkout-summary-section" aria-labelledby="{{ modal_id }}-summary-heading">
+  <h3 id="{{ modal_id }}-summary-heading" class="visually-hidden">Order Summary</h3>
+  
+  <div class="checkout-products-container" data-checkout-items>
+    {% comment %} Dynamic cart items will be populated here {% endcomment %}
+    {% for item in cart.items limit: 3 %}
+      {% render 'checkout-products-wrap', item: item, modal_id: modal_id %}
+    {% endfor %}
+    
+    {% comment %} Placeholder for when no items {% endcomment %}
+    <div class="checkout-empty-state" data-empty-state style="display: none;">
+      <p>Your personalized items will appear here</p>
+    </div>
+  </div>
+</section>
+
+<!-- Additional Recommendations -->
+<section class="additional-recommendations-section" aria-labelledby="{{ modal_id }}-additional-heading">
+  <div class="recommendation-separator" role="separator">
+    <h4 id="{{ modal_id }}-additional-heading" class="recommendation-separator-text">
+      Last Chance Add-Ons
+    </h4>
+  </div>
+  
+  {% if section.settings.enable_extra_cups %}
+    <article class="mini-atc-modal__personalization mini-atc-modal__add-extra-cups" data-personalization="extra-cups">
+      <header class="mini-atc-modal__personalization-header">
+        <div class="mini-atc-modal__personalization-header-content">
+          <div class="mini-atc-modal__personalization-icon" aria-hidden="true">
+            {% render 'personalization-icon', icon_type: 'cup' %}
+          </div>
+          <h5>Add Extra Insulated Cups?</h5>
+        </div>
+        
+        <div class="mini-atc-modal__personalization-header-content_right">
+          <a href="#" class="mini-atc-modal__design-link" aria-describedby="{{ modal_id }}-extra-preview-tooltip">
+            See preview
+          </a>
+          {% render 'icon-question-mark-tooltip', 
+            tooltip_text: section.settings.vessel_question_tooltip,
+            tooltip_id: modal_id | append: '-extra-preview-tooltip' 
+          %}
+          
+          <div class="mini-atc-modal__toggle-container">
+            <label class="mini-atc-modal__toggle" for="{{ modal_id }}-extra-cups-toggle">
+              <input 
+                type="checkbox" 
+                id="{{ modal_id }}-extra-cups-toggle"
+                data-personalization-toggle="extra-cups"
+                aria-describedby="{{ modal_id }}-extra-cups-description"
+              >
+              <span class="mini-atc-modal__toggle-slider" aria-hidden="true"></span>
+              <span class="visually-hidden">Enable extra cups at checkout</span>
+            </label>
+          </div>
+        </div>
+      </header>
+      
+      <div id="{{ modal_id }}-extra-cups-description" class="visually-hidden">
+        Toggle to add extra insulated cups to your final order
+      </div>
+    </article>
+  {% endif %}
+</section>
+
+<!-- Checkout Actions -->
+<nav class="checkout-actions-section" aria-labelledby="{{ modal_id }}-actions-heading">
+  <h3 id="{{ modal_id }}-actions-heading" class="visually-hidden">Checkout Actions</h3>
+  
+  <button 
+    type="button"
+    class="mini-atc-modal__back-btn"
+    data-modal-action="back-to-personalize"
+    aria-describedby="{{ modal_id }}-back-description"
+  >
+    ← Back to Personalization
+  </button>
+  
+  <div id="{{ modal_id }}-back-description" class="visually-hidden">
+    Return to the personalization view to modify your selections
+  </div>
+</nav>
