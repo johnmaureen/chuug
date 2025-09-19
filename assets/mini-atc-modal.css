@@ -315,6 +315,12 @@
 	font-size: 16px;
 }
 
+.mini-atc-modal__mix-match
+	.mini-atc-modal__personalization-header
+	.mini-atc-modal__personalization-header-content {
+	align-items: center;
+}
+
 .mini-atc-modal__add-extra-cups
 	.mini-atc-modal__personalization-header-content {
 	align-items: center;
@@ -326,6 +332,18 @@
 
 .mini-atc-modal__add-extra-cups .mini-atc-modal__design-link {
 	margin-right: 12px;
+}
+
+.mini-atc-modal__personalization-header .icon-question-mark-tooltip {
+	/* margin: 0 6px; */
+}
+
+.mini-atc-modal__personalization-header .icon-question-mark-tooltip p {
+	color: #fff;
+}
+.mini-atc-modal__personalization-header .icon-question-mark-tooltip svg,
+.mini-atc-modal__personalization-header .icon-question-mark-tooltip svg path {
+	fill: #000 !important;
 }
 
 /* Design Links */
@@ -899,7 +917,7 @@
 }
 
 .premium-gift-box__toggle-input:checked + .premium-gift-box__toggle-slider {
-	background-color: #4caf50;
+	background-color: rgb(219, 225, 136);
 }
 
 .premium-gift-box__toggle-input:checked
@@ -908,7 +926,7 @@
 }
 
 .premium-gift-box__toggle-input:focus + .premium-gift-box__toggle-slider {
-	outline: 2px solid rgba(76, 175, 80, 0.5);
+	outline: 2px solid rgba(219, 225, 136, 0.5);
 	outline-offset: 2px;
 }
 

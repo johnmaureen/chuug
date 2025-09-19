@@ -844,6 +844,9 @@
         this.focusTrap = null;
       }
       
+      // Reset to preview (personalize) view when closing
+      this.switchView('personalize');
+      
       this.isActive = false;
       this.emit('modalClosed');
     }

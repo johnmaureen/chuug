@@ -123,6 +123,7 @@
 }
 .product_amount_original_price {
 	color: rgba(0, 0, 0, 0.4) !important;
+	margin-top: 3px;
 }
 .product_amount_original_price .dualPrice {
 	text-align: center;
@@ -136,6 +137,7 @@
 .vessel-price-wrap {
 	margin-top: 5px;
 	margin-bottom: 3px;
+	column-gap: 5px;
 }
 
 .discount-label {
