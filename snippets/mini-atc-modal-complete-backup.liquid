@@ -1,0 +1,137 @@
+{% comment %}
+  Mini Add-to-Cart Modal Complete Snippet
+  
+  A complete modal implementation that can be included in other sections.
+  This is a snippet version of the mini-atc-modal section.
+{% endcomment %}
+
+{%- liquid
+  assign parent_section = section
+  assign modal_id = 'mini-atc-modal-' | append: parent_section.id
+  assign swiper_id = 'mini-atc-product-swiper-' | append: parent_section.id
+-%}
+
+<!-- Mini ATC Modal Snippet Styles -->
+{{ 'mini-atc-modal.css' | asset_url | stylesheet_tag }}
+
+<section 
+  id="{{ modal_id }}" 
+  class="mini-atc-modal" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-labelledby="{{ modal_id }}-title"
+  aria-hidden="true"
+  data-modal-id="{{ parent_section.id }}"
+  data-product-context="personalization"
+>
+  <!-- Modal Overlay -->
+  <div 
+    class="mini-atc-modal__overlay" 
+    role="presentation"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Modal Container -->
+  <aside class="mini-atc-modal__container" role="document">
+    
+    <!-- Modal Header -->
+    <header class="mini-atc-modal__header">
+      <h2 
+        id="{{ modal_id }}-title" 
+        class="mini-atc-modal__title"
+      >
+        Personalise Your CHUUG
+      </h2>
+      
+      <button 
+        type="button"
+        class="mini-atc-modal__close" 
+        aria-label="Close modal"
+        data-modal-close
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+    
+    <!-- Modal Content -->
+    <main class="mini-atc-modal__content">
+      
+      <!-- Personalization View -->
+      <div 
+        class="mini-atc-modal__view mini-atc-modal__personalise-view mini-atc-modal__view--active" 
+        data-view="personalize"
+        role="tabpanel"
+        aria-labelledby="{{ modal_id }}-personalize-tab"
+      >
+        {% render 'mini-atc-modal-personalize', 
+          section: parent_section, 
+          modal_id: modal_id,
+          swiper_id: swiper_id 
+        %}
+      </div>
+
+      <!-- Checkout View -->
+      <div 
+        class="mini-atc-modal__view mini-atc-modal__checkout-view" 
+        data-view="checkout"
+        role="tabpanel" 
+        aria-labelledby="{{ modal_id }}-checkout-tab"
+        aria-hidden="true"
+      >
+        {% render 'mini-atc-modal-checkout', 
+          section: parent_section, 
+          modal_id: modal_id 
+        %}
+      </div>
+      
+    </main>
+    
+    <!-- Modal Footer -->
+    <footer class="mini-atc-modal__footer">
+      {% render 'mini-atc-modal-footer', 
+        section: parent_section, 
+        modal_id: modal_id 
+      %}
+    </footer>
+    
+  </aside>
+</section>
+
+<!-- Modal JavaScript -->
+<script src="{{ 'mini-atc-modal.js' | asset_url }}" defer onerror="console.error('Failed to load mini-atc-modal.js')"></script>
+
+<!-- Debug script to check if JavaScript loaded -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      if (window.MiniATCModal) {
+        console.log('Mini ATC Modal JavaScript loaded successfully');
+      } else {
+        console.error('Mini ATC Modal JavaScript not available after DOM load');
+      }
+    }, 100);
+  });
+</script>
+
+{% comment %} Modal configuration for JavaScript {% endcomment %}
+<script type="application/json" data-mini-atc-config="{{ modal_id }}">
+{
+  "modalId": "{{ modal_id }}",
+  "swiperId": "{{ swiper_id }}",
+  "sectionId": "{{ parent_section.id }}",
+  "productContext": {
+    "baseProductId": null,
+    "variantIds": [],
+    "personalizationEnabled": true
+  },
+  "modalTitle": "Personalise Your CHUUG",
+  "checkoutTitle": "Proceed to Checkout",
+  "pricing": {
+    "basePrice": 7800,
+    "giftBoxPrice": 200,
+    "variantPrice": 1299
+  }
+}
+</script>

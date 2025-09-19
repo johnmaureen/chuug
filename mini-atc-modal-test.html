@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini ATC Modal Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/mini-atc-modal.css">
+</head>
+<body>
+    <h1>Mini ATC Modal Test</h1>
+    <button onclick="testOpenModal()" style="padding: 20px; font-size: 18px; margin-bottom: 20px;">Open Mini ATC Modal</button>
+    <div id="test-results" style="background: #f0f0f0; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+        <h3>Test Results:</h3>
+        <div id="test-log"></div>
+    </div>
+    
+    <!-- Include the modal -->
+    <section 
+      id="mini-atc-modal-test" 
+      class="mini-atc-modal" 
+      role="dialog" 
+      aria-modal="true" 
+      aria-labelledby="mini-atc-modal-test-title"
+      aria-hidden="true"
+      data-modal-id="test"
+      data-product-context="personalization"
+    >
+      <!-- Modal Overlay -->
+      <div class="mini-atc-modal__overlay" role="presentation" aria-hidden="true"></div>
+
+      <!-- Modal Container -->
+      <aside class="mini-atc-modal__container" role="document">
+        
+        <!-- Modal Header -->
+        <header class="mini-atc-modal__header">
+          <h2 id="mini-atc-modal-test-title" class="mini-atc-modal__title">
+            Personalise Your CHUUG
+          </h2>
+          
+          <button type="button" class="mini-atc-modal__close" aria-label="Close modal" data-modal-close>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </header>
+        
+        <!-- Modal Content -->
+        <main class="mini-atc-modal__content">
+          <!-- Personalize View -->
+          <div class="mini-atc-modal__view mini-atc-modal__personalise-view mini-atc-modal__view--active" data-view="personalize">
+            <p style="padding: 20px; text-align: center; margin-bottom: 30px;">
+              This is a test of the mini ATC modal. Test the counter buttons below:
+            </p>
+            
+            <!-- Test Counter -->
+            <div class="mini-atc-modal__variant-row" data-variant-id="test-variant-1" style="max-width: 400px; margin: 0 auto;">
+              <div class="mini-atc-modal__variant-details">
+                <div class="mini-atc-modal__variant-info">
+                  <h6 class="mini-atc-modal__variant-name">Test Variant</h6>
+                  <p class="mini-atc-modal__variant-description">Counter functionality test</p>
+                </div>
+                
+                <div class="mini-atc-modal__variant-controls">
+                  <div class="mini-atc-modal__counter" role="group">
+                    <button 
+                      type="button"
+                      class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" 
+                      aria-label="Decrease quantity"
+                      data-variant-action="decrement"
+                      data-variant-id="test-variant-1"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                        <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                    
+                    <div 
+                      class="mini-atc-modal__counter-value" 
+                      aria-live="polite"
+                      aria-atomic="true"
+                      data-variant-quantity
+                    >1</div>
+                    
+                    <button 
+                      type="button"
+                      class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" 
+                      aria-label="Increase quantity"
+                      data-variant-action="increment"
+                      data-variant-id="test-variant-1"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                        <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                        <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <div 
+                    class="mini-atc-modal__variant-price" 
+                    aria-live="polite"
+                    data-variant-price="test-variant-1"
+                    data-base-price="1299"
+                  >
+                    £12.99
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checkout View -->
+          <div class="mini-atc-modal__view mini-atc-modal__checkout-view" data-view="checkout" aria-hidden="true">
+            <div style="padding: 20px; text-align: center;">
+              <h3>Checkout View</h3>
+              <p>This is the checkout view. The button should now say "CHECK OUT".</p>
+              <button type="button" data-modal-action="back-to-personalize" style="padding: 10px 20px; margin-top: 20px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px;">
+                Back to Personalize
+              </button>
+            </div>
+          </div>
+        </main>
+        
+        <!-- Modal Footer -->
+        <footer class="mini-atc-modal__footer">
+          <div class="mini-atc-modal__subtotal-row">
+            <div class="mini-atc-modal__left-section">
+              <span class="mini-atc-modal__subtotal-label">Subtotal</span>
+            </div>
+            <div class="mini-atc-modal__right-section">
+              <div class="mini-atc-modal__pricing">
+                <span class="mini-atc-modal__current-price">£78.00</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="mini-atc-modal__add-to-cart-btn" data-modal-action="add-to-cart">
+            <span class="mini-atc-modal__btn-text">ADD TO CART</span>
+          </button>
+        </footer>
+        
+      </aside>
+    </section>
+
+    <script src="assets/mini-atc-modal.js"></script>
+    <script>
+        function logToPage(message, type = 'info') {
+            const logDiv = document.getElementById('test-log');
+            const time = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logDiv.innerHTML += `<div style="color: ${color}; margin: 5px 0;">[${time}] ${message}</div>`;
+            console.log(message);
+        }
+        
+        function testOpenModal() {
+            logToPage('Testing modal open...', 'info');
+            
+            // Test if JavaScript loaded
+            if (window.MiniATCModal) {
+                logToPage('✅ MiniATCModal API is available', 'success');
+                
+                // Check for instances
+                const allInstances = window.MiniATCModal.getAllInstances();
+                logToPage(`Modal instances found: ${allInstances.size}`, 'info');
+                
+                // Try to open the modal
+                try {
+                    window.MiniATCModal.openModal('mini-atc-modal-test');
+                    logToPage('✅ Modal opened successfully', 'success');
+                    
+                    // Test button label functionality
+                    setTimeout(() => {
+                        testButtonLabelChanges();
+                    }, 500);
+                    
+                } catch (error) {
+                    logToPage(`❌ Error opening modal: ${error.message}`, 'error');
+                    
+                    // Fallback - manually show modal
+                    const modal = document.getElementById('mini-atc-modal-test');
+                    if (modal) {
+                        modal.classList.add('mini-atc-modal--active');
+                        modal.setAttribute('aria-hidden', 'false');
+                        document.body.style.overflow = 'hidden';
+                        logToPage('✅ Manually opened modal as fallback', 'success');
+                        
+                        // Test button label functionality
+                        setTimeout(() => {
+                            testButtonLabelChanges();
+                        }, 500);
+                    } else {
+                        logToPage('❌ Modal element not found', 'error');
+                    }
+                }
+            } else {
+                logToPage('❌ MiniATCModal API not available', 'error');
+                // Fallback - manually show modal
+                const modal = document.getElementById('mini-atc-modal-test');
+                if (modal) {
+                    modal.classList.add('mini-atc-modal--active');
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    logToPage('✅ Manually opened modal as fallback', 'success');
+                    
+                    // Test button label functionality
+                    setTimeout(() => {
+                        testButtonLabelChanges();
+                    }, 500);
+                } else {
+                    logToPage('❌ Modal element not found', 'error');
+                }
+            }
+        }
+        
+        function testButtonLabelChanges() {
+            logToPage('Testing button label changes...', 'info');
+            
+            const modal = document.getElementById('mini-atc-modal-test');
+            const btnTextEl = modal?.querySelector('.mini-atc-modal__btn-text');
+            const addToCartBtn = modal?.querySelector('.mini-atc-modal__add-to-cart-btn');
+            
+            if (!btnTextEl || !addToCartBtn) {
+                logToPage('❌ Button elements not found', 'error');
+                return;
+            }
+            
+            // Test initial state
+            const initialText = btnTextEl.textContent;
+            logToPage(`Initial button text: "${initialText}"`, 'info');
+            
+            if (initialText === 'ADD TO CART') {
+                logToPage('✅ Initial button text is correct', 'success');
+            } else {
+                logToPage(`❌ Initial button text should be "ADD TO CART", got "${initialText}"`, 'error');
+            }
+            
+            // Simulate clicking the button to switch to checkout view
+            logToPage('Simulating button click to switch to checkout view...', 'info');
+            addToCartBtn.click();
+            
+            // Check button text after switching to checkout
+            setTimeout(() => {
+                const checkoutText = btnTextEl.textContent;
+                logToPage(`Button text after checkout switch: "${checkoutText}"`, 'info');
+                
+                if (checkoutText === 'CHECK OUT') {
+                    logToPage('✅ Button text changed to "CHECK OUT" correctly', 'success');
+                } else {
+                    logToPage(`❌ Button text should be "CHECK OUT", got "${checkoutText}"`, 'error');
+                }
+                
+                // Test switching back to personalize view
+                const backBtn = modal.querySelector('[data-modal-action="back-to-personalize"]');
+                if (backBtn) {
+                    logToPage('Testing switch back to personalize view...', 'info');
+                    backBtn.click();
+                    
+                    setTimeout(() => {
+                        const personalizeText = btnTextEl.textContent;
+                        logToPage(`Button text after personalize switch: "${personalizeText}"`, 'info');
+                        
+                        if (personalizeText === 'ADD TO CART') {
+                            logToPage('✅ Button text changed back to "ADD TO CART" correctly', 'success');
+                        } else {
+                            logToPage(`❌ Button text should be "ADD TO CART", got "${personalizeText}"`, 'error');
+                        }
+                    }, 100);
+                } else {
+                    logToPage('❌ Back to personalize button not found', 'error');
+                }
+            }, 100);
+        }
+        
+        // Test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded. Testing mini ATC modal...');
+            
+            setTimeout(() => {
+                if (window.MiniATCModal) {
+                    console.log('✅ MiniATCModal JavaScript loaded successfully');
+                } else {
+                    console.error('❌ MiniATCModal JavaScript not available');
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

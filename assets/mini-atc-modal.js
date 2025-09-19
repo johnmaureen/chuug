@@ -211,6 +211,7 @@
       if (!this.state[type].variants) {
         this.state[type].variants = {};
       }
+      
       this.state[type].variants[variantId] = Math.max(0, quantity);
       this.saveState();
       this.emit('variantChanged', { type, variantId, quantity });
@@ -418,28 +419,32 @@
       // Add mix & match variants
       if (state.mixMatch?.enabled && state.mixMatch.variants) {
         Object.values(state.mixMatch.variants).forEach(quantity => {
-          total += quantity * this.basePrices.variant;
+          const variantPrice = quantity * this.basePrices.variant;
+          total += variantPrice;
         });
       }
       
       // Add extra cups variants
       if (state.extraCups?.enabled && state.extraCups.variants) {
         Object.values(state.extraCups.variants).forEach(quantity => {
-          total += quantity * this.basePrices.variant;
+          const variantPrice = quantity * this.basePrices.variant;
+          total += variantPrice;
         });
       }
 
       const originalPrice = 19000; // £190.00 in cents
       const savings = originalPrice - total;
 
-      this.emit('priceCalculated', {
+      const pricingData = {
         total,
         originalPrice,
         savings,
         formattedTotal: Utils.formatPrice(total),
         formattedOriginal: Utils.formatPrice(originalPrice),
         formattedSavings: Utils.formatPrice(savings)
-      });
+      };
+
+      this.emit('priceCalculated', pricingData);
 
       return { total, originalPrice, savings };
     }
@@ -624,7 +629,14 @@
       
       // Determine personalization type
       const personalizationEl = counterBtn.closest('[data-personalization]');
-      const type = personalizationEl?.getAttribute('data-personalization') || 'mixMatch';
+      let type = personalizationEl?.getAttribute('data-personalization') || 'mixMatch';
+      
+      // Convert kebab-case to camelCase for state consistency
+      if (type === 'mix-match') {
+        type = 'mixMatch';
+      } else if (type === 'extra-cups') {
+        type = 'extraCups';
+      }
       
       this.state.updateVariantQuantity(type, variantId, currentValue);
     }
@@ -676,6 +688,12 @@
     }
 
     toggleOptionsVisibility(toggle) {
+      // Don't hide complete options for vessel personalization toggles
+      // These toggles should only enable/disable individual vessel input fields
+      if (toggle.hasAttribute('data-vessel-toggle')) {
+        return;
+      }
+      
       const personalizationEl = toggle.closest('.mini-atc-modal__personalization');
       const optionsEl = personalizationEl?.querySelector('[data-personalization-content], .mini-atc-modal__complete-options');
       
@@ -716,9 +734,13 @@
     }
 
     updatePricingDisplay(pricing) {
-      const currentPriceEl = this.modal.querySelector('[data-current-price]');
-      const originalPriceEl = this.modal.querySelector('[data-original-price]');
-      const savingsEl = this.modal.querySelector('[data-savings-amount]');
+      // Try multiple selectors to find the price elements
+      const currentPriceEl = this.modal.querySelector('[data-current-price]') || 
+                            this.modal.querySelector('.mini-atc-modal__current-price');
+      const originalPriceEl = this.modal.querySelector('[data-original-price]') || 
+                             this.modal.querySelector('.mini-atc-modal__original-price');
+      const savingsEl = this.modal.querySelector('[data-savings-amount]') || 
+                       this.modal.querySelector('.mini-atc-modal__savings-text');
 
       if (currentPriceEl) {
         currentPriceEl.textContent = pricing.formattedTotal;
@@ -728,15 +750,15 @@
         originalPriceEl.textContent = pricing.formattedOriginal;
       }
       
-      if (savingsEl) {
-        savingsEl.textContent = `You Saved ${pricing.formattedSavings}`;
-      }
+      // Keep savings static - don't update
     }
 
     switchView(viewName) {
       const views = this.modal.querySelectorAll('.mini-atc-modal__view');
       const targetView = this.modal.querySelector(`[data-view="${viewName}"]`);
       const titleEl = this.modal.querySelector('.mini-atc-modal__title');
+      const addToCartBtn = this.modal.querySelector('.mini-atc-modal__add-to-cart-btn');
+      const btnTextEl = addToCartBtn?.querySelector('.mini-atc-modal__btn-text');
 
       if (!targetView) return;
 
@@ -758,6 +780,19 @@
           case 'personalize':
           default:
             titleEl.textContent = this.config.modalTitle || 'Personalise Your CHUUG';
+            break;
+        }
+      }
+
+      // Update button label based on view
+      if (btnTextEl) {
+        switch (viewName) {
+          case 'checkout':
+            btnTextEl.textContent = 'CHECK OUT';
+            break;
+          case 'personalize':
+          default:
+            btnTextEl.textContent = 'ADD TO CART';
             break;
         }
       }
@@ -784,6 +819,9 @@
       
       this.isActive = true;
       this.emit('modalOpened');
+
+      // Calculate initial pricing
+      this.calculatePricing();
 
       // Initialize components that need the modal to be visible
       setTimeout(() => {
@@ -873,7 +911,7 @@
     const modals = document.querySelectorAll('.mini-atc-modal');
     const instances = new Map();
 
-    modals.forEach(modal => {
+    modals.forEach((modal, index) => {
       const instance = new MiniATCModal(modal);
       instances.set(modal.id, instance);
       

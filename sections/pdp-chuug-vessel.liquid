@@ -149,6 +149,10 @@
         <!-- POMC System Integration -->
         {% render 'pomc-system', product: product, section: section %}
       </div>
+
+      <!-- Mini ATC Modal Section -->
+      {% render 'mini-atc-modal-complete' %}
+      
       {% for block in section.blocks %}
         {%- case block.type -%}
           {%- when 'accordion' -%}
@@ -468,6 +472,71 @@
     toggleClass('monogram_initials', 'tw-hidden', true);
     updateCarouselsImages();
     updatePrices(index);
+  }
+
+  function handlePersonalizeVessel() {
+    // Find the mini ATC modal element on the page
+    const miniATCModal = document.querySelector('.mini-atc-modal');
+    
+    if (!miniATCModal) {
+      console.error('Mini ATC Modal element not found on page');
+      return;
+    }
+
+    const modalId = miniATCModal.id;
+    
+    // Try multiple approaches to open the modal
+    const tryOpenModal = () => {
+      // Method 1: Use the main MiniATCModal API
+      if (window.MiniATCModal && typeof window.MiniATCModal.openModal === 'function') {
+        console.log("Using window.MiniATCModal.openModal");
+        window.MiniATCModal.openModal(modalId);
+        return true;
+      }
+      
+      // Method 2: Use the global helper function
+      if (window.openMiniATCModal && typeof window.openMiniATCModal === 'function') {
+        console.log("Using window.openMiniATCModal");
+        window.openMiniATCModal(modalId);
+        return true;
+      }
+      
+      return false;
+    };
+
+    // Try immediately
+    if (tryOpenModal()) {
+      return;
+    }
+
+    // If not available, wait for script to load
+    console.warn('Mini ATC Modal JavaScript not loaded yet. Waiting for script...');
+    
+    // Method 3: Wait for the script to load by checking periodically
+    let retryCount = 0;
+    const maxRetries = 20; // 2 seconds max
+    
+    const retryInterval = setInterval(() => {
+      retryCount++;
+      
+      if (tryOpenModal()) {
+        clearInterval(retryInterval);
+        return;
+      }
+      
+      if (retryCount >= maxRetries) {
+        clearInterval(retryInterval);
+        console.error('Mini ATC Modal JavaScript failed to load after 2 seconds');
+        
+        // Method 4: Fallback - try to manually trigger the modal
+        console.log('Attempting manual modal trigger...');
+        if (miniATCModal) {
+          miniATCModal.classList.add('mini-atc-modal--active');
+          miniATCModal.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+    }, 100);
   }
 
   function handleATCbutton() {

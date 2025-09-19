@@ -1,0 +1,430 @@
+{% comment %}
+  Mini Add-to-Cart Modal Complete Snippet - Fixed Version
+  
+  A complete modal implementation that can be included in other sections.
+  This version is self-contained and doesn't rely on section settings.
+{% endcomment %}
+
+{%- liquid
+  assign parent_section = section
+  assign modal_id = 'mini-atc-modal-' | append: parent_section.id
+  assign swiper_id = 'mini-atc-product-swiper-' | append: parent_section.id
+-%}
+
+<!-- Mini ATC Modal Snippet Styles -->
+{{ 'mini-atc-modal.css' | asset_url | stylesheet_tag }}
+
+<section 
+  id="{{ modal_id }}" 
+  class="mini-atc-modal" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-labelledby="{{ modal_id }}-title"
+  aria-hidden="true"
+  data-modal-id="{{ parent_section.id }}"
+  data-product-context="personalization"
+>
+  <!-- Modal Overlay -->
+  <div 
+    class="mini-atc-modal__overlay" 
+    role="presentation"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Modal Container -->
+  <aside class="mini-atc-modal__container" role="document">
+    
+    <!-- Modal Header -->
+    <header class="mini-atc-modal__header">
+      <h2 
+        id="{{ modal_id }}-title" 
+        class="mini-atc-modal__title"
+      >
+        Personalise Your CHUUG
+      </h2>
+      
+      <button 
+        type="button"
+        class="mini-atc-modal__close" 
+        aria-label="Close modal"
+        data-modal-close
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+    
+    <!-- Modal Content -->
+    <main class="mini-atc-modal__content">
+      
+      <!-- Personalization View -->
+      <div 
+        class="mini-atc-modal__view mini-atc-modal__personalise-view mini-atc-modal__view--active" 
+        data-view="personalize"
+        role="tabpanel"
+        aria-labelledby="{{ modal_id }}-personalize-tab"
+      >
+        <!-- Simplified hardcoded personalization content -->
+        <section class="mini-atc-modal__product-section" aria-labelledby="{{ modal_id }}-product-heading">
+          <h3 id="{{ modal_id }}-product-heading" class="visually-hidden">Product Images</h3>
+          
+          <div class="mini-atc-modal__product-image">
+            <div 
+              id="{{ swiper_id }}" 
+              class="swiper mini-atc-product-swiper"
+              role="region"
+              aria-label="Product image gallery"
+              data-swiper-container
+            >
+              <div class="swiper-wrapper">
+                <div class="swiper-slide" data-image-type="selection">
+                  <div class="product-image-wrap">
+                    <div class="img-wrap">
+                      <img 
+                        src="{{ 'vessel-sample.png' | asset_url }}" 
+                        alt="CHUUG Vessel - Current Selection" 
+                        width="400" 
+                        height="400"
+                        data-selection-image
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Image Navigation Dots -->
+            <nav class="mini-atc-modal__image-dots" aria-label="Product image navigation">
+              <button class="dot active" aria-label="View main product image" data-slide="0"></button>
+            </nav>
+          </div>
+        </section>
+
+        <!-- Personalization Options -->
+        <section class="mini-atc-modal__personalization-section" aria-labelledby="{{ modal_id }}-personalization-heading">
+          <h3 id="{{ modal_id }}-personalization-heading" class="visually-hidden">Personalization Options</h3>
+          
+          <div class="personalization-cards">
+            
+            <!-- Coin Engraving Personalization -->
+            <article class="mini-atc-modal__personalization mini-vessel-names" data-personalization="engraving">
+              <header class="mini-atc-modal__personalization-header">
+                <div class="mini-atc-modal__personalization-header-content">
+                  <div class="mini-atc-modal__personalization-icon" aria-hidden="true">
+                    {% render 'personalization-icon', icon_type: 'pencil' %}
+                  </div>
+                  <h4>Add a Personalised <br/>Coin Engraving?</h4>
+                </div>
+                
+                <div class="mini-atc-modal__personalization-header-content_right">
+                  <a href="#" class="mini-atc-modal__design-link" aria-describedby="{{ modal_id }}-design-tooltip">
+                    Can I see the design?
+                  </a>
+                  {% render 'icon-question-mark-tooltip', 
+                    tooltip_text: 'Learn more about vessel personalization options',
+                    tooltip_id: modal_id | append: '-design-tooltip' 
+                  %}
+                  
+                  <div class="mini-atc-modal__toggle-container">
+                    <label class="mini-atc-modal__toggle" for="{{ modal_id }}-engraving-toggle">
+                      <input 
+                        type="checkbox" 
+                        id="{{ modal_id }}-engraving-toggle" 
+                        checked
+                        data-personalization-toggle="engraving"
+                        aria-describedby="{{ modal_id }}-engraving-description"
+                      >
+                      <span class="mini-atc-modal__toggle-slider" aria-hidden="true"></span>
+                      <span class="visually-hidden">Enable coin engraving personalization</span>
+                    </label>
+                  </div>
+                </div>
+              </header>
+              
+              <div id="{{ modal_id }}-engraving-description" class="visually-hidden">
+                Toggle to enable or disable coin engraving personalization for your vessels
+              </div>
+              
+              <div class="mini-atc-modal__complete-options" data-personalization-content="engraving">
+                <button 
+                  type="button" 
+                  class="mini-atc-modal__complete-set-btn"
+                  data-complete-set="engraving"
+                >
+                  Complete Set
+                </button>
+                
+                <fieldset class="modal__personalization-vessel-name-wrap">
+                  <legend class="visually-hidden">Vessel Personalization</legend>
+                  
+                  <!-- Vessel personalization inputs -->
+                  {% for i in (1..2) %}
+                    <div class="vessel-personalization-row" data-vessel="{{ i }}">
+                      <div class="vessel-info">
+                        <span class="vessel-label">Vessel #{{ i }}</span>
+                        <div class="mini-atc-modal__toggle-container">
+                          <label class="mini-atc-modal__toggle" for="{{ modal_id }}-vessel-{{ i }}-toggle">
+                            <input 
+                              type="checkbox" 
+                              id="{{ modal_id }}-vessel-{{ i }}-toggle" 
+                              checked
+                              data-vessel-toggle="{{ i }}"
+                              aria-describedby="{{ modal_id }}-vessel-{{ i }}-description"
+                            >
+                            <span class="mini-atc-modal__toggle-slider" aria-hidden="true"></span>
+                            <span class="visually-hidden">Enable personalization for vessel {{ i }}</span>
+                          </label>
+                        </div>
+                      </div>
+                      
+                      <div class="vessel-input-container">
+                        <label for="{{ modal_id }}-vessel-{{ i }}-name" class="visually-hidden">
+                          Personalization text for vessel {{ i }}
+                        </label>
+                        <input 
+                          type="text" 
+                          id="{{ modal_id }}-vessel-{{ i }}-name" 
+                          class="vessel-name-input" 
+                          placeholder="Maximum of 3 Letters"
+                          maxlength="3"
+                          disabled
+                          data-vessel-input="{{ i }}"
+                          data-property="properties[Vessel {{ i }} Engraving]"
+                          aria-describedby="{{ modal_id }}-vessel-{{ i }}-description"
+                        >
+                      </div>
+                      
+                      <div id="{{ modal_id }}-vessel-{{ i }}-description" class="visually-hidden">
+                        Enter up to 3 letters for vessel {{ i }} engraving
+                      </div>
+                    </div>
+                  {% endfor %}
+                </fieldset>
+              </div>
+            </article>
+
+            <!-- Mix & Match Cups -->
+            <article class="mini-atc-modal__personalization mini-atc-modal__mix-match" data-personalization="mix-match">
+              <header class="mini-atc-modal__personalization-header">
+                <div class="mini-atc-modal__personalization-header-content">
+                  <div class="mini-atc-modal__personalization-icon" aria-hidden="true">
+                    {% render 'personalization-icon', icon_type: 'cup' %}
+                  </div>
+                  <h4>Add Extra Insulated Cups?</h4>
+                </div>
+                
+                <div class="mini-atc-modal__personalization-header-content_right">
+                  <a href="#" class="mini-atc-modal__design-link" aria-describedby="{{ modal_id }}-preview-tooltip">
+                    See preview
+                  </a>
+                  {% render 'icon-question-mark-tooltip', 
+                    tooltip_text: 'Learn more about vessel personalization options',
+                    tooltip_id: modal_id | append: '-preview-tooltip' 
+                  %}
+                  
+                  <div class="mini-atc-modal__toggle-container">
+                    <label class="mini-atc-modal__toggle" for="{{ modal_id }}-mix-match-toggle">
+                      <input 
+                        type="checkbox" 
+                        id="{{ modal_id }}-mix-match-toggle" 
+                        checked
+                        data-personalization-toggle="mix-match"
+                        aria-describedby="{{ modal_id }}-mix-match-description"
+                      >
+                      <span class="mini-atc-modal__toggle-slider" aria-hidden="true"></span>
+                      <span class="visually-hidden">Enable extra insulated cups</span>
+                    </label>
+                  </div>
+                </div>
+              </header>
+              
+              <div id="{{ modal_id }}-mix-match-description" class="visually-hidden">
+                Toggle to enable or disable adding extra insulated cups to your order
+              </div>
+              
+              <div class="mini-atc-modal__complete-options" data-personalization-content="mix-match">
+                <button 
+                  type="button" 
+                  class="mini-atc-modal__complete-set-btn bg-green"
+                  data-complete-set="mix-match"
+                >
+                  Mix & Match Set
+                </button>
+                
+                <div class="mini-atc-modal__mix-match-content">
+                  <!-- Info Box -->
+                  <aside class="mini-atc-modal__mix-match-info" role="note">
+                    <div class="mini-atc-modal__mix-match-info-content">
+                      <p>💡 You already get 1 free silver insulated cup with each CHUUG. Add backup insulated cups so you're never without your CHUUG!</p>
+                    </div>
+                  </aside>
+                  
+                  <!-- Product Variants -->
+                  <section class="mini-atc-modal__mix-match-variants" aria-labelledby="{{ modal_id }}-variants-heading">
+                    <h5 id="{{ modal_id }}-variants-heading" class="visually-hidden">Available Cup Variants</h5>
+                    
+                    <!-- Hardcoded variants for demo -->
+                    {% assign variants = 'Midnight Black,Bronze,Rose Gold,Silver' | split: ',' %}
+                    {% assign descriptions = 'Matches most CHUUGs,Premium finish,Elegant choice,Classic style' | split: ',' %}
+                    {% assign images = 'midnight_charcoal.png,dawn_charcoal.png,dusk_charcoal.png,midnight_natural.png' | split: ',' %}
+                    
+                    {% for variant in variants %}
+                      <article class="mini-atc-modal__variant-row" data-variant-id="variant-{{ forloop.index }}">
+                        <div class="mini-atc-modal__variant-image">
+                          <img 
+                            src="{{ images[forloop.index0] | asset_url }}" 
+                            alt="{{ variant }} Cup" 
+                            width="37" 
+                            height="64"
+                          />
+                        </div>
+                        
+                        <div class="mini-atc-modal__variant-details">
+                          <div class="mini-atc-modal__variant-info">
+                            <h6 class="mini-atc-modal__variant-name">{{ variant }}</h6>
+                            <p class="mini-atc-modal__variant-description">{{ descriptions[forloop.index0] }}</p>
+                          </div>
+                          
+                          <div class="mini-atc-modal__variant-controls">
+                            <div class="mini-atc-modal__counter" role="group" aria-labelledby="{{ modal_id }}-variant-{{ forloop.index }}-label">
+                              <span id="{{ modal_id }}-variant-{{ forloop.index }}-label" class="visually-hidden">
+                                Quantity for {{ variant }}
+                              </span>
+                              
+                              <button 
+                                type="button"
+                                class="mini-atc-modal__counter-btn mini-atc-modal__counter-decrement" 
+                                aria-label="Decrease quantity of {{ variant }}"
+                                data-variant-action="decrement"
+                                data-variant-id="variant-{{ forloop.index }}"
+                              >
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                  <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                                  <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                                </svg>
+                              </button>
+                              
+                              <div 
+                                class="mini-atc-modal__counter-value" 
+                                aria-live="polite"
+                                aria-atomic="true"
+                                data-variant-quantity="variant-{{ forloop.index }}"
+                              >1</div>
+                              
+                              <button 
+                                type="button"
+                                class="mini-atc-modal__counter-btn mini-atc-modal__counter-increment" 
+                                aria-label="Increase quantity of {{ variant }}"
+                                data-variant-action="increment"
+                                data-variant-id="variant-{{ forloop.index }}"
+                              >
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                  <circle cx="10" cy="10" r="9.5" fill="transparent" stroke="#0D2026" stroke-opacity="0.1"/>
+                                  <line x1="10" y1="6" x2="10" y2="14" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                                  <line x1="6" y1="10" x2="14" y2="10" stroke="#0D2026" stroke-width="1" stroke-linecap="round"/>
+                                </svg>
+                              </button>
+                            </div>
+                            
+                            <div 
+                              class="mini-atc-modal__variant-price" 
+                              aria-live="polite"
+                              data-variant-price="variant-{{ forloop.index }}"
+                              data-base-price="1299"
+                            >
+                              £12.99
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                      
+                      {% unless forloop.last %}
+                        <hr class="mini-atc-modal__variant-divider" aria-hidden="true">
+                      {% endunless %}
+                    {% endfor %}
+                  </section>
+                </div>
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        <!-- Recommendation Section -->
+        <section class="mini-atc-modal__recommendation-section" aria-labelledby="{{ modal_id }}-recommendations-heading">
+          <div class="recommendation-separator" role="separator">
+            <h4 id="{{ modal_id }}-recommendations-heading" class="recommendation-separator-text">
+              Recommended Add-Ons
+            </h4>
+          </div>
+          
+          <div class="mini-atc-modal__recommendation">
+            {% render 'mini-atc-modal-gift-box', modal_id: modal_id %}
+          </div>
+        </section>
+      </div>
+
+      <!-- Checkout View -->
+      <div 
+        class="mini-atc-modal__view mini-atc-modal__checkout-view" 
+        data-view="checkout"
+        role="tabpanel" 
+        aria-labelledby="{{ modal_id }}-checkout-tab"
+        aria-hidden="true"
+      >
+        {% render 'mini-atc-modal-checkout', 
+          section: parent_section, 
+          modal_id: modal_id 
+        %}
+      </div>
+      
+    </main>
+    
+    <!-- Modal Footer -->
+    <footer class="mini-atc-modal__footer">
+      {% render 'mini-atc-modal-footer', 
+        section: parent_section, 
+        modal_id: modal_id 
+      %}
+    </footer>
+    
+  </aside>
+</section>
+
+<!-- Modal JavaScript -->
+<script src="{{ 'mini-atc-modal.js' | asset_url }}" defer onerror="console.error('Failed to load mini-atc-modal.js')"></script>
+
+<!-- Debug script to check if JavaScript loaded -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      if (window.MiniATCModal) {
+        console.log('Mini ATC Modal JavaScript loaded successfully');
+      } else {
+        console.error('Mini ATC Modal JavaScript not available after DOM load');
+      }
+    }, 100);
+  });
+</script>
+
+{% comment %} Modal configuration for JavaScript {% endcomment %}
+<script type="application/json" data-mini-atc-config="{{ modal_id }}">
+{
+  "modalId": "{{ modal_id }}",
+  "swiperId": "{{ swiper_id }}",
+  "sectionId": "{{ parent_section.id }}",
+  "productContext": {
+    "baseProductId": null,
+    "variantIds": [],
+    "personalizationEnabled": true
+  },
+  "modalTitle": "Personalise Your CHUUG",
+  "checkoutTitle": "Proceed to Checkout",
+  "pricing": {
+    "basePrice": 7800,
+    "giftBoxPrice": 200,
+    "variantPrice": 1299
+  }
+}
+</script>
