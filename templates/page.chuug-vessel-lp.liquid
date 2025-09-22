@@ -388,7 +388,7 @@
         <div class="flex flex-col gap-y-5 flex-1">
           <h4 class="tw-text-chuug-dark-navy text-[1.75em] leading-[2.275em]">Let Us ‘Handle’ It</h4>
           <p class="tw-text-chuug-japanese-indigo text-base leading-6 ">
-            Bet you didn’t know a rope could be ‘smart’? Anti-bacterial, water resistant AND it doesn’t warp or stretch.
+            Bet you didn't know a rope could be 'smart'? Anti-bacterial, water resistant AND it doesn't warp or stretch.
             Pretty damn clever if you ask us.
           </p>
         </div>
@@ -396,6 +396,10 @@
     </div>
   </div>
 </section>
+
+{% for section in page.sections %}
+  {% render section %}
+{% endfor %}
 
 <section class="tw-bg-chuug-dark-navy text-white rounded-ss-[2em] rounded-se-[2em] -mt-8 pt-5 md:pt-24 pb-14 md:pb-32">
   <div class="flex flex-col justify-center items-center gap-y-20">

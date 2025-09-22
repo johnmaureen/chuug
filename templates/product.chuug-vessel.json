@@ -302,8 +302,8 @@
 					"type": "text_and_image",
 					"settings": {
 						"block_image": "shopify://shop_images/the-chef-kiss.png",
-						"block_title": "The Chef’s Kiss",
-						"block_text": "The personalisation station. We engrave your mark into your tankard to let others know it’s yours and not to be touched."
+						"block_title": "The Chef's Kiss",
+						"block_text": "The personalisation station. We engrave your mark into your tankard to let others know it's yours and not to be touched."
 					}
 				},
 				"text_and_image_Fba63x": {
@@ -311,8 +311,8 @@
 					"disabled": true,
 					"settings": {
 						"block_image": "shopify://shop_images/lets-us-handle-it.png",
-						"block_title": "Let Us ‘Handle’ It",
-						"block_text": "Bet you didn’t know a rope could be ‘smart’? Anti-bacterial, water resistant AND it doesn’t warp or stretch. Pretty damn clever if you ask us."
+						"block_title": "Let Us 'Handle' It",
+						"block_text": "Bet you didn't know a rope could be 'smart'? Anti-bacterial, water resistant AND it doesn't warp or stretch. Pretty damn clever if you ask us."
 					}
 				}
 			},
@@ -323,8 +323,66 @@
 				"text_and_image_Fba63x"
 			],
 			"settings": {
-				"section_title": "<h1>Nature’s gift, <em>forged </em>into perfection</h1>",
+				"section_title": "<h1>Nature's gift, <em>forged </em>into perfection</h1>",
 				"section_subtitle": "Always built by hand, machines are cheating"
+			}
+		},
+		"chuug_customiser_carousel_QHgy3x": {
+			"type": "chuug-customiser-carousel",
+			"blocks": {
+				"feature_slide_PexUQk": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
+						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/smart-rope.png",
+						"feature_icon_alt": "",
+						"feature_title": "Smart Rope Technology",
+						"feature_description": "Soft to the touch and no funky smells, from the tankard at least."
+					}
+				},
+				"feature_slide_R3GDQr": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image_alt": "",
+						"feature_icon_alt": "",
+						"feature_title": "Premium Materials",
+						"feature_description": "Crafted from the finest mango wood and food-grade stainless steel."
+					}
+				},
+				"feature_slide_xdHyCk": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image_alt": "",
+						"feature_icon_alt": "",
+						"feature_title": "Insulation Technology",
+						"feature_description": "Keep your drinks cold for up to 2 hours, hot drinks hot for the same duration."
+					}
+				},
+				"feature_slide_YPXjgX": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image_alt": "",
+						"feature_icon_alt": "",
+						"feature_title": "Handcrafted Quality",
+						"feature_description": "Each tankard is meticulously assembled by hand in Britain."
+					}
+				}
+			},
+			"block_order": [
+				"feature_slide_PexUQk",
+				"feature_slide_R3GDQr",
+				"feature_slide_xdHyCk",
+				"feature_slide_YPXjgX"
+			],
+			"name": "Chuug Customiser Carousel",
+			"settings": {
+				"section_title": "Drinking Beer Just Got Cooler",
+				"section_subtitle": "Out-do your neighbour at the next awkward BBQ that you'd rather not attend",
+				"button_text": "CUSTOMIZE NOW",
+				"button_url": "",
+				"auto_advance": false,
+				"auto_advance_delay": 5
 			}
 		},
 		"five_images_hjC3Jd": {
@@ -821,6 +879,7 @@
 	"order": [
 		"pdp_chuug_vessel_8y8pAk",
 		"several_text_and_images_EHXQ8F",
+		"chuug_customiser_carousel_QHgy3x",
 		"five_images_hjC3Jd",
 		"reviews_carousel_QgJCgz",
 		"benefits_xeGgkP",

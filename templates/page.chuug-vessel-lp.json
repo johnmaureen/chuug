@@ -1,0 +1,70 @@
+{
+  "sections": {
+    "chuug_customiser_carousel_ABC123": {
+      "type": "chuug-customiser-carousel",
+      "blocks": {
+        "feature_slide_1": {
+          "type": "feature_slide",
+          "settings": {
+            "product_image": "shopify://shop_images/chuug_dusk_natural_invisible_bg_small_9f3be21e-7509-464a-bdd4-6c793783f235.png",
+            "product_image_alt": "Chuug Vessel Product",
+            "feature_icon": "shopify://shop_images/smart-rope.png",
+            "feature_icon_alt": "Smart Rope Icon",
+            "feature_title": "Smart Rope Technology",
+            "feature_description": "Soft to the touch and no funky smells, from the tankard at least."
+          }
+        },
+        "feature_slide_2": {
+          "type": "feature_slide",
+          "settings": {
+            "product_image": "shopify://shop_images/chuug_dusk_natural_invisible_bg_small_9f3be21e-7509-464a-bdd4-6c793783f235.png",
+            "product_image_alt": "Chuug Vessel Product",
+            "feature_icon": "shopify://shop_images/ice-cold-beer.png",
+            "feature_icon_alt": "Ice Cold Beer Icon",
+            "feature_title": "Ice Cold Beer",
+            "feature_description": "Cold for up to two hours, not that you'll need it!"
+          }
+        },
+        "feature_slide_3": {
+          "type": "feature_slide",
+          "settings": {
+            "product_image": "shopify://shop_images/chuug_dusk_natural_invisible_bg_small_9f3be21e-7509-464a-bdd4-6c793783f235.png",
+            "product_image_alt": "Chuug Vessel Product",
+            "feature_icon": "shopify://shop_images/british-flag.png",
+            "feature_icon_alt": "British Flag Icon",
+            "feature_title": "Built in Britain",
+            "feature_description": "Because why get it made anywhere else?"
+          }
+        },
+        "feature_slide_4": {
+          "type": "feature_slide",
+          "settings": {
+            "product_image": "shopify://shop_images/chuug_dusk_natural_invisible_bg_small_9f3be21e-7509-464a-bdd4-6c793783f235.png",
+            "product_image_alt": "Chuug Vessel Product",
+            "feature_icon": "shopify://shop_images/fully-customizable.png",
+            "feature_icon_alt": "Customizable Icon",
+            "feature_title": "Fully Customisable",
+            "feature_description": "Why buy a boring tankard that thousands of others own?"
+          }
+        }
+      },
+      "block_order": [
+        "feature_slide_1",
+        "feature_slide_2",
+        "feature_slide_3",
+        "feature_slide_4"
+      ],
+      "settings": {
+        "section_title": "Drinking Beer Just Got Cooler",
+        "section_subtitle": "Out-do your neighbour at the next awkward BBQ that you'd rather not attend",
+        "button_text": "CUSTOMIZE NOW",
+        "button_url": "#",
+        "auto_advance": true,
+        "auto_advance_delay": 5
+      }
+    }
+  },
+  "order": [
+    "chuug_customiser_carousel_ABC123"
+  ]
+}

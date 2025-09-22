@@ -1,0 +1,366 @@
+/* Chuug Customiser Carousel Section Styles */
+.chuug-customiser-carousel-section {
+  background-color: #0D2026;
+  padding: 60px 0;
+  position: relative;
+}
+
+.chuug-customiser-carousel-container {
+  max-width: 970px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Header Styles */
+.chuug-customiser-carousel-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.chuug-customiser-carousel-title {
+  font-family: 'Merge One', serif;
+  font-weight: 400;
+  font-size: 45px;
+  line-height: 1.177;
+  color: #FFFFFF;
+  margin: 0;
+  text-align: center;
+}
+
+.chuug-customiser-carousel-subtitle {
+  font-family: 'Gabarito', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.2;
+  color: #FFFFFF;
+  margin: 0;
+  text-align: center;
+}
+
+/* Main Content Styles */
+.chuug-customiser-carousel-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Swiper Container */
+.chuug-customiser-carousel-swiper {
+  width: 100%;
+  height: 401px;
+}
+
+.chuug-customiser-carousel-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chuug-customiser-carousel-slide-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  width: 100%;
+}
+
+/* Image Container Styles */
+.chuug-customiser-carousel-image-container {
+  position: relative;
+  width: 380px;
+  height: 401px;
+  flex-shrink: 0;
+}
+
+.chuug-customiser-carousel-image-wrapper {
+  width: 380px;
+  height: 380px;
+  border-radius: 17.27px;
+  overflow: hidden;
+  background-color: #F5F5F5;
+}
+
+.chuug-customiser-carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 17.27px;
+}
+
+.chuug-customiser-carousel-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #F5F5F5;
+  border-radius: 17.27px;
+}
+
+/* Social Media Tag */
+.chuug-customiser-carousel-social-tag {
+  position: absolute;
+  bottom: 0;
+  left: 23px;
+  width: 179px;
+  height: 39px;
+  background-color: #278EFF;
+  border-radius: 36.29px 0px 0px 0px;
+  display: flex;
+  align-items: center;
+  gap: 12.63px;
+  padding: 7.2px 0;
+}
+
+.social-icon {
+  width: 18.45px;
+  height: 20.44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-handle {
+  font-family: 'Gabarito', sans-serif;
+  font-weight: 400;
+  font-size: 22.74px;
+  line-height: 1.2;
+  color: #FFFFFF;
+}
+
+/* Feature Details Styles */
+.chuug-customiser-carousel-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  max-width: 344px;
+}
+
+.feature-icon {
+  width: 92px;
+  height: 93px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.feature-icon-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-title {
+  font-family: 'Merriweather', serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  color: #FFFFFF;
+  margin: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.feature-description {
+  font-family: 'Gabarito', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1;
+  color: #FFFFFF;
+  margin: 0;
+  text-align: left;
+  width: 100%;
+}
+
+/* Swiper Pagination Styles */
+.chuug-customiser-carousel-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.chuug-customiser-carousel-pagination .swiper-pagination-bullet {
+  width: 55px;
+  height: 11px;
+  border-radius: 30px;
+  background-color: #2D3A40;
+  opacity: 1;
+  margin: 0;
+}
+
+.chuug-customiser-carousel-pagination .swiper-pagination-bullet-active {
+  background-color: #FDFF96;
+}
+
+.chuug-customiser-carousel-pagination .swiper-pagination-bullet:hover {
+  background-color: #4A5A60;
+}
+
+.chuug-customiser-carousel-pagination .swiper-pagination-bullet-active:hover {
+  background-color: #FDFF96;
+}
+
+/* CTA Button Styles */
+.chuug-customiser-carousel-cta {
+  display: flex;
+  justify-content: center;
+}
+
+.customize-button {
+  width: 480px;
+  height: 59px;
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  border: 2px solid #FFFFFF;
+  border-radius: 8px;
+  font-family: 'Gabarito', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.2;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 183px;
+  box-sizing: border-box;
+}
+
+.customize-button:hover {
+  background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.customize-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .chuug-customiser-carousel-container {
+    padding: 0 15px;
+    gap: 20px;
+  }
+
+  .chuug-customiser-carousel-title {
+    font-size: 32px;
+  }
+
+  .chuug-customiser-carousel-subtitle {
+    font-size: 18px;
+  }
+
+  .chuug-customiser-carousel-swiper {
+    height: auto;
+    min-height: 350px;
+  }
+
+  .chuug-customiser-carousel-slide-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .chuug-customiser-carousel-image-container {
+    width: 300px;
+    height: 300px;
+  }
+
+  .chuug-customiser-carousel-image-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+
+  .chuug-customiser-carousel-social-tag {
+    left: 15px;
+    width: 150px;
+    height: 35px;
+  }
+
+  .social-handle {
+    font-size: 18px;
+  }
+
+  .feature-title {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .feature-description {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .customize-button {
+    width: 100%;
+    max-width: 350px;
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chuug-customiser-carousel-section {
+    padding: 40px 0;
+  }
+
+  .chuug-customiser-carousel-title {
+    font-size: 24px;
+  }
+
+  .chuug-customiser-carousel-subtitle {
+    font-size: 16px;
+  }
+
+  .chuug-customiser-carousel-image-container {
+    width: 250px;
+    height: 250px;
+  }
+
+  .chuug-customiser-carousel-image-wrapper {
+    width: 250px;
+    height: 250px;
+  }
+
+  .chuug-customiser-carousel-social-tag {
+    width: 120px;
+    height: 30px;
+  }
+
+  .social-handle {
+    font-size: 14px;
+  }
+
+  .feature-title {
+    font-size: 22px;
+  }
+
+  .feature-description {
+    font-size: 16px;
+  }
+
+  .customize-button {
+    font-size: 14px;
+    height: 50px;
+  }
+}
