@@ -308,6 +308,7 @@
 				},
 				"text_and_image_Fba63x": {
 					"type": "text_and_image",
+					"disabled": true,
 					"settings": {
 						"block_image": "shopify://shop_images/lets-us-handle-it.png",
 						"block_title": "Let Us ‘Handle’ It",
@@ -322,7 +323,7 @@
 				"text_and_image_Fba63x"
 			],
 			"settings": {
-				"section_title": "<h1>Nature's gift, <em>forged </em>into perfection</h1>",
+				"section_title": "<h1>Nature’s gift, <em>forged </em>into perfection</h1>",
 				"section_subtitle": "Always built by hand, machines are cheating"
 			}
 		},
