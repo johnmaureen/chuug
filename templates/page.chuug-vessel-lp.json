@@ -11,7 +11,8 @@
             "feature_icon": "shopify://shop_images/smart-rope.png",
             "feature_icon_alt": "Smart Rope Icon",
             "feature_title": "Smart Rope Technology",
-            "feature_description": "Soft to the touch and no funky smells, from the tankard at least."
+            "feature_description": "Soft to the touch and no funky smells, from the tankard at least.",
+            "social_handle": "@chuugofficial"
           }
         },
         "feature_slide_2": {
@@ -22,7 +23,8 @@
             "feature_icon": "shopify://shop_images/ice-cold-beer.png",
             "feature_icon_alt": "Ice Cold Beer Icon",
             "feature_title": "Ice Cold Beer",
-            "feature_description": "Cold for up to two hours, not that you'll need it!"
+            "feature_description": "Cold for up to two hours, not that you'll need it!",
+            "social_handle": "@chuugofficial"
           }
         },
         "feature_slide_3": {
@@ -33,7 +35,8 @@
             "feature_icon": "shopify://shop_images/british-flag.png",
             "feature_icon_alt": "British Flag Icon",
             "feature_title": "Built in Britain",
-            "feature_description": "Because why get it made anywhere else?"
+            "feature_description": "Because why get it made anywhere else?",
+            "social_handle": "@chuugofficial"
           }
         },
         "feature_slide_4": {
@@ -44,7 +47,8 @@
             "feature_icon": "shopify://shop_images/fully-customizable.png",
             "feature_icon_alt": "Customizable Icon",
             "feature_title": "Fully Customisable",
-            "feature_description": "Why buy a boring tankard that thousands of others own?"
+            "feature_description": "Why buy a boring tankard that thousands of others own?",
+            "social_handle": "@chuugofficial"
           }
         }
       },

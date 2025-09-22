@@ -344,28 +344,34 @@
 				"feature_slide_R3GDQr": {
 					"type": "feature_slide",
 					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
 						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/ice-cold-beer.png",
 						"feature_icon_alt": "",
-						"feature_title": "Premium Materials",
-						"feature_description": "Crafted from the finest mango wood and food-grade stainless steel."
+						"feature_title": "Ice Cold Beer",
+						"feature_description": "Cold for up to two hours, not that you’ll need it!"
 					}
 				},
 				"feature_slide_xdHyCk": {
 					"type": "feature_slide",
 					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
 						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/british-flag.png",
 						"feature_icon_alt": "",
-						"feature_title": "Insulation Technology",
-						"feature_description": "Keep your drinks cold for up to 2 hours, hot drinks hot for the same duration."
+						"feature_title": "Built in Britain",
+						"feature_description": "Because why get it made anywhere else?"
 					}
 				},
 				"feature_slide_YPXjgX": {
 					"type": "feature_slide",
 					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
 						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/fully-customizable.png",
 						"feature_icon_alt": "",
-						"feature_title": "Handcrafted Quality",
-						"feature_description": "Each tankard is meticulously assembled by hand in Britain."
+						"feature_title": "Fully Customisable",
+						"feature_description": "Why buy a boring tankard that thousands of others own?"
 					}
 				}
 			},

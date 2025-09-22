@@ -33,12 +33,12 @@
                   <!-- Social Media Tag -->
                   <div class="chuug-customiser-carousel-social-tag">
                     <div class="social-icon">
-                      <svg width="19" height="21" viewBox="0 0 19 21" fill="none">
-                        <path d="M13.79 0H5.21C2.33 0 0 2.33 0 5.21V15.79C0 18.67 2.33 21 5.21 21H13.79C16.67 21 19 18.67 19 15.79V5.21C19 2.33 16.67 0 13.79 0Z" fill="#278EFF"/>
-                        <path d="M9.5 15.5C12.2614 15.5 14.5 13.2614 14.5 10.5C14.5 7.73858 12.2614 5.5 9.5 5.5C6.73858 5.5 4.5 7.73858 4.5 10.5C4.5 13.2614 6.73858 15.5 9.5 15.5Z" fill="#1888FE"/>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="23" viewBox="0 0 20 23" fill="none">
+                        <path d="M0.552734 22.3955V2.43652C4.93149 2.43652 8.83331 4.47772 11.3594 7.66016C15.9438 6.61801 18.305 3.01717 18.7607 1.9541C19.9218 8.34078 16.583 13.203 14.7686 14.8359L14.2725 14.8203C14.3193 15.2825 14.3428 15.752 14.3428 16.2266V22.3955H0.552734Z" fill="#278EFF"/>
+                        <path d="M0.552734 22.3955H0.27001V22.6782H0.552734V22.3955ZM0.552734 2.43652V2.1538H0.27001V2.43652H0.552734ZM11.3594 7.66016L11.1379 7.83593L11.2485 7.97529L11.422 7.93585L11.3594 7.66016ZM18.7607 1.9541L19.0389 1.90353L18.8709 0.979563L18.5009 1.8427L18.7607 1.9541ZM14.7686 14.8359L14.7597 15.1185L14.8732 15.1221L14.9577 15.0461L14.7686 14.8359ZM14.2725 14.8203L14.2814 14.5377L13.9587 14.5276L13.9912 14.8488L14.2725 14.8203ZM14.3428 22.3955V22.6782H14.6255V22.3955H14.3428ZM0.552734 22.3955H0.835459V2.43652H0.552734H0.27001V22.3955H0.552734ZM0.552734 2.43652V2.71925C4.84156 2.71925 8.66318 4.71813 11.1379 7.83593L11.3594 7.66016L11.5808 7.48439C9.00345 4.2373 5.02142 2.1538 0.552734 2.1538V2.43652ZM11.3594 7.66016L11.422 7.93585C16.1204 6.86779 18.5411 3.18405 19.0206 2.0655L18.7607 1.9541L18.5009 1.8427C18.0689 2.85029 15.7671 6.36823 11.2967 7.38447L11.3594 7.66016ZM18.7607 1.9541L18.4826 2.00467C19.6215 8.26976 16.3422 13.0393 14.5794 14.6258L14.7686 14.8359L14.9577 15.0461C16.8237 13.3666 20.2221 8.4118 19.0389 1.90353L18.7607 1.9541ZM14.7686 14.8359L14.7775 14.5534L14.2814 14.5377L14.2725 14.8203L14.2636 15.1029L14.7597 15.1185L14.7686 14.8359ZM14.2725 14.8203L13.9912 14.8488C14.037 15.3014 14.0601 15.7613 14.0601 16.2266H14.3428H14.6255C14.6255 15.7427 14.6015 15.2637 14.5537 14.7918L14.2725 14.8203ZM14.3428 16.2266H14.0601V22.3955H14.3428H14.6255V16.2266H14.3428ZM14.3428 22.3955V22.1128H0.552734V22.3955V22.6782H14.3428V22.3955Z" fill="#278EFF"/>
                       </svg>
                     </div>
-                    <span class="social-handle">@chuugofficial</span>
+                      <span class="social-handle">{{ block.settings.social_handle | default: '@chuugofficial' }}</span>
                   </div>
                 </div>
 
@@ -76,7 +76,7 @@
 
       <!-- CTA Button -->
       <div class="chuug-customiser-carousel-cta">
-        <button class="customize-button" onclick="window.location.href='{{ section.settings.button_url | default: '#' }}'">
+        <button class="customize-button tw-container tw-text-[2rem] tw-leading-[1] tw-font-bold tw-p-0 tw-uppercase tw-bg-no-repeat tw-w-full tw-max-w-[36rem] tw-h-[4.375em] tw-rounded-[1.25em] tw-flex tw-justify-center tw-items-center tw-mt-[3rem] md:tw-mt-0 tw-transition-all tw-duration-300 tw-ease-in-out" onclick="window.location.href='{{ section.settings.button_url | default: '#' }}'">
           {{ section.settings.button_text | default: 'CUSTOMIZE NOW' }}
         </button>
       </div>
@@ -94,10 +94,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Pagination
     pagination: {
-      el: '.swiper-pagination',
+      el: '.chuug-customiser-carousel-pagination',
       clickable: true,
       renderBullet: function (index, className) {
-        return '<button class="' + className + ' pagination-indicator"></button>';
+        return '<span class="' + className + '"></span>';
       },
     },
     
@@ -210,6 +210,12 @@ document.addEventListener('DOMContentLoaded', function() {
           "id": "feature_description",
           "label": "Feature Description",
           "default": "Soft to the touch and no funky smells, from the tankard at least."
+        },
+        {
+          "type": "text",
+          "id": "social_handle",
+          "label": "Social Media Handle",
+          "default": "@chuugofficial"
         }
       ]
     }
