@@ -165,7 +165,7 @@
   </div>
 
   <div class="tw-flex tw-justify-center tw-items-center tw-w-full tw-mt-[3rem] tw-mb-[4rem] tw-container lg:tw-mt-[6rem]">
-    <div class="tw-bg-chuug-yankees-blue tw-rounded-3xl tw-w-full tw-max-w-[60em] tw-h-[10rem] tw-py-4 tw-px-7 tw-flex tw-items-center tw-gap-x-[3.5em]">
+    <div class="tw-bg-chuug-yankees-blue tw-rounded-3xl tw-w-full tw-max-w-full tw-h-[10rem] tw-py-4 tw-px-7 tw-flex tw-items-center tw-gap-x-[3.5em]">
       <div class="swiper bottom-autoplay-carousel tw-h-[10rem]">
         <div class="swiper-wrapper">
           {% for block in section.blocks %}
@@ -896,6 +896,9 @@
         },
         1024: {
           slidesPerView: 4,
+        },
+        1366: {
+          slidesPerView: 6,
         },
       },
     });

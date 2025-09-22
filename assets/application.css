@@ -2664,3 +2664,44 @@ video {
 		width: 60rem;
 	}
 }
+
+/* Custom heading styles for several-text-and-images section */
+.section-heading-container h1 {
+	color: #0D2026;
+	text-align: center;
+	font-family: 'Merriweather', serif;
+	font-size: 45px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+}
+
+/* Custom Tailwind Styles for Chuug Vessel Landing Page */
+#hero-section > * {
+	@apply text-white;
+}
+
+#MainContent > * {
+	font-size: 16px;
+	line-height: 16px;
+}
+
+h1 {
+	@apply text-white;
+	@apply md:text-4xl md:font-bold md:leading-[2.475em];
+}
+
+summary {
+	list-style-type: none;
+	font-size: 16px;
+	/* Firefox */
+}
+
+summary::-webkit-details-marker {
+	display: none;
+	/* Chrome */
+}
+
+.input {
+	@apply bg-transparent border border-white rounded-[1.25em] text-center min-h-12 py-4 appearance-none px-2;
+}

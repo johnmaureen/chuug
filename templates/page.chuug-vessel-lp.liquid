@@ -3,228 +3,80 @@
   href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 >
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  // Configurar prefix 'tw' para todas las clases de Tailwind
-  tailwind.config = {
-    prefix: 'tw-',
-    theme: {
-      extend: {
-        colors: {
-          chuug: {
-            'dark-navy': '#0D2026',
-            rose: '#FFB3C7',
-            'yankees-blue': '#1B333B',
-            rackley: '#6093A3',
-            'pastel-yellow': '#FDFF96',
-            gainsboro: '#DFDFD8',
-            'artic-blug': '#6093A3',
-            'japanese-indigo': '#1E3E48',
-          },
-        },
-        container: {
-          center: true,
-          padding: '0.5em',
-        },
-        fontFamily: {},
-      },
-      fontSize: {
-        xs: '0.75em' /* 12px */,
-        sm: '0.875em' /* 14px */,
-        base: '1em' /* 16px */,
-        lg: '1.125em' /* 18px */,
-        xl: '1.25em' /* 20px */,
-        '2xl': '1.5em' /* 24px */,
-        '3xl': '1.875em' /* 30px */,
-        '4xl': '2.25em' /* 36px */,
-        '5xl': '2.625em' /* 42px */,
-        '6xl': '3em' /* 48px */,
-      },
-      spacing: {
-        0: '0em',
-        1: '0.25em',
-        2: '0.5em',
-        3: '0.75em',
-        4: '1em',
-        5: '1.25em',
-        6: '1.5em',
-        7: '1.75em',
-        8: '2em',
-        9: '2.25em',
-        10: '2.5em',
-        11: '2.75em',
-        12: '3em',
-        14: '3.5em',
-        16: '4em',
-        20: '5em',
-        24: '6em',
-        28: '7em',
-        32: '8em',
-        36: '9em',
-        40: '10em',
-        44: '11em',
-        48: '12em',
-        52: '13em',
-        56: '14em',
-        60: '15em',
-        64: '16em',
-        72: '18em',
-        80: '20em',
-        96: '24em',
-      },
-      lineHeight: {
-        none: '1',
-        tight: '1.25',
-        snug: '1.375',
-        normal: '1.5',
-        relaxed: '1.625',
-        loose: '2',
-        3: '0.75em',
-        4: '1em',
-        5: '1.25em',
-        6: '1.5em',
-        7: '1.75em',
-        8: '2em',
-        9: '2.25em',
-        10: '2.5em',
-      },
-    },
-  };
-</script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
 
-<style type="text/tailwindcss">
-  @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-
-  @layer base {
-
-    {% comment %} :root {
-      --bg-footer: url('https://cdn.shopify.com/s/files/1/0261/6507/files/rsbtr-cp-footer-1.jpg?v=1726071206');
-      --bg-hero: url('https://cdn.shopify.com/s/files/1/0261/6507/files/rsbtr-lp-hero_604f1867-3741-4da6-aaef-af1f7f3f0507.jpg?v=1726188627');
-    } {% endcomment %}
-
-    html {
-      {% comment %} font-size: 16px; {% endcomment %}
-    }
-
-    #hero-section > * {
-        @apply tw-text-white;
-    }
-
-    #MainContent > * {
-        font-size: 16px;
-        line-height: 16px;
-    }
-
-
-
-
-    h1 {
-        @apply tw-text-white;
-        @apply md:tw-text-4xl md:tw-font-bold md:tw-leading-[2.475em];
-    }
-
-
-    h1, h2, h3, h4, h5, h6  {
-
-    }
-
-
-    summary {
-      list-style-type: none;
-      font-size: 16px;
-      /* Firefox */
-    }
-
-    summary::-webkit-details-marker {
-      display: none;
-        /* Chrome */
-    }
-  }
-
-  @layer components {
-
-    .input{
-        @apply tw-bg-transparent tw-border tw-border-white tw-rounded-[1.25em] tw-text-center tw-min-h-12 tw-py-4 tw-appearance-none tw-px-2;
-    }
-
-  }
-</style>
-
-<section id="hero-section" class="tw-bg-chuug-dark-navy tw-pt-5 md:tw-pt-24 tw-pb-14 md:tw-pb-32">
-  <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-x-20 tw-container">
-    <div class="tw-flex tw-flex-col tw-w-full lg:tw-w-[32.5em] tw-gap-y-5">
-      <picture class="tw-overflow-hidden tw-w-full tw-h-[32.5em] tw-aspect-square tw-rounded-[1.25em] tw-relative">
-        <div class="tw-z-[2] tw-absolute tw-top-5 tw-right-5 tw-bg-chuug-rose tw-rounded-[0.40613em] tw-py-[0.375em] tw-px-[0.75em]">
+<section id="hero-section" class="tw-bg-chuug-dark-navy pt-5 md:pt-24 pb-14 md:pb-32 ">
+  <div class="flex flex-col lg:flex-row gap-x-20 container">
+    <div class="flex flex-col w-full lg:w-[32.5em] gap-y-5">
+      <picture class="overflow-hidden w-full h-[32.5em] aspect-square rounded-[1.25em] relative">
+        <div class="z-[2] absolute top-5 right-5 tw-bg-chuug-rose rounded-[0.40613em] py-[0.375em] px-[0.75em]">
           <svg xmlns="http://www.w3.org/2000/svg" width="68" height="17" viewBox="0 0 68 17" fill="none">
             <path d="M64.6859 10.5317C64.6859 8.94852 63.3459 7.66683 61.6927 7.66683C60.0395 7.66683 58.6995 8.95047 58.6995 10.5317C58.6995 12.1129 60.0415 13.3946 61.6947 13.3946C63.3478 13.3946 64.6859 12.1129 64.6859 10.5317ZM64.6976 4.96341H68.0001V16.098H64.6976V15.3862C63.7348 16.0508 62.5923 16.4063 61.4224 16.4053C58.2074 16.4053 55.6013 13.7758 55.6013 10.5317C55.6013 7.28757 58.2074 4.65806 61.4224 4.65806C62.6379 4.65806 63.764 5.03342 64.6976 5.67719V4.96341ZM38.2624 6.41431V4.96535H34.8802V16.098H38.2702V10.8993C38.2702 9.14496 40.1529 8.20362 41.4598 8.20362H41.4987V4.96535C40.1568 4.96535 38.9256 5.54493 38.2624 6.41431ZM29.8371 10.5317C29.8371 8.94852 28.497 7.66683 26.8439 7.66683C25.1907 7.66683 23.8506 8.95047 23.8506 10.5317C23.8506 12.1129 25.1926 13.3946 26.8458 13.3946C28.499 13.3946 29.8371 12.1129 29.8371 10.5317ZM29.8487 4.96341H33.1531V16.098H29.8487V15.3862C28.9152 16.028 27.7891 16.4053 26.5735 16.4053C23.3586 16.4053 20.7524 13.7758 20.7524 10.5317C20.7524 7.28757 23.3586 4.65806 26.5735 4.65806C27.7891 4.65806 28.9152 5.03342 29.8487 5.67719V4.96341ZM49.7315 4.66584C48.4129 4.66584 47.1643 5.07816 46.3279 6.21787V4.96535H43.0391V16.098H46.3688V10.2477C46.3688 8.55565 47.4929 7.72518 48.8485 7.72518C50.2994 7.72518 51.1358 8.60038 51.1358 10.2244V16.098H54.4343V9.01854C54.4343 6.42792 52.3922 4.66584 49.7315 4.66584ZM15.9407 16.098H19.3988V0.00389139H15.9407V16.098ZM0.750977 16.1019H4.41324V0H0.752921L0.750977 16.1019ZM13.5601 0C13.5601 3.48528 12.2143 6.72938 9.81425 9.13912L14.8749 16.1019H10.353L4.85473 8.5362L6.27451 7.46262C7.43032 6.59333 8.3668 5.46575 9.0091 4.16999C9.65141 2.87423 9.98175 1.4462 9.97373 0H13.5562H13.5601Z" fill="#0C061D"/>
           </svg>
         </div>
-        <img src="" class="tw-w-full tw-h-full" alt="Chuug Vessel" width="100%" height="100%">
+        <img src="" class="w-full h-full" alt="Chuug Vessel" width="100%" height="100%">
       </picture>
-      <div class="tw-flex tw-items-center tw-overflow-x-auto tw-w-full tw-gap-x-[1.31em]">
+      <div class="flex items-center overflow-x-auto w-full gap-x-[1.31em]">
         {% for i in (1..10) %}
           <img
             src=""
-            class="tw-flex-shrink tw-cursor-pointer tw-w-[4.32694em] tw-h-[4.32694em] tw-rounded"
+            class="flex-shrink cursor-pointer w-[4.32694em] h-[4.32694em] rounded"
             alt="thum1"
             width="100%"
             height="100%"
           >
         {% endfor %}
       </div>
-      <div class="tw-flex tw-items-center tw-justify-between tw-gap-x-3">
-        <div class="tw-flex-col tw-flex tw-items-center tw-gap-y-3 tw-flex-1">
+      <div class="flex items-center justify-between gap-x-3">
+        <div class="flex-col flex items-center gap-y-3 flex-1">
           <img
             src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-image-adv-list-icon-1.png?v=1728571777"
-            class="tw-w-20 tw-h-20"
+            class="w-20 h-20"
             alt="Chuug Vessel"
             width="100%"
             height="100%"
           >
-          <h6 class="tw-text-center tw-text-white tw-text-[1.375em] tw-font-bold tw-leading-[1.7875em]">
+          <h6 class="text-center text-white text-[1.375em] font-bold leading-[1.7875em]">
             Speedy Delivery
           </h6>
-          <span class="tw-text-center tw-text-sm tw-leading-[1.3125em]"
+          <span class="text-center text-sm leading-[1.3125em]"
             >Delivery quicker than you could pour a pint</span
           >
         </div>
-        <div class="tw-flex-col tw-flex tw-items-center tw-gap-y-3 tw-flex-1">
+        <div class="flex-col flex items-center gap-y-3 flex-1">
           <img
             src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-image-adv-list-icon-2.png?v=1728571777"
-            class="tw-w-20 tw-h-20"
+            class="w-20 h-20"
             alt="Chuug Vessel"
             width="100%"
             height="100%"
           >
 
-          <h6 class="tw-text-center tw-text-white tw-text-[1.375em] tw-font-bold tw-leading-[1.7875em]">
+          <h6 class="text-center text-white text-[1.375em] font-bold leading-[1.7875em]">
             Free Cotton Bag
           </h6>
-          <span class="tw-text-center tw-text-sm tw-leading-[1.3125em]"
+          <span class="text-center text-sm leading-[1.3125em]"
             >Your tankards very own organic cotton home
           </span>
         </div>
-        <div class="tw-flex-col tw-flex tw-items-center tw-gap-y-3 tw-flex-1">
+        <div class="flex-col flex items-center gap-y-3 flex-1">
           <img
             src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-image-adv-list-icon-3.png?v=1728571777"
-            class="tw-w-20 tw-h-20"
+            class="w-20 h-20"
             alt="Chuug Vessel"
             width="100%"
             height="100%"
           >
-          <h6 class="tw-text-center tw-text-white tw-text-[1.375em] tw-font-bold tw-leading-[1.7875em]">
+          <h6 class="text-center text-white text-[1.375em] font-bold leading-[1.7875em]">
             Lifetime Guarantee
           </h6>
-          <span class="tw-text-center tw-text-sm tw-leading-[1.3125em]">No questions asked, free replacement</span>
+          <span class="text-center text-sm leading-[1.3125em]">No questions asked, free replacement</span>
         </div>
       </div>
     </div>
-    <div class="tw-flex-1 tw-flex tw-flex-col tw-gap-y-5 md:tw-gap-y-8 ">
-      <div class="tw-flex tw-flex-col tw-gap-y-4">
-        <a class="tw-flex tw-items-center tw-gap-x-2">
+    <div class="flex-1 flex flex-col gap-y-5 md:gap-y-8 ">
+      <div class="flex flex-col gap-y-4">
+        <a class="flex items-center gap-x-2">
           <svg width="113" height="29" viewBox="0 0 113 29" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M26.3319 12.5652L16.2719 12.5652L13.1751 3L10.06 12.5652L0 12.5469L8.13595 18.4656L5.02083 28.0309L13.1568 22.1121L21.2927 28.0309L18.1959 18.4656L26.3319 12.5652Z" fill="#00B67A"/>
             <path d="M18.8922 20.6276L18.1959 18.4653L13.175 22.1118L18.8922 20.6276Z" fill="#005128"/>
@@ -240,37 +92,37 @@
             <rect x="96.0669" width="21.9999" height="21.9999" fill="#00B67A"/>
             <path d="M11.5069 14.45L14.8439 13.5666L16.2382 18.0555L11.5069 14.45ZM19.1867 8.64789H13.3126L11.5069 2.86963L9.70125 8.64789H3.82715L8.58129 12.2295L6.77563 18.0077L11.5298 14.4262L14.4554 12.2295L19.1867 8.64789ZM35.2776 14.45L38.6146 13.5666L40.0089 18.0555L35.2776 14.45ZM42.9574 8.64789H37.0833L35.2776 2.86963L33.4719 8.64789H27.5978L32.352 12.2295L30.5463 18.0077L35.3005 14.4262L38.2261 12.2295L42.9574 8.64789ZM59.0483 14.45L62.3853 13.5666L63.7796 18.0555L59.0483 14.45ZM66.728 8.64789H60.8539L59.0483 2.86963L57.2426 8.64789H51.3685L56.1227 12.2295L54.317 18.0077L59.0711 14.4262L61.9968 12.2295L66.728 8.64789ZM82.819 14.45L86.156 13.5666L87.5502 18.0555L82.819 14.45ZM90.4987 8.64789H84.6246L82.819 2.86963L81.0133 8.64789H75.1392L79.8933 12.2295L78.0877 18.0077L82.8418 14.4262L85.7674 12.2295L90.4987 8.64789ZM106.59 14.45L109.927 13.5666L111.321 18.0555L106.59 14.45ZM114.269 8.64789H108.395L106.59 2.86963L104.784 8.64789H98.9099L103.664 12.2295L101.858 18.0077L106.613 14.4262L109.538 12.2295L114.269 8.64789Z" fill="white"/>
           </svg>
-          <span class="tw-text-white"> 4.9 - 345 Vessel Vikings </span>
+          <span class="text-white"> 4.9 - 345 Vessel Vikings </span>
         </a>
         <h1 class="">The Chuug V2 660ml</h1>
       </div>
-      <ul class="tw-flex tw-flex-col tw-gap-y-4">
-        <li class="tw-bg-[url(https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-ul-list-icon.svg?v=1727978730)] tw-bg-left tw-bg-no-repeat tw-pl-8">
+      <ul class="flex flex-col gap-y-4">
+        <li class="bg-[url(https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-ul-list-icon.svg?v=1727978730)] bg-left bg-no-repeat pl-8">
           Adding to your travel liquid allowance.
         </li>
-        <li class="tw-bg-[url(https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-ul-list-icon.svg?v=1727978730)] tw-bg-left tw-bg-no-repeat tw-pl-8">
+        <li class="bg-[url(https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-ul-list-icon.svg?v=1727978730)] bg-left bg-no-repeat pl-8">
           Bulky dry shampoo cans.
         </li>
-        <li class="tw-bg-[url(https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-ul-list-icon.svg?v=1727978730)] tw-bg-left tw-bg-no-repeat tw-pl-8">
+        <li class="bg-[url(https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-ul-list-icon.svg?v=1727978730)] bg-left bg-no-repeat pl-8">
           Weak and brittle hair.
         </li>
       </ul>
-      <div class="tw-border-t-white tw-border-t-4 tw-border-dotted tw-h-0">&nbsp;</div>
-      <form class="tw-bg-chuug-yankees-blue tw-p-4 tw-rounded-[1.25em] tw-flex tw-flex-col tw-gap-y-4">
-        <div class="tw-flex tw-flex-col tw-gap-y-2">
+      <div class="border-t-white border-t-4 border-dotted h-0">&nbsp;</div>
+      <form class="tw-bg-chuug-yankees-blue p-4 rounded-[1.25em] flex flex-col gap-y-4">
+        <div class="flex flex-col gap-y-2">
           <span>1. Number of Vessels</span>
-          <div class="tw-flex tw-items-end tw-gap-x-[0.62em] tw-p-2">
-            <div class="tw-w-full">
+          <div class="flex items-end gap-x-[0.62em] p-2">
+            <div class="w-full">
               <label
-                class="tw-cursor-pointer"
+                class="cursor-pointer"
               >
-                <input type="radio" name="quantity" class="tw-peer tw-hidden">
-                <div class="tw-min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black tw-flex tw-flex-col tw-gap-y-3 tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full peer-checked:tw-opacity-100 tw-opacity-35 tw-transition-opacity">
-                  <span class="tw-text-center tw-text-lg tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                <input type="radio" name="quantity" class="peer hidden">
+                <div class="min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:text-black flex flex-col gap-y-3 items-center justify-center select-none  rounded-[0.84613em] border-white tw-bg-chuug-rackley py-[0.62em] w-full peer-checked:opacity-100 opacity-35 transition-opacity">
+                  <span class="text-center text-lg font-bold tracking-[0.0625em] leading-5 uppercase"
                     >1X</span
                   >
                   <span
-                    ><span class="tw-line-through tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter">
+                    ><span class="line-through text-base font-bold leading-4 tracking-tighter">
                       {{- 0 | money -}}
                     </span>
                     {{ 0 | money -}}
@@ -278,17 +130,17 @@
                 </div>
               </label>
             </div>
-            <div class="tw-w-full">
+            <div class="w-full">
               <label
-                class="has-[input:checked]:tw-opacity-100 tw-opacity-35 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase"
+                class="has-[input:checked]:opacity-100 opacity-35 cursor-pointer transition-opacity before:bottom-0 before:bg-[#ECC78C] before:text-black before:rounded-ss-lg before:rounded-se-lg before:text-xs before:font-bold before:tracking-[0.075em] before:w-fit before:inline-block before:mx-[50%] before:-translate-x-1/2 before:text-center before:text-nowrap before:content-['Most_Popular'] before:top-0 before:px-2 before:py-1 before:uppercase"
               >
-                <input type="radio" name="quantity" class="tw-peer tw-hidden" checked>
-                <div class="tw-min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black tw-flex tw-flex-col tw-gap-y-3 tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full peer-checked:tw-opacity-100 tw-opacity-35 tw-transition-opacity">
-                  <span class="tw-text-center tw-text-lg tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                <input type="radio" name="quantity" class="peer hidden" checked>
+                <div class="min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:text-black flex flex-col gap-y-3 items-center justify-center select-none  rounded-[0.84613em] border-white tw-bg-chuug-rackley py-[0.62em] w-full peer-checked:opacity-100 opacity-35 transition-opacity">
+                  <span class="text-center text-lg font-bold tracking-[0.0625em] leading-5 uppercase"
                     >1X</span
                   >
                   <span
-                    ><span class="tw-line-through tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter">
+                    ><span class="line-through text-base font-bold leading-4 tracking-tighter">
                       {{- 0 | money -}}
                     </span>
                     {{ 0 | money -}}
@@ -296,17 +148,17 @@
                 </div>
               </label>
             </div>
-            <div class="tw-w-full">
+            <div class="w-full">
               <label
-                class="has-[input:checked]:tw-opacity-100 tw-opacity-35 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase"
+                class="has-[input:checked]:opacity-100 opacity-35 cursor-pointer transition-opacity before:bottom-0 before:bg-[#ECC78C] before:text-black before:rounded-ss-lg before:rounded-se-lg before:text-xs before:font-bold before:tracking-[0.075em] before:w-fit before:inline-block before:mx-[50%] before:-translate-x-1/2 before:text-center before:text-nowrap before:content-['Best_value'] before:top-0 before:px-2 before:py-1 before:uppercase"
               >
-                <input type="radio" name="quantity" class="tw-peer tw-hidden">
-                <div class="tw-min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black tw-flex tw-flex-col tw-gap-y-3 tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full peer-checked:tw-opacity-100 tw-opacity-35 tw-transition-opacity">
-                  <span class="tw-text-center tw-text-lg tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
+                <input type="radio" name="quantity" class="peer hidden">
+                <div class="min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:text-black flex flex-col gap-y-3 items-center justify-center select-none  rounded-[0.84613em] border-white tw-bg-chuug-rackley py-[0.62em] w-full peer-checked:opacity-100 opacity-35 transition-opacity">
+                  <span class="text-center text-lg font-bold tracking-[0.0625em] leading-5 uppercase"
                     >1X</span
                   >
                   <span
-                    ><span class="tw-line-through tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter">
+                    ><span class="line-through text-base font-bold leading-4 tracking-tighter">
                       {{- 0 | money -}}
                     </span>
                     {{ 0 | money -}}
@@ -316,57 +168,57 @@
             </div>
           </div>
         </div>
-        <div class="tw-flex tw-flex-col tw-gap-y-2">
+        <div class="flex flex-col gap-y-2">
           <span>2. Personalised Engraving?</span>
-          <div class="tw-flex tw-items-center tw-gap-x-[0.62em] tw-p-2">
-            <div class="tw-w-full">
+          <div class="flex items-center gap-x-[0.62em] p-2">
+            <div class="w-full">
               <label
-                class="tw-cursor-pointer"
+                class="cursor-pointer"
               >
-                <input type="radio" name="engraving" class="tw-peer tw-hidden">
-                <div class="tw-min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black tw-flex tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full peer-checked:tw-opacity-100 tw-opacity-35 tw-transition-opacity">
-                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">NO</span>
+                <input type="radio" name="engraving" class="peer hidden">
+                <div class="min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:text-black flex items-center justify-center select-none  rounded-[0.84613em] border-white tw-bg-chuug-rackley py-[0.62em] w-full peer-checked:opacity-100 opacity-35 transition-opacity">
+                  <span class="text-center text-base leading-4 tracking-tighter font-bold">NO</span>
                 </div>
               </label>
             </div>
-            <div class="tw-w-full">
+            <div class="w-full">
               <label
-                class="tw-cursor-pointer"
+                class="cursor-pointer"
               >
-                <input type="radio" name="engraving" class="tw-peer tw-hidden" checked>
-                <div class="tw-min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black tw-flex tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full peer-checked:tw-opacity-100 tw-opacity-35 tw-transition-opacity">
-                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">YES</span>
+                <input type="radio" name="engraving" class="peer hidden" checked>
+                <div class="min-h-12 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:text-black flex items-center justify-center select-none  rounded-[0.84613em] border-white tw-bg-chuug-rackley py-[0.62em] w-full peer-checked:opacity-100 opacity-35 transition-opacity">
+                  <span class="text-center text-base leading-4 tracking-tighter font-bold">YES</span>
                 </div>
               </label>
             </div>
           </div>
         </div>
-        <div class="tw-flex tw-flex-col tw-gap-y-2">
+        <div class="flex flex-col gap-y-2">
           <span>3. Customise Your Vessel(s)</span>
           {% for i in (1..5) %}
-<div class="tw-flex tw-flex-col tw-gap-y-1">
+<div class="flex flex-col gap-y-1">
   <span>Vessel #{{ forloop.index }}</span>
-  <div class="tw-flex tw-items-center tw-gap-x-[0.62em] tw-p-2">
-<select class="tw-flex-1 input" style="background-color: #6093a3;">
+  <div class="flex items-center gap-x-[0.62em] p-2">
+<select class="flex-1 input" style="background-color: #6093a3;">
   <option>asda</option>
 </select>
-<select class="tw-flex-1 input" style="background-color: #6093a3;">
+<select class="flex-1 input" style="background-color: #6093a3;">
   <option>asda</option>
 </select>
-    <input class="tw-flex-1 input tw-uppercase" type="text" maxlength="2" placeholder="ENTER Initials">
+    <input class="flex-1 input uppercase" type="text" maxlength="2" placeholder="ENTER Initials">
   </div>
 </div>
 {% endfor %}
 </div>
-        <div class="tw-flex tw-flex-col tw-gap-y-3">
+        <div class="flex flex-col gap-y-3">
           <button
             type="submit"
-            class="tw-uppercase tw-bg-[#8C3000] tw-bg-no-repeat tw-w-full tw-bg-contain tw-h-[4.375em] tw-rounded-[1.25em]"
+            class="uppercase bg-[#8C3000] bg-no-repeat w-full bg-contain h-[4.375em] rounded-[1.25em]"
           >
             ADD TO CART | {{ 0 | money }}
           </button>
-          <div class="tw-flex tw-items-center tw-gap-x-2 tw-justify-center">
-            <div class="tw-bg-chuug-rose tw-rounded-[0.29375em] tw-py-[0.27125em] tw-px-[0.5425em] tw-flex tw-items-center tw-justify-center">
+          <div class="flex items-center gap-x-2 justify-center">
+            <div class="tw-bg-chuug-rose rounded-[0.29375em] py-[0.27125em] px-[0.5425em] flex items-center justify-center">
               <svg width="49" height="13" viewBox="0 0 49 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M46.4233 7.95711C46.4233 6.81202 45.454 5.88498 44.2583 5.88498C43.0626 5.88498 42.0933 6.81343 42.0933 7.95711C42.0933 9.10079 43.064 10.0278 44.2597 10.0278C45.4554 10.0278 46.4233 9.10079 46.4233 7.95711ZM46.4317 3.92961H48.8204V11.9832H46.4317V11.4683C45.7353 11.9491 44.909 12.2062 44.0628 12.2055C41.7374 12.2055 39.8524 10.3036 39.8524 7.95711C39.8524 5.61066 41.7374 3.70875 44.0628 3.70875C44.942 3.70875 45.7565 3.98025 46.4317 4.44588V3.92961ZM27.3113 4.97904V3.93101H24.865V11.9832H27.3169V8.22298C27.3169 6.9541 28.6786 6.27324 29.624 6.27324H29.6521V3.93101C28.6814 3.93101 27.791 4.35022 27.3113 4.97904ZM21.2173 7.95711C21.2173 6.81202 20.248 5.88498 19.0523 5.88498C17.8566 5.88498 16.8873 6.81343 16.8873 7.95711C16.8873 9.10079 17.858 10.0278 19.0537 10.0278C20.2494 10.0278 21.2173 9.10079 21.2173 7.95711ZM21.2257 3.92961H23.6158V11.9832H21.2257V11.4683C20.5505 11.9326 19.736 12.2055 18.8568 12.2055C16.5314 12.2055 14.6464 10.3036 14.6464 7.95711C14.6464 5.61066 16.5314 3.70875 18.8568 3.70875C19.736 3.70875 20.5505 3.98025 21.2257 4.44588V3.92961ZM35.6068 3.71437C34.6531 3.71437 33.7499 4.0126 33.145 4.83696V3.93101H30.7662V11.9832H33.1746V7.75172C33.1746 6.52786 33.9877 5.92718 34.9682 5.92718C36.0176 5.92718 36.6225 6.56021 36.6225 7.73484V11.9832H39.0083V6.86266C39.0083 4.98888 37.5312 3.71437 35.6068 3.71437ZM11.1661 11.9832H13.6673V0.342414H11.1661V11.9832ZM0.179443 11.986H2.82834V0.3396H0.18085L0.179443 11.986ZM9.44424 0.3396C9.44424 2.86048 8.47078 5.20693 6.73486 6.94988L10.3952 11.986H7.12453L3.14767 6.51379L4.17459 5.73727C5.01058 5.10852 5.68793 4.29295 6.1525 3.35573C6.61708 2.41852 6.85602 1.38563 6.85021 0.3396H9.44143H9.44424Z" fill="#0C061D"/>
               </svg>
@@ -378,65 +230,65 @@
 
       <script></script>
 
-      <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+      <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
         <details
           open
           name="specification-accordion"
-          class="tw-overflow-hidden tw-peer tw-group"
+          class="overflow-hidden peer group"
         >
-          <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-            <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+          <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+            <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
               >Specifications</span
             >
-            <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+            <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="10"
                 height="6"
                 viewBox="0 0 10 6"
                 fill="none"
-                class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
               >
                 <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
               </svg>
             </i>
           </summary>
         </details>
-        <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+        <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
           <p>
-            <strong class="tw-font-bold">Capacity:</strong> 660ml (enough for a pint or 2 of your favourite beers cans)
+            <strong class="font-bold">Capacity:</strong> 660ml (enough for a pint or 2 of your favourite beers cans)
           </p>
           <p>
-            <strong class="tw-font-bold">Materials:</strong> Premium mango wood exterior with food grade stainless steel
+            <strong class="font-bold">Materials:</strong> Premium mango wood exterior with food grade stainless steel
             interior. The handle is made from synthetic hemp meaning it’s water resistant and anti-bacterial.
           </p>
-          <p><strong class="tw-font-bold">Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</p>
+          <p><strong class="font-bold">Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</p>
         </div>
       </div>
-      <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+      <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
         <details
           name="specification-accordion"
-          class="tw-overflow-hidden tw-peer tw-group"
+          class="overflow-hidden peer group"
         >
-          <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-            <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+          <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+            <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
               >Shipping & returns</span
             >
-            <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+            <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="10"
                 height="6"
                 viewBox="0 0 10 6"
                 fill="none"
-                class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
               >
                 <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
               </svg>
             </i>
           </summary>
         </details>
-        <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+        <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
           <p>Free express shipping on multi-orders (check offer banner at top of page)</p>
           <p>
             <ul>
@@ -449,11 +301,11 @@
       </div>
     </div>
   </div>
-  <div class="tw-flex tw-justify-center tw-items-center tw-w-full tw-mt-[3.75em] tw-container">
-    <div class="tw-bg-chuug-yankees-blue tw-rounded-3xl tw-w-full tw-max-w-[60em]  tw-py-4 tw-px-7 tw-flex tw-items-center tw-gap-x-[3.5em]">
-      <div class="tw-flex-1 tw-w-full">&nbsp;</div>
-      <div class="tw-flex tw-items-center tw-justify-center">
-        <button class="tw-bg-chuug-pastel-yellow tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-10 tw-h-10">
+  <div class="flex justify-center items-center w-full mt-[3.75em] container">
+    <div class="tw-bg-chuug-yankees-blue rounded-3xl w-full max-w-[60em]  py-4 px-7 flex items-center gap-x-[3.5em]">
+      <div class="flex-1 w-full">&nbsp;</div>
+      <div class="flex items-center justify-center">
+        <button class="tw-bg-chuug-pastel-yellow rounded-full flex items-center justify-center w-10 h-10">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
             <g clip-path="url(#clip0_1_2880)">
               <path d="M5.82945 12.4222C5.82945 13.4622 4.98629 14.3053 3.94634 14.3053C2.90639 14.3053 2.06323 13.4622 2.06323 12.4222V2.66875C2.06323 1.6288 2.90639 0.785645 3.94634 0.785645C4.98629 0.785645 5.82945 1.6288 5.82945 2.66875V12.4222Z" fill="#0D2026"/>
@@ -470,72 +322,72 @@
     </div>
   </div>
 </section>
-<section class="tw-bg-chuug-gainsboro tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-pt-5 md:tw-pt-24 tw-pb-14 md:tw-pb-32">
-  <div class="tw-container tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-20">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4">
-      <h2 class="tw-text-6xl tw-font-bold tw-leading-[52.8px] tw-text-center">Nature's gift, forged into perfection</h2>
-      <p class="tw-text-center tw-text-lg tw-leading-[1.6875em] tw-text-chuug-japanese-indigo">
+<section class="tw-bg-chuug-gainsboro rounded-ss-[2em] rounded-se-[2em] -mt-8 pt-5 md:pt-24 pb-14 md:pb-32">
+  <div class="container flex flex-col justify-center items-center gap-y-20">
+    <header class="flex flex-col justify-center max-w-[60em] gap-y-4">
+      <h2 class="text-6xl font-bold leading-[52.8px] text-center">Nature's gift, forged into perfection</h2>
+      <p class="text-center text-lg leading-[1.6875em] tw-text-chuug-japanese-indigo">
         Always handmade, machines are cheating
       </p>
     </header>
-    <div class="tw-flex tw-flex-col tw-items-center tw-gap-y-[6.25em] tw-max-w-[45.9375em]">
-      <div class="tw-flex tw-flex-col lg:tw-flex-row tw-items-center tw-gap-x-8 tw-w-full">
+    <div class="flex flex-col items-center gap-y-[6.25em] max-w-[45.9375em]">
+      <div class="flex flex-col lg:flex-row items-center gap-x-8 w-full">
         <img
           src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-man-chuug-1.png?v=1728393349"
-          class="tw-w-[20em] tw-h-[20em]"
+          class="w-[20em] h-[20em]"
           alt="man-chuug"
           width="100%"
           height="100%"
         >
-        <div class="tw-flex tw-flex-col tw-gap-y-5 tw-flex-1">
-          <h4 class="tw-text-chuug-dark-navy tw-text-[1.75em] tw-leading-[2.275em]">Man chop. Man-go</h4>
-          <p class="tw-text-chuug-japanese-indigo tw-text-base tw-leading-6 ">
+        <div class="flex flex-col gap-y-5 flex-1">
+          <h4 class="tw-text-chuug-dark-navy text-[1.75em] leading-[2.275em]">Man chop. Man-go</h4>
+          <p class="tw-text-chuug-japanese-indigo text-base leading-6 ">
             Quality from the onset. Each tankard is crafted from durable Mango wood. How else would it last a lifetime?
           </p>
         </div>
       </div>
-      <div class="tw-flex tw-flex-col lg:tw-flex-row tw-items-center tw-gap-x-8 tw-w-full">
+      <div class="flex flex-col lg:flex-row items-center gap-x-8 w-full">
         <img
           src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-man-chuug-2.png?v=1728393350"
-          class="tw-w-[20em] tw-h-[20em]"
+          class="w-[20em] h-[20em]"
           alt="man-chuug"
           width="100%"
           height="100%"
         >
-        <div class="tw-flex tw-flex-col tw-gap-y-5 tw-flex-1">
-          <h4 class="tw-text-chuug-dark-navy tw-text-[1.75em] tw-leading-[2.275em]">Hand Crafted In Britain</h4>
-          <p class="tw-text-chuug-japanese-indigo tw-text-base tw-leading-6 ">
+        <div class="flex flex-col gap-y-5 flex-1">
+          <h4 class="tw-text-chuug-dark-navy text-[1.75em] leading-[2.275em]">Hand Crafted In Britain</h4>
+          <p class="tw-text-chuug-japanese-indigo text-base leading-6 ">
             No stone is left unturned during our artisans creative process. Beer vessels deserve the VIP treatment.
           </p>
         </div>
       </div>
-      <div class="tw-flex tw-flex-col lg:tw-flex-row tw-items-center tw-gap-x-8 tw-w-full">
+      <div class="flex flex-col lg:flex-row items-center gap-x-8 w-full">
         <img
           src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-man-chuug-3.png?v=1728393353"
-          class="tw-w-[20em] tw-h-[20em]"
+          class="w-[20em] h-[20em]"
           alt="man-chuug"
           width="100%"
           height="100%"
         >
-        <div class="tw-flex tw-flex-col tw-gap-y-5 tw-flex-1">
-          <h4 class="tw-text-chuug-dark-navy tw-text-[1.75em] tw-leading-[2.275em]">The Chef’s Kiss</h4>
-          <p class="tw-text-chuug-japanese-indigo tw-text-base tw-leading-6 ">
+        <div class="flex flex-col gap-y-5 flex-1">
+          <h4 class="tw-text-chuug-dark-navy text-[1.75em] leading-[2.275em]">The Chef’s Kiss</h4>
+          <p class="tw-text-chuug-japanese-indigo text-base leading-6 ">
             The personalisation station. We stamp your mark into your tankard to let others know it’s yours and not to
             be touched.
           </p>
         </div>
       </div>
-      <div class="tw-flex tw-flex-col lg:tw-flex-row tw-items-center tw-gap-x-8 tw-w-full">
+      <div class="flex flex-col lg:flex-row items-center gap-x-8 w-full">
         <img
           src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-man-chuug-4.png?v=1728393356"
-          class="tw-w-[20em] tw-h-[20em]"
+          class="w-[20em] h-[20em]"
           alt="man-chuug"
           width="100%"
           height="100%"
         >
-        <div class="tw-flex tw-flex-col tw-gap-y-5 tw-flex-1">
-          <h4 class="tw-text-chuug-dark-navy tw-text-[1.75em] tw-leading-[2.275em]">Let Us ‘Handle’ It</h4>
-          <p class="tw-text-chuug-japanese-indigo tw-text-base tw-leading-6 ">
+        <div class="flex flex-col gap-y-5 flex-1">
+          <h4 class="tw-text-chuug-dark-navy text-[1.75em] leading-[2.275em]">Let Us ‘Handle’ It</h4>
+          <p class="tw-text-chuug-japanese-indigo text-base leading-6 ">
             Bet you didn’t know a rope could be ‘smart’? Anti-bacterial, water resistant AND it doesn’t warp or stretch.
             Pretty damn clever if you ask us.
           </p>
@@ -545,54 +397,54 @@
   </div>
 </section>
 
-<section class="tw-bg-chuug-dark-navy tw-text-white tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-pt-5 md:tw-pt-24 tw-pb-14 md:tw-pb-32">
-  <div class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-20">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4">
-      <h2 class="tw-text-6xl tw-font-bold tw-leading-[52.8px] tw-text-center tw-text-white">
+<section class="tw-bg-chuug-dark-navy text-white rounded-ss-[2em] rounded-se-[2em] -mt-8 pt-5 md:pt-24 pb-14 md:pb-32">
+  <div class="flex flex-col justify-center items-center gap-y-20">
+    <header class="flex flex-col justify-center max-w-[60em] gap-y-4">
+      <h2 class="text-6xl font-bold leading-[52.8px] text-center text-white">
         Drinking Beer Just Got Cooler
       </h2>
-      <p class="tw-text-center tw-text-lg tw-leading-[1.6875em] tw-text-white">
+      <p class="text-center text-lg leading-[1.6875em] text-white">
         Out-do your neighbour at the next awkward BBQ that you’d rather not attend
       </p>
     </header>
-    <div class="tw-container tw-grid tw-grid-cols-3 tw-text-white tw-gap-y-20 tw-gap-x-10 tw-w-full">
-      <div class="tw-flex-1 tw-text-center ">1</div>
-      <div class="tw-row-span-2 tw-flex-1 tw-text-center ">
+    <div class="container grid grid-cols-3 text-white gap-y-20 gap-x-10 w-full">
+      <div class="flex-1 text-center ">1</div>
+      <div class="row-span-2 flex-1 text-center ">
         <img
           src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-cover-vessel.png?v=1728482938"
-          class="tw-w-full"
+          class="w-full"
           alt="Chuug Vessel"
           width="100%"
           height="100%"
         >
       </div>
-      <div class="tw-flex-1 tw-text-center ">3</div>
-      <div class="tw-flex-1 tw-text-center ">4</div>
-      <div class="tw-flex-1 tw-text-center ">5</div>
+      <div class="flex-1 text-center ">3</div>
+      <div class="flex-1 text-center ">4</div>
+      <div class="flex-1 text-center ">5</div>
     </div>
     <button
       type="submit"
-      class="tw-container tw-uppercase tw-bg-[#8C3000] tw-bg-no-repeat tw-w-full tw-bg-contain tw-h-[4.375em] tw-rounded-[1.25em]"
+      class="container uppercase bg-[#8C3000] bg-no-repeat w-full bg-contain h-[4.375em] rounded-[1.25em]"
     >
       Customize Now
     </button>
 
-    <div class="tw-w-full">
-      <div id="review-swiper" class="swiper tw-w-full">
+    <div class="w-full">
+      <div id="review-swiper" class="swiper w-full">
         <div class="swiper-wrapper">
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl tw-order-last"
+              class="h-[12.5em] overflow-hidden rounded-2xl order-last"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-1.png?v=1728611178"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="120" height="22" viewBox="0 0 120 22" fill="none">
                 <rect x="0.966675" y="0.000183105" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <rect x="24.8806" width="21.9999" height="21.9999" fill="#00B67A"/>
@@ -603,32 +455,32 @@
                 <rect x="97.0334" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <path d="M12.4736 14.4501L15.8106 13.5666L17.2049 18.0555L12.4736 14.4501ZM20.1533 8.64791H14.2792L12.4736 2.86964L10.6679 8.64791H4.79382L9.54796 12.2295L7.7423 18.0077L12.4964 14.4262L15.4221 12.2295L20.1533 8.64791ZM36.2443 14.4501L39.5813 13.5666L40.9755 18.0555L36.2443 14.4501ZM43.924 8.64791H38.0499L36.2443 2.86964L34.4386 8.64791H28.5645L33.3186 12.2295L31.513 18.0077L36.2671 14.4262L39.1927 12.2295L43.924 8.64791ZM60.015 14.4501L63.352 13.5666L64.7462 18.0555L60.015 14.4501ZM67.6947 8.64791H61.8206L60.015 2.86964L58.2093 8.64791H52.3352L57.0893 12.2295L55.2837 18.0077L60.0378 14.4262L62.9634 12.2295L67.6947 8.64791ZM83.7856 14.4501L87.1227 13.5666L88.5169 18.0555L83.7856 14.4501ZM91.4654 8.64791H85.5913L83.7856 2.86964L81.98 8.64791H76.1059L80.86 12.2295L79.0544 18.0077L83.8085 14.4262L86.7341 12.2295L91.4654 8.64791ZM107.556 14.4501L110.893 13.5666L112.288 18.0555L107.556 14.4501ZM115.236 8.64791H109.362L107.556 2.86964L105.751 8.64791H99.8766L104.631 12.2295L102.825 18.0077L107.579 14.4262L110.505 12.2295L115.236 8.64791Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “A little bit of special”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “It’s bespoke and something that is mine to treasure for years to come, that is the key, it feels
                 special and looks amazing and is comfortable to hold so what’s not like!”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>Jason Ellis</span>
                 <span>August 20, 2024</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl"
+              class="h-[12.5em] overflow-hidden rounded-2xl"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-2.png?v=1728611178"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="120" height="22" viewBox="0 0 120 22" fill="none">
                 <rect x="0.966675" y="0.000183105" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <rect x="24.8806" width="21.9999" height="21.9999" fill="#00B67A"/>
@@ -639,32 +491,32 @@
                 <rect x="97.0334" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <path d="M12.4736 14.4501L15.8106 13.5666L17.2049 18.0555L12.4736 14.4501ZM20.1533 8.64791H14.2792L12.4736 2.86964L10.6679 8.64791H4.79382L9.54796 12.2295L7.7423 18.0077L12.4964 14.4262L15.4221 12.2295L20.1533 8.64791ZM36.2443 14.4501L39.5813 13.5666L40.9755 18.0555L36.2443 14.4501ZM43.924 8.64791H38.0499L36.2443 2.86964L34.4386 8.64791H28.5645L33.3186 12.2295L31.513 18.0077L36.2671 14.4262L39.1927 12.2295L43.924 8.64791ZM60.015 14.4501L63.352 13.5666L64.7462 18.0555L60.015 14.4501ZM67.6947 8.64791H61.8206L60.015 2.86964L58.2093 8.64791H52.3352L57.0893 12.2295L55.2837 18.0077L60.0378 14.4262L62.9634 12.2295L67.6947 8.64791ZM83.7856 14.4501L87.1227 13.5666L88.5169 18.0555L83.7856 14.4501ZM91.4654 8.64791H85.5913L83.7856 2.86964L81.98 8.64791H76.1059L80.86 12.2295L79.0544 18.0077L83.8085 14.4262L86.7341 12.2295L91.4654 8.64791ZM107.556 14.4501L110.893 13.5666L112.288 18.0555L107.556 14.4501ZM115.236 8.64791H109.362L107.556 2.86964L105.751 8.64791H99.8766L104.631 12.2295L102.825 18.0077L107.579 14.4262L110.505 12.2295L115.236 8.64791Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “Gift for 40 year old man”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “Extremely easy & efficient process from start to finish. Excellent delivery time, presentation was
                 brilliant, the product itself was superbly crafted.”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>Cath Myers</span>
                 <span>August 14, 2024</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl tw-order-last"
+              class="h-[12.5em] overflow-hidden rounded-2xl order-last"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-3.png?v=1728611178"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="120" height="22" viewBox="0 0 120 22" fill="none">
                 <rect x="0.966675" y="0.000183105" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <rect x="24.8806" width="21.9999" height="21.9999" fill="#00B67A"/>
@@ -675,63 +527,63 @@
                 <rect x="97.0334" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <path d="M12.4736 14.4501L15.8106 13.5666L17.2049 18.0555L12.4736 14.4501ZM20.1533 8.64791H14.2792L12.4736 2.86964L10.6679 8.64791H4.79382L9.54796 12.2295L7.7423 18.0077L12.4964 14.4262L15.4221 12.2295L20.1533 8.64791ZM36.2443 14.4501L39.5813 13.5666L40.9755 18.0555L36.2443 14.4501ZM43.924 8.64791H38.0499L36.2443 2.86964L34.4386 8.64791H28.5645L33.3186 12.2295L31.513 18.0077L36.2671 14.4262L39.1927 12.2295L43.924 8.64791ZM60.015 14.4501L63.352 13.5666L64.7462 18.0555L60.015 14.4501ZM67.6947 8.64791H61.8206L60.015 2.86964L58.2093 8.64791H52.3352L57.0893 12.2295L55.2837 18.0077L60.0378 14.4262L62.9634 12.2295L67.6947 8.64791ZM83.7856 14.4501L87.1227 13.5666L88.5169 18.0555L83.7856 14.4501ZM91.4654 8.64791H85.5913L83.7856 2.86964L81.98 8.64791H76.1059L80.86 12.2295L79.0544 18.0077L83.8085 14.4262L86.7341 12.2295L91.4654 8.64791ZM107.556 14.4501L110.893 13.5666L112.288 18.0555L107.556 14.4501ZM115.236 8.64791H109.362L107.556 2.86964L105.751 8.64791H99.8766L104.631 12.2295L102.825 18.0077L107.579 14.4262L110.505 12.2295L115.236 8.64791Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “Easy 5 star”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “My husband is a viking type so a perfect gift for him. The craftsmanship is outstanding and the rope
                 handle elevates the Chuug that little bit more.”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>Emma Ockwell</span>
                 <span>August 17, 2024</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl"
+              class="h-[12.5em] overflow-hidden rounded-2xl"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-4.png?v=1728611178"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="94" height="18" viewBox="0 0 94 18" fill="none">
                 <rect x="76.0402" y="-2.28882e-05" width="17.5999" height="17.5999" fill="#DCDCE6"/>
                 <path d="M0.360046 0H17.8122V17.6H0.360046V0ZM19.2666 0H36.7187V17.6H19.2666V0ZM38.1731 0H55.6252V17.6H38.1731V0ZM57.0796 0H74.5317V17.6H57.0796V0Z" fill="#8CC84A"/>
                 <path d="M8.85065 12.1977L11.5203 11.4909L12.6357 15.082L8.85065 12.1977ZM14.9944 7.55598H10.2952L8.85065 2.93337L7.40612 7.55598H2.70685L6.51015 10.4212L5.06563 15.0438L8.86893 12.1786L11.2094 10.4212L14.9944 7.55598ZM27.8672 12.1977L30.5368 11.4909L31.6522 15.082L27.8672 12.1977ZM34.011 7.55598H29.3117L27.8672 2.93337L26.4226 7.55598H21.7234L25.5267 10.4212L24.0821 15.0438L27.8854 12.1786L30.2259 10.4212L34.011 7.55598ZM46.8837 12.1977L49.5533 11.4909L50.6687 15.082L46.8837 12.1977ZM53.0275 7.55598H48.3282L46.8837 2.93337L45.4392 7.55598H40.7399L44.5432 10.4212L43.0987 15.0438L46.902 12.1786L49.2425 10.4212L53.0275 7.55598ZM65.9002 12.1977L68.5698 11.4909L69.6852 15.082L65.9002 12.1977ZM72.044 7.55598H67.3447L65.9002 2.93337L64.4557 7.55598H59.7564L63.5597 10.4212L62.1152 15.0438L65.9185 12.1786L68.259 10.4212L72.044 7.55598ZM84.9167 12.1977L87.5863 11.4909L88.7017 15.082L84.9167 12.1977ZM91.0605 7.55598H86.3612L84.9167 2.93337L83.4722 7.55598H78.7729L82.5762 10.4212L81.1317 15.0438L84.935 12.1786L87.2755 10.4212L91.0605 7.55598Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “A nice solid mug”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “Order arrived very quickly and was well presented. Really nice design and overall finish. Certainly
                 good value for money as i have enjoyed it over the last month.”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>Jim w</span>
                 <span>August 01, 2024</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl tw-order-last"
+              class="h-[12.5em] overflow-hidden rounded-2xl order-last"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-5.png?v=1728611179"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="120" height="22" viewBox="0 0 120 22" fill="none">
                 <rect x="0.966675" y="0.000183105" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <rect x="24.8806" width="21.9999" height="21.9999" fill="#00B67A"/>
@@ -742,32 +594,32 @@
                 <rect x="97.0334" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <path d="M12.4736 14.4501L15.8106 13.5666L17.2049 18.0555L12.4736 14.4501ZM20.1533 8.64791H14.2792L12.4736 2.86964L10.6679 8.64791H4.79382L9.54796 12.2295L7.7423 18.0077L12.4964 14.4262L15.4221 12.2295L20.1533 8.64791ZM36.2443 14.4501L39.5813 13.5666L40.9755 18.0555L36.2443 14.4501ZM43.924 8.64791H38.0499L36.2443 2.86964L34.4386 8.64791H28.5645L33.3186 12.2295L31.513 18.0077L36.2671 14.4262L39.1927 12.2295L43.924 8.64791ZM60.015 14.4501L63.352 13.5666L64.7462 18.0555L60.015 14.4501ZM67.6947 8.64791H61.8206L60.015 2.86964L58.2093 8.64791H52.3352L57.0893 12.2295L55.2837 18.0077L60.0378 14.4262L62.9634 12.2295L67.6947 8.64791ZM83.7856 14.4501L87.1227 13.5666L88.5169 18.0555L83.7856 14.4501ZM91.4654 8.64791H85.5913L83.7856 2.86964L81.98 8.64791H76.1059L80.86 12.2295L79.0544 18.0077L83.8085 14.4262L86.7341 12.2295L91.4654 8.64791ZM107.556 14.4501L110.893 13.5666L112.288 18.0555L107.556 14.4501ZM115.236 8.64791H109.362L107.556 2.86964L105.751 8.64791H99.8766L104.631 12.2295L102.825 18.0077L107.579 14.4262L110.505 12.2295L115.236 8.64791Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “Beautiful product”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “Bought 2, one for my husband and one for my son ready for Xmas after them seeing them at a festival.
                 Really well made and lovely looking.”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>Paula Charles</span>
                 <span>August 21, 2024</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl"
+              class="h-[12.5em] overflow-hidden rounded-2xl"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-6.png?v=1728611178"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="120" height="22" viewBox="0 0 120 22" fill="none">
                 <rect x="0.966675" y="0.000183105" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <rect x="24.8806" width="21.9999" height="21.9999" fill="#00B67A"/>
@@ -778,32 +630,32 @@
                 <rect x="97.0334" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <path d="M12.4736 14.4501L15.8106 13.5666L17.2049 18.0555L12.4736 14.4501ZM20.1533 8.64791H14.2792L12.4736 2.86964L10.6679 8.64791H4.79382L9.54796 12.2295L7.7423 18.0077L12.4964 14.4262L15.4221 12.2295L20.1533 8.64791ZM36.2443 14.4501L39.5813 13.5666L40.9755 18.0555L36.2443 14.4501ZM43.924 8.64791H38.0499L36.2443 2.86964L34.4386 8.64791H28.5645L33.3186 12.2295L31.513 18.0077L36.2671 14.4262L39.1927 12.2295L43.924 8.64791ZM60.015 14.4501L63.352 13.5666L64.7462 18.0555L60.015 14.4501ZM67.6947 8.64791H61.8206L60.015 2.86964L58.2093 8.64791H52.3352L57.0893 12.2295L55.2837 18.0077L60.0378 14.4262L62.9634 12.2295L67.6947 8.64791ZM83.7856 14.4501L87.1227 13.5666L88.5169 18.0555L83.7856 14.4501ZM91.4654 8.64791H85.5913L83.7856 2.86964L81.98 8.64791H76.1059L80.86 12.2295L79.0544 18.0077L83.8085 14.4262L86.7341 12.2295L91.4654 8.64791ZM107.556 14.4501L110.893 13.5666L112.288 18.0555L107.556 14.4501ZM115.236 8.64791H109.362L107.556 2.86964L105.751 8.64791H99.8766L104.631 12.2295L102.825 18.0077L107.579 14.4262L110.505 12.2295L115.236 8.64791Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “Excellent quality”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “I bought it for my dad for Christmas (he’s really hard too buy for) I know he’ll love it. Very quick
                 delivery even with personalising.”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>Susan Taylor </span>
                 <span>August 22, 2024</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl tw-order-last"
+              class="h-[12.5em] overflow-hidden rounded-2xl order-last"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-7.png?v=1728611178"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="120" height="22" viewBox="0 0 120 22" fill="none">
                 <rect x="0.966675" y="0.000183105" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <rect x="24.8806" width="21.9999" height="21.9999" fill="#00B67A"/>
@@ -814,32 +666,32 @@
                 <rect x="97.0334" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <path d="M12.4736 14.4501L15.8106 13.5666L17.2049 18.0555L12.4736 14.4501ZM20.1533 8.64791H14.2792L12.4736 2.86964L10.6679 8.64791H4.79382L9.54796 12.2295L7.7423 18.0077L12.4964 14.4262L15.4221 12.2295L20.1533 8.64791ZM36.2443 14.4501L39.5813 13.5666L40.9755 18.0555L36.2443 14.4501ZM43.924 8.64791H38.0499L36.2443 2.86964L34.4386 8.64791H28.5645L33.3186 12.2295L31.513 18.0077L36.2671 14.4262L39.1927 12.2295L43.924 8.64791ZM60.015 14.4501L63.352 13.5666L64.7462 18.0555L60.015 14.4501ZM67.6947 8.64791H61.8206L60.015 2.86964L58.2093 8.64791H52.3352L57.0893 12.2295L55.2837 18.0077L60.0378 14.4262L62.9634 12.2295L67.6947 8.64791ZM83.7856 14.4501L87.1227 13.5666L88.5169 18.0555L83.7856 14.4501ZM91.4654 8.64791H85.5913L83.7856 2.86964L81.98 8.64791H76.1059L80.86 12.2295L79.0544 18.0077L83.8085 14.4262L86.7341 12.2295L91.4654 8.64791ZM107.556 14.4501L110.893 13.5666L112.288 18.0555L107.556 14.4501ZM115.236 8.64791H109.362L107.556 2.86964L105.751 8.64791H99.8766L104.631 12.2295L102.825 18.0077L107.579 14.4262L110.505 12.2295L115.236 8.64791Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “I love my Chugg”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “It is great quality and looks fantastic. It will be my go to vessel for both tea and beers. Ordered
                 Wednesday evening and it arrived Friday morning.”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>keith welch</span>
                 <span>August 30, 2024</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-flex-col tw-gap-y-3 !tw-h-[29.7em] !tw-w-[22.5em] tw-shrink-0">
+          <div class="swiper-slide !flex flex-col gap-y-3 !h-[29.7em] !w-[22.5em] shrink-0">
             <div
-              class="tw-h-[12.5em] tw-overflow-hidden tw-rounded-2xl"
+              class="h-[12.5em] overflow-hidden rounded-2xl"
             >
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-review-image-8.png?v=1728611178"
-                class="tw-w-full tw-h-full"
+                class="w-full h-full"
                 alt="Chuug Vessel"
                 width="100%"
                 height="100%"
               >
             </div>
-            <div class="tw-flex-1 tw-py-6 tw-px-8 tw-rounded-2xl tw-bg-chuug-japanese-indigo tw-flex tw-flex-col tw-items-center tw-gap-y-4">
+            <div class="flex-1 py-6 px-8 rounded-2xl tw-bg-chuug-japanese-indigo flex flex-col items-center gap-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="120" height="22" viewBox="0 0 120 22" fill="none">
                 <rect x="0.966675" y="0.000183105" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <rect x="24.8806" width="21.9999" height="21.9999" fill="#00B67A"/>
@@ -850,14 +702,14 @@
                 <rect x="97.0334" width="21.9999" height="21.9999" fill="#00B67A"/>
                 <path d="M12.4736 14.4501L15.8106 13.5666L17.2049 18.0555L12.4736 14.4501ZM20.1533 8.64791H14.2792L12.4736 2.86964L10.6679 8.64791H4.79382L9.54796 12.2295L7.7423 18.0077L12.4964 14.4262L15.4221 12.2295L20.1533 8.64791ZM36.2443 14.4501L39.5813 13.5666L40.9755 18.0555L36.2443 14.4501ZM43.924 8.64791H38.0499L36.2443 2.86964L34.4386 8.64791H28.5645L33.3186 12.2295L31.513 18.0077L36.2671 14.4262L39.1927 12.2295L43.924 8.64791ZM60.015 14.4501L63.352 13.5666L64.7462 18.0555L60.015 14.4501ZM67.6947 8.64791H61.8206L60.015 2.86964L58.2093 8.64791H52.3352L57.0893 12.2295L55.2837 18.0077L60.0378 14.4262L62.9634 12.2295L67.6947 8.64791ZM83.7856 14.4501L87.1227 13.5666L88.5169 18.0555L83.7856 14.4501ZM91.4654 8.64791H85.5913L83.7856 2.86964L81.98 8.64791H76.1059L80.86 12.2295L79.0544 18.0077L83.8085 14.4262L86.7341 12.2295L91.4654 8.64791ZM107.556 14.4501L110.893 13.5666L112.288 18.0555L107.556 14.4501ZM115.236 8.64791H109.362L107.556 2.86964L105.751 8.64791H99.8766L104.631 12.2295L102.825 18.0077L107.579 14.4262L110.505 12.2295L115.236 8.64791Z" fill="white"/>
               </svg>
-              <h4 class="tw-text-[1.375em] tw-font-bold tw-text-center tw-leading-[1.5125em] tw-text-white">
+              <h4 class="text-[1.375em] font-bold text-center leading-[1.5125em] text-white">
                 “Quality is spot on”
               </h4>
-              <p class="tw-flex-1 tw-text-center tw-text-balance tw-font-medium tw-text-base tw-leading-6">
+              <p class="flex-1 text-center text-balance font-medium text-base leading-6">
                 “Purchased for my Brother who loves things ‘Vikingish’. The rope handle detail works so well. I had his
                 initials engraved which makes it a thoughtful gift.”
               </p>
-              <div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-font-bold tw-capitalize tw-leading-[0.975em] tw-w-full">
+              <div class="flex items-center justify-between text-xs font-bold capitalize leading-[0.975em] w-full">
                 <span>Fallon Hanson, UK</span>
                 <span>September 01, 2024</span>
               </div>
@@ -865,15 +717,15 @@
           </div>
         </div>
       </div>
-      <div class="tw-flex tw-justify-end tw-items-center tw-container tw-mt-[1.88em]">
+      <div class="flex justify-end items-center container mt-[1.88em]">
         <button
           onclick="handleToggleReviewSwiperState(this)"
           title="pause"
           data-play="true"
-          class="tw-bg-chuug-pastel-yellow tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-10 tw-h-10 tw-group"
+          class="tw-bg-chuug-pastel-yellow rounded-full flex items-center justify-center w-10 h-10 group"
         >
           <svg
-            class="tw-hidden group-[&[data-play='true']]:tw-block"
+            class="hidden group-[&[data-play='true']]:block"
             xmlns="http://www.w3.org/2000/svg"
             width="15"
             height="15"
@@ -922,48 +774,48 @@
   </div>
 </section>
 
-<section class="tw-bg-chuug-gainsboro tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-pt-5 md:tw-pt-24 tw-pb-14 md:tw-pb-32">
-  <div class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-20">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4">
-      <h2 class="tw-text-6xl tw-font-bold tw-leading-[52.8px] tw-text-center tw-text-chuug-dark-navy tw-capitalize">
+<section class="tw-bg-chuug-gainsboro rounded-ss-[2em] rounded-se-[2em] -mt-8 pt-5 md:pt-24 pb-14 md:pb-32">
+  <div class="flex flex-col justify-center items-center gap-y-20">
+    <header class="flex flex-col justify-center max-w-[60em] gap-y-4">
+      <h2 class="text-6xl font-bold leading-[52.8px] text-center tw-text-chuug-dark-navy capitalize">
         Time To Ditch The Dainty Glassware
       </h2>
-      <p class="tw-text-center tw-text-lg tw-leading-[1.6875em] tw-text-chuug-dark-navy">
+      <p class="text-center text-lg leading-[1.6875em] tw-text-chuug-dark-navy">
         Leave that for Prosecco and Bucks-fizz. We’re here for real drinks
       </p>
     </header>
-    <div id="advantage-tab" class="tw-group tw-flex tw-flex-col tw-gap-y-10" data-tab="1">
-      <div class="tw-flex tw-items-center tw-bg-chuug-yankees-blue tw-p-2 tw-rounded-[1.25em] tw-gap-x-[0.62em]">
+    <div id="advantage-tab" class="group flex flex-col gap-y-10" data-tab="1">
+      <div class="flex items-center tw-bg-chuug-yankees-blue p-2 rounded-[1.25em] gap-x-[0.62em]">
         <button
           onclick="handleChangeAdvantageTab(1)"
-          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='1']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='1']]:tw-text-black group-[&[data-tab='1']]:tw-opacity-100 group-[&[data-tab='1']]:tw-border-chuug-pastel-yellow"
+          class="transition-all flex-1 tw-bg-chuug-rackley text-white uppercase text-nowrap h-12 rounded-[0.84613em] px-5 border border-white opacity-35 text-base font-bold leading-4 tracking-tighter group-[&[data-tab='1']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='1']]:text-black group-[&[data-tab='1']]:opacity-100 group-[&[data-tab='1']]:tw-border-chuug-pastel-yellow"
         >
           SmartrOPE tECHNOLOGY
         </button>
         <button
           onclick="handleChangeAdvantageTab(2)"
-          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='2']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='2']]:tw-text-black group-[&[data-tab='2']]:tw-opacity-100 group-[&[data-tab='2']]:tw-border-chuug-pastel-yellow"
+          class="transition-all flex-1 tw-bg-chuug-rackley text-white uppercase text-nowrap h-12 rounded-[0.84613em] px-5 border border-white opacity-35 text-base font-bold leading-4 tracking-tighter group-[&[data-tab='2']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='2']]:text-black group-[&[data-tab='2']]:opacity-100 group-[&[data-tab='2']]:tw-border-chuug-pastel-yellow"
         >
           THE CHUUG RITUAL
         </button>
       </div>
       <div>
-        <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-x-[3.75em]">
-          <div class="tw-flex-1 tw-bg-white tw-border tw-border-black tw-p-8 tw-rounded-[1.25em]">
-            <div class="tw-hidden group-[&[data-tab='1']]:tw-block">
-              <div class="tw-flex tw-flex-col tw-gap-y-10">
-                <div class="tw-flex tw-flex-col tw-gap-y-5">
+        <div class="flex flex-col md:flex-row gap-x-[3.75em]">
+          <div class="flex-1 bg-white border border-black p-8 rounded-[1.25em]">
+            <div class="hidden group-[&[data-tab='1']]:block">
+              <div class="flex flex-col gap-y-10">
+                <div class="flex flex-col gap-y-5">
                   <h3>Slippery Slope</h3>
-                  <ul class="tw-flex tw-flex-col tw-gap-y-4">
+                  <ul class="flex flex-col gap-y-4">
                     <li>Flimsy and fragile handles ruin your ritual</li>
                     <li>Uncomfortable ceramic & metal handles</li>
                     <li>Slippy handles lead to spillage, not built for men</li>
                   </ul>
                 </div>
-                <div class="tw-w-full tw-border-t tw-border-t-[#DCDCDC] ">&nbsp;</div>
-                <div class="tw-flex tw-flex-col tw-gap-y-5">
+                <div class="w-full border-t border-t-[#DCDCDC] ">&nbsp;</div>
+                <div class="flex flex-col gap-y-5">
                   <h3>Rope Revolution</h3>
-                  <ul class="tw-flex tw-flex-col tw-gap-y-4">
+                  <ul class="flex flex-col gap-y-4">
                     <li>A durable, comfortable grip built for men</li>
                     <li>Anti-bacterial means no fur growing on the side</li>
                     <li>Waterproof technology keeps it dry and fresh</li>
@@ -971,20 +823,20 @@
                 </div>
               </div>
             </div>
-            <div class="tw-hidden group-[&[data-tab='2']]:tw-block">
-              <div class="tw-flex tw-flex-col tw-gap-y-10">
-                <div class="tw-flex tw-flex-col tw-gap-y-5">
+            <div class="hidden group-[&[data-tab='2']]:block">
+              <div class="flex flex-col gap-y-10">
+                <div class="flex flex-col gap-y-5">
                   <h3>Boring Beer</h3>
-                  <ul class="tw-flex tw-flex-col tw-gap-y-4">
+                  <ul class="flex flex-col gap-y-4">
                     <li>Warms faster than you can drink it</li>
                     <li>Generic, boring glassware that lacks personality</li>
                     <li>Fragile and slippery, a recipe for disaster</li>
                   </ul>
                 </div>
-                <div class="tw-w-full tw-border-t tw-border-t-[#DCDCDC] ">&nbsp;</div>
-                <div class="tw-flex tw-flex-col tw-gap-y-5">
+                <div class="w-full border-t border-t-[#DCDCDC] ">&nbsp;</div>
+                <div class="flex flex-col gap-y-5">
                   <h3>The Coolest Vessel</h3>
-                  <ul class="tw-flex tw-flex-col tw-gap-y-4">
+                  <ul class="flex flex-col gap-y-4">
                     <li>Cold for 2 hours - savour that sweet nectar</li>
                     <li>Food grade stainless steel hugged in Mango Wood</li>
                     <li>Makes EVERY drinking experience great</li>
@@ -993,10 +845,10 @@
               </div>
             </div>
           </div>
-          <div class="tw-flex-1">
+          <div class="flex-1">
             <img
               src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-man-chuug-5.png?v=1728393358"
-              class="tw-w-full"
+              class="w-full"
               alt="Chuug Man 5"
               width="100%"
               height="100%"
@@ -1015,23 +867,23 @@
   </div>
 </section>
 
-<section class="tw-bg-chuug-dark-navy tw-text-white tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-pt-5 md:tw-pt-24 tw-pb-14 md:tw-pb-32">
-  <div class="tw-container tw-flex tw-flex-col md:tw-flex-row tw-justify-center tw-items-center tw-gap-x-[3.75em]">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4 tw-flex-1">
-      <h2 class="tw-text-6xl tw-font-bold tw-leading-[52.8px]  tw-text-white">You’d Have To See It To Beerlieve It</h2>
-      <p class=" tw-text-lg tw-leading-[1.6875em] tw-text-white">
+<section class="tw-bg-chuug-dark-navy text-white rounded-ss-[2em] rounded-se-[2em] -mt-8 pt-5 md:pt-24 pb-14 md:pb-32">
+  <div class="container flex flex-col md:flex-row justify-center items-center gap-x-[3.75em]">
+    <header class="flex flex-col justify-center max-w-[60em] gap-y-4 flex-1">
+      <h2 class="text-6xl font-bold leading-[52.8px]  text-white">You’d Have To See It To Beerlieve It</h2>
+      <p class=" text-lg leading-[1.6875em] text-white">
         What’s better than drinking beer from a tankard? Drinking two. It’s no coincidence our tankards hold 660ml.
         (That’s two of your favourite beer cans, ales, or fancy craft beers - whatever's your poison)
       </p>
       <a>Add to cart</a>
     </header>
-    <div class="tw-flex-1">
+    <div class="flex-1">
       <div>
         {% for i in (1..3) %}
-          <img src="" class="tw-w-full" alt="Chuug Vessel" width="100%" height="100%">
+          <img src="" class="w-full" alt="Chuug Vessel" width="100%" height="100%">
         {% endfor %}
       </div>
-      <button class="tw-bg-chuug-pastel-yellow tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-10 tw-h-10">
+      <button class="tw-bg-chuug-pastel-yellow rounded-full flex items-center justify-center w-10 h-10">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
           <g clip-path="url(#clip0_1_2880)">
             <path d="M5.82945 12.4222C5.82945 13.4622 4.98629 14.3053 3.94634 14.3053C2.90639 14.3053 2.06323 13.4622 2.06323 12.4222V2.66875C2.06323 1.6288 2.90639 0.785645 3.94634 0.785645C4.98629 0.785645 5.82945 1.6288 5.82945 2.66875V12.4222Z" fill="#0D2026"/>
@@ -1048,30 +900,30 @@
   </div>
 </section>
 
-<section class="tw-bg-chuug-gainsboro tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-py-5 md:tw-py-24">
-  <div class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-20">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4">
-      <h2 class="tw-text-6xl tw-font-bold tw-leading-[52.8px] tw-text-center tw-text-chuug-dark-navy tw-capitalize">
+<section class="tw-bg-chuug-gainsboro rounded-ss-[2em] rounded-se-[2em] -mt-8 py-5 md:py-24">
+  <div class="flex flex-col justify-center items-center gap-y-20">
+    <header class="flex flex-col justify-center max-w-[60em] gap-y-4">
+      <h2 class="text-6xl font-bold leading-[52.8px] text-center tw-text-chuug-dark-navy capitalize">
         “my go to vessel for tea and beer”
       </h2>
-      <p class="tw-text-center tw-text-lg tw-leading-[1.6875em] tw-text-chuug-dark-navy">
+      <p class="text-center text-lg leading-[1.6875em] tw-text-chuug-dark-navy">
         Hot or cold beverages. We don’t judge, our tankards can do it all.
       </p>
     </header>
-    <div class="tw-group tw-flex tw-flex-col tw-items-center tw-gap-y-10 tw-w-full">
-      <div id="review-vessel-swiper" class="swiper tw-max-w-[90em]">
+    <div class="group flex flex-col items-center gap-y-10 w-full">
+      <div id="review-vessel-swiper" class="swiper max-w-[90em]">
         <div class="swiper-wrapper">
           {% comment %} {% for i in (1..12) %} {% endcomment %}
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1082,23 +934,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1109,23 +961,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1136,23 +988,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1163,23 +1015,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1190,23 +1042,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1217,23 +1069,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1244,23 +1096,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1271,23 +1123,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1298,23 +1150,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1325,23 +1177,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1352,23 +1204,23 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
-          <div class="swiper-slide !tw-flex tw-items-center tw-justify-center">
-            <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none">
+          <div class="swiper-slide !flex items-center justify-center">
+            <div class="relative h-[20.44469em] !w-[21.1405em] select-none">
               <img
                 src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/ch-lp-vessel-bg.png?v=1728565761"
                 width="100%"
-                class="tw-w-full tw-h-auto"
+                class="w-full h-auto"
                 height="auto"
                 alt=""
               >
-              <div class="tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-3 tw-top-12 tw-text-white tw-left-6 tw-right-[8em] tw-bottom-12">
+              <div class="absolute flex flex-col justify-center items-center gap-y-3 top-12 text-white left-6 right-[8em] bottom-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="18" viewBox="0 0 96 18" fill="none">
                   <rect x="0.773315" y="0.000244141" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <rect x="19.9045" width="17.5999" height="17.5999" fill="#00B67A"/>
@@ -1379,10 +1231,10 @@
                   <rect x="77.6268" width="17.5999" height="17.5999" fill="#00B67A"/>
                   <path d="M9.97889 11.56L12.6485 10.8532L13.7639 14.4443L9.97889 11.56ZM16.1227 6.91827H11.4234L9.97889 2.29565L8.53436 6.91827H3.83508L7.63839 9.78352L6.19387 14.4061L9.99717 11.5409L12.3377 9.78352L16.1227 6.91827ZM28.9954 11.56L31.6651 10.8532L32.7805 14.4443L28.9954 11.56ZM35.1392 6.91827H30.44L28.9954 2.29565L27.5509 6.91827H22.8516L26.6549 9.78352L25.2104 14.4061L29.0137 11.5409L31.3542 9.78352L35.1392 6.91827ZM48.012 11.56L50.6816 10.8532L51.797 14.4443L48.012 11.56ZM54.1558 6.91827H49.4565L48.012 2.29565L46.5675 6.91827H41.8682L45.6715 9.78352L44.227 14.4061L48.0303 11.5409L50.3708 9.78352L54.1558 6.91827ZM67.0285 11.56L69.6982 10.8532L70.8136 14.4443L67.0285 11.56ZM73.1723 6.91827H68.4731L67.0285 2.29565L65.584 6.91827H60.8847L64.688 9.78352L63.2435 14.4061L67.0468 11.5409L69.3873 9.78352L73.1723 6.91827ZM86.0451 11.56L88.7147 10.8532L89.8301 14.4443L86.0451 11.56ZM92.1889 6.91827H87.4896L86.0451 2.29565L84.6006 6.91827H79.9013L83.7046 9.78352L82.2601 14.4061L86.0634 11.5409L88.4039 9.78352L92.1889 6.91827Z" fill="white"/>
                 </svg>
-                <p class="tw-flex-1 tw-text-center tw-text-balance">
+                <p class="flex-1 text-center text-balance">
                   “A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”
                 </p>
-                <span class="tw-text-center">Jennie C.</span>
+                <span class="text-center">Jennie C.</span>
               </div>
             </div>
           </div>
@@ -1412,58 +1264,58 @@
   </div>
 </section>
 
-<section class="tw-bg-chuug-gainsboro  tw-rounded-ss-[2em] tw-rounded-se-[2em] tw-pt-5 md:tw-pt-[3.75em] tw-pb-14 md:tw-pb-32">
-  <div class="tw-container tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-20">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4">
-      <h2 class="tw-text-6xl tw-font-bold tw-leading-[52.8px] tw-text-center tw-text-chuug-dark-navy tw-capitalize">
+<section class="tw-bg-chuug-gainsboro  rounded-ss-[2em] rounded-se-[2em] pt-5 md:pt-[3.75em] pb-14 md:pb-32">
+  <div class="container flex flex-col justify-center items-center gap-y-20">
+    <header class="flex flex-col justify-center max-w-[60em] gap-y-4">
+      <h2 class="text-6xl font-bold leading-[52.8px] text-center tw-text-chuug-dark-navy capitalize">
         You Deserve Cold Beer
       </h2>
-      <p class="tw-text-center tw-text-lg tw-leading-[1.6875em] tw-text-chuug-dark-navy">
+      <p class="text-center text-lg leading-[1.6875em] tw-text-chuug-dark-navy">
         Every guy needs his personalised beer tankard. If you’re a confused woman reading this, just trust us.
       </p>
     </header>
-    <div class="tw-group tw-flex tw-flex-col md:tw-flex-row tw-gap-y-10 tw-gap-x-[3.75em] tw-w-full">
-      <img src="" alt="" width="100%" height="100%" class="tw-w-full tw-h-auto lg:tw-w-[30.75em] lg:tw-h-[30.75em]">
-      <div class="tw-flex-1 tw-flex tw-flex-col tw-gap-y-5">
-        <div class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4">
-          <div class="tw-flex tw-items-center tw-gap-x-4">
-            <div class="tw-rounded-full tw-bg-[#6093A3] tw-w-[2.22856em] tw-h-[2.22856em] tw-flex tw-justify-center tw-items-center">
+    <div class="group flex flex-col md:flex-row gap-y-10 gap-x-[3.75em] w-full">
+      <img src="" alt="" width="100%" height="100%" class="w-full h-auto lg:w-[30.75em] lg:h-[30.75em]">
+      <div class="flex-1 flex flex-col gap-y-5">
+        <div class="p-4 flex flex-col gap-y-4">
+          <div class="flex items-center gap-x-4">
+            <div class="rounded-full bg-[#6093A3] w-[2.22856em] h-[2.22856em] flex justify-center items-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M9.48632 18.3946C9.30707 18.5748 9.06265 18.6754 8.80864 18.6754C8.55463 18.6754 8.31021 18.5748 8.13096 18.3946L2.71912 12.9818C2.15743 12.4201 2.15743 11.5095 2.71912 10.9487L3.3968 10.2711C3.9585 9.70936 4.86814 9.70936 5.42984 10.2711L8.80864 13.6499L17.9386 4.5199C18.5003 3.95821 19.4109 3.95821 19.9716 4.5199L20.6493 5.19758C21.211 5.75928 21.211 6.66988 20.6493 7.23061L9.48632 18.3946Z" fill="white"/>
               </svg>
             </div>
-            <h3 class="tw-text-[1.75em] tw-font-bold tw-leading-[1.925em]">Craft Your Perfect Tankard</h3>
+            <h3 class="text-[1.75em] font-bold leading-[1.925em]">Craft Your Perfect Tankard</h3>
           </div>
-          <p class="tw-text-base tw-leading-6 tw-text-chuug-dark-navy">
+          <p class="text-base leading-6 tw-text-chuug-dark-navy">
             Select from our range of premium wood finishes, each with its own character and charm. Sustainable, durable,
             and ready to become your new favourite drinking companion.
           </p>
         </div>
-        <div class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4">
-          <div class="tw-flex tw-items-center tw-gap-x-4">
-            <div class="tw-rounded-full tw-bg-[#6093A3] tw-w-[2.22856em] tw-h-[2.22856em] tw-flex tw-justify-center tw-items-center">
+        <div class="p-4 flex flex-col gap-y-4">
+          <div class="flex items-center gap-x-4">
+            <div class="rounded-full bg-[#6093A3] w-[2.22856em] h-[2.22856em] flex justify-center items-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M9.48632 18.3946C9.30707 18.5748 9.06265 18.6754 8.80864 18.6754C8.55463 18.6754 8.31021 18.5748 8.13096 18.3946L2.71912 12.9818C2.15743 12.4201 2.15743 11.5095 2.71912 10.9487L3.3968 10.2711C3.9585 9.70936 4.86814 9.70936 5.42984 10.2711L8.80864 13.6499L17.9386 4.5199C18.5003 3.95821 19.4109 3.95821 19.9716 4.5199L20.6493 5.19758C21.211 5.75928 21.211 6.66988 20.6493 7.23061L9.48632 18.3946Z" fill="white"/>
               </svg>
             </div>
-            <h3 class="tw-text-[1.75em] tw-font-bold tw-leading-[1.925em]">Select Your Grip</h3>
+            <h3 class="text-[1.75em] font-bold leading-[1.925em]">Select Your Grip</h3>
           </div>
-          <p class="tw-text-base tw-leading-6 tw-text-chuug-dark-navy">
+          <p class="text-base leading-6 tw-text-chuug-dark-navy">
             Complete your tankard's look with a rope that's as tough as you are. Our durable, anti-bacterial ropes are
             designed for comfort and longevity. Select a colour that matches your style and prepare for years of happy
             sipping.
           </p>
         </div>
-        <div class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4">
-          <div class="tw-flex tw-items-center tw-gap-x-4">
-            <div class="tw-rounded-full tw-bg-[#6093A3] tw-w-[2.22856em] tw-h-[2.22856em] tw-flex tw-justify-center tw-items-center">
+        <div class="p-4 flex flex-col gap-y-4">
+          <div class="flex items-center gap-x-4">
+            <div class="rounded-full bg-[#6093A3] w-[2.22856em] h-[2.22856em] flex justify-center items-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M9.48632 18.3946C9.30707 18.5748 9.06265 18.6754 8.80864 18.6754C8.55463 18.6754 8.31021 18.5748 8.13096 18.3946L2.71912 12.9818C2.15743 12.4201 2.15743 11.5095 2.71912 10.9487L3.3968 10.2711C3.9585 9.70936 4.86814 9.70936 5.42984 10.2711L8.80864 13.6499L17.9386 4.5199C18.5003 3.95821 19.4109 3.95821 19.9716 4.5199L20.6493 5.19758C21.211 5.75928 21.211 6.66988 20.6493 7.23061L9.48632 18.3946Z" fill="white"/>
               </svg>
             </div>
-            <h3 class="tw-text-[1.75em] tw-font-bold tw-leading-[1.925em]">Stamp Your Mark</h3>
+            <h3 class="text-[1.75em] font-bold leading-[1.925em]">Stamp Your Mark</h3>
           </div>
-          <p class="tw-text-base tw-leading-6 tw-text-chuug-dark-navy">
+          <p class="text-base leading-6 tw-text-chuug-dark-navy">
             The final touch to your perfect drinking vessel. Add a personal engraving to transform your tankard from
             great to unforgettable. Your story, your style, your tankard.
           </p>
@@ -1473,152 +1325,152 @@
   </div>
 </section>
 
-<section class="tw-bg-chuug-dark-navy tw-text-white tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-pt-5 md:tw-pt-24 tw-pb-14 md:tw-pb-32">
-  <div class="tw-container tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-20">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-4 tw-flex-1">
-      <h2 class="tw-text-6xl tw-font-bold tw-leading-[52.8px]  tw-text-white tw-text-center">
+<section class="tw-bg-chuug-dark-navy text-white rounded-ss-[2em] rounded-se-[2em] -mt-8 pt-5 md:pt-24 pb-14 md:pb-32">
+  <div class="container flex flex-col justify-center items-center gap-y-20">
+    <header class="flex flex-col justify-center max-w-[60em] gap-y-4 flex-1">
+      <h2 class="text-6xl font-bold leading-[52.8px]  text-white text-center">
         lets clear a few things up
       </h2>
-      <p class=" tw-text-lg tw-leading-[1.6875em] tw-text-white tw-text-center">
+      <p class=" text-lg leading-[1.6875em] text-white text-center">
         If you still have question, don’t hesitate to contact us
       </p>
     </header>
     <div
       id="faq-tab"
-      class="tw-group tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-10 tw-max-w-[52.5em]"
+      class="group flex flex-col justify-center items-center gap-y-10 max-w-[52.5em]"
       data-tab="1"
     >
-      <div class="tw-flex tw-items-center tw-bg-chuug-yankees-blue tw-p-2 tw-rounded-[1.25em] tw-gap-x-[0.62em]">
+      <div class="flex items-center tw-bg-chuug-yankees-blue p-2 rounded-[1.25em] gap-x-[0.62em]">
         <button
           onclick="handleChangeFaqTab(1)"
-          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='1']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='1']]:tw-text-black group-[&[data-tab='1']]:tw-opacity-100 group-[&[data-tab='1']]:tw-border-chuug-pastel-yellow"
+          class="transition-all flex-1 tw-bg-chuug-rackley text-white uppercase text-nowrap h-12 rounded-[0.84613em] px-5 border border-white opacity-35 text-base font-bold leading-4 tracking-tighter group-[&[data-tab='1']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='1']]:text-black group-[&[data-tab='1']]:opacity-100 group-[&[data-tab='1']]:tw-border-chuug-pastel-yellow"
         >
           cHUUG tankard
         </button>
         <button
           onclick="handleChangeFaqTab(2)"
-          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-base tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='2']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='2']]:tw-text-black group-[&[data-tab='2']]:tw-opacity-100 group-[&[data-tab='2']]:tw-border-chuug-pastel-yellow"
+          class="transition-all flex-1 tw-bg-chuug-rackley text-white uppercase text-nowrap h-12 rounded-[0.84613em] px-5 border border-white opacity-35 text-base font-bold leading-4 tracking-tighter group-[&[data-tab='2']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='2']]:text-black group-[&[data-tab='2']]:opacity-100 group-[&[data-tab='2']]:tw-border-chuug-pastel-yellow"
         >
           delivery & returns
         </button>
       </div>
       <div>
-        <div class="tw-hidden group-[&[data-tab='1']]:tw-flex tw-flex-col tw-gap-y-5">
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+        <div class="hidden group-[&[data-tab='1']]:flex flex-col gap-y-5">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               open
               name="faq-accordion-1"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >How long will my Chuug tankard keep my drink cold?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 Up to 2 hours of frosty goodness! Your Chuug tankard is designed to keep your brew at the perfect
                 temperature, ensuring you enjoy every sip as much as the first.
               </p>
             </div>
           </div>
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               name="faq-accordion-1"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >is it dishwasher safe?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 No, hand wash only. Your Chuug tankard deserves a bit of personal attention. A quick handwash will keep
                 it in top shape and ready for your next adventure.
               </p>
             </div>
           </div>
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               name="faq-accordion-1"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >Can I put hot beverages in my Chuug tankard?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 Yes, it will keep hot drinks hot for up to 2 hours. Your Chuug isn't just for cold ones – it's a
                 year-round companion.
               </p>
             </div>
           </div>
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               name="faq-accordion-1"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >How do I look after my Chuug tankard?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 Hand wash and towel dry. Keep your Chuug in prime condition with a simple care routine. Wash it gently
                 with warm water and mild soap, then dry with a soft towel. For wooden parts, an occasional rub with
@@ -1627,122 +1479,122 @@
             </div>
           </div>
         </div>
-        <div class="tw-hidden group-[&[data-tab='2']]:tw-flex tw-flex-col tw-gap-y-5">
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+        <div class="hidden group-[&[data-tab='2']]:flex flex-col gap-y-5">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               open
               name="faq-accordion-2"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >HOW LONG WILL IT TAKE FOR MY ORDER TO ARRIVE?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 Your Chuug is eager to meet you! Expect your order within 4 working days. For the most up-to-date and
                 accurate ETA, check the product listing.
               </p>
             </div>
           </div>
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               name="faq-accordion-2"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >dO YOU OFFER INTERNATIONAL SHIPPING?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 Yes! Chuug tankards are ready to travel the world. We ship internationally because everyone deserves
                 cold beer.
               </p>
             </div>
           </div>
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               name="faq-accordion-2"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >HOW DO I TRACK MY ORDER?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 We'll keep you in the loop! As soon as your Chuug begins its journey, we'll send you an email with
                 tracking information. You can follow your tankard's adventure right to your doorstep.
               </p>
             </div>
           </div>
-          <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
+          <div class="rounded-xl w-full overflow-hidden select-none border border-white tw-bg-chuug-gainsboro">
             <details
               name="faq-accordion-2"
-              class="tw-overflow-hidden tw-peer tw-group"
+              class="overflow-hidden peer group"
             >
-              <summary class="tw-p-5 tw-text-chuug-dark-navy tw-flex tw-justify-between tw-items-center hover:tw-cursor-pointer">
-                <span class="tw-text-base tw-font-bold tw-leading-[1.1em] tw-tracking-[0.05em] tw-uppercase"
+              <summary class="p-5 tw-text-chuug-dark-navy flex justify-between items-center hover:cursor-pointer">
+                <span class="text-base font-bold leading-[1.1em] tracking-[0.05em] uppercase"
                   >WHAT IF MY CHUUG ARRIVES DAMAGED?</span
                 >
-                <i class="tw-relative tw-rounded-full tw-flex tw-justify-center tw-items-center tw-aspect-square tw-w-[1.25em] tw-h-[1.25em] tw-bg-chuug-artic-blug">
+                <i class="relative rounded-full flex justify-center items-center aspect-square w-[1.25em] h-[1.25em] tw-bg-chuug-artic-blug">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
-                    class="-tw-rotate-90 group-open:tw-rotate-0 tw-transition-transform tw-ease-in-out tw-duration-500"
+                    class="-rotate-90 group-open:rotate-0 transition-transform ease-in-out duration-500"
                   >
                     <path d="M5.00013 5.55532C5.19013 5.55532 5.38013 5.48532 5.53013 5.33532L9.06013 1.80532C9.35013 1.51532 9.35013 1.03532 9.06013 0.745317C8.77013 0.455337 8.29013 0.455337 8.00013 0.745317L5.00013 3.74532L2.00016 0.745317C1.71016 0.455337 1.23016 0.455337 0.940156 0.745317C0.650156 1.03532 0.650156 1.51532 0.940156 1.80532L4.47013 5.33532C4.62013 5.48532 4.81013 5.55532 5.00013 5.55532Z" fill="white"/>
                   </svg>
                 </i>
               </summary>
             </details>
-            <div class="tw-px-5 tw-pb-0 peer-open:tw-pb-5 tw-text-black tw-text-base tw-leading-6 tw-transition-all tw-duration-500 tw-ease-in-out peer-open:tw-max-h-[1000px] tw-max-h-[0px] tw-overflow-hidden">
+            <div class="px-5 pb-0 peer-open:pb-5 text-black text-base leading-6 transition-all duration-500 ease-in-out peer-open:max-h-[1000px] max-h-[0px] overflow-hidden">
               <p>
                 No worries, we've got you covered! If your Chuug arrives looking less than perfect, just send us a
                 photo. We'll replace it faster than you can say "cheers" - no questions asked.
