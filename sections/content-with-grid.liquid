@@ -1,0 +1,274 @@
+{{ 'section-content-with-grid.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="content-with-grid-section color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="content-with-grid-title{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+    
+    <div class="content-with-grid-container{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <div class="content-with-grid">
+        {%- for block in section.blocks -%}
+          <div 
+            class="content-with-grid-item content-with-grid-item--{{ forloop.index }}{% if forloop.index > 4 %} hidden-item{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            {{ block.shopify_attributes }}
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+            data-item-index="{{ forloop.index }}"
+          >
+            <div class="content-image-wrapper">
+              {%- if block.settings.image != blank -%}
+                {%- liquid
+                  assign image_widths = '200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600'
+                  assign image_sizes = '(min-width: 1200px) 513px, (min-width: 750px) 45vw, 90vw'
+                -%}
+                {{
+                  block.settings.image
+                  | image_url: width: 1600
+                  | image_tag:
+                    loading: 'lazy',
+                    sizes: image_sizes,
+                    widths: image_widths,
+                    class: 'content-image'
+                }}
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+      
+      {%- if section.settings.load_more_text != blank -%}
+        <div class="content-load-more">
+          <button class="content-load-more-button" type="button" data-current-shown="4" data-total-items="{{ section.blocks.size }}">
+            {{ section.settings.load_more_text }}
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const loadMoreButton = document.querySelector('.content-load-more-button');
+    const gridContainer = document.querySelector('.content-with-grid');
+    
+    console.log('Load More Button:', loadMoreButton);
+    console.log('Grid Container:', gridContainer);
+    
+    if (loadMoreButton && gridContainer) {
+      let currentShown = parseInt(loadMoreButton.dataset.currentShown) || 4;
+      const totalItems = parseInt(loadMoreButton.dataset.totalItems) || 0;
+      
+      console.log('Current Shown:', currentShown);
+      console.log('Total Items:', totalItems);
+      
+      // Hide button if we don't have more than 4 items
+      if (totalItems <= 4) {
+        console.log('Hiding button - only 4 or fewer items');
+        loadMoreButton.style.display = 'none';
+      } else {
+        console.log('Button should be visible');
+        loadMoreButton.style.display = 'block';
+      }
+      
+      loadMoreButton.addEventListener('click', function() {
+        // Show next 4 items
+        const itemsToShow = Math.min(4, totalItems - currentShown);
+        
+        for (let i = 0; i < itemsToShow; i++) {
+          const nextIndex = currentShown + i + 1;
+          const itemToShow = document.querySelector(`[data-item-index="${nextIndex}"]`);
+          
+          if (itemToShow) {
+            // Remove hidden class with animation
+            itemToShow.classList.remove('hidden-item');
+            itemToShow.style.opacity = '0';
+            itemToShow.style.transform = 'translateY(20px)';
+            
+            // Animate in
+            setTimeout(() => {
+              itemToShow.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              itemToShow.style.opacity = '1';
+              itemToShow.style.transform = 'translateY(0)';
+            }, i * 100); // Stagger the animation
+          }
+        }
+        
+        currentShown += itemsToShow;
+        loadMoreButton.dataset.currentShown = currentShown;
+        
+        // Update container height
+        updateContainerHeight(currentShown);
+        
+        // Hide button if all items are shown
+        if (currentShown >= totalItems) {
+          loadMoreButton.style.display = 'none';
+        }
+      });
+      
+      function updateContainerHeight(itemsShown) {
+        // Get all visible items (not hidden)
+        const visibleItems = Array.from(gridContainer.querySelectorAll('.content-with-grid-item:not(.hidden-item)'));
+        
+        if (visibleItems.length === 0) {
+          gridContainer.style.height = '1142.15px'; // Default height for first row
+          return;
+        }
+        
+        // Calculate height based on CSS positioning and item dimensions
+        let maxBottom = 0;
+        
+        // Define the height pattern based on Figma design
+        const heightPatterns = {
+          1: 645.44, // Large
+          2: 453.89, // Small  
+          3: 532.26, // Medium
+          4: 567     // Small
+        };
+        
+        // Define the top positioning pattern
+        const topPatterns = {
+          1: 0,      // Large - top
+          2: 688.26, // Small - bottom
+          3: 0,      // Medium - top
+          4: 575     // Small - bottom
+        };
+        
+        visibleItems.forEach(item => {
+          const itemIndex = parseInt(item.dataset.itemIndex);
+          const patternIndex = ((itemIndex - 1) % 4) + 1;
+          
+          // Calculate which row this item is in (0-based)
+          const row = Math.floor((itemIndex - 1) / 4);
+          const rowOffset = row * 1200; // 1200px offset per row
+          
+          // Get the base position for this pattern
+          const baseTop = topPatterns[patternIndex];
+          const itemHeight = heightPatterns[patternIndex];
+          
+          // Calculate actual position with row offset
+          const actualTop = baseTop + rowOffset;
+          const itemBottom = actualTop + itemHeight;
+          
+          maxBottom = Math.max(maxBottom, itemBottom);
+          
+          console.log(`Item ${itemIndex}: pattern ${patternIndex}, row ${row}, top ${actualTop}, height ${itemHeight}, bottom ${itemBottom}`);
+        });
+        
+        // Add some padding at the bottom
+        const actualHeight = maxBottom + 50;
+        gridContainer.style.height = actualHeight + 'px';
+        
+        console.log('Visible items:', visibleItems.length);
+        console.log('Calculated height:', actualHeight + 'px');
+        console.log('Max bottom position:', maxBottom + 'px');
+      }
+      
+      // Set initial container height
+      updateContainerHeight(currentShown);
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Content with Grid",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Proof CHUUG Is Worth The Hype",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "load_more_text",
+      "default": "Load More",
+      "label": "Load More Button Text"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content_image",
+      "name": "Content Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Content with Grid",
+      "blocks": [
+        {
+          "type": "content_image"
+        },
+        {
+          "type": "content_image"
+        },
+        {
+          "type": "content_image"
+        },
+        {
+          "type": "content_image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

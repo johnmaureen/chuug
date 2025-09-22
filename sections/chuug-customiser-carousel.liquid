@@ -1,4 +1,10 @@
 {{ 'chuug-customiser-carousel.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background: #dfdfd8;
+  }
+
+{%- endstyle -%}
 
 <section class="chuug-customiser-carousel-section">
   <div class="chuug-customiser-carousel-container">

@@ -3,6 +3,8 @@
 	background-color: #0d2026;
 	padding: 60px 0;
 	position: relative;
+	border-radius: 40px 40px 0 0;
+	overflow: hidden;
 }
 
 .chuug-customiser-carousel-container {

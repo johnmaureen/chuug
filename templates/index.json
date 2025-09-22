@@ -619,6 +619,48 @@
       "settings": {
         "include_margins": true
       }
+    },
+    "content-with-grid-test": {
+      "type": "content-with-grid",
+      "blocks": {
+        "ugc-image-1": {
+          "type": "content_image",
+          "settings": {
+            "image": "shopify://shop_images/ugc-image-1.png"
+          }
+        },
+        "ugc-image-2": {
+          "type": "content_image",
+          "settings": {
+            "image": "shopify://shop_images/ugc-image-2.png"
+          }
+        },
+        "ugc-image-3": {
+          "type": "content_image",
+          "settings": {
+            "image": "shopify://shop_images/ugc-image-3.png"
+          }
+        },
+        "ugc-image-4": {
+          "type": "content_image",
+          "settings": {
+            "image": "shopify://shop_images/ugc-image-4.png"
+          }
+        }
+      },
+      "block_order": [
+        "ugc-image-1",
+        "ugc-image-2",
+        "ugc-image-3",
+        "ugc-image-4"
+      ],
+      "settings": {
+        "heading": "Proof CHUUG Is Worth The Hype",
+        "load_more_text": "Load More",
+        "color_scheme": "background-1",
+        "padding_top": 30,
+        "padding_bottom": 30
+      }
     }
   },
   "order": [
@@ -638,6 +680,7 @@
     "2d808b29-1d29-4705-a419-87f705fd8d93",
     "rich-text-1",
     "multicolumn",
+    "content-with-grid-test",
     "image-banner",
     "1690408082ef858763"
   ]
