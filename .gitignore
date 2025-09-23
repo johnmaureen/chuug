@@ -5,6 +5,11 @@ checkout-components/extensions/checkout-banner/node_modules
 checkout-ui-extension/node_modules
 checkout-ui-extension/extensions/checkout-banner/node_modules
 
+# Build output
+dist/
+**/dist/
+**/**/dist/
+
 # macOS system files
 .DS_Store
 **/.DS_Store
