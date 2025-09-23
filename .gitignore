@@ -2,3 +2,9 @@
 node_modules
 checkout-components/node_modules
 checkout-components/extensions/checkout-banner/node_modules
+checkout-ui-extension/node_modules
+checkout-ui-extension/extensions/checkout-banner/node_modules
+
+# macOS system files
+.DS_Store
+**/.DS_Store
