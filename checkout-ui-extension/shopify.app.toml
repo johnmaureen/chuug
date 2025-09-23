@@ -1,20 +1,3 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "d36fe0ccba09fd7720f784e2c473a008"
 name = "checkout-ui-extension"
-application_url = "https://shopify.dev/apps/default-app-home"
-embedded = true
-
-[build]
-automatically_update_urls_on_dev = true
-include_config_on_deploy = true
-
-[webhooks]
-api_version = "2025-10"
-
-[access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_orders,write_products"
-
-[auth]
-redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
