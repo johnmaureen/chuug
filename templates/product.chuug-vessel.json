@@ -292,6 +292,7 @@
 				},
 				"text_and_image_adzQFp": {
 					"type": "text_and_image",
+					"disabled": true,
 					"settings": {
 						"block_image": "shopify://shop_images/hand-crafted-in-britain.png",
 						"block_title": "Crafted by Hand, Built In Britain",
@@ -300,6 +301,7 @@
 				},
 				"text_and_image_nJRfHq": {
 					"type": "text_and_image",
+					"disabled": true,
 					"settings": {
 						"block_image": "shopify://shop_images/the-chef-kiss.png",
 						"block_title": "The Chef's Kiss",
@@ -338,7 +340,8 @@
 						"feature_icon": "shopify://shop_images/smart-rope.png",
 						"feature_icon_alt": "",
 						"feature_title": "Smart Rope Technology",
-						"feature_description": "Soft to the touch and no funky smells, from the tankard at least."
+						"feature_description": "Soft to the touch and no funky smells, from the tankard at least.",
+						"social_handle": "@chuugofficial"
 					}
 				},
 				"feature_slide_R3GDQr": {
@@ -349,7 +352,8 @@
 						"feature_icon": "shopify://shop_images/ice-cold-beer.png",
 						"feature_icon_alt": "",
 						"feature_title": "Ice Cold Beer",
-						"feature_description": "Cold for up to two hours, not that you’ll need it!"
+						"feature_description": "Cold for up to two hours, not that you’ll need it!",
+						"social_handle": "@chuugofficial"
 					}
 				},
 				"feature_slide_xdHyCk": {
@@ -360,7 +364,8 @@
 						"feature_icon": "shopify://shop_images/british-flag.png",
 						"feature_icon_alt": "",
 						"feature_title": "Built in Britain",
-						"feature_description": "Because why get it made anywhere else?"
+						"feature_description": "Because why get it made anywhere else?",
+						"social_handle": "@chuugofficial"
 					}
 				},
 				"feature_slide_YPXjgX": {
@@ -371,7 +376,8 @@
 						"feature_icon": "shopify://shop_images/fully-customizable.png",
 						"feature_icon_alt": "",
 						"feature_title": "Fully Customisable",
-						"feature_description": "Why buy a boring tankard that thousands of others own?"
+						"feature_description": "Why buy a boring tankard that thousands of others own?",
+						"social_handle": "@chuugofficial"
 					}
 				}
 			},
@@ -389,6 +395,48 @@
 				"button_url": "",
 				"auto_advance": false,
 				"auto_advance_delay": 5
+			}
+		},
+		"content_with_grid_efaAzm": {
+			"type": "content-with-grid",
+			"blocks": {
+				"content_image_emteVy": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-1.png"
+					}
+				},
+				"content_image_AxdL3i": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-2.png"
+					}
+				},
+				"content_image_bzArh7": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-3.png"
+					}
+				},
+				"content_image_gTGtKK": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-4.png"
+					}
+				}
+			},
+			"block_order": [
+				"content_image_emteVy",
+				"content_image_AxdL3i",
+				"content_image_bzArh7",
+				"content_image_gTGtKK"
+			],
+			"name": "Content with Grid",
+			"settings": {
+				"heading": "Proof CHUUG Is Worth The Hype",
+				"load_more_text": "Load More",
+				"padding_top": 32,
+				"padding_bottom": 32
 			}
 		},
 		"five_images_hjC3Jd": {
@@ -433,6 +481,7 @@
 				"image_block_gdGxVq",
 				"image_block_catVBx"
 			],
+			"disabled": true,
 			"settings": {
 				"section_title": "<p>Drinking Beer Just Got <em>Cooler</em></p>",
 				"section_subtitle": "Out-do your neighbour at the next awkward BBQ that you’d rather not attend",
@@ -556,56 +605,35 @@
 		"benefits_xeGgkP": {
 			"type": "benefits",
 			"blocks": {
-				"benefit_tab_1_RMEqHy": {
-					"type": "benefit_tab_1",
+				"comparison_section_BaX79M": {
+					"type": "comparison_section",
 					"settings": {
-						"benefit_title_1": "<h1><strong>Slippery Slope</strong></h1>",
-						"benefit_text_1_tab_1": "Flimsy and fragile handles ruin your ritual",
-						"benefit_text_2_tab_1": "Uncomfortable ceramic & metal handles",
-						"benefit_text_3_tab_1": "Slippy handles lead to spillage, not built for men"
+						"section_title": "Slippery Slope",
+						"section_type": "negative",
+						"point_1": "Flimsy and fragile handles ruin your ritual.",
+						"point_2": "Uncomfortable ceramic & metal handles.",
+						"point_3": "Slippy handles lead to spillage, not build for men."
 					}
 				},
-				"benefit_tab_1_Mbq9iU": {
-					"type": "benefit_tab_1",
+				"comparison_section_YRxRtr": {
+					"type": "comparison_section",
 					"settings": {
-						"benefit_title_1": "<h1><strong>Rope Revolution</strong></h1>",
-						"benefit_text_1_tab_1": "A durable, comfortable grip built for men",
-						"benefit_text_2_tab_1": "Anti-bacterial means no fur growing on the side",
-						"benefit_text_3_tab_1": "Waterproof technology keeps it dry and fresh"
-					}
-				},
-				"benefit_tab_2_3iQ7Hn": {
-					"type": "benefit_tab_2",
-					"settings": {
-						"benefit_title_2": "<h1><em><strong>Boring </strong></em><strong>Beer</strong></h1>",
-						"benefit_text_1_tab_2": "Warms faster than you can drink it",
-						"benefit_text_2_tab_2": "Generic, boring glassware that lacks personality",
-						"benefit_text_3_tab_2": "Fragile and slippery, a recipe for disaster"
-					}
-				},
-				"benefit_tab_2_Rh78y9": {
-					"type": "benefit_tab_2",
-					"settings": {
-						"benefit_title_2": "<h1><strong>The </strong><em><strong>Coolest Vessel</strong></em></h1>",
-						"benefit_text_1_tab_2": "Cold for 2 hours -  savour that sweet nectar",
-						"benefit_text_2_tab_2": "Food grade stainless steel hugged in Mango Wood",
-						"benefit_text_3_tab_2": "Makes EVERY drinking experience great"
+						"section_title": "Rope Revolution",
+						"section_type": "positive",
+						"point_1": "Flimsy and fragile handles ruin your ritual.",
+						"point_2": "Uncomfortable ceramic & metal handles.",
+						"point_3": "Slippy handles lead to spillage, not build for men."
 					}
 				}
 			},
-			"block_order": [
-				"benefit_tab_1_RMEqHy",
-				"benefit_tab_1_Mbq9iU",
-				"benefit_tab_2_3iQ7Hn",
-				"benefit_tab_2_Rh78y9"
-			],
+			"block_order": ["comparison_section_BaX79M", "comparison_section_YRxRtr"],
 			"settings": {
-				"section_title": "<h1> Time To Ditch The <em>Dainty </em>Glassware</h1>",
+				"section_title": "Time To Ditch The Dainty Glassware",
 				"section_subtitle": "Leave that for Prosecco and Bucks-fizz. We’re here for real drinks",
 				"tab_1_title": "SMARTROPE TECH",
 				"tab_2_title": "THE CHUUG RITUAL",
-				"section_image": "shopify://shop_images/ch-lp-man-chuug-5.png",
-				"button_text": "Add to cart"
+				"button_text": "Add to cart",
+				"button_url": ""
 			}
 		},
 		"text_and_image_carousel_TjCMqW": {
@@ -886,6 +914,7 @@
 		"pdp_chuug_vessel_8y8pAk",
 		"several_text_and_images_EHXQ8F",
 		"chuug_customiser_carousel_QHgy3x",
+		"content_with_grid_efaAzm",
 		"five_images_hjC3Jd",
 		"reviews_carousel_QgJCgz",
 		"benefits_xeGgkP",
