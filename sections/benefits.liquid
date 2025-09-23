@@ -1,151 +1,101 @@
-<section class="tw-bg-chuug-gainsboro tw-overflow-hidden tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 tw-px-[1rem] tw-pt-[4rem] tw-pb-[6rem] md:tw-pt-[10rem] md:tw-pb-[12rem]">
-  <div class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-[2rem] tw-w-full tw-max-w-[120rem] tw-mx-auto md:tw-gap-y-[6rem]">
-    <header class="tw-flex tw-flex-col tw-justify-center tw-max-w-[60em] tw-gap-y-[2rem]">
-      <div class="tw-text-[3.2rem] tw-leading-[1.1] tw-font-bold tw-text-center tw-text-chuug-dark-navy tw-capitalize lg:tw-text-[4.8rem]">
-        {{ section.settings.section_title }}
-      </div>
-      <p class="tw-text-center tw-text-[1.6rem] tw-leading-[1.5] tw-text-chuug-dark-navy lg:tw-text-[1.8rem]">
-        {{ section.settings.section_subtitle }}
-      </p>
+{{ 'benefits.css' | asset_url | stylesheet_tag }}
+
+<section class="benefits-section">
+  <div class="benefits-article">
+    <!-- Article Header -->
+    <header class="benefits-header">
+      <h1 class="benefits-title">{{ section.settings.section_title | strip_html }}</h1>
+      <p class="benefits-subtitle">{{ section.settings.section_subtitle }}</p>
     </header>
-    <div
-      id="advantage-tab"
-      class="tw-group tw-w-full tw-flex tw-flex-col tw-gap-y-[2rem] md:tw-gap-y-[4rem]"
-      data-tab="1"
-    >
-      <div class="tw-flex tw-items-center tw-bg-chuug-yankees-blue tw-p-2 tw-rounded-[1.25em] tw-gap-x-[0.62em] tw-w-full tw-max-w-[54rem] tw-mx-auto">
-        <button
-          onclick="handleChangeAdvantageTab(1)"
-          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-[1.4rem] tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='1']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='1']]:tw-text-black group-[&[data-tab='1']]:tw-opacity-100 group-[&[data-tab='1']]:tw-border-chuug-pastel-yellow"
-        >
-          {{ section.settings.tab_1_title }}
-        </button>
-        <button
-          onclick="handleChangeAdvantageTab(2)"
-          class="tw-transition-all tw-flex-1 tw-bg-chuug-rackley tw-text-white tw-uppercase tw-text-nowrap tw-h-12 tw-rounded-[0.84613em] tw-px-5 tw-border tw-border-white tw-opacity-35 tw-text-[1.4rem] tw-font-bold tw-leading-4 tw-tracking-tighter group-[&[data-tab='2']]:tw-bg-chuug-pastel-yellow group-[&[data-tab='2']]:tw-text-black group-[&[data-tab='2']]:tw-opacity-100 group-[&[data-tab='2']]:tw-border-chuug-pastel-yellow"
-        >
-          {{ section.settings.tab_2_title }}
-        </button>
-      </div>
-      <div>
-        <div class="tw-flex tw-flex-col tw-gap-x-[3.75em] tw-items-center md:tw-flex-row">
-          <div class="tw-flex-1 tw-bg-white tw-border tw-border-black tw-p-8 tw-rounded-[1.25em] tw-h-fit tw-w-full tw-max-w-[54rem]">
-            <div class="tw-hidden group-[&[data-tab='1']]:tw-block">
-              <div class="tw-flex tw-flex-col tw-gap-y-[4rem]">
-                {% for block in section.blocks %}
-                  {% if block.type == 'benefit_tab_1' %}
-                    <div class="tw-flex tw-flex-col tw-gap-y-5">
-                      <div class="tw-text-[2.4rem] tw-leading-[1.1] tw-text-[#0D2026] lg:tw-text-[2.8rem]">
-                        {{ block.settings.benefit_title_1 }}
-                      </div>
-                      <ul class="tw-flex tw-flex-col tw-gap-y-[1.5rem]">
-                        <div class="tw-flex tw-gap-[1rem]">
-                          {% if forloop.index == 1 %}
-                            {% render 'icon-gray-circle-cross', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% else %}
-                            {% render 'icon-gray-circle-tick', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% endif %}
-                          <li class="tw-text-[1.6rem] tw-leading-[1.5]">{{ block.settings.benefit_text_1_tab_1 }}</li>
-                        </div>
-                        <div class="tw-flex tw-gap-[1rem]">
-                          {% if forloop.index == 1 %}
-                            {% render 'icon-gray-circle-cross', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% else %}
-                            {% render 'icon-gray-circle-tick', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% endif %}
-                          <li class="tw-text-[1.6rem] tw-leading-[1.5]">{{ block.settings.benefit_text_2_tab_1 }}</li>
-                        </div>
-                        <div class="tw-flex tw-gap-[1rem]">
-                          {% if forloop.index == 1 %}
-                            {% render 'icon-gray-circle-cross', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% else %}
-                            {% render 'icon-gray-circle-tick', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% endif %}
-                          <li class="tw-text-[1.6rem] tw-leading-[1.5]">{{ block.settings.benefit_text_3_tab_1 }}</li>
-                        </div>
-                      </ul>
-                    </div>
-                    {% if forloop.index == 1 %}
-                      <div class="tw-w-full tw-h-[0.3rem] tw-bg-[#DCDCDC]">&nbsp;</div>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </div>
-            <div class="tw-hidden group-[&[data-tab='2']]:tw-block">
-              <div class="tw-flex tw-flex-col tw-gap-y-[4rem]">
-                {% for block in section.blocks %}
-                  {% if block.type == 'benefit_tab_2' %}
-                    <div class="tw-flex tw-flex-col tw-gap-y-5">
-                      <div class="tw-text-[2.4rem] tw-leading-[1.1] tw-text-[#0D2026] lg:tw-text-[2.8rem]">
-                        {{ block.settings.benefit_title_2 }}
-                      </div>
-                      <ul class="tw-flex tw-flex-col tw-gap-y-[1.5rem]">
-                        <div class="tw-flex tw-gap-[1rem]">
-                          {% if forloop.index == 3 %}
-                            {% render 'icon-gray-circle-cross', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% else %}
-                            {% render 'icon-gray-circle-tick', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% endif %}
-                          <li class="tw-text-[1.6rem] tw-leading-[1.5]">{{ block.settings.benefit_text_1_tab_2 }}</li>
-                        </div>
-                        <div class="tw-flex tw-gap-[1rem]">
-                          {% if forloop.index == 3 %}
-                            {% render 'icon-gray-circle-cross', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% else %}
-                            {% render 'icon-gray-circle-tick', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% endif %}
-                          <li class="tw-text-[1.6rem] tw-leading-[1.5]">{{ block.settings.benefit_text_2_tab_2 }}</li>
-                        </div>
-                        <div class="tw-flex tw-gap-[1rem]">
-                          {% if forloop.index == 3 %}
-                            {% render 'icon-gray-circle-cross', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% else %}
-                            {% render 'icon-gray-circle-tick', classes: 'tw-w-[2.5rem] tw-h-[2.5rem]' %}
-                          {% endif %}
-                          <li class="tw-text-[1.6rem] tw-leading-[1.5]">{{ block.settings.benefit_text_3_tab_2 }}</li>
-                        </div>
-                      </ul>
-                    </div>
-                    {% if forloop.index == 3 %}
-                      <div class="tw-w-full tw-h-[0.3rem] tw-bg-[#DCDCDC]">&nbsp;</div>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-          <div class="tw-flex-1 tw-mt-[2rem] md:tw-mt-0 tw-max-w-[40rem] tw-max-h-[40rem]">
-            <img
-              src="{{ section.settings.section_image | image_url }}"
-              class="tw-w-full"
-              alt="Chuug Man 5"
-              loading="lazy"
-              width="100%"
-              height="100%"
-            >
-          </div>
+
+    <!-- Article Content -->
+    <div class="benefits-content">
+      <!-- Article Details (Tabs) -->
+      <div class="benefits-details">
+        <div class="detail-item active" data-tab="1">
+          <div class="detail-title">{{ section.settings.tab_1_title }}</div>
+        </div>
+        <div class="detail-item inactive" data-tab="2">
+          <div class="detail-title">{{ section.settings.tab_2_title }}</div>
         </div>
       </div>
     </div>
-    <script>
-      function handleChangeAdvantageTab(tab) {
-        const advantageTab = document.querySelector('#advantage-tab');
-        advantageTab.dataset.tab = tab.toString();
-      }
-    </script>
-    <a
-      href="#hero-section"
-      class="cta-button tw-container tw-text-[2rem] tw-text-white tw-leading-[1] tw-font-bold tw-p-0 tw-uppercase tw-bg-no-repeat tw-w-full tw-max-w-[34.5rem] tw-h-[4.375em] tw-rounded-[1.25em] tw-flex tw-justify-center tw-items-center tw-mt-[2rem] md:tw-mt-0"
-      style="
-        background-image: url('https://cdn.shopify.com/s/files/1/0799/4307/4111/files/cta-button-white-bg.png?v=1729273009');
-        background-size: contain;
-        background-position: center;
-      "
-    >
-      {{ section.settings.button_text }}
+
+    <!-- Comparison Section -->
+    <div class="comparison-section">
+      <div class="comparison-container">
+        {% for block in section.blocks %}
+          {% if block.type == 'comparison_section' %}
+            <div class="comparison-item">
+              <h3 class="comparison-title">{{ block.settings.section_title }}</h3>
+              
+              <div class="comparison-detail">
+                <div class="detail-icon {{ block.settings.section_type }}">
+                  {% if block.settings.section_type == 'negative' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 2L14 14" stroke="#DBE188" stroke-width="3.6"/>
+                      <path d="M14 2L2 14" stroke="#DBE188" stroke-width="3.6"/>
+                    </svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                      <path d="M18 2L6 14" stroke="#0D2026" stroke-width="3.6"/>
+                      <path d="M2 8L8 14" stroke="#0D2026" stroke-width="3.6"/>
+                    </svg>
+                  {% endif %}
+                </div>
+                <div class="detail-text">{{ block.settings.point_1 }}</div>
+              </div>
+              
+              <div class="comparison-detail">
+                <div class="detail-icon {{ block.settings.section_type }}">
+                  {% if block.settings.section_type == 'negative' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 2L14 14" stroke="#DBE188" stroke-width="3.6"/>
+                      <path d="M14 2L2 14" stroke="#DBE188" stroke-width="3.6"/>
+                    </svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                      <path d="M18 2L6 14" stroke="#0D2026" stroke-width="3.6"/>
+                      <path d="M2 8L8 14" stroke="#0D2026" stroke-width="3.6"/>
+                    </svg>
+                  {% endif %}
+                </div>
+                <div class="detail-text">{{ block.settings.point_2 }}</div>
+              </div>
+              
+              <div class="comparison-detail">
+                <div class="detail-icon {{ block.settings.section_type }}">
+                  {% if block.settings.section_type == 'negative' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 2L14 14" stroke="#DBE188" stroke-width="3.6"/>
+                      <path d="M14 2L2 14" stroke="#DBE188" stroke-width="3.6"/>
+                    </svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                      <path d="M18 2L6 14" stroke="#0D2026" stroke-width="3.6"/>
+                      <path d="M2 8L8 14" stroke="#0D2026" stroke-width="3.6"/>
+                    </svg>
+                  {% endif %}
+                </div>
+                <div class="detail-text">{{ block.settings.point_3 }}</div>
+              </div>
+            </div>
+            
+            {% unless forloop.last %}
+              <!-- Vertical Divider -->
+              <div class="comparison-divider"></div>
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Add to Cart Button -->
+    <a href="{{ section.settings.button_url | default: '#hero-section' }}" class="add-to-cart-button">
+      <span class="add-to-cart-text">{{ section.settings.button_text }}</span>
     </a>
   </div>
+
 </section>
 
 {% schema %}
@@ -153,16 +103,16 @@
   "name": "Benefits",
   "settings": [
     {
-      "type": "richtext",
+      "type": "text",
       "id": "section_title",
-      "default": "<h1> Time To Ditch The Dainty Glassware</h1>",
-      "label": "Section Title"
+      "label": "Section Title",
+      "default": "Time to Ditch the Dainty Glassware"
     },
     {
       "type": "text",
       "id": "section_subtitle",
       "label": "Section Subtitle",
-      "default": "Leave that for Prosecco and Bucks-fizz. We’re here for real drinks"
+      "default": "Leave that for Prosecco and Bucks-fizz. We're here for real drinks."
     },
     {
       "type": "text",
@@ -174,79 +124,64 @@
       "type": "text",
       "id": "tab_2_title",
       "label": "Tab 2 Title",
-      "default": " THE CHUUG RITUAL"
-    },
-    {
-      "type": "image_picker",
-      "id": "section_image",
-      "label": "Image"
+      "default": "THE CHUUG RITUAL"
     },
     {
       "type": "text",
       "id": "button_text",
-      "label": "Button text",
-      "default": "Add to cart"
+      "label": "Button Text",
+      "default": "ADD TO CART"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
     }
   ],
   "blocks": [
     {
-      "type": "benefit_tab_1",
-      "name": "Benefit Tab 1",
+      "type": "comparison_section",
+      "name": "Comparison Section",
       "settings": [
         {
-          "type": "richtext",
-          "id": "benefit_title_1",
-          "label": "Benefit Title",
-          "default": "<h2>Benefit Title</h2>"
+          "type": "text",
+          "id": "section_title",
+          "label": "Section Title",
+          "default": "Slippery Slope"
+        },
+        {
+          "type": "select",
+          "id": "section_type",
+          "label": "Section Type",
+          "options": [
+            {
+              "value": "negative",
+              "label": "Negative"
+            },
+            {
+              "value": "positive",
+              "label": "Positive"
+            }
+          ],
+          "default": "negative"
         },
         {
           "type": "text",
-          "id": "benefit_text_1_tab_1",
-          "label": "Benefit First Text",
-          "default": "Benefit First Text"
+          "id": "point_1",
+          "label": "Point 1",
+          "default": "Flimsy and fragile handles ruin your ritual."
         },
         {
           "type": "text",
-          "id": "benefit_text_2_tab_1",
-          "label": "Benefit Second Text",
-          "default": "Benefit Second Text"
+          "id": "point_2",
+          "label": "Point 2",
+          "default": "Uncomfortable ceramic & metal handles."
         },
         {
           "type": "text",
-          "id": "benefit_text_3_tab_1",
-          "label": "Benefit Third Text",
-          "default": "Benefit Third Text"
-        }
-      ],
-      "limit": 2
-    },
-    {
-      "type": "benefit_tab_2",
-      "name": "Benefit Tab 2",
-      "settings": [
-        {
-          "type": "richtext",
-          "id": "benefit_title_2",
-          "label": "Benefit Title",
-          "default": "<h2>Benefit Title</h2>"
-        },
-        {
-          "type": "text",
-          "id": "benefit_text_1_tab_2",
-          "label": "Benefit First Text",
-          "default": "Benefit First Text"
-        },
-        {
-          "type": "text",
-          "id": "benefit_text_2_tab_2",
-          "label": "Benefit Second Text",
-          "default": "Benefit Second Text"
-        },
-        {
-          "type": "text",
-          "id": "benefit_text_3_tab_2",
-          "label": "Benefit Third Text",
-          "default": "Benefit Third Text"
+          "id": "point_3",
+          "label": "Point 3",
+          "default": "Slippy handles lead to spillage, not build for men."
         }
       ],
       "limit": 2
@@ -254,7 +189,29 @@
   ],
   "presets": [
     {
-      "name": "Benefits"
+      "name": "Benefits",
+      "blocks": [
+        {
+          "type": "comparison_section",
+          "settings": {
+            "section_title": "Slippery Slope",
+            "section_type": "negative",
+            "point_1": "Flimsy and fragile handles ruin your ritual.",
+            "point_2": "Uncomfortable ceramic & metal handles.",
+            "point_3": "Slippy handles lead to spillage, not build for men."
+          }
+        },
+        {
+          "type": "comparison_section",
+          "settings": {
+            "section_title": "Rope Revolution",
+            "section_type": "positive",
+            "point_1": "A durable, comfortable grip built for men.",
+            "point_2": "Anti-bacterial means no fur growing.",
+            "point_3": "Waterproof technology keeps it dry and fresh."
+          }
+        }
+      ]
     }
   ]
 }
