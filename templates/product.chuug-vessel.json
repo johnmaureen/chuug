@@ -917,14 +917,21 @@
 			"type": "content-video-section",
 			"name": "Content Video Section",
 			"settings": {
-				"video_url": "https://www.youtube.com/WNOCtxs-aFs",
+				"video_url": "https://youtu.be/WNOCtxs-aFs",
 				"video_file": "",
 				"video_poster": "shopify://shop_images/CHUU5126-Chuug0459-1.jpg",
 				"article_title": "Wood Becomes Art",
-				"article_content": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>",
+				"article_content": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>"
+			}
+		},
+		"content_footer_section_MLUDPB": {
+			"type": "content-footer-section",
+			"name": "Content Footer Section",
+			"settings": {
 				"footer_links": "",
 				"email_title": "Join the Email Fellowship",
 				"country_text": "GBP £ | United Kingdom",
+				"social_url": "",
 				"footer_text": "© 2025, CHUUG® • Refund Policy • Privacy Policy • Terms of Service • Contact Information"
 			}
 		}
@@ -941,6 +948,7 @@
 		"three_image_reviews_carousel_KxatHt",
 		"fading_text_carousel_9VgpBp",
 		"accordions_M9ze79",
-		"content_video_section_DwemtG"
+		"content_video_section_DwemtG",
+		"content_footer_section_MLUDPB"
 	]
 }
