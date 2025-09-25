@@ -600,6 +600,7 @@
 				"review_KWgxeN",
 				"review_qkdrpj"
 			],
+			"disabled": true,
 			"settings": {}
 		},
 		"benefits_xeGgkP": {
@@ -677,6 +678,7 @@
 				"slide_dPTLbg",
 				"slide_4jG6E8"
 			],
+			"disabled": true,
 			"settings": {
 				"title": "<h1>You’d Have To See It To Beerlieve It</h1>",
 				"description": "What’s better than drinking beer from a tankard? Drinking two. It’s no coincidence our tankards hold 660ml. (That’s two of your favourite 330ml cans, ales, or fancy craft beers - whatever's your poison)",
@@ -810,6 +812,7 @@
 				"review_mMYwyD",
 				"review_VQjKEX"
 			],
+			"disabled": true,
 			"settings": {
 				"title": "<h1>“my go to vessel for tea and beer”</h1>",
 				"subtitle": "Hot or cold beverages. We don’t judge, our tankards can do it all."
@@ -817,6 +820,7 @@
 		},
 		"fading_text_carousel_9VgpBp": {
 			"type": "fading-text-carousel",
+			"disabled": true,
 			"settings": {
 				"section_title": "<h1>You Deserve Cold Beer</h1>",
 				"section_description": "Every guy needs his personalised beer tankard. If you’re a confused woman reading this, just trust us.",
