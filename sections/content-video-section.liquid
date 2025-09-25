@@ -13,10 +13,6 @@
   assign video_poster = section.settings.video_poster
   assign article_title = section.settings.article_title
   assign article_content = section.settings.article_content
-  assign footer_links = section.settings.footer_links
-  assign email_title = section.settings.email_title
-  assign country_text = section.settings.country_text
-  assign footer_text = section.settings.footer_text
 -%}
 
 <div id="{{ section_id }}" class="content-video-section">
@@ -34,7 +30,51 @@
       {% if section.settings.video_url != blank %}
         <!-- Embedded Video (YouTube/Vimeo) -->
         <div class="content-video-section__video-embed">
-          {{ section.settings.video_url | video_tag: image_size: "1080x723", controls: true, autoplay: false, loop: false, muted: false }}
+          {% assign video_id = '' %}
+          {% assign video_type = '' %}
+          
+          {% if section.settings.video_url contains 'youtube.com/watch' or section.settings.video_url contains 'youtu.be' %}
+            {% if section.settings.video_url contains 'youtube.com/watch' %}
+              {% assign video_id = section.settings.video_url | split: 'v=' | last | split: '&' | first %}
+            {% elsif section.settings.video_url contains 'youtu.be' %}
+              {% assign video_id = section.settings.video_url | split: 'youtu.be/' | last | split: '?' | first %}
+            {% endif %}
+            {% assign video_type = 'youtube' %}
+          {% elsif section.settings.video_url contains 'vimeo.com' %}
+            {% assign video_id = section.settings.video_url | split: 'vimeo.com/' | last | split: '?' | first %}
+            {% assign video_type = 'vimeo' %}
+          {% endif %}
+          
+          {% if video_type == 'youtube' %}
+            <iframe 
+              src="https://www.youtube.com/embed/{{ video_id }}?rel=0&showinfo=0&modestbranding=1&playsinline=1" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen
+              loading="lazy">
+            </iframe>
+          {% elsif video_type == 'vimeo' %}
+            <iframe 
+              src="https://player.vimeo.com/video/{{ video_id }}?title=0&byline=0&portrait=0&playsinline=1" 
+              frameborder="0" 
+              allow="autoplay; fullscreen; picture-in-picture" 
+              allowfullscreen
+              loading="lazy">
+            </iframe>
+          {% elsif section.settings.video_url contains '<iframe' %}
+            <!-- Direct embed code support -->
+            {{ section.settings.video_url }}
+          {% else %}
+            <!-- Fallback for unsupported URLs -->
+            <div class="content-video-section__video-error">
+              <p>Unsupported video URL format. Please use:</p>
+              <ul>
+                <li>YouTube URLs: https://www.youtube.com/watch?v=VIDEO_ID</li>
+                <li>Vimeo URLs: https://vimeo.com/VIDEO_ID</li>
+                <li>Direct embed codes with &lt;iframe&gt; tags</li>
+              </ul>
+            </div>
+          {% endif %}
         </div>
       {% elsif section.settings.video_file != blank %}
         <!-- Direct Video File -->
@@ -46,8 +86,8 @@
           preload="metadata"
           poster="{{ section.settings.video_poster | image_url: width: 1080 }}"
         >
-          <source src="{{ section.settings.video_file | asset_url }}" type="video/mp4">
-          <source src="{{ section.settings.video_file | asset_url }}" type="video/webm">
+          <source src="{{ section.settings.video_file }}" type="video/mp4">
+          <source src="{{ section.settings.video_file }}" type="video/webm">
           Your browser does not support the video tag.
         </video>
       {% else %}
@@ -63,72 +103,6 @@
       {% endif %}
     </div>
 
-    <!-- Footer -->
-    <div class="content-video-section__footer">
-      <!-- Footer Links -->
-      {% if footer_links != blank %}
-        <div class="content-video-section__footer-links">
-          {% for link in footer_links %}
-            <a href="{{ link.url }}" class="content-video-section__footer-link">{{ link.title }}</a>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <!-- Email Signup -->
-      <div class="content-video-section__email">
-        <h3 class="content-video-section__email-title">{{ email_title }}</h3>
-        <form class="content-video-section__email-form" action="#" method="post">
-          <input 
-            type="email" 
-            name="email" 
-            placeholder="Email" 
-            class="content-video-section__email-input"
-            required
-          >
-          <button type="submit" class="content-video-section__email-submit">
-            <svg width="9" height="0" viewBox="0 0 9 0" fill="none">
-              <path d="M0 0L9 0" stroke="#969393" stroke-width="1"/>
-            </svg>
-          </button>
-        </form>
-      </div>
-
-      <!-- Country Selector -->
-      <div class="content-video-section__country">
-        <label class="content-video-section__country-label">Country/region</label>
-        <div class="content-video-section__country-dropdown">
-          <span class="content-video-section__country-text">{{ country_text }}</span>
-          <svg width="18.07" height="16.43" viewBox="0 0 18.07 16.43" fill="none">
-            <path d="M8.18 10.46L8.18 10.46" stroke="#0D2026" stroke-width="1.64"/>
-          </svg>
-        </div>
-        
-        <!-- Social Media Link -->
-        <a href="#" class="content-video-section__social-link">
-          <div class="content-video-section__social-icon">
-            <svg width="16" height="14.87" viewBox="0 0 16 14.87" fill="none">
-              <path d="M0 0L16 0" fill="#FFFFFF"/>
-            </svg>
-          </div>
-          <div class="content-video-section__social-text">
-            <span>Follow on</span>
-            <div class="content-video-section__shop-logo">
-              <svg width="38" height="15" viewBox="0 0 38 15" fill="none">
-                <path d="M0.25 3L7.76 12.01" fill="#FFFFFF"/>
-                <path d="M9.07 0L17.23 11.93" fill="#FFFFFF"/>
-                <path d="M18.5 2.74L27.14 12.28" fill="#FFFFFF"/>
-                <path d="M28.42 3L37.75 15" fill="#FFFFFF"/>
-              </svg>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Footer Text -->
-      <div class="content-video-section__footer-text">
-        {{ footer_text }}
-      </div>
-    </div>
   </div>
 </div>
 
@@ -145,14 +119,14 @@
     {
       "type": "url",
       "id": "video_url",
-      "label": "Video URL",
-      "info": "YouTube or Vimeo video URL (recommended)"
+      "label": "Video URL or Embed Code",
+      "info": "YouTube/Vimeo URL or direct iframe embed code"
     },
     {
       "type": "url",
       "id": "video_file",
       "label": "Video File URL",
-      "info": "Direct link to video file (MP4, WebM)"
+      "info": "Direct link to video file (MP4, WebM) - external URL or Shopify Files URL"
     },
     {
       "type": "image_picker",
@@ -181,30 +155,6 @@
       "id": "article_content",
       "label": "Article Content",
       "default": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>"
-    },
-    {
-      "type": "link_list",
-      "id": "footer_links",
-      "label": "Footer Links",
-      "info": "Select a menu for footer navigation links"
-    },
-    {
-      "type": "text",
-      "id": "email_title",
-      "label": "Email Signup Title",
-      "default": "Join the Email Fellowship"
-    },
-    {
-      "type": "text",
-      "id": "country_text",
-      "label": "Country/Region Text",
-      "default": "GBP £ | United Kingdom"
-    },
-    {
-      "type": "textarea",
-      "id": "footer_text",
-      "label": "Footer Text",
-      "default": "© 2025, CHUUG® • Refund Policy • Privacy Policy • Terms of Service • Contact Information"
     }
   ],
   "presets": [

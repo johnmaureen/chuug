@@ -10,8 +10,8 @@
     {
       "type": "url",
       "id": "video_url",
-      "label": "Video URL",
-      "info": "YouTube or Vimeo video URL (recommended)"
+      "label": "Video URL or Embed Code",
+      "info": "YouTube/Vimeo URL or direct iframe embed code"
     },
     {
       "type": "url",
@@ -46,30 +46,6 @@
       "id": "article_content",
       "label": "Article Content",
       "default": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>"
-    },
-    {
-      "type": "link_list",
-      "id": "footer_links",
-      "label": "Footer Links",
-      "info": "Select a menu for footer navigation links"
-    },
-    {
-      "type": "text",
-      "id": "email_title",
-      "label": "Email Signup Title",
-      "default": "Join the Email Fellowship"
-    },
-    {
-      "type": "text",
-      "id": "country_text",
-      "label": "Country/Region Text",
-      "default": "GBP £ | United Kingdom"
-    },
-    {
-      "type": "textarea",
-      "id": "footer_text",
-      "label": "Footer Text",
-      "default": "© 2025, CHUUG® • Refund Policy • Privacy Policy • Terms of Service • Contact Information"
     }
   ],
   "presets": [
