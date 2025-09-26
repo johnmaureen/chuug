@@ -683,6 +683,7 @@
   function updateVesselTabVisibility(vesselCount) {
     const vesselCountNum = parseInt(vesselCount);
     state.currentVesselCount = vesselCountNum;
+    state.multiplier = vesselCountNum; // Update multiplier to match vessel count
     
     // Check if current active vessel is beyond the new count
     if (state.activeVessel > vesselCountNum) {
@@ -746,6 +747,24 @@
       }
       
       updateSelectionDisplay(false);
+      
+      // Validate button state after vessel count change
+      const vesselValidation = validateAllVesselsForAddToCart();
+      const cta_button = document.querySelector('.cta-button');
+      
+      if (!vesselValidation.isValid) {
+        if (cta_button) {
+          cta_button.setAttribute('disabled', true);
+        }
+      } else {
+        // Only enable if other validations also pass
+        if (window.thereAreNoIncompleteInputs && cta_button) {
+          const originalValidation = window.thereAreNoIncompleteInputs(vesselCountNum);
+          if (originalValidation) {
+            cta_button.removeAttribute('disabled');
+          }
+        }
+      }
     });
   }
 
@@ -766,6 +785,25 @@
     return { errors: [], warnings };
   }
 
+  function validateAllVesselsForAddToCart() {
+    const errors = [];
+    const currentVesselCount = state.currentVesselCount;
+    
+    for (let vesselNum = 1; vesselNum <= currentVesselCount; vesselNum++) {
+      const selection = state.vesselSelections[vesselNum];
+      
+      if (!selection.woodType || !selection.ropeType) {
+        errors.push(`Vessel #${vesselNum} is missing required selections`);
+      }
+    }
+    
+    return { 
+      isValid: errors.length === 0, 
+      errors: errors,
+      message: errors.length > 0 ? 'Please fill all vessel selections before adding to cart.' : null
+    };
+  }
+
   function showValidationFeedback(validation) {
     const existingFeedback = document.querySelector('.validation-feedback');
     if (existingFeedback) existingFeedback.remove();
@@ -779,6 +817,12 @@
       if (selectionWrap && selectionWrap.parentNode) {
         selectionWrap.parentNode.insertBefore(feedback, selectionWrap.nextSibling);
       }
+    }
+    
+    // Only manage button state, not error message display during real-time validation
+    const vesselValidation = validateAllVesselsForAddToCart();
+    if (window.hideVesselValidationError && vesselValidation.isValid) {
+      window.hideVesselValidationError();
     }
   }
 
@@ -822,6 +866,12 @@
       restoreUIFromSelections();
     }
     updateSelectionDisplay(false);
+    
+    // Ensure button starts disabled
+    const addButton = document.getElementById('add-multiple-products');
+    if (addButton) {
+      addButton.setAttribute('disabled', true);
+    }
     
     // Setup cleanup on page unload
     const cleanup = debounce(storage.clear, 100);
@@ -867,6 +917,7 @@
       state.multiplier = multiplier;
       storage.save();
     },
+    validateAllVesselsForAddToCart: validateAllVesselsForAddToCart,
     setVesselSelection: function(vesselNumber, woodType, ropeType, woodVariantId = null, ropeVariantId = null) {
       if (vesselNumber >= 1 && vesselNumber <= 3) {
         state.vesselSelections[vesselNumber].woodType = woodType;

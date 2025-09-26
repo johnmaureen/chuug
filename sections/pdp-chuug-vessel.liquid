@@ -423,22 +423,40 @@
     hideInputs(productAmount);
     updateCarouselsImages();
     disableCTAbutton(productAmount);
+    
+    // Also validate button status with POMC system and update multiplier
+    if (window.pomcSystem) {
+      // Update multiplier to match product amount
+      window.pomcSystem.setMultiplier(parseInt(productAmount));
+      
+      const vesselValidation = window.pomcSystem.validateAllVesselsForAddToCart();
+      const cta_button = document.querySelector('.cta-button');
+      
+      if (!vesselValidation.isValid) {
+        if (cta_button) {
+          cta_button.setAttribute('disabled', true);
+        }
+      } else {
+        // Only enable if other validations also pass
+        const originalValidation = thereAreNoIncompleteInputs(productAmount);
+        if (originalValidation && cta_button) {
+          cta_button.removeAttribute('disabled');
+        }
+      }
+    }
   }
 
   function disableCTAbutton(productAmount) {
     const cta_button = document.querySelector('.cta-button');
-    const incompleted_inputs_text = document.querySelector('.incompleted-inputs-text');
 
-    if (!thereAreNoIncompleteInputs(productAmount)) {
+    // Check both the original validation and POMC vessel validation
+    const originalValidation = thereAreNoIncompleteInputs(productAmount);
+    const pomcValidation = window.pomcSystem ? window.pomcSystem.validateAllVesselsForAddToCart().isValid : false;
+    
+    if (!originalValidation || !pomcValidation) {
       cta_button.setAttribute('disabled', true);
-      if (incompleted_inputs_text && incompleted_inputs_text.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.remove('tw-hidden');
-      }
     } else {
       cta_button.removeAttribute('disabled');
-      if (incompleted_inputs_text && !incompleted_inputs_text.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.add('tw-hidden');
-      }
     }
   }
 
@@ -474,6 +492,48 @@
     updatePrices(index);
   }
 
+  function showVesselValidationError(message) {
+    // Use existing incompleted-inputs-text element
+    const errorElement = document.querySelector('.incompleted-inputs-text');
+    const addButton = document.getElementById('add-multiple-products');
+    
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.classList.remove('tw-hidden');
+    }
+    
+    // Disable the button when validation fails
+    if (addButton) {
+      addButton.setAttribute('disabled', true);
+    }
+  }
+
+  function hideVesselValidationError() {
+    // Only enable the button, don't manage error message display
+    const addButton = document.getElementById('add-multiple-products');
+    
+    if (addButton) {
+      addButton.removeAttribute('disabled');
+    }
+  }
+
+  // Expose functions globally for POMC system to use
+  window.showVesselValidationError = showVesselValidationError;
+  window.hideVesselValidationError = hideVesselValidationError;
+  window.thereAreNoIncompleteInputs = thereAreNoIncompleteInputs;
+  
+  // Set current product ID for POMC system (with retry mechanism)
+  function setProductIdForPOMC() {
+    if (window.pomcSystem) {
+      window.pomcSystem.setCurrentProductId({{ product.id }});
+      console.log('Product ID set for POMC system:', {{ product.id }});
+    } else {
+      // Retry if POMC system not ready yet
+      setTimeout(setProductIdForPOMC, 100);
+    }
+  }
+  setProductIdForPOMC();
+
   function handlePersonalizeVessel() {
     // Log current POMC system data when add-multiple-products is clicked
     console.log('=== ADD-MULTIPLE-PRODUCTS CLICKED ===');
@@ -484,8 +544,17 @@
         multiplier: window.pomcSystem.getMultiplier(),
         currentVesselSelection: window.pomcSystem.getCurrentVesselSelection()
       });
+      
+      // Validate all vessels before proceeding
+      const validation = window.pomcSystem.validateAllVesselsForAddToCart();
+      if (!validation.isValid) {
+        console.warn('Validation failed:', validation.errors);
+        showVesselValidationError(validation.message);
+        return;
+      }
     } else {
       console.log('POMC System not available');
+      return;
     }
     console.log('=====================================');
     
@@ -701,12 +770,13 @@
       }
     });
 
-    if (thereAreNoIncompleteInputs(productAmount)){
+    // Check both the original validation and POMC vessel validation
+    const originalValidation = thereAreNoIncompleteInputs(productAmount);
+    const pomcValidation = window.pomcSystem ? window.pomcSystem.validateAllVesselsForAddToCart().isValid : false;
+    
+    if (originalValidation && pomcValidation){
       if (cta_button?.hasAttribute('disabled')) {
         cta_button.removeAttribute('disabled');
-        if (!incompleted_inputs_text?.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.add('tw-hidden');
-        }
       }
     }
   }  
