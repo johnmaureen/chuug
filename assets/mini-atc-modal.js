@@ -403,8 +403,11 @@
       super();
       this.basePrices = {
         product: 7800, // £78.00 in cents
-        giftBox: 200,  // £2.00 in cents
+        giftBox: 200,  // £2.00 in cents (fallback)
         variant: 1299  // £12.99 in cents
+      };
+      this.dynamicPrices = {
+        giftBox: null // Will be updated from product data
       };
     }
 
@@ -413,7 +416,8 @@
       
       // Add gift box if enabled
       if (state.giftBox?.enabled) {
-        total += this.basePrices.giftBox;
+        const giftBoxPrice = this.dynamicPrices.giftBox || this.basePrices.giftBox;
+        total += giftBoxPrice;
       }
       
       // Add mix & match variants
@@ -447,6 +451,11 @@
       this.emit('priceCalculated', pricingData);
 
       return { total, originalPrice, savings };
+    }
+
+    updateGiftBoxPrice(priceInCents) {
+      this.dynamicPrices.giftBox = priceInCents;
+      console.log('Updated gift box price:', priceInCents);
     }
   }
 
@@ -488,6 +497,7 @@
       this.bindEvents();
       this.initializeComponents();
       this.setupAccessibility();
+      this.initializeGiftBoxPricing();
     }
 
     bindEvents() {
@@ -1155,6 +1165,22 @@
     calculatePricing() {
       const state = this.state.getState();
       this.pricing.calculateTotal(state);
+    }
+
+    async initializeGiftBoxPricing() {
+      try {
+        const response = await fetch('/products/premium-gift-box-tissue-wrap.js');
+        if (response.ok) {
+          const productData = await response.json();
+          if (productData.variants && productData.variants.length > 0) {
+            const variant = productData.variants[0];
+            this.pricing.updateGiftBoxPrice(variant.price);
+            console.log('Initialized gift box pricing from product data:', variant.price);
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to initialize gift box pricing, using fallback:', error);
+      }
     }
 
     updatePricingDisplay(pricing) {

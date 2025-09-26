@@ -531,7 +531,14 @@
         id: {{ product.id }},
         handle: '{{ product.handle }}'
       });
+      console.log('Verification - Current product handle:', window.pomcSystem.getCurrentProductHandle());
+      console.log('Direct test - Setting and getting handle:');
+      window.pomcSystem.setCurrentProductHandle('test-handle');
+      console.log('After setting test handle:', window.pomcSystem.getCurrentProductHandle());
+      window.pomcSystem.setCurrentProductHandle('{{ product.handle }}');
+      console.log('After setting real handle:', window.pomcSystem.getCurrentProductHandle());
     } else {
+      console.log('POMC system not ready, retrying...');
       // Retry if POMC system not ready yet
       setTimeout(setProductDataForPOMC, 100);
     }
@@ -545,6 +552,7 @@
       console.log('Current POMC System Data:', {
         allVesselSelections: window.pomcSystem.getAllVesselSelections(),
         currentProductId: window.pomcSystem.getCurrentProductId(),
+        currentProductHandle: window.pomcSystem.getCurrentProductHandle(),
         multiplier: window.pomcSystem.getMultiplier(),
         currentVesselSelection: window.pomcSystem.getCurrentVesselSelection()
       });

@@ -831,7 +831,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	width: 262.84px;
+	/* width: 262.84px; */
+	width: 300px;
 	height: 70px;
 }
 
