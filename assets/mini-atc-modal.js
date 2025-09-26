@@ -833,6 +833,20 @@
     open() {
       if (this.isActive) return;
 
+      // Log current POMC system data when mini-atc-modal shows
+      console.log('=== MINI-ATC-MODAL SHOWING ===');
+      if (window.pomcSystem) {
+        console.log('Current POMC System Data:', {
+          allVesselSelections: window.pomcSystem.getAllVesselSelections(),
+          currentProductId: window.pomcSystem.getCurrentProductId(),
+          multiplier: window.pomcSystem.getMultiplier(),
+          currentVesselSelection: window.pomcSystem.getCurrentVesselSelection()
+        });
+      } else {
+        console.log('POMC System not available');
+      }
+      console.log('==============================');
+
       this.modal.classList.add('mini-atc-modal--active');
       this.modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';

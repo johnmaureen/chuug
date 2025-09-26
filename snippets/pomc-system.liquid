@@ -1,4 +1,25 @@
 
+{%- liquid
+  assign dusk_charcoal = all_products[section.settings.dusk_charcoal]
+  assign dusk_natural = all_products[section.settings.dusk_natural]
+  assign dawn_charcoal = all_products[section.settings.dawn_charcoal]
+  assign dawn_natural = all_products[section.settings.dawn_natural]
+  assign midnight_charcoal = all_products[section.settings.midnight_charcoal]
+  assign midnight_natural = all_products[section.settings.midnight_natural]
+-%}
+
+<script>
+  // Make product IDs available to JavaScript
+  window.PRODUCT_IDS = {
+    dusk_charcoal: {{ dusk_charcoal.id | json }},
+    dusk_natural: {{ dusk_natural.id | json }},
+    dawn_charcoal: {{ dawn_charcoal.id | json }},
+    dawn_natural: {{ dawn_natural.id | json }},
+    midnight_charcoal: {{ midnight_charcoal.id | json }},
+    midnight_natural: {{ midnight_natural.id | json }}
+  };
+</script>
+
 <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
       <div class="tw-flex tw-whitespace-nowrap">
         <div class="label-text"><span>1</span>{{ section.settings.vessel_question }} 
@@ -178,7 +199,7 @@
 
                     <div class="block-wrap">
                       <label class="wood-type-label block-label tw-cursor-pointer  ">
-                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DUSK" class="tw-hidden js-option">
+                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DUSK" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option">
                         {% if section.settings.wood_finish_dusk_wood != blank %}
                          <div class="img-wrap">
                            <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48">
@@ -188,7 +209,7 @@
                       </label>
 
                       <label class="wood-type-label block-label tw-cursor-pointer">
-                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DAWN" class="tw-hidden js-option">
+                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DAWN" data-variant-id="{{ dawn_charcoal.variants.first.id }}" class="tw-hidden js-option">
                         {% if section.settings.wood_finish_dawn_wood != blank %}
                          <div class="img-wrap">
                             <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48">
@@ -198,7 +219,7 @@
                       </label>
 
                       <label class="wood-type-label block-label tw-cursor-pointer">
-                        <input type="radio" name="wood_material_{{ forloop.index }}" value="MIDNIGHT" class="tw-hidden js-option">
+                        <input type="radio" name="wood_material_{{ forloop.index }}" value="MIDNIGHT" data-variant-id="{{ midnight_charcoal.variants.first.id }}" class="tw-hidden js-option">
                         {% if section.settings.wood_finish_midnight_wood != blank %}
                          <div class="img-wrap">
                           <img
@@ -218,14 +239,14 @@
 
                     <div class="block-wrap">
                       <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow tw-cursor-pointer">
-                        <input type="radio" name="rope_material_{{ forloop.index }}" value="NATURAL" class="tw-hidden js-option">
+                        <input type="radio" name="rope_material_{{ forloop.index }}" value="NATURAL" data-variant-id="{{ dusk_natural.variants.first.id }}" class="tw-hidden js-option">
                         <span class="rope-type-name tw-uppercase type-name">NATURAL</span>
                         {% if section.settings.natural_rope != blank %}
                           <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
                         {% endif %}
                       </label>
                       <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
-                        <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" class="tw-hidden js-option">
+                        <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option">
                         <span class="rope-type-name tw-uppercase type-name">CHARCOAL</span>
                         {% if section.settings.charcoal_rope != blank %}
                           <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">

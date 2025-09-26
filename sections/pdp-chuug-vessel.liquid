@@ -475,6 +475,20 @@
   }
 
   function handlePersonalizeVessel() {
+    // Log current POMC system data when add-multiple-products is clicked
+    console.log('=== ADD-MULTIPLE-PRODUCTS CLICKED ===');
+    if (window.pomcSystem) {
+      console.log('Current POMC System Data:', {
+        allVesselSelections: window.pomcSystem.getAllVesselSelections(),
+        currentProductId: window.pomcSystem.getCurrentProductId(),
+        multiplier: window.pomcSystem.getMultiplier(),
+        currentVesselSelection: window.pomcSystem.getCurrentVesselSelection()
+      });
+    } else {
+      console.log('POMC System not available');
+    }
+    console.log('=====================================');
+    
     // Find the mini ATC modal element on the page
     const miniATCModal = document.querySelector('.mini-atc-modal');
     
