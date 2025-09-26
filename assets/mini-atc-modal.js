@@ -15,7 +15,6 @@
 (function() {
   'use strict';
   
-  console.log('🚀 mini-atc-modal.js script starting to execute');
 
   // ============================================
   // CONSTANTS AND CONFIGURATION
@@ -110,7 +109,6 @@
         localStorage.setItem(key, JSON.stringify(data));
         return true;
       } catch (error) {
-        console.warn('Failed to save to localStorage:', error);
         return false;
       }
     },
@@ -120,7 +118,6 @@
         const data = localStorage.getItem(key);
         return data ? JSON.parse(data) : null;
       } catch (error) {
-        console.warn('Failed to load from localStorage:', error);
         return null;
       }
     },
@@ -130,7 +127,6 @@
         localStorage.removeItem(key);
         return true;
       } catch (error) {
-        console.warn('Failed to remove from localStorage:', error);
         return false;
       }
     }
@@ -419,30 +415,22 @@
       let total = 0;
       let originalTotal = 0;
       
+      console.log('Starting pricing calculation with state:', state);
+      
       // Calculate pricing based on POMC system vessel selections
       if (window.pomcSystem) {
         const vesselSelections = window.pomcSystem.getAllVesselSelections();
         const multiplier = window.pomcSystem.getMultiplier();
         const selectedProductAmountData = window.pomcSystem.getSelectedProductAmountData();
         
-        console.log('Calculating pricing with POMC data:', {
-          multiplier,
-          selectedProductAmountData,
-          vesselSelections
-        });
         
         // Get pricing for the current vessel count (1x, 2x, or 3x)
         const vesselPricing = this.getVesselPricingForMultiplier(multiplier);
         if (vesselPricing) {
           total = vesselPricing.price;
           originalTotal = vesselPricing.originalPrice;
-          
-          console.log('Using vessel pricing:', vesselPricing);
-        } else {
-          console.log('No vessel pricing found, using fallback');
+          console.log('Using vessel pricing:', vesselPricing, 'Total after vessel pricing:', total);
         }
-      } else {
-        console.log('POMC system not available, using fallback pricing');
       }
       
       // Fallback to base pricing if no POMC data
@@ -452,11 +440,17 @@
         console.log('Using fallback pricing:', { total, originalTotal });
       }
       
-      // Add gift box if enabled
+      // Handle gift box pricing
+      console.log('Gift box state:', state.giftBox);
+      const giftBoxPrice = this.dynamicPrices.giftBox || this.basePrices.giftBox;
+      
       if (state.giftBox?.enabled) {
-        const giftBoxPrice = this.dynamicPrices.giftBox || this.basePrices.giftBox;
+        // Gift box is enabled - add the gift box price to POMC price
         total += giftBoxPrice;
-        // Gift box doesn't affect original price
+        console.log('Gift box enabled - adding price:', giftBoxPrice, 'New total:', total);
+      } else {
+        // Gift box is disabled - keep the original POMC price
+        console.log('Gift box disabled - keeping original POMC price:', total);
       }
       
       // Add mix & match variants
@@ -486,6 +480,7 @@
         formattedSavings: Utils.formatPrice(savings)
       };
 
+      console.log('Final pricing data:', pricingData);
       this.emit('priceCalculated', pricingData);
 
       return { total, originalPrice: originalTotal, savings };
@@ -524,7 +519,6 @@
           };
         }
       } catch (error) {
-        console.warn('Failed to parse modal configuration:', error);
       }
       
       // Fallback pricing
@@ -533,15 +527,11 @@
     
     
     getVesselPricingForMultiplier(multiplier) {
-      console.log('getVesselPricingForMultiplier called with multiplier:', multiplier);
       
       // First try to get pricing from POMC system selectedProductAmountData
       if (window.pomcSystem) {
         const selectedProductAmountData = window.pomcSystem.getSelectedProductAmountData();
-        console.log('POMC selectedProductAmountData:', selectedProductAmountData);
-        
         if (selectedProductAmountData) {
-          console.log('Using selectedProductAmountData for pricing:', selectedProductAmountData);
           
           // Check if engraving is enabled - we'll get this from the modal instance
           const engravingEnabled = this.getEngravingState();
@@ -552,16 +542,6 @@
           const price = variant?.price || selectedProductAmountData.price || 7800;
           const compareAtPrice = variant?.compare_at_price || selectedProductAmountData.compare_at_price || 18000;
           
-          console.log('Variant pricing data:', {
-            variantIndex,
-            engravingEnabled,
-            variant,
-            price,
-            compareAtPrice,
-            selectedProductAmountData,
-            formattedPrice: Utils.formatPrice(price),
-            formattedCompareAtPrice: Utils.formatPrice(compareAtPrice)
-          });
           
           return {
             price: price,
@@ -600,7 +580,6 @@
           };
         }
       } catch (error) {
-        console.warn('Failed to parse modal configuration:', error);
       }
       
       // Fallback pricing
@@ -609,7 +588,6 @@
 
     updateGiftBoxPrice(priceInCents) {
       this.dynamicPrices.giftBox = priceInCents;
-      console.log('Updated gift box price:', priceInCents);
     }
     
     getEngravingState() {
@@ -672,7 +650,10 @@
       document.addEventListener('keydown', this.handleKeydown.bind(this));
       
       // Toggle events
-      this.modal.addEventListener('change', this.handleToggleChange.bind(this));
+      this.modal.addEventListener('change', (event) => {
+        console.log('Modal change event fired:', event.target, event.target.type);
+        this.handleToggleChange(event);
+      });
       
       // Counter events
       this.modal.addEventListener('click', this.handleCounterClick.bind(this));
@@ -723,7 +704,6 @@
         
         // Add direct event listener as backup
         closeButton.addEventListener('click', (event) => {
-          console.log('Direct close button click detected');
           event.preventDefault();
           event.stopPropagation();
           this.close();
@@ -752,11 +732,9 @@
     }
 
     handleModalClick(event) {
-      console.log('Modal click detected:', event.target, event.target.classList);
       
       // Handle overlay clicks
       if (event.target.classList.contains('mini-atc-modal__overlay')) {
-        console.log('Overlay click detected, closing modal');
         this.close();
         return;
       }
@@ -764,7 +742,6 @@
       // Handle close button clicks
       const closeButton = event.target.closest('[data-modal-close]');
       if (closeButton) {
-        console.log('Close button click detected, closing modal');
         event.preventDefault();
         event.stopPropagation();
         this.close();
@@ -788,15 +765,26 @@
     }
 
     handleToggleChange(event) {
-      const toggle = event.target.closest('[data-personalization-toggle], [data-addon-toggle], [data-vessel-toggle]');
+      console.log('Toggle change event triggered:', event.target);
+      const toggle = event.target.closest('[data-personalization-toggle], [data-addon-toggle], [data-vessel-toggle], [data-gift-box-variant-id]');
+      console.log('Toggle element found:', toggle);
       if (!toggle) return;
+
 
       if (toggle.hasAttribute('data-personalization-toggle')) {
         const type = toggle.getAttribute('data-personalization-toggle');
         this.state.updatePersonalization(type, { enabled: toggle.checked });
       } else if (toggle.hasAttribute('data-addon-toggle')) {
         const type = toggle.getAttribute('data-addon-toggle');
-        this.state.updatePersonalization(type, { enabled: toggle.checked });
+        // Handle gift box toggle specifically with correct key
+        if (type === 'gift-box') {
+          console.log('Premium gift box toggle changed:', toggle.checked);
+          console.log('Updating giftBox state to enabled:', toggle.checked);
+          this.state.updatePersonalization('giftBox', { enabled: toggle.checked });
+          console.log('Gift box state after update:', this.state.getState().giftBox);
+        } else {
+          this.state.updatePersonalization(type, { enabled: toggle.checked });
+        }
       } else if (toggle.hasAttribute('data-vessel-toggle')) {
         const vesselId = toggle.getAttribute('data-vessel-toggle');
         const input = toggle.closest('.vessel-personalization-row').querySelector('.vessel-name-input');
@@ -810,6 +798,9 @@
       }
 
       this.toggleOptionsVisibility(toggle);
+      
+      // Recalculate pricing when any toggle changes
+      this.calculatePricing();
     }
 
     handleCounterClick(event) {
@@ -882,7 +873,6 @@
           this.proceedToCheckout();
           break;
         default:
-          console.warn('Unknown action type:', actionType);
       }
     }
 
@@ -939,73 +929,115 @@
       // Placeholder for dynamic image update logic
       if (this.swiper && state.engraving?.vessels) {
         // This would integrate with actual product image variants
-        console.log('Updating product image based on selection:', state.engraving.vessels);
       }
     }
 
+    updateVesselPersonalizationRows() {
+      // Get vessel count from POMC system
+      if (!window.pomcSystem) {
+        return;
+      }
+      
+      const vesselCount = window.pomcSystem.getMultiplier() || 2;
+      
+      // Find the vessel personalization container
+      const vesselContainer = this.modal.querySelector('.modal__personalization-vessel-name-wrap');
+      if (!vesselContainer) {
+        return;
+      }
+      
+      // Remove existing vessel rows
+      const existingRows = vesselContainer.querySelectorAll('.vessel-personalization-row');
+      existingRows.forEach(row => row.remove());
+      
+      // Create new vessel rows based on vessel count
+      for (let i = 1; i <= vesselCount; i++) {
+        const vesselRow = this.createVesselPersonalizationRow(i);
+        vesselContainer.appendChild(vesselRow);
+      }
+    }
+    
+    createVesselPersonalizationRow(vesselNumber) {
+      const modalId = this.modal.id;
+      const row = document.createElement('div');
+      row.className = 'vessel-personalization-row';
+      row.setAttribute('data-vessel', vesselNumber);
+      
+      row.innerHTML = `
+        <div class="vessel-info">
+          <span class="vessel-label">Vessel #${vesselNumber}</span>
+          <div class="mini-atc-modal__toggle-container">
+            <label class="mini-atc-modal__toggle" for="${modalId}-vessel-${vesselNumber}-toggle">
+              <input 
+                type="checkbox" 
+                id="${modalId}-vessel-${vesselNumber}-toggle" 
+                checked
+                data-vessel-toggle="${vesselNumber}"
+                aria-describedby="${modalId}-vessel-${vesselNumber}-description"
+              >
+              <span class="mini-atc-modal__toggle-slider" aria-hidden="true"></span>
+              <span class="visually-hidden">Enable personalization for vessel ${vesselNumber}</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="vessel-input-container">
+          <label for="${modalId}-vessel-${vesselNumber}-name" class="visually-hidden">
+            Personalization text for vessel ${vesselNumber}
+          </label>
+          <input 
+            type="text" 
+            id="${modalId}-vessel-${vesselNumber}-name" 
+            class="vessel-name-input" 
+            placeholder="Maximum of 3 Letters"
+            maxlength="3"
+            disabled
+            data-vessel-input="${vesselNumber}"
+            data-property="properties[Vessel ${vesselNumber} Engraving]"
+            aria-describedby="${modalId}-vessel-${vesselNumber}-description"
+          >
+        </div>
+        
+        <div id="${modalId}-vessel-${vesselNumber}-description" class="visually-hidden">
+          Enter up to 3 letters for vessel ${vesselNumber} engraving
+        </div>
+      `;
+      
+      return row;
+    }
+
     async fetchVesselSelectionsAndUpdateImages() {
-      console.log('🚀 fetchVesselSelectionsAndUpdateImages called');
       try {
         // Show loading state
         this.showImageLoader();
 
         // Get vessel selections from POMC system
         if (!window.pomcSystem) {
-          console.warn('❌ POMC System not available for fetching vessel selections');
           this.hideImageLoader();
           return;
         }
-
-        console.log('✅ POMC System is available');
-        console.log('🔧 POMC System methods:', Object.keys(window.pomcSystem));
-        console.log('🌐 PRODUCT_HANDLES available:', window.PRODUCT_HANDLES);
         const allVesselSelections = window.pomcSystem.getAllVesselSelections();
-        console.log('📋 Fetched vessel selections:', allVesselSelections);
         
         // Extract product handles from vessel selections
         const productHandles = [];
         Object.values(allVesselSelections).forEach((selection, index) => {
-          console.log(`🔍 Checking vessel selection ${index + 1}:`, selection);
           if (selection.productHandle) {
             productHandles.push(selection.productHandle);
-            console.log(`✅ Added product handle: ${selection.productHandle}`);
-          } else {
-            console.log(`❌ No product handle for vessel ${index + 1}`);
           }
         });
 
         if (productHandles.length === 0) {
-          console.log('❌ No product handles found in vessel selections');
           this.hideImageLoader();
           return;
         }
 
-        console.log('📦 Product handles to fetch:', productHandles);
-
         // Fetch product data for each product handle
-        console.log('🌐 Starting to fetch product data...');
         const productPromises = productHandles.map(productHandle => 
           this.fetchProductDataByHandle(productHandle)
         );
 
         const products = await Promise.all(productPromises);
         const validProducts = products.filter(product => product !== null);
-
-        console.log('📦 Fetched products:', validProducts);
-        console.log('📊 Total products fetched:', products.length, 'Valid products:', validProducts.length);
-        
-        // Log media information for each product
-        validProducts.forEach((product, index) => {
-          console.log(`Product ${index + 1} (${product.title}):`, {
-            id: product.id,
-            handle: product.handle,
-            images: product.images,
-            media: product.media,
-            featured_image: product.featured_image,
-            image_count: product.images ? product.images.length : 0,
-            media_count: product.media ? product.media.length : 0
-          });
-        });
 
         // Update the product image slider with the first image from each product
         this.updateProductImageSlider(validProducts);
@@ -1014,7 +1046,6 @@
         this.hideImageLoader();
 
       } catch (error) {
-        console.error('Error fetching vessel selections and updating images:', error);
         this.hideImageLoader();
       }
     }
@@ -1028,20 +1059,13 @@
         }
         
         const variantData = await variantResponse.json();
-        console.log(`Variant ${variantId} data:`, variantData);
-        
-        // Check what properties are available in the variant data
-        console.log(`Variant ${variantId} keys:`, Object.keys(variantData));
         
         // Try different possible property names for product ID
         const productId = variantData.product_id || variantData.productId || variantData.product?.id;
         
         if (!productId) {
-          console.error(`No product ID found in variant ${variantId} data:`, variantData);
           return null;
         }
-        
-        console.log(`Found product ID: ${productId} for variant ${variantId}`);
         
         // Now get the product data using the product ID from the variant
         const productResponse = await fetch(`/products/${productId}.js`);
@@ -1050,11 +1074,8 @@
         }
         
         const productData = await productResponse.json();
-        console.log(`Product ${productId} data:`, productData);
-        
         return productData;
       } catch (error) {
-        console.error(`Error fetching product from variant ${variantId}:`, error);
         return null;
       }
     }
@@ -1062,28 +1083,21 @@
 
     async fetchProductDataByHandle(productHandle) {
       try {
-        console.log(`🌐 Fetching product ${productHandle} via AJAX API...`);
-        
         const response = await fetch(`/products/${productHandle}.js`);
-        console.log(`📡 Response for ${productHandle}:`, response.status, response.statusText);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch product ${productHandle}: ${response.status}`);
         }
         
         const productData = await response.json();
-        console.log(`✅ Found product ${productHandle}:`, productData);
-        
         return productData;
       } catch (error) {
-        console.error(`❌ Error fetching product ${productHandle}:`, error);
         return null;
       }
     }
 
     async fetchProductData(productId) {
       try {
-        console.log(`Fetching product ${productId} via AJAX API...`);
         
         const response = await fetch(`/products.json?ids=${productId}`);
         if (!response.ok) {
@@ -1091,7 +1105,6 @@
         }
         
         const data = await response.json();
-        console.log(`Raw API response for ${productId}:`, data);
         
         if (data.products && data.products.length > 0) {
           // Find the specific product by ID
@@ -1100,18 +1113,14 @@
           );
           
           if (targetProduct) {
-            console.log(`✅ Found specific product ${productId}:`, targetProduct);
             return targetProduct;
           } else {
-            console.log(`❌ Product ${productId} not found in response. Available IDs:`, 
-              data.products.map(p => p.id));
             return null;
           }
         } else {
           throw new Error(`Product ${productId} not found`);
         }
       } catch (error) {
-        console.error(`Error fetching product ${productId}:`, error);
         return null;
       }
     }
@@ -1169,14 +1178,12 @@
         });
 
         if (!response.ok) {
-          console.log(`Storefront API failed for ${productId}: ${response.status}`);
           return null;
         }
 
         const data = await response.json();
         
         if (data.errors) {
-          console.log(`Storefront API errors for ${productId}:`, data.errors);
           return null;
         }
 
@@ -1204,14 +1211,11 @@
             }))
           };
 
-          console.log(`✅ Storefront API success for ${productId}:`, transformedProduct);
           return transformedProduct;
         }
 
-        console.log(`No product found via Storefront API for ${productId}`);
         return null;
       } catch (error) {
-        console.log(`Storefront API error for ${productId}:`, error.message);
         return null;
       }
     }
@@ -1222,7 +1226,6 @@
       const imageDots = this.modal.querySelector('.mini-atc-modal__image-dots');
 
       if (!swiperWrapper || !imageDots) {
-        console.warn('Swiper container or dots not found');
         return;
       }
 
@@ -1273,7 +1276,6 @@
         this.swiper.swiper.update();
       }
 
-      console.log(`Updated product image slider with ${products.length} products`);
     }
 
     showImageLoader() {
@@ -1357,7 +1359,6 @@
     }
 
     calculatePricing() {
-      console.log('MiniATCModal.calculatePricing() called');
       const state = this.state.getState();
       this.pricing.calculateTotal(state);
     }
@@ -1367,7 +1368,6 @@
       if (window.pomcSystem) {
         // Create a custom event listener for POMC changes
         const updatePricingFromPOMC = (event) => {
-          console.log('POMC system changed, updating modal pricing', event?.detail);
           this.calculatePricing();
         };
 
@@ -1381,10 +1381,16 @@
           setTimeout(updatePricingFromPOMC, 100); // Small delay to ensure POMC is ready
         });
         
+        // Listen for vessel count changes to update personalization rows
+        document.addEventListener('pomcMultiplierChanged', (event) => {
+          if (this.isActive) {
+            this.updateVesselPersonalizationRows();
+          }
+        });
+        
         // Listen for storage changes (when POMC data is updated)
         window.addEventListener('storage', (event) => {
           if (event.key === 'chuug_vessel_selections') {
-            console.log('POMC storage changed, updating modal pricing');
             updatePricingFromPOMC();
           }
         });
@@ -1392,33 +1398,19 @@
     }
     
     setupEngravingToggleListener() {
-      console.log('Setting up engraving toggle listener...');
       const engravingToggle = this.modal.querySelector('[data-personalization-toggle="engraving"]');
       
       if (engravingToggle) {
-        console.log('Found engraving toggle:', engravingToggle);
-        console.log('Current toggle state:', engravingToggle.checked);
         
         // Remove any existing listeners to avoid duplicates
         engravingToggle.removeEventListener('change', this.handleEngravingToggleChange);
         
         // Add the new listener
         this.handleEngravingToggleChange = (event) => {
-          console.log('Engraving toggle changed:', event.target.checked);
           this.calculatePricing();
         };
         
         engravingToggle.addEventListener('change', this.handleEngravingToggleChange);
-        
-        console.log('Engraving toggle listener set up successfully');
-      } else {
-        console.warn('Engraving toggle not found in modal. Available elements:', 
-          Array.from(this.modal.querySelectorAll('input[type="checkbox"]')).map(el => ({
-            id: el.id,
-            dataAttr: el.getAttribute('data-personalization-toggle'),
-            checked: el.checked
-          }))
-        );
       }
     }
     
@@ -1427,7 +1419,6 @@
       const engravingToggle = this.modal.querySelector('[data-personalization-toggle="engraving"]');
       if (engravingToggle) {
         const toggleEnabled = engravingToggle.checked;
-        console.log('Engraving toggle state:', toggleEnabled);
         return toggleEnabled;
       }
       
@@ -1441,13 +1432,6 @@
         const variantIndex = parseInt(inputs[0].getAttribute('variant_index'), 10);
         const mainPageEngravingEnabled = variantIndex === 1;
         
-        console.log('Engraving state check:', {
-          modalToggle: engravingToggle?.checked,
-          modalState: engravingEnabled,
-          mainPageVariantIndex: variantIndex,
-          mainPageEngraving: mainPageEngravingEnabled,
-          usingToggle: engravingToggle?.checked
-        });
         
         // Use the toggle state as the source of truth if available
         if (engravingToggle) {
@@ -1469,16 +1453,13 @@
           if (productData.variants && productData.variants.length > 0) {
             const variant = productData.variants[0];
             this.pricing.updateGiftBoxPrice(variant.price);
-            console.log('Initialized gift box pricing from product data:', variant.price);
           }
         }
       } catch (error) {
-        console.warn('Failed to initialize gift box pricing, using fallback:', error);
       }
     }
 
     updatePricingDisplay(pricing) {
-      console.log('Updating pricing display:', pricing);
       
       // Try multiple selectors to find the price elements
       const currentPriceEl = this.modal.querySelector('[data-current-price]') || 
@@ -1487,17 +1468,56 @@
                              this.modal.querySelector('.mini-atc-modal__original-price');
       const savingsEl = this.modal.querySelector('[data-savings-amount]') || 
                        this.modal.querySelector('.mini-atc-modal__savings-text');
+      
+      console.log('Price elements found:', {
+        currentPriceEl: !!currentPriceEl,
+        originalPriceEl: !!originalPriceEl,
+        savingsEl: !!savingsEl,
+        modal: this.modal,
+        modalId: this.modal.id,
+        modalClasses: this.modal.className
+      });
+      
+      // Check if there are multiple modals
+      const allModals = document.querySelectorAll('.mini-atc-modal');
+      console.log('All modals found:', allModals.length, Array.from(allModals).map(m => ({ id: m.id, classes: m.className })));
+      
+      // Check all price elements on the page
+      const allPriceElements = document.querySelectorAll('.mini-atc-modal__current-price, [data-current-price]');
+      console.log('All price elements on page:', allPriceElements.length, Array.from(allPriceElements).map(el => ({
+        text: el.textContent,
+        placeholder: el.querySelector('.pricing-placeholder')?.textContent,
+        id: el.id,
+        classes: el.className
+      })));
 
       if (currentPriceEl) {
         // Update the placeholder span inside the price element
         const placeholder = currentPriceEl.querySelector('.pricing-placeholder');
+        console.log('Current price element found:', currentPriceEl);
+        console.log('Placeholder element found:', placeholder);
+        console.log('Current placeholder text:', placeholder?.textContent);
+        
         if (placeholder) {
-          placeholder.textContent = pricing.formattedTotal;
-          console.log('Updated current price:', pricing.formattedTotal);
+          // Check if the text is actually different before updating
+          if (placeholder.textContent !== pricing.formattedTotal) {
+            placeholder.textContent = pricing.formattedTotal;
+            console.log('Updated placeholder text to:', pricing.formattedTotal);
+            console.log('Placeholder text after update:', placeholder.textContent);
+          } else {
+            console.log('Placeholder text already correct:', pricing.formattedTotal);
+          }
         } else {
-          currentPriceEl.textContent = pricing.formattedTotal;
-          console.log('Updated current price (no placeholder):', pricing.formattedTotal);
+          if (currentPriceEl.textContent !== pricing.formattedTotal) {
+            currentPriceEl.textContent = pricing.formattedTotal;
+            console.log('Updated current price element text to:', pricing.formattedTotal);
+          } else {
+            console.log('Current price element text already correct:', pricing.formattedTotal);
+          }
         }
+        console.log('Updated mini-atc-modal__current-price:', pricing.formattedTotal);
+      } else {
+        console.log('No current price element found');
       }
       
       if (originalPriceEl) {
@@ -1505,10 +1525,8 @@
         const placeholder = originalPriceEl.querySelector('.pricing-placeholder');
         if (placeholder) {
           placeholder.textContent = pricing.formattedOriginal;
-          console.log('Updated original price:', pricing.formattedOriginal);
         } else {
           originalPriceEl.textContent = pricing.formattedOriginal;
-          console.log('Updated original price (no placeholder):', pricing.formattedOriginal);
         }
       }
       
@@ -1517,10 +1535,8 @@
         const placeholder = savingsEl.querySelector('.pricing-placeholder');
         if (placeholder) {
           placeholder.textContent = `You Saved ${pricing.formattedSavings}`;
-          console.log('Updated savings:', `You Saved ${pricing.formattedSavings}`);
         } else {
           savingsEl.textContent = `You Saved ${pricing.formattedSavings}`;
-          console.log('Updated savings (no placeholder):', `You Saved ${pricing.formattedSavings}`);
         }
       }
     }
@@ -1582,19 +1598,6 @@
     open() {
       if (this.isActive) return;
 
-      // Log current POMC system data when mini-atc-modal shows
-      console.log('=== MINI-ATC-MODAL SHOWING ===');
-      if (window.pomcSystem) {
-        console.log('Current POMC System Data:', {
-          allVesselSelections: window.pomcSystem.getAllVesselSelections(),
-          currentProductId: window.pomcSystem.getCurrentProductId(),
-          multiplier: window.pomcSystem.getMultiplier(),
-          currentVesselSelection: window.pomcSystem.getCurrentVesselSelection()
-        });
-      } else {
-        console.log('POMC System not available');
-      }
-      console.log('==============================');
 
       this.modal.classList.add('mini-atc-modal--active');
       this.modal.setAttribute('aria-hidden', 'false');
@@ -1609,8 +1612,10 @@
       // Dispatch modal opened event for POMC integration
       this.modal.dispatchEvent(new CustomEvent('modalOpened'));
 
+      // Update vessel personalization rows based on current vessel count
+      this.updateVesselPersonalizationRows();
+
       // Fetch vessel selections data and update product images
-      console.log('🎯 About to call fetchVesselSelectionsAndUpdateImages');
       this.fetchVesselSelectionsAndUpdateImages();
 
       // Calculate initial pricing
@@ -1621,7 +1626,6 @@
       
       // Force pricing refresh to ensure it's up to date with any changes made while modal was closed
       setTimeout(() => {
-        console.log('Modal opened - forcing pricing refresh');
         this.calculatePricing();
       }, 200);
 
@@ -1634,17 +1638,14 @@
     }
 
     close() {
-      console.log('Close method called, isActive:', this.isActive);
       
       // Check if modal is visually active (either through isActive state or CSS class)
       const isVisuallyActive = this.isActive || this.modal.classList.contains('mini-atc-modal--active');
       
       if (!isVisuallyActive) {
-        console.log('Modal is not active, ignoring close request');
         return;
       }
 
-      console.log('Closing modal...');
       this.modal.classList.remove('mini-atc-modal--active');
       this.modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
@@ -1660,14 +1661,12 @@
       
       this.isActive = false;
       this.emit('modalClosed');
-      console.log('Modal closed successfully');
     }
 
     proceedToCheckout() {
       // Future integration point for Shopify checkout
       const state = this.state.getState();
       
-      console.log('Proceeding to checkout with state:', state);
       
       // This would integrate with Shopify cart API
       // Example:
@@ -1723,20 +1722,16 @@
   
   // Auto-initialize modals when DOM is ready
   function initializeModals() {
-    console.log('🔧 initializeModals called');
     const modals = document.querySelectorAll('.mini-atc-modal');
-    console.log('🎯 Found modals:', modals.length, modals);
     const instances = new Map();
 
     modals.forEach((modal, index) => {
-      console.log(`🎯 Initializing modal ${index + 1}:`, modal.id, modal);
       const instance = new MiniATCModal(modal);
       instances.set(modal.id, instance);
       
       // Make instance globally accessible
       const globalName = `miniATCModal_${modal.dataset.modalId || modal.id}`;
       window[globalName] = instance;
-      console.log(`✅ Modal instance created and assigned to window.${globalName}`);
     });
 
     // Global API
@@ -1764,18 +1759,14 @@
       }
     };
     
-    console.log('✅ window.MiniATCModal API created:', window.MiniATCModal);
 
     return instances;
   }
 
   // Initialize when DOM is ready
-  console.log('📋 Document ready state:', document.readyState);
   if (document.readyState === 'loading') {
-    console.log('⏳ DOM still loading, waiting for DOMContentLoaded');
     document.addEventListener('DOMContentLoaded', initializeModals);
   } else {
-    console.log('✅ DOM already ready, initializing modals immediately');
     initializeModals();
   }
 
