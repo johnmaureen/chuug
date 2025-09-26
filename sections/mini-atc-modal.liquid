@@ -442,7 +442,27 @@
   "pricing": {
     "basePrice": 7800,
     "giftBoxPrice": 200,
-    "variantPrice": 1299
+    "variantPrice": 1299,
+    "vesselPricing": {
+      "one": {
+        "noEngraving": {{ section.settings.one_chuug_product.price | default: 7800 }},
+        "engraving": {{ section.settings.one_chuug_product.variants[1].price | default: 7800 }},
+        "compareAtNoEngraving": {{ section.settings.one_chuug_product.compare_at_price | default: 19000 }},
+        "compareAtEngraving": {{ section.settings.one_chuug_product.variants[1].compare_at_price | default: 19000 }}
+      },
+      "two": {
+        "noEngraving": {{ section.settings.two_chuug_product.price | default: 7800 }},
+        "engraving": {{ section.settings.two_chuug_product.variants[1].price | default: 7800 }},
+        "compareAtNoEngraving": {{ section.settings.two_chuug_product.compare_at_price | default: 19000 }},
+        "compareAtEngraving": {{ section.settings.two_chuug_product.variants[1].compare_at_price | default: 19000 }}
+      },
+      "three": {
+        "noEngraving": {{ section.settings.three_chuug_product.price | default: 7800 }},
+        "engraving": {{ section.settings.three_chuug_product.variants[1].price | default: 7800 }},
+        "compareAtNoEngraving": {{ section.settings.three_chuug_product.compare_at_price | default: 19000 }},
+        "compareAtEngraving": {{ section.settings.three_chuug_product.variants[1].compare_at_price | default: 19000 }}
+      }
+    }
   }
 }
 </script>

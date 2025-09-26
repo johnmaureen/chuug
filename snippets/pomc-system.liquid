@@ -28,6 +28,69 @@
     midnight_charcoal: {{ midnight_charcoal.handle | json }},
     midnight_natural: {{ midnight_natural.handle | json }}
   };
+  
+  // Make product amount products available to JavaScript
+  window.PRODUCT_AMOUNT_PRODUCTS = {
+    1: {
+      id: {{ section.settings.one_chuug_product.id | json }},
+      handle: {{ section.settings.one_chuug_product.handle | json }},
+      price: {{ section.settings.one_chuug_product.price | json }},
+      compare_at_price: {{ section.settings.one_chuug_product.compare_at_price | json }},
+      variants: [
+        {
+          id: {{ section.settings.one_chuug_product.variants[0].id | json }},
+          price: {{ section.settings.one_chuug_product.variants[0].price | json }},
+          compare_at_price: {{ section.settings.one_chuug_product.variants[0].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.one_chuug_product.variants[1].id | json }},
+          price: {{ section.settings.one_chuug_product.variants[1].price | json }},
+          compare_at_price: {{ section.settings.one_chuug_product.variants[1].compare_at_price | json }}
+        }
+      ]
+    },
+    2: {
+      id: {{ section.settings.two_chuug_product.id | json }},
+      handle: {{ section.settings.two_chuug_product.handle | json }},
+      price: {{ section.settings.two_chuug_product.price | json }},
+      compare_at_price: {{ section.settings.two_chuug_product.compare_at_price | json }},
+      variants: [
+        {
+          id: {{ section.settings.two_chuug_product.variants[0].id | json }},
+          price: {{ section.settings.two_chuug_product.variants[0].price | json }},
+          compare_at_price: {{ section.settings.two_chuug_product.variants[0].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.two_chuug_product.variants[1].id | json }},
+          price: {{ section.settings.two_chuug_product.variants[1].price | json }},
+          compare_at_price: {{ section.settings.two_chuug_product.variants[1].compare_at_price | json }}
+        }
+      ]
+    },
+    3: {
+      id: {{ section.settings.three_chuug_product.id | json }},
+      handle: {{ section.settings.three_chuug_product.handle | json }},
+      price: {{ section.settings.three_chuug_product.price | json }},
+      compare_at_price: {{ section.settings.three_chuug_product.compare_at_price | json }},
+      variants: [
+        {
+          id: {{ section.settings.three_chuug_product.variants[0].id | json }},
+          price: {{ section.settings.three_chuug_product.variants[0].price | json }},
+          compare_at_price: {{ section.settings.three_chuug_product.variants[0].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.three_chuug_product.variants[1].id | json }},
+          price: {{ section.settings.three_chuug_product.variants[1].price | json }},
+          compare_at_price: {{ section.settings.three_chuug_product.variants[1].compare_at_price | json }}
+        }
+      ]
+    }
+  };
+  
+  // Helper function to get product data for a specific amount
+  window.getProductAmountData = function(amount) {
+    return window.PRODUCT_AMOUNT_PRODUCTS[amount] || null;
+  };
 </script>
 
 <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
@@ -299,7 +362,6 @@
     <div class="tw-flex tw-flex-col">
       <button
         id="add-multiple-products"
-        onclick="handlePersonalizeVessel()"
         type="submit"
         name="add"
         disabled

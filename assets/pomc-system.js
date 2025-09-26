@@ -25,6 +25,8 @@
     multiplier: 1,
     activeVessel: 1,
     currentVesselCount: DEFAULT_VESSEL_COUNT,
+    selectedProductAmount: 2, // Default to 2 (most popular)
+    selectedProductAmountData: null, // Will store the product data for selected amount
     updateTimeout: null,
     validationTimeout: null,
     imageCache: new Map(),
@@ -83,6 +85,41 @@
     return null;
   }
 
+  function getProductAmountData(amount) {
+    // Use the global helper function if available, otherwise fallback to direct access
+    if (window.getProductAmountData && typeof window.getProductAmountData === 'function') {
+      return window.getProductAmountData(amount);
+    }
+    
+    // Fallback to direct access
+    if (!window.PRODUCT_AMOUNT_PRODUCTS || !window.PRODUCT_AMOUNT_PRODUCTS[amount]) {
+      return null;
+    }
+    
+    return window.PRODUCT_AMOUNT_PRODUCTS[amount];
+  }
+
+  function updateSelectedProductAmountData(amount) {
+    state.selectedProductAmount = amount;
+    state.selectedProductAmountData = getProductAmountData(amount);
+    
+    console.log('Updated selected product amount data:', {
+      amount: amount,
+      data: state.selectedProductAmountData
+    });
+    
+    // Save to storage
+    storage.save();
+    
+    // Dispatch event for mini ATC modal
+    document.dispatchEvent(new CustomEvent('pomcProductAmountChanged', {
+      detail: {
+        amount: amount,
+        data: state.selectedProductAmountData
+      }
+    }));
+  }
+
   function getFromCache(key, selector) {
     if (!state.domCache.has(key)) {
       const element = document.querySelector(selector);
@@ -113,7 +150,9 @@
           vesselSelections: state.vesselSelections,
           currentProductId: state.currentProductId,
           currentProductHandle: state.currentProductHandle,
-          multiplier: state.multiplier
+          multiplier: state.multiplier,
+          selectedProductAmount: state.selectedProductAmount,
+          selectedProductAmountData: state.selectedProductAmountData
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
       } catch (error) {
@@ -134,12 +173,16 @@
             state.currentProductId = parsed.currentProductId || null;
             state.currentProductHandle = parsed.currentProductHandle || null;
             state.multiplier = parsed.multiplier || 1;
+            state.selectedProductAmount = parsed.selectedProductAmount || 2;
+            state.selectedProductAmountData = parsed.selectedProductAmountData || null;
           } else {
             // Legacy structure - migrate old data
             state.vesselSelections = { ...DEFAULT_VESSEL_SELECTIONS, ...parsed };
             state.currentProductId = null;
             state.currentProductHandle = null;
             state.multiplier = 1;
+            state.selectedProductAmount = 2;
+            state.selectedProductAmountData = null;
           }
           return true;
         }
@@ -156,6 +199,8 @@
         state.currentProductId = null;
         state.currentProductHandle = null;
         state.multiplier = 1;
+        state.selectedProductAmount = 2;
+        state.selectedProductAmountData = null;
       } catch (error) {
         // Silent fail for storage issues
       }
@@ -868,6 +913,7 @@
         window.originalSetProductAmount(amount);
       }
       updateVesselTabVisibility(amount);
+      updateSelectedProductAmountData(parseInt(amount, 10));
     };
     
     return true;
@@ -892,6 +938,12 @@
     if (hasLoadedSelections) {
       restoreUIFromSelections();
     }
+    
+    // Initialize product amount data if not loaded from storage
+    if (!state.selectedProductAmountData) {
+      updateSelectedProductAmountData(state.selectedProductAmount);
+    }
+    
     updateSelectionDisplay(false);
     
     // Ensure button starts disabled
@@ -931,7 +983,11 @@
   // PUBLIC API
   // ========================================
   window.pomcSystem = {
-    getCurrentVesselSelection: () => state.vesselSelections[state.activeVessel],
+    getCurrentVesselSelection: () => ({
+      ...state.vesselSelections[state.activeVessel],
+      selectedProductAmount: state.selectedProductAmount,
+      selectedProductAmountData: state.selectedProductAmountData
+    }),
     getAllVesselSelections: () => ({ ...state.vesselSelections }),
     getVesselSelection: (vesselNumber) => state.vesselSelections[vesselNumber] || null,
     getCurrentProductId: () => state.currentProductId,
@@ -948,6 +1004,11 @@
     setMultiplier: function(multiplier) {
       state.multiplier = multiplier;
       storage.save();
+    },
+    getSelectedProductAmount: () => state.selectedProductAmount,
+    getSelectedProductAmountData: () => state.selectedProductAmountData,
+    setSelectedProductAmount: function(amount) {
+      updateSelectedProductAmountData(parseInt(amount, 10));
     },
     validateAllVesselsForAddToCart: validateAllVesselsForAddToCart,
     setVesselSelection: function(vesselNumber, woodType, ropeType, woodVariantId = null, ropeVariantId = null) {

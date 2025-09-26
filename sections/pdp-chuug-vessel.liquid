@@ -429,6 +429,9 @@
       // Update multiplier to match product amount
       window.pomcSystem.setMultiplier(parseInt(productAmount));
       
+      // Update selected product amount data for mini ATC modal
+      window.pomcSystem.setSelectedProductAmount(parseInt(productAmount));
+      
       const vesselValidation = window.pomcSystem.validateAllVesselsForAddToCart();
       const cta_button = document.querySelector('.cta-button');
       
@@ -545,6 +548,22 @@
   }
   setProductDataForPOMC();
 
+  // Add event listener for the button when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const addMultipleProductsBtn = document.getElementById('add-multiple-products');
+    if (addMultipleProductsBtn) {
+      addMultipleProductsBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        handlePersonalizeVessel();
+      });
+    }
+  });
+
+  // Also listen for when the modal system is ready
+  document.addEventListener('miniATCModalReady', function() {
+    console.log('Mini ATC Modal system is ready');
+  });
+
   function handlePersonalizeVessel() {
     // Log current POMC system data when add-multiple-products is clicked
     console.log('=== ADD-MULTIPLE-PRODUCTS CLICKED ===');
@@ -604,12 +623,12 @@
       return;
     }
 
-    // If not available, wait for script to load
-    console.warn('Mini ATC Modal JavaScript not loaded yet. Waiting for script...');
+    // If not available, wait for script to load with a more efficient approach
+    console.log('Mini ATC Modal JavaScript not loaded yet. Waiting for script...');
     
-    // Method 3: Wait for the script to load by checking periodically
+    // Method 3: Wait for the script to load by checking periodically (reduced retries)
     let retryCount = 0;
-    const maxRetries = 20; // 2 seconds max
+    const maxRetries = 10; // 1 second max (reduced from 2 seconds)
     
     const retryInterval = setInterval(() => {
       retryCount++;
@@ -621,14 +640,31 @@
       
       if (retryCount >= maxRetries) {
         clearInterval(retryInterval);
-        console.error('Mini ATC Modal JavaScript failed to load after 2 seconds');
+        console.warn('Mini ATC Modal JavaScript not ready after 1 second, using fallback');
         
         // Method 4: Fallback - try to manually trigger the modal
         console.log('Attempting manual modal trigger...');
         if (miniATCModal) {
-          miniATCModal.classList.add('mini-atc-modal--active');
-          miniATCModal.setAttribute('aria-hidden', 'false');
-          document.body.style.overflow = 'hidden';
+          // Try to find the modal instance and call open() properly
+          const modalInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
+          if (modalInstance && typeof modalInstance.open === 'function') {
+            console.log('Found modal instance, calling open() method');
+            modalInstance.open();
+          } else {
+            console.log('Modal instance not found, using CSS fallback');
+            miniATCModal.classList.add('mini-atc-modal--active');
+            miniATCModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Try to set isActive state on any available modal instance
+            setTimeout(() => {
+              const modalInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
+              if (modalInstance) {
+                console.log('Setting isActive state on modal instance');
+                modalInstance.isActive = true;
+              }
+            }, 50); // Reduced timeout
+          }
         }
       }
     }, 100);

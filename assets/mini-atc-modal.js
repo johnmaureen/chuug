@@ -399,12 +399,14 @@
   // ============================================
   
   class PricingCalculator extends EventEmitter {
-    constructor() {
+    constructor(modalInstance) {
       super();
+      this.modalInstance = modalInstance; // Reference to the modal instance
       this.basePrices = {
         product: 7800, // £78.00 in cents
         giftBox: 200,  // £2.00 in cents (fallback)
-        variant: 1299  // £12.99 in cents
+        variant: 1299, // £12.99 in cents
+        originalPrice: 18000 // £180.00 in cents (updated to match actual data)
       };
       this.dynamicPrices = {
         giftBox: null // Will be updated from product data
@@ -412,12 +414,47 @@
     }
 
     calculateTotal(state) {
-      let total = this.basePrices.product;
+      let total = 0;
+      let originalTotal = 0;
+      
+      // Calculate pricing based on POMC system vessel selections
+      if (window.pomcSystem) {
+        const vesselSelections = window.pomcSystem.getAllVesselSelections();
+        const multiplier = window.pomcSystem.getMultiplier();
+        const selectedProductAmountData = window.pomcSystem.getSelectedProductAmountData();
+        
+        console.log('Calculating pricing with POMC data:', {
+          multiplier,
+          selectedProductAmountData,
+          vesselSelections
+        });
+        
+        // Get pricing for the current vessel count (1x, 2x, or 3x)
+        const vesselPricing = this.getVesselPricingForMultiplier(multiplier);
+        if (vesselPricing) {
+          total = vesselPricing.price;
+          originalTotal = vesselPricing.originalPrice;
+          
+          console.log('Using vessel pricing:', vesselPricing);
+        } else {
+          console.log('No vessel pricing found, using fallback');
+        }
+      } else {
+        console.log('POMC system not available, using fallback pricing');
+      }
+      
+      // Fallback to base pricing if no POMC data
+      if (total === 0) {
+        total = this.basePrices.product;
+        originalTotal = this.basePrices.originalPrice;
+        console.log('Using fallback pricing:', { total, originalTotal });
+      }
       
       // Add gift box if enabled
       if (state.giftBox?.enabled) {
         const giftBoxPrice = this.dynamicPrices.giftBox || this.basePrices.giftBox;
         total += giftBoxPrice;
+        // Gift box doesn't affect original price
       }
       
       // Add mix & match variants
@@ -436,15 +473,14 @@
         });
       }
 
-      const originalPrice = 19000; // £190.00 in cents
-      const savings = originalPrice - total;
+      const savings = originalTotal - total;
 
       const pricingData = {
         total,
-        originalPrice,
+        originalPrice: originalTotal,
         savings,
         formattedTotal: Utils.formatPrice(total),
-        formattedOriginal: Utils.formatPrice(originalPrice),
+        formattedOriginal: Utils.formatPrice(originalTotal),
         formattedSavings: Utils.formatPrice(savings)
       };
 
@@ -453,9 +489,135 @@
       return { total, originalPrice, savings };
     }
 
+    getVesselPricing(selection) {
+      // Get pricing from the modal configuration that matches vessel-number-wrap
+      const config = this.modal.querySelector('[data-mini-atc-config]');
+      if (!config) {
+        return { price: 7800, originalPrice: 19000 };
+      }
+      
+      try {
+        const modalConfig = JSON.parse(config.textContent);
+        const vesselPricing = modalConfig.pricing?.vesselPricing;
+        
+        if (!vesselPricing) {
+          return { price: 7800, originalPrice: 19000 };
+        }
+        
+        // Get the current multiplier from POMC system
+        const multiplier = window.pomcSystem ? window.pomcSystem.getMultiplier() : 1;
+        const vesselKey = multiplier === 1 ? 'one' : multiplier === 2 ? 'two' : 'three';
+        
+        // Check if engraving is enabled (this would need to be determined from the current state)
+        // For now, we'll use noEngraving as default, but this should be dynamic
+        const engravingEnabled = this.isEngravingEnabled();
+        const priceKey = engravingEnabled ? 'engraving' : 'noEngraving';
+        const compareAtKey = engravingEnabled ? 'compareAtEngraving' : 'compareAtNoEngraving';
+        
+        const pricing = vesselPricing[vesselKey];
+        if (pricing) {
+          return {
+            price: pricing[priceKey] || 7800,
+            originalPrice: pricing[compareAtKey] || 19000
+          };
+        }
+      } catch (error) {
+        console.warn('Failed to parse modal configuration:', error);
+      }
+      
+      // Fallback pricing
+      return { price: this.basePrices.product, originalPrice: this.basePrices.originalPrice };
+    }
+    
+    
+    getVesselPricingForMultiplier(multiplier) {
+      console.log('getVesselPricingForMultiplier called with multiplier:', multiplier);
+      
+      // First try to get pricing from POMC system selectedProductAmountData
+      if (window.pomcSystem) {
+        const selectedProductAmountData = window.pomcSystem.getSelectedProductAmountData();
+        console.log('POMC selectedProductAmountData:', selectedProductAmountData);
+        
+        if (selectedProductAmountData) {
+          console.log('Using selectedProductAmountData for pricing:', selectedProductAmountData);
+          
+          // Check if engraving is enabled - we'll get this from the modal instance
+          const engravingEnabled = this.getEngravingState();
+          const variantIndex = engravingEnabled ? 1 : 0;
+          
+          // Get the variant data
+          const variant = selectedProductAmountData.variants[variantIndex];
+          const price = variant?.price || selectedProductAmountData.price || 7800;
+          const compareAtPrice = variant?.compare_at_price || selectedProductAmountData.compare_at_price || 18000;
+          
+          console.log('Variant pricing data:', {
+            variantIndex,
+            engravingEnabled,
+            variant,
+            price,
+            compareAtPrice,
+            selectedProductAmountData,
+            formattedPrice: Utils.formatPrice(price),
+            formattedCompareAtPrice: Utils.formatPrice(compareAtPrice)
+          });
+          
+          return {
+            price: price,
+            originalPrice: compareAtPrice
+          };
+        }
+      }
+      
+      // Fallback to modal configuration
+      const config = this.modal.querySelector('[data-mini-atc-config]');
+      if (!config) {
+        return { price: 7800, originalPrice: 19000 };
+      }
+      
+      try {
+        const modalConfig = JSON.parse(config.textContent);
+        const vesselPricing = modalConfig.pricing?.vesselPricing;
+        
+        if (!vesselPricing) {
+          return { price: 7800, originalPrice: 19000 };
+        }
+        
+        // Get the vessel key based on multiplier
+        const vesselKey = multiplier === 1 ? 'one' : multiplier === 2 ? 'two' : 'three';
+        
+            // Check if engraving is enabled
+            const engravingEnabled = this.getEngravingState();
+            const priceKey = engravingEnabled ? 'engraving' : 'noEngraving';
+            const compareAtKey = engravingEnabled ? 'compareAtEngraving' : 'compareAtNoEngraving';
+        
+        const pricing = vesselPricing[vesselKey];
+        if (pricing) {
+          return {
+            price: pricing[priceKey] || 7800,
+            originalPrice: pricing[compareAtKey] || 19000
+          };
+        }
+      } catch (error) {
+        console.warn('Failed to parse modal configuration:', error);
+      }
+      
+      // Fallback pricing
+      return { price: this.basePrices.product, originalPrice: this.basePrices.originalPrice };
+    }
+
     updateGiftBoxPrice(priceInCents) {
       this.dynamicPrices.giftBox = priceInCents;
       console.log('Updated gift box price:', priceInCents);
+    }
+    
+    getEngravingState() {
+      // Default to false if no modal instance
+      if (!this.modalInstance) {
+        return false;
+      }
+      
+      // Use the modal instance's method
+      return this.modalInstance.isEngravingEnabled();
     }
   }
 
@@ -474,7 +636,7 @@
       
       // Initialize components
       this.state = new PersonalizationState();
-      this.pricing = new PricingCalculator();
+      this.pricing = new PricingCalculator(this); // Pass modal instance to pricing calculator
       this.swiper = null;
       this.countdown = null;
       
@@ -523,6 +685,9 @@
       
       // Pricing events
       this.pricing.on('priceCalculated', this.updatePricingDisplay.bind(this));
+      
+      // Listen for POMC system changes to update pricing
+      this.setupPOMCIntegration();
     }
 
     initializeComponents() {
@@ -553,6 +718,14 @@
       const closeButton = this.modal.querySelector('[data-modal-close]');
       if (closeButton) {
         closeButton.setAttribute('aria-label', closeButton.getAttribute('aria-label') || 'Close modal');
+        
+        // Add direct event listener as backup
+        closeButton.addEventListener('click', (event) => {
+          console.log('Direct close button click detected');
+          event.preventDefault();
+          event.stopPropagation();
+          this.close();
+        });
       }
     }
 
@@ -577,14 +750,21 @@
     }
 
     handleModalClick(event) {
+      console.log('Modal click detected:', event.target, event.target.classList);
+      
       // Handle overlay clicks
       if (event.target.classList.contains('mini-atc-modal__overlay')) {
+        console.log('Overlay click detected, closing modal');
         this.close();
         return;
       }
 
       // Handle close button clicks
-      if (event.target.closest('[data-modal-close]')) {
+      const closeButton = event.target.closest('[data-modal-close]');
+      if (closeButton) {
+        console.log('Close button click detected, closing modal');
+        event.preventDefault();
+        event.stopPropagation();
         this.close();
         return;
       }
@@ -1163,8 +1343,108 @@
     }
 
     calculatePricing() {
+      console.log('MiniATCModal.calculatePricing() called');
       const state = this.state.getState();
       this.pricing.calculateTotal(state);
+    }
+
+    setupPOMCIntegration() {
+      // Listen for POMC system changes and update pricing
+      if (window.pomcSystem) {
+        // Create a custom event listener for POMC changes
+        const updatePricingFromPOMC = (event) => {
+          console.log('POMC system changed, updating modal pricing', event?.detail);
+          this.calculatePricing();
+        };
+
+        // Listen for vessel selection changes
+        document.addEventListener('pomcVesselSelectionChanged', updatePricingFromPOMC);
+        document.addEventListener('pomcMultiplierChanged', updatePricingFromPOMC);
+        document.addEventListener('pomcProductAmountChanged', updatePricingFromPOMC);
+        
+        // Also listen for the modal opening to ensure pricing is current
+        this.modal.addEventListener('modalOpened', () => {
+          setTimeout(updatePricingFromPOMC, 100); // Small delay to ensure POMC is ready
+        });
+        
+        // Listen for storage changes (when POMC data is updated)
+        window.addEventListener('storage', (event) => {
+          if (event.key === 'chuug_vessel_selections') {
+            console.log('POMC storage changed, updating modal pricing');
+            updatePricingFromPOMC();
+          }
+        });
+      }
+    }
+    
+    setupEngravingToggleListener() {
+      console.log('Setting up engraving toggle listener...');
+      const engravingToggle = this.modal.querySelector('[data-personalization-toggle="engraving"]');
+      
+      if (engravingToggle) {
+        console.log('Found engraving toggle:', engravingToggle);
+        console.log('Current toggle state:', engravingToggle.checked);
+        
+        // Remove any existing listeners to avoid duplicates
+        engravingToggle.removeEventListener('change', this.handleEngravingToggleChange);
+        
+        // Add the new listener
+        this.handleEngravingToggleChange = (event) => {
+          console.log('Engraving toggle changed:', event.target.checked);
+          this.calculatePricing();
+        };
+        
+        engravingToggle.addEventListener('change', this.handleEngravingToggleChange);
+        
+        console.log('Engraving toggle listener set up successfully');
+      } else {
+        console.warn('Engraving toggle not found in modal. Available elements:', 
+          Array.from(this.modal.querySelectorAll('input[type="checkbox"]')).map(el => ({
+            id: el.id,
+            dataAttr: el.getAttribute('data-personalization-toggle'),
+            checked: el.checked
+          }))
+        );
+      }
+    }
+    
+    isEngravingEnabled() {
+      // First check the mini ATC modal engraving toggle
+      const engravingToggle = this.modal.querySelector('[data-personalization-toggle="engraving"]');
+      if (engravingToggle) {
+        const toggleEnabled = engravingToggle.checked;
+        console.log('Engraving toggle state:', toggleEnabled);
+        return toggleEnabled;
+      }
+      
+      // Fallback to modal state
+      const state = this.state.getState();
+      const engravingEnabled = state.personalization?.engraving?.enabled || false;
+      
+      // Also check the main product page variant index for consistency
+      const inputs = document.querySelectorAll('.inputs');
+      if (inputs.length > 0) {
+        const variantIndex = parseInt(inputs[0].getAttribute('variant_index'), 10);
+        const mainPageEngravingEnabled = variantIndex === 1;
+        
+        console.log('Engraving state check:', {
+          modalToggle: engravingToggle?.checked,
+          modalState: engravingEnabled,
+          mainPageVariantIndex: variantIndex,
+          mainPageEngraving: mainPageEngravingEnabled,
+          usingToggle: engravingToggle?.checked
+        });
+        
+        // Use the toggle state as the source of truth if available
+        if (engravingToggle) {
+          return engravingToggle.checked;
+        }
+        
+        // Otherwise use the main page state
+        return mainPageEngravingEnabled;
+      }
+      
+      return engravingEnabled;
     }
 
     async initializeGiftBoxPricing() {
@@ -1184,6 +1464,8 @@
     }
 
     updatePricingDisplay(pricing) {
+      console.log('Updating pricing display:', pricing);
+      
       // Try multiple selectors to find the price elements
       const currentPriceEl = this.modal.querySelector('[data-current-price]') || 
                             this.modal.querySelector('.mini-atc-modal__current-price');
@@ -1193,14 +1475,40 @@
                        this.modal.querySelector('.mini-atc-modal__savings-text');
 
       if (currentPriceEl) {
-        currentPriceEl.textContent = pricing.formattedTotal;
+        // Update the placeholder span inside the price element
+        const placeholder = currentPriceEl.querySelector('.pricing-placeholder');
+        if (placeholder) {
+          placeholder.textContent = pricing.formattedTotal;
+          console.log('Updated current price:', pricing.formattedTotal);
+        } else {
+          currentPriceEl.textContent = pricing.formattedTotal;
+          console.log('Updated current price (no placeholder):', pricing.formattedTotal);
+        }
       }
       
       if (originalPriceEl) {
-        originalPriceEl.textContent = pricing.formattedOriginal;
+        // Update the placeholder span inside the price element
+        const placeholder = originalPriceEl.querySelector('.pricing-placeholder');
+        if (placeholder) {
+          placeholder.textContent = pricing.formattedOriginal;
+          console.log('Updated original price:', pricing.formattedOriginal);
+        } else {
+          originalPriceEl.textContent = pricing.formattedOriginal;
+          console.log('Updated original price (no placeholder):', pricing.formattedOriginal);
+        }
       }
       
-      // Keep savings static - don't update
+      if (savingsEl) {
+        // Update the savings text
+        const placeholder = savingsEl.querySelector('.pricing-placeholder');
+        if (placeholder) {
+          placeholder.textContent = `You Saved ${pricing.formattedSavings}`;
+          console.log('Updated savings:', `You Saved ${pricing.formattedSavings}`);
+        } else {
+          savingsEl.textContent = `You Saved ${pricing.formattedSavings}`;
+          console.log('Updated savings (no placeholder):', `You Saved ${pricing.formattedSavings}`);
+        }
+      }
     }
 
     switchView(viewName) {
@@ -1283,12 +1591,24 @@
       
       this.isActive = true;
       this.emit('modalOpened');
+      
+      // Dispatch modal opened event for POMC integration
+      this.modal.dispatchEvent(new CustomEvent('modalOpened'));
 
       // Fetch vessel selections data and update product images
       this.fetchVesselSelectionsAndUpdateImages();
 
       // Calculate initial pricing
       this.calculatePricing();
+
+      // Setup engraving toggle listener now that modal is visible
+      this.setupEngravingToggleListener();
+      
+      // Force pricing refresh to ensure it's up to date with any changes made while modal was closed
+      setTimeout(() => {
+        console.log('Modal opened - forcing pricing refresh');
+        this.calculatePricing();
+      }, 200);
 
       // Initialize components that need the modal to be visible
       setTimeout(() => {
@@ -1299,8 +1619,17 @@
     }
 
     close() {
-      if (!this.isActive) return;
+      console.log('Close method called, isActive:', this.isActive);
+      
+      // Check if modal is visually active (either through isActive state or CSS class)
+      const isVisuallyActive = this.isActive || this.modal.classList.contains('mini-atc-modal--active');
+      
+      if (!isVisuallyActive) {
+        console.log('Modal is not active, ignoring close request');
+        return;
+      }
 
+      console.log('Closing modal...');
       this.modal.classList.remove('mini-atc-modal--active');
       this.modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
@@ -1316,6 +1645,7 @@
       
       this.isActive = false;
       this.emit('modalClosed');
+      console.log('Modal closed successfully');
     }
 
     proceedToCheckout() {
@@ -1423,6 +1753,15 @@
   } else {
     initializeModals();
   }
+
+  // Dispatch custom event when modal system is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      if (window.MiniATCModal) {
+        document.dispatchEvent(new CustomEvent('miniATCModalReady'));
+      }
+    }, 100);
+  });
 
   // Global functions for backward compatibility and external triggers
   window.openMiniATCModal = function(modalId) {
