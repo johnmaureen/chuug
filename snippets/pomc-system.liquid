@@ -18,6 +18,16 @@
     midnight_charcoal: {{ midnight_charcoal.id | json }},
     midnight_natural: {{ midnight_natural.id | json }}
   };
+  
+  // Make product handles available to JavaScript
+  window.PRODUCT_HANDLES = {
+    dusk_charcoal: {{ dusk_charcoal.handle | json }},
+    dusk_natural: {{ dusk_natural.handle | json }},
+    dawn_charcoal: {{ dawn_charcoal.handle | json }},
+    dawn_natural: {{ dawn_natural.handle | json }},
+    midnight_charcoal: {{ midnight_charcoal.handle | json }},
+    midnight_natural: {{ midnight_natural.handle | json }}
+  };
 </script>
 
 <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">

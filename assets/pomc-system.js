@@ -10,9 +10,9 @@
   const VALIDATION_DELAY = 200;
   
   const DEFAULT_VESSEL_SELECTIONS = {
-    1: { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null },
-    2: { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null },
-    3: { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null }
+    1: { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null, productHandle: null },
+    2: { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null, productHandle: null },
+    3: { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null, productHandle: null }
   };
 
   // ========================================
@@ -21,6 +21,7 @@
   let state = {
     vesselSelections: { ...DEFAULT_VESSEL_SELECTIONS },
     currentProductId: null,
+    currentProductHandle: null,
     multiplier: 1,
     activeVessel: 1,
     currentVesselCount: DEFAULT_VESSEL_COUNT,
@@ -62,6 +63,26 @@
     return null;
   }
 
+  function getProductHandleForCombination(woodType, ropeType) {
+    // Product handle mapping based on wood/rope combinations
+    const productHandleMapping = {
+      'DUSK_CHARCOAL': window.PRODUCT_HANDLES?.dusk_charcoal || null,
+      'DUSK_NATURAL': window.PRODUCT_HANDLES?.dusk_natural || null,
+      'DAWN_CHARCOAL': window.PRODUCT_HANDLES?.dawn_charcoal || null,
+      'DAWN_NATURAL': window.PRODUCT_HANDLES?.dawn_natural || null,
+      'MIDNIGHT_CHARCOAL': window.PRODUCT_HANDLES?.midnight_charcoal || null,
+      'MIDNIGHT_NATURAL': window.PRODUCT_HANDLES?.midnight_natural || null
+    };
+
+    if (woodType && ropeType) {
+      const combination = `${woodType.toUpperCase()}_${ropeType.toUpperCase()}`;
+      console.log('Looking for product handle for combination:', combination, 'Found:', productHandleMapping[combination]);
+      return productHandleMapping[combination] || null;
+    }
+    
+    return null;
+  }
+
   function getFromCache(key, selector) {
     if (!state.domCache.has(key)) {
       const element = document.querySelector(selector);
@@ -91,6 +112,7 @@
         const dataToSave = {
           vesselSelections: state.vesselSelections,
           currentProductId: state.currentProductId,
+          currentProductHandle: state.currentProductHandle,
           multiplier: state.multiplier
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
@@ -110,11 +132,13 @@
             // New structure
             state.vesselSelections = { ...DEFAULT_VESSEL_SELECTIONS, ...parsed.vesselSelections };
             state.currentProductId = parsed.currentProductId || null;
+            state.currentProductHandle = parsed.currentProductHandle || null;
             state.multiplier = parsed.multiplier || 1;
           } else {
             // Legacy structure - migrate old data
             state.vesselSelections = { ...DEFAULT_VESSEL_SELECTIONS, ...parsed };
             state.currentProductId = null;
+            state.currentProductHandle = null;
             state.multiplier = 1;
           }
           return true;
@@ -130,6 +154,7 @@
         localStorage.removeItem(STORAGE_KEY);
         state.vesselSelections = { ...DEFAULT_VESSEL_SELECTIONS };
         state.currentProductId = null;
+        state.currentProductHandle = null;
         state.multiplier = 1;
       } catch (error) {
         // Silent fail for storage issues
@@ -152,10 +177,12 @@
       }
     }
     
-    // Update product ID based on wood/rope combination
+    // Update product ID and handle based on wood/rope combination
     const selection = state.vesselSelections[vesselNumber];
     const productId = getProductIdForCombination(selection.woodType, selection.ropeType);
+    const productHandle = getProductHandleForCombination(selection.woodType, selection.ropeType);
     state.vesselSelections[vesselNumber].productId = productId;
+    state.vesselSelections[vesselNumber].productHandle = productHandle;
     
     // Debug logging
     console.log(`Vessel ${vesselNumber} selection updated:`, {
@@ -720,7 +747,7 @@
     // Clear selections for vessels beyond the new vessel count
     for (let i = vesselCountNum + 1; i <= 3; i++) {
       if (state.vesselSelections[i] && (state.vesselSelections[i].woodType || state.vesselSelections[i].ropeType)) {
-        state.vesselSelections[i] = { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null };
+        state.vesselSelections[i] = { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null, productHandle: null };
         
         // Clear UI state for this vessel
         state.vesselUIState.delete(i);
@@ -912,6 +939,11 @@
       state.currentProductId = productId;
       storage.save();
     },
+    getCurrentProductHandle: () => state.currentProductHandle,
+    setCurrentProductHandle: function(productHandle) {
+      state.currentProductHandle = productHandle;
+      storage.save();
+    },
     getMultiplier: () => state.multiplier,
     setMultiplier: function(multiplier) {
       state.multiplier = multiplier;
@@ -925,9 +957,11 @@
         state.vesselSelections[vesselNumber].woodVariantId = woodVariantId;
         state.vesselSelections[vesselNumber].ropeVariantId = ropeVariantId;
         
-        // Update product ID based on wood/rope combination
+        // Update product ID and handle based on wood/rope combination
         const productId = getProductIdForCombination(woodType, ropeType);
+        const productHandle = getProductHandleForCombination(woodType, ropeType);
         state.vesselSelections[vesselNumber].productId = productId;
+        state.vesselSelections[vesselNumber].productHandle = productHandle;
         
         const vesselPanel = document.getElementById(`tab${vesselNumber}`);
         if (vesselPanel) {
@@ -962,7 +996,7 @@
     },
     clearVesselSelection: function(vesselNumber) {
       if (vesselNumber >= 1 && vesselNumber <= 3) {
-        state.vesselSelections[vesselNumber] = { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null };
+        state.vesselSelections[vesselNumber] = { woodType: null, ropeType: null, woodVariantId: null, ropeVariantId: null, productId: null, productHandle: null };
         state.vesselUIState.delete(vesselNumber);
         
         const vesselPanel = document.getElementById(`tab${vesselNumber}`);

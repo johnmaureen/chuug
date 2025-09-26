@@ -522,17 +522,21 @@
   window.hideVesselValidationError = hideVesselValidationError;
   window.thereAreNoIncompleteInputs = thereAreNoIncompleteInputs;
   
-  // Set current product ID for POMC system (with retry mechanism)
-  function setProductIdForPOMC() {
+  // Set current product ID and handle for POMC system (with retry mechanism)
+  function setProductDataForPOMC() {
     if (window.pomcSystem) {
       window.pomcSystem.setCurrentProductId({{ product.id }});
-      console.log('Product ID set for POMC system:', {{ product.id }});
+      window.pomcSystem.setCurrentProductHandle('{{ product.handle }}');
+      console.log('Product data set for POMC system:', {
+        id: {{ product.id }},
+        handle: '{{ product.handle }}'
+      });
     } else {
       // Retry if POMC system not ready yet
-      setTimeout(setProductIdForPOMC, 100);
+      setTimeout(setProductDataForPOMC, 100);
     }
   }
-  setProductIdForPOMC();
+  setProductDataForPOMC();
 
   function handlePersonalizeVessel() {
     // Log current POMC system data when add-multiple-products is clicked

@@ -751,6 +751,407 @@
       }
     }
 
+    async fetchVesselSelectionsAndUpdateImages() {
+      try {
+        // Show loading state
+        this.showImageLoader();
+
+        // Get vessel selections from POMC system
+        if (!window.pomcSystem) {
+          console.warn('POMC System not available for fetching vessel selections');
+          this.hideImageLoader();
+          return;
+        }
+
+        const allVesselSelections = window.pomcSystem.getAllVesselSelections();
+        console.log('Fetched vessel selections:', allVesselSelections);
+        
+        // Extract product handles from vessel selections
+        const productHandles = [];
+        Object.values(allVesselSelections).forEach(selection => {
+          if (selection.productHandle) {
+            productHandles.push(selection.productHandle);
+          }
+        });
+
+        if (productHandles.length === 0) {
+          console.log('No product handles found in vessel selections');
+          this.hideImageLoader();
+          return;
+        }
+
+        console.log('Product handles to fetch:', productHandles);
+
+        // Fetch product data for each product handle
+        const productPromises = productHandles.map(productHandle => 
+          this.fetchProductDataByHandle(productHandle)
+        );
+
+        const products = await Promise.all(productPromises);
+        const validProducts = products.filter(product => product !== null);
+
+        console.log('Fetched products:', validProducts);
+        
+        // Log media information for each product
+        validProducts.forEach((product, index) => {
+          console.log(`Product ${index + 1} (${product.title}):`, {
+            id: product.id,
+            handle: product.handle,
+            images: product.images,
+            media: product.media,
+            featured_image: product.featured_image,
+            image_count: product.images ? product.images.length : 0,
+            media_count: product.media ? product.media.length : 0
+          });
+        });
+
+        // Update the product image slider with the first image from each product
+        this.updateProductImageSlider(validProducts);
+
+        // Hide loading state
+        this.hideImageLoader();
+
+      } catch (error) {
+        console.error('Error fetching vessel selections and updating images:', error);
+        this.hideImageLoader();
+      }
+    }
+
+    async fetchProductDataFromVariant(variantId) {
+      try {
+        // First, get the variant data to find the product ID
+        const variantResponse = await fetch(`/variants/${variantId}.js`);
+        if (!variantResponse.ok) {
+          throw new Error(`Failed to fetch variant ${variantId}: ${variantResponse.status}`);
+        }
+        
+        const variantData = await variantResponse.json();
+        console.log(`Variant ${variantId} data:`, variantData);
+        
+        // Check what properties are available in the variant data
+        console.log(`Variant ${variantId} keys:`, Object.keys(variantData));
+        
+        // Try different possible property names for product ID
+        const productId = variantData.product_id || variantData.productId || variantData.product?.id;
+        
+        if (!productId) {
+          console.error(`No product ID found in variant ${variantId} data:`, variantData);
+          return null;
+        }
+        
+        console.log(`Found product ID: ${productId} for variant ${variantId}`);
+        
+        // Now get the product data using the product ID from the variant
+        const productResponse = await fetch(`/products/${productId}.js`);
+        if (!productResponse.ok) {
+          throw new Error(`Failed to fetch product ${productId}: ${productResponse.status}`);
+        }
+        
+        const productData = await productResponse.json();
+        console.log(`Product ${productId} data:`, productData);
+        
+        return productData;
+      } catch (error) {
+        console.error(`Error fetching product from variant ${variantId}:`, error);
+        return null;
+      }
+    }
+
+
+    async fetchProductDataByHandle(productHandle) {
+      try {
+        console.log(`Fetching product ${productHandle} via AJAX API...`);
+        
+        const response = await fetch(`/products/${productHandle}.js`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch product ${productHandle}: ${response.status}`);
+        }
+        
+        const productData = await response.json();
+        console.log(`✅ Found product ${productHandle}:`, productData);
+        
+        return productData;
+      } catch (error) {
+        console.error(`Error fetching product ${productHandle}:`, error);
+        return null;
+      }
+    }
+
+    async fetchProductData(productId) {
+      try {
+        console.log(`Fetching product ${productId} via AJAX API...`);
+        
+        const response = await fetch(`/products.json?ids=${productId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch product ${productId}: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log(`Raw API response for ${productId}:`, data);
+        
+        if (data.products && data.products.length > 0) {
+          // Find the specific product by ID
+          const targetProduct = data.products.find(product => 
+            product.id.toString() === productId.toString()
+          );
+          
+          if (targetProduct) {
+            console.log(`✅ Found specific product ${productId}:`, targetProduct);
+            return targetProduct;
+          } else {
+            console.log(`❌ Product ${productId} not found in response. Available IDs:`, 
+              data.products.map(p => p.id));
+            return null;
+          }
+        } else {
+          throw new Error(`Product ${productId} not found`);
+        }
+      } catch (error) {
+        console.error(`Error fetching product ${productId}:`, error);
+        return null;
+      }
+    }
+
+    async fetchProductViaStorefrontAPI(productId) {
+      try {
+        // Convert numeric product ID to Shopify Global ID format
+        const globalId = `gid://shopify/Product/${productId}`;
+        
+        const query = `
+          query getProduct($id: ID!) {
+            product(id: $id) {
+              id
+              title
+              handle
+              description
+              images(first: 10) {
+                edges {
+                  node {
+                    id
+                    url
+                    altText
+                    width
+                    height
+                  }
+                }
+              }
+              variants(first: 10) {
+                edges {
+                  node {
+                    id
+                    title
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    availableForSale
+                  }
+                }
+              }
+            }
+          }
+        `;
+
+        const response = await fetch('/api/2023-10/graphql.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Storefront-Access-Token': window.Shopify?.storefrontAccessToken || ''
+          },
+          body: JSON.stringify({
+            query: query,
+            variables: { id: globalId }
+          })
+        });
+
+        if (!response.ok) {
+          console.log(`Storefront API failed for ${productId}: ${response.status}`);
+          return null;
+        }
+
+        const data = await response.json();
+        
+        if (data.errors) {
+          console.log(`Storefront API errors for ${productId}:`, data.errors);
+          return null;
+        }
+
+        if (data.data?.product) {
+          const product = data.data.product;
+          
+          // Transform to match expected format
+          const transformedProduct = {
+            id: product.id.replace('gid://shopify/Product/', ''),
+            title: product.title,
+            handle: product.handle,
+            description: product.description,
+            images: product.images.edges.map(edge => ({
+              src: edge.node.url,
+              alt: edge.node.altText,
+              width: edge.node.width,
+              height: edge.node.height
+            })),
+            variants: product.variants.edges.map(edge => ({
+              id: edge.node.id.replace('gid://shopify/ProductVariant/', ''),
+              title: edge.node.title,
+              price: edge.node.price.amount,
+              currency: edge.node.price.currencyCode,
+              available: edge.node.availableForSale
+            }))
+          };
+
+          console.log(`✅ Storefront API success for ${productId}:`, transformedProduct);
+          return transformedProduct;
+        }
+
+        console.log(`No product found via Storefront API for ${productId}`);
+        return null;
+      } catch (error) {
+        console.log(`Storefront API error for ${productId}:`, error.message);
+        return null;
+      }
+    }
+
+    updateProductImageSlider(products) {
+      const swiperContainer = this.modal.querySelector('.mini-atc-product-swiper');
+      const swiperWrapper = swiperContainer?.querySelector('.swiper-wrapper');
+      const imageDots = this.modal.querySelector('.mini-atc-modal__image-dots');
+
+      if (!swiperWrapper || !imageDots) {
+        console.warn('Swiper container or dots not found');
+        return;
+      }
+
+      // Clear all existing slides and dots
+      swiperWrapper.innerHTML = '';
+      imageDots.innerHTML = '';
+
+      // Add slides and dots for each product
+      products.forEach((product, index) => {
+        if (product.images && product.images.length > 0) {
+          // Get the main/featured image (first image is typically the main image)
+          const mainImage = product.images[0];
+          const imageUrl = mainImage.src || mainImage;
+
+          // Create new slide
+          const newSlide = document.createElement('div');
+          newSlide.className = 'swiper-slide';
+          newSlide.setAttribute('data-image-type', 'selection');
+          
+          newSlide.innerHTML = `
+            <div class="product-image-wrap">
+              <div class="img-wrap">
+                <img 
+                  src="${imageUrl}" 
+                  alt="${product.title || `Product ${index + 1}`}" 
+                  width="400" 
+                  height="400"
+                  data-selection-image
+                />
+              </div>
+            </div>
+          `;
+
+          swiperWrapper.appendChild(newSlide);
+
+          // Create new dot
+          const newDot = document.createElement('button');
+          newDot.className = index === 0 ? 'dot active' : 'dot';
+          newDot.setAttribute('data-slide', index);
+          newDot.setAttribute('aria-label', `View product image ${index + 1}`);
+
+          imageDots.appendChild(newDot);
+        }
+      });
+
+      // Update swiper if it exists
+      if (this.swiper && this.swiper.swiper) {
+        this.swiper.swiper.update();
+      }
+
+      console.log(`Updated product image slider with ${products.length} products`);
+    }
+
+    showImageLoader() {
+      const swiperContainer = this.modal.querySelector('.mini-atc-product-swiper');
+      const swiperWrapper = swiperContainer?.querySelector('.swiper-wrapper');
+      
+      if (!swiperWrapper) return;
+
+      // Create or show loading overlay
+      let loader = swiperContainer.querySelector('.image-loader');
+      if (!loader) {
+        loader = document.createElement('div');
+        loader.className = 'image-loader';
+        loader.innerHTML = `
+          <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <p class="loader-text">Loading product images...</p>
+          </div>
+        `;
+        swiperContainer.appendChild(loader);
+      }
+
+      // Add loading styles if not already present
+      if (!document.querySelector('#mini-atc-loader-styles')) {
+        const style = document.createElement('style');
+        style.id = 'mini-atc-loader-styles';
+        style.textContent = `
+          .image-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 8px;
+          }
+          
+          .loader-content {
+            text-align: center;
+            color: #333;
+          }
+          
+          .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0D2026;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+          }
+          
+          .loader-text {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      loader.style.display = 'flex';
+    }
+
+    hideImageLoader() {
+      const swiperContainer = this.modal.querySelector('.mini-atc-product-swiper');
+      const loader = swiperContainer?.querySelector('.image-loader');
+      
+      if (loader) {
+        loader.style.display = 'none';
+      }
+    }
+
     calculatePricing() {
       const state = this.state.getState();
       this.pricing.calculateTotal(state);
@@ -856,6 +1257,9 @@
       
       this.isActive = true;
       this.emit('modalOpened');
+
+      // Fetch vessel selections data and update product images
+      this.fetchVesselSelectionsAndUpdateImages();
 
       // Calculate initial pricing
       this.calculatePricing();
