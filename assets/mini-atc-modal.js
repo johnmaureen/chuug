@@ -415,7 +415,6 @@
       let total = 0;
       let originalTotal = 0;
       
-      console.log('Starting pricing calculation with state:', state);
       
       // Calculate pricing based on POMC system vessel selections
       if (window.pomcSystem) {
@@ -429,7 +428,6 @@
         if (vesselPricing) {
           total = vesselPricing.price;
           originalTotal = vesselPricing.originalPrice;
-          console.log('Using vessel pricing:', vesselPricing, 'Total after vessel pricing:', total);
         }
       }
       
@@ -437,20 +435,16 @@
       if (total === 0) {
         total = this.basePrices.product;
         originalTotal = this.basePrices.originalPrice;
-        console.log('Using fallback pricing:', { total, originalTotal });
       }
       
       // Handle gift box pricing
-      console.log('Gift box state:', state.giftBox);
       const giftBoxPrice = this.dynamicPrices.giftBox || this.basePrices.giftBox;
       
       if (state.giftBox?.enabled) {
         // Gift box is enabled - add the gift box price to POMC price
         total += giftBoxPrice;
-        console.log('Gift box enabled - adding price:', giftBoxPrice, 'New total:', total);
       } else {
         // Gift box is disabled - keep the original POMC price
-        console.log('Gift box disabled - keeping original POMC price:', total);
       }
       
       // Add mix & match variants
@@ -480,7 +474,6 @@
         formattedSavings: Utils.formatPrice(savings)
       };
 
-      console.log('Final pricing data:', pricingData);
       this.emit('priceCalculated', pricingData);
 
       return { total, originalPrice: originalTotal, savings };
@@ -651,7 +644,6 @@
       
       // Toggle events
       this.modal.addEventListener('change', (event) => {
-        console.log('Modal change event fired:', event.target, event.target.type);
         this.handleToggleChange(event);
       });
       
@@ -765,9 +757,7 @@
     }
 
     handleToggleChange(event) {
-      console.log('Toggle change event triggered:', event.target);
       const toggle = event.target.closest('[data-personalization-toggle], [data-addon-toggle], [data-vessel-toggle], [data-gift-box-variant-id]');
-      console.log('Toggle element found:', toggle);
       if (!toggle) return;
 
 
@@ -778,10 +768,7 @@
         const type = toggle.getAttribute('data-addon-toggle');
         // Handle gift box toggle specifically with correct key
         if (type === 'gift-box') {
-          console.log('Premium gift box toggle changed:', toggle.checked);
-          console.log('Updating giftBox state to enabled:', toggle.checked);
           this.state.updatePersonalization('giftBox', { enabled: toggle.checked });
-          console.log('Gift box state after update:', this.state.getState().giftBox);
         } else {
           this.state.updatePersonalization(type, { enabled: toggle.checked });
         }
@@ -1469,55 +1456,30 @@
       const savingsEl = this.modal.querySelector('[data-savings-amount]') || 
                        this.modal.querySelector('.mini-atc-modal__savings-text');
       
-      console.log('Price elements found:', {
-        currentPriceEl: !!currentPriceEl,
-        originalPriceEl: !!originalPriceEl,
-        savingsEl: !!savingsEl,
-        modal: this.modal,
-        modalId: this.modal.id,
-        modalClasses: this.modal.className
-      });
       
       // Check if there are multiple modals
       const allModals = document.querySelectorAll('.mini-atc-modal');
-      console.log('All modals found:', allModals.length, Array.from(allModals).map(m => ({ id: m.id, classes: m.className })));
       
       // Check all price elements on the page
       const allPriceElements = document.querySelectorAll('.mini-atc-modal__current-price, [data-current-price]');
-      console.log('All price elements on page:', allPriceElements.length, Array.from(allPriceElements).map(el => ({
-        text: el.textContent,
-        placeholder: el.querySelector('.pricing-placeholder')?.textContent,
-        id: el.id,
-        classes: el.className
-      })));
 
       if (currentPriceEl) {
         // Update the placeholder span inside the price element
         const placeholder = currentPriceEl.querySelector('.pricing-placeholder');
-        console.log('Current price element found:', currentPriceEl);
-        console.log('Placeholder element found:', placeholder);
-        console.log('Current placeholder text:', placeholder?.textContent);
         
         if (placeholder) {
           // Check if the text is actually different before updating
           if (placeholder.textContent !== pricing.formattedTotal) {
             placeholder.textContent = pricing.formattedTotal;
-            console.log('Updated placeholder text to:', pricing.formattedTotal);
-            console.log('Placeholder text after update:', placeholder.textContent);
           } else {
-            console.log('Placeholder text already correct:', pricing.formattedTotal);
           }
         } else {
           if (currentPriceEl.textContent !== pricing.formattedTotal) {
             currentPriceEl.textContent = pricing.formattedTotal;
-            console.log('Updated current price element text to:', pricing.formattedTotal);
           } else {
-            console.log('Current price element text already correct:', pricing.formattedTotal);
           }
         }
-        console.log('Updated mini-atc-modal__current-price:', pricing.formattedTotal);
       } else {
-        console.log('No current price element found');
       }
       
       if (originalPriceEl) {

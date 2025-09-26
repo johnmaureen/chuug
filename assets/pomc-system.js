@@ -58,7 +58,6 @@
 
     if (woodType && ropeType) {
       const combination = `${woodType.toUpperCase()}_${ropeType.toUpperCase()}`;
-      console.log('Looking for product ID for combination:', combination, 'Found:', productMapping[combination]);
       return productMapping[combination] || null;
     }
     
@@ -78,7 +77,6 @@
 
     if (woodType && ropeType) {
       const combination = `${woodType.toUpperCase()}_${ropeType.toUpperCase()}`;
-      console.log('Looking for product handle for combination:', combination, 'Found:', productHandleMapping[combination]);
       return productHandleMapping[combination] || null;
     }
     
@@ -103,10 +101,6 @@
     state.selectedProductAmount = amount;
     state.selectedProductAmountData = getProductAmountData(amount);
     
-    console.log('Updated selected product amount data:', {
-      amount: amount,
-      data: state.selectedProductAmountData
-    });
     
     // Save to storage
     storage.save();
@@ -230,12 +224,6 @@
     state.vesselSelections[vesselNumber].productHandle = productHandle;
     
     // Debug logging
-    console.log(`Vessel ${vesselNumber} selection updated:`, {
-      woodType: selection.woodType,
-      ropeType: selection.ropeType,
-      productId: productId,
-      windowProductIds: window.PRODUCT_IDS
-    });
     
     // Maintain UI state for this vessel
     maintainVesselUIState(vesselNumber);
@@ -659,12 +647,6 @@
     
     // Update image efficiently
     if (img.src !== newImageSrc) {
-      console.log(`Updating image for vessel ${vesselNum}:`, {
-        oldSrc: img.src,
-        newSrc: newImageSrc,
-        selection: selection,
-        imageName: selection.woodType && selection.ropeType ? `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png` : 'none'
-      });
       
       if (selection.woodType && selection.ropeType) {
         const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
@@ -702,13 +684,11 @@
   function loadImageOptimized(img, src, selection, shouldShowLoading, resultItem) {
     const imageName = `${selection.woodType.toLowerCase()}_${selection.ropeType.toLowerCase()}.png`;
     
-    console.log(`Loading image: ${imageName} from ${src}`);
     
     img.style.display = 'none';
     const preloadImg = new Image();
     
     preloadImg.onload = function() {
-      console.log(`Image loaded successfully: ${imageName}`);
       state.imageCache.set(imageName, preloadImg.src);
       img.src = preloadImg.src;
       img.style.display = 'block';
