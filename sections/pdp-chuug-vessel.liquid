@@ -626,6 +626,14 @@
     // If not available, wait for script to load with a more efficient approach
     console.log('Mini ATC Modal JavaScript not loaded yet. Waiting for script...');
     
+    // Listen for the modal ready event
+    document.addEventListener('miniATCModalReady', () => {
+      console.log('Mini ATC Modal ready event received, attempting to open modal');
+      if (tryOpenModal()) {
+        return;
+      }
+    });
+    
     // Method 3: Wait for the script to load by checking periodically (reduced retries)
     let retryCount = 0;
     const maxRetries = 10; // 1 second max (reduced from 2 seconds)
@@ -662,6 +670,21 @@
               if (modalInstance) {
                 console.log('Setting isActive state on modal instance');
                 modalInstance.isActive = true;
+                
+                // Manually trigger the fetchVesselSelectionsAndUpdateImages function
+                if (typeof modalInstance.fetchVesselSelectionsAndUpdateImages === 'function') {
+                  console.log('Manually calling fetchVesselSelectionsAndUpdateImages');
+                  modalInstance.fetchVesselSelectionsAndUpdateImages();
+                }
+              } else {
+                // If still no instance, wait a bit more and try again
+                setTimeout(() => {
+                  const delayedInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
+                  if (delayedInstance && typeof delayedInstance.fetchVesselSelectionsAndUpdateImages === 'function') {
+                    console.log('Delayed call to fetchVesselSelectionsAndUpdateImages');
+                    delayedInstance.fetchVesselSelectionsAndUpdateImages();
+                  }
+                }, 200);
               }
             }, 50); // Reduced timeout
           }

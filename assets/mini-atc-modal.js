@@ -14,6 +14,8 @@
 
 (function() {
   'use strict';
+  
+  console.log('🚀 mini-atc-modal.js script starting to execute');
 
   // ============================================
   // CONSTANTS AND CONFIGURATION
@@ -486,7 +488,7 @@
 
       this.emit('priceCalculated', pricingData);
 
-      return { total, originalPrice, savings };
+      return { total, originalPrice: originalTotal, savings };
     }
 
     getVesselPricing(selection) {
@@ -942,37 +944,46 @@
     }
 
     async fetchVesselSelectionsAndUpdateImages() {
+      console.log('🚀 fetchVesselSelectionsAndUpdateImages called');
       try {
         // Show loading state
         this.showImageLoader();
 
         // Get vessel selections from POMC system
         if (!window.pomcSystem) {
-          console.warn('POMC System not available for fetching vessel selections');
+          console.warn('❌ POMC System not available for fetching vessel selections');
           this.hideImageLoader();
           return;
         }
 
+        console.log('✅ POMC System is available');
+        console.log('🔧 POMC System methods:', Object.keys(window.pomcSystem));
+        console.log('🌐 PRODUCT_HANDLES available:', window.PRODUCT_HANDLES);
         const allVesselSelections = window.pomcSystem.getAllVesselSelections();
-        console.log('Fetched vessel selections:', allVesselSelections);
+        console.log('📋 Fetched vessel selections:', allVesselSelections);
         
         // Extract product handles from vessel selections
         const productHandles = [];
-        Object.values(allVesselSelections).forEach(selection => {
+        Object.values(allVesselSelections).forEach((selection, index) => {
+          console.log(`🔍 Checking vessel selection ${index + 1}:`, selection);
           if (selection.productHandle) {
             productHandles.push(selection.productHandle);
+            console.log(`✅ Added product handle: ${selection.productHandle}`);
+          } else {
+            console.log(`❌ No product handle for vessel ${index + 1}`);
           }
         });
 
         if (productHandles.length === 0) {
-          console.log('No product handles found in vessel selections');
+          console.log('❌ No product handles found in vessel selections');
           this.hideImageLoader();
           return;
         }
 
-        console.log('Product handles to fetch:', productHandles);
+        console.log('📦 Product handles to fetch:', productHandles);
 
         // Fetch product data for each product handle
+        console.log('🌐 Starting to fetch product data...');
         const productPromises = productHandles.map(productHandle => 
           this.fetchProductDataByHandle(productHandle)
         );
@@ -980,7 +991,8 @@
         const products = await Promise.all(productPromises);
         const validProducts = products.filter(product => product !== null);
 
-        console.log('Fetched products:', validProducts);
+        console.log('📦 Fetched products:', validProducts);
+        console.log('📊 Total products fetched:', products.length, 'Valid products:', validProducts.length);
         
         // Log media information for each product
         validProducts.forEach((product, index) => {
@@ -1050,9 +1062,11 @@
 
     async fetchProductDataByHandle(productHandle) {
       try {
-        console.log(`Fetching product ${productHandle} via AJAX API...`);
+        console.log(`🌐 Fetching product ${productHandle} via AJAX API...`);
         
         const response = await fetch(`/products/${productHandle}.js`);
+        console.log(`📡 Response for ${productHandle}:`, response.status, response.statusText);
+        
         if (!response.ok) {
           throw new Error(`Failed to fetch product ${productHandle}: ${response.status}`);
         }
@@ -1062,7 +1076,7 @@
         
         return productData;
       } catch (error) {
-        console.error(`Error fetching product ${productHandle}:`, error);
+        console.error(`❌ Error fetching product ${productHandle}:`, error);
         return null;
       }
     }
@@ -1596,6 +1610,7 @@
       this.modal.dispatchEvent(new CustomEvent('modalOpened'));
 
       // Fetch vessel selections data and update product images
+      console.log('🎯 About to call fetchVesselSelectionsAndUpdateImages');
       this.fetchVesselSelectionsAndUpdateImages();
 
       // Calculate initial pricing
@@ -1708,15 +1723,20 @@
   
   // Auto-initialize modals when DOM is ready
   function initializeModals() {
+    console.log('🔧 initializeModals called');
     const modals = document.querySelectorAll('.mini-atc-modal');
+    console.log('🎯 Found modals:', modals.length, modals);
     const instances = new Map();
 
     modals.forEach((modal, index) => {
+      console.log(`🎯 Initializing modal ${index + 1}:`, modal.id, modal);
       const instance = new MiniATCModal(modal);
       instances.set(modal.id, instance);
       
       // Make instance globally accessible
-      window[`miniATCModal_${modal.dataset.modalId || modal.id}`] = instance;
+      const globalName = `miniATCModal_${modal.dataset.modalId || modal.id}`;
+      window[globalName] = instance;
+      console.log(`✅ Modal instance created and assigned to window.${globalName}`);
     });
 
     // Global API
@@ -1743,14 +1763,19 @@
         }
       }
     };
+    
+    console.log('✅ window.MiniATCModal API created:', window.MiniATCModal);
 
     return instances;
   }
 
   // Initialize when DOM is ready
+  console.log('📋 Document ready state:', document.readyState);
   if (document.readyState === 'loading') {
+    console.log('⏳ DOM still loading, waiting for DOMContentLoaded');
     document.addEventListener('DOMContentLoaded', initializeModals);
   } else {
+    console.log('✅ DOM already ready, initializing modals immediately');
     initializeModals();
   }
 
