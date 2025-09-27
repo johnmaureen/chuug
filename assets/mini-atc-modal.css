@@ -76,6 +76,8 @@
 	align-items: center;
 	border-radius: 0 0 10px 10px;
 	background: #0d2026;
+	margin-left: -1px;
+	width: calc(100% + 1px);
 }
 
 .mini-atc-modal__title {
