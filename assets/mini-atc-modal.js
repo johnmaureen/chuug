@@ -1495,7 +1495,6 @@
 			}
 
 			loader.style.display = "flex";
-			console.log("Image loader shown:", loader);
 		}
 
 		hideImageLoader() {
@@ -1506,7 +1505,6 @@
 
 			if (loader) {
 				loader.style.display = "none";
-				console.log("Image loader hidden:", loader);
 			}
 		}
 
@@ -1943,20 +1941,15 @@
 
 		collectCartData() {
 			const state = this.state.getState();
-			console.log("🔍 Mini ATC Debug - Modal state:", state);
 
 			const items = [];
 
 			// 1. Collect vessel products from POMC system
-			console.log("🔍 Mini ATC Debug - Collecting vessel products...");
 			const vesselItems = this.collectVesselProducts(state);
-			console.log("🔍 Mini ATC Debug - Vessel items collected:", vesselItems);
 			items.push(...vesselItems);
 
 			// 2. Collect add-on products (gift box, mix & match, extra cups)
-			console.log("🔍 Mini ATC Debug - Collecting addon products...");
 			const addonItems = this.collectAddonProducts(state);
-			console.log("🔍 Mini ATC Debug - Addon items collected:", addonItems);
 			items.push(...addonItems);
 
 			const cartData = {
@@ -1965,7 +1958,6 @@
 				attributes: this.collectOrderAttributes(state),
 			};
 
-			console.log("🔍 Mini ATC Debug - Final cart data:", cartData);
 			return cartData;
 		}
 
@@ -1973,12 +1965,7 @@
 			const items = [];
 
 			// Get vessel selections from POMC system
-			console.log(
-				"🔍 Mini ATC Debug - Checking POMC system:",
-				!!window.pomcSystem
-			);
 			if (!window.pomcSystem) {
-				console.warn("🚨 Mini ATC Debug - POMC system not available");
 				return items;
 			}
 
@@ -1987,23 +1974,13 @@
 			const selectedProductAmountData =
 				window.pomcSystem.getSelectedProductAmountData();
 
-			console.log("🔍 Mini ATC Debug - POMC data:", {
-				vesselSelections,
-				multiplier,
-				selectedProductAmountData,
-			});
 
 			// Determine if engraving is enabled
 			const engravingEnabled = this.isEngravingEnabled();
-			console.log("🔍 Mini ATC Debug - Engraving enabled:", engravingEnabled);
 
 			// Process each vessel
 			Object.entries(vesselSelections).forEach(
 				([vesselIndex, selection], index) => {
-					console.log(
-						`🔍 Mini ATC Debug - Processing vessel ${vesselIndex}:`,
-						selection
-					);
 
 					// Check for variant ID - POMC system uses woodVariantId/ropeVariantId
 					let variantId =
@@ -2012,10 +1989,6 @@
 						selection.ropeVariantId;
 
 					if (!variantId) {
-						console.warn(
-							`🚨 Mini ATC Debug - No variant ID found for vessel ${vesselIndex}. Available keys:`,
-							Object.keys(selection)
-						);
 						return;
 					}
 
@@ -2023,22 +1996,11 @@
 					const vesselEngraving =
 						state.engraving?.vessels?.[vesselNumber] || "";
 
-					console.log(
-						`🔍 Mini ATC Debug - Vessel ${vesselNumber} engraving:`,
-						vesselEngraving
-					);
 
 					// For POMC system, we might need to determine variant based on engraving differently
 					// Check if there's an engraving variant available
 					if (engravingEnabled && selection.engravingVariantId) {
 						variantId = selection.engravingVariantId;
-						console.log(
-							`🔍 Mini ATC Debug - Using engraving variant: ${variantId}`
-						);
-					} else {
-						console.log(
-							`🔍 Mini ATC Debug - Using regular variant: ${variantId}`
-						);
 					}
 
 					// Create properties object
@@ -2073,16 +2035,12 @@
 						properties,
 					};
 
-					console.log(`🔍 Mini ATC Debug - Adding vessel item:`, item);
 					items.push(item);
 				}
 			);
 
 			// Fallback: If no vessel items were collected, try to get from selectedProductAmountData
 			if (items.length === 0 && selectedProductAmountData) {
-				console.log(
-					"🔍 Mini ATC Debug - No vessel items found, trying selectedProductAmountData fallback"
-				);
 
 				// Use the selected product amount data as fallback
 				const fallbackVariantIndex = engravingEnabled ? 1 : 0;
@@ -2099,15 +2057,10 @@
 						},
 					};
 
-					console.log(
-						"🔍 Mini ATC Debug - Adding fallback item:",
-						fallbackItem
-					);
 					items.push(fallbackItem);
 				}
 			}
 
-			console.log("🔍 Mini ATC Debug - Total vessel items:", items.length);
 			return items;
 		}
 
@@ -2115,14 +2068,9 @@
 			const items = [];
 
 			// 1. Gift Box
-			console.log("🔍 Mini ATC Debug - Gift box state:", state.giftBox);
 			if (state.giftBox?.enabled) {
 				// Get gift box variant ID from modal config or default
 				const giftBoxVariantId = this.getGiftBoxVariantId();
-				console.log(
-					"🔍 Mini ATC Debug - Gift box variant ID:",
-					giftBoxVariantId
-				);
 				if (giftBoxVariantId) {
 					const giftBoxItem = {
 						id: giftBoxVariantId,
@@ -2131,19 +2079,14 @@
 							"Add-on": "Premium Gift Box",
 						},
 					};
-					console.log("🔍 Mini ATC Debug - Adding gift box item:", giftBoxItem);
 					items.push(giftBoxItem);
 				}
 			}
 
 			// 2. Mix & Match variants
-			console.log("🔍 Mini ATC Debug - Mix & Match state:", state.mixMatch);
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
 				Object.entries(state.mixMatch.variants).forEach(
 					([variantId, quantity]) => {
-						console.log(
-							`🔍 Mini ATC Debug - Mix & Match variant ${variantId}: quantity ${quantity}`
-						);
 						if (quantity > 0) {
 							const mixMatchItem = {
 								id: variantId,
@@ -2152,10 +2095,6 @@
 									"Add-on": "Mix & Match",
 								},
 							};
-							console.log(
-								"🔍 Mini ATC Debug - Adding mix & match item:",
-								mixMatchItem
-							);
 							items.push(mixMatchItem);
 						}
 					}
@@ -2163,13 +2102,9 @@
 			}
 
 			// 3. Extra Cups variants
-			console.log("🔍 Mini ATC Debug - Extra Cups state:", state.extraCups);
 			if (state.extraCups?.enabled && state.extraCups.variants) {
 				Object.entries(state.extraCups.variants).forEach(
 					([variantId, quantity]) => {
-						console.log(
-							`🔍 Mini ATC Debug - Extra Cups variant ${variantId}: quantity ${quantity}`
-						);
 						if (quantity > 0) {
 							const extraCupsItem = {
 								id: variantId,
@@ -2178,17 +2113,12 @@
 									"Add-on": "Extra Cups",
 								},
 							};
-							console.log(
-								"🔍 Mini ATC Debug - Adding extra cups item:",
-								extraCupsItem
-							);
 							items.push(extraCupsItem);
 						}
 					}
 				);
 			}
 
-			console.log("🔍 Mini ATC Debug - Total addon items:", items.length);
 			return items;
 		}
 
@@ -2462,11 +2392,6 @@
 					}
 				}
 
-				console.log(
-					"✅ Checkout view updated with",
-					cartData.items.length,
-					"items"
-				);
 			} catch (error) {
 				console.error("Failed to update checkout view:", error);
 			}
@@ -2716,7 +2641,6 @@
 					window.cart.renderContents(cartData);
 				}
 
-				console.log("✅ Item removed from cart and checkout view updated");
 			} catch (error) {
 				console.error("Failed to remove cart item:", error);
 				// Show error message to user

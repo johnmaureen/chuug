@@ -696,7 +696,6 @@
     };
     
     preloadImg.onerror = function() {
-      console.error(`Failed to load image: ${imageName} from ${src}`);
       img.style.display = 'block';
       img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI0IiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDEyNCAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjQiIGhlaWdodD0iMTUyIiBmaWxsPSIjMWExYTFhIi8+Cjwvc3ZnPgo=';
       if (shouldShowLoading) resultItem.classList.remove('loading');

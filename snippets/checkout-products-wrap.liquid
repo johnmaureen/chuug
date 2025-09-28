@@ -214,7 +214,6 @@
 <script>
 // Log cart data for debugging - runs when this snippet loads
 (function() {
-  console.group('🛒 LIQUID CART DATA DEBUG');
   
   // Log Liquid cart data that was available at render time
   const liquidCartData = {
@@ -238,7 +237,6 @@
     ]
   };
   
-  console.log('Liquid cart data (server-side):', liquidCartData);
   
   // Check for gift box items in Liquid data
   const giftBoxItems = liquidCartData.items.filter(item => {
@@ -246,42 +244,20 @@
     return title.includes('gift') || title.includes('box');
   });
   
-  if (giftBoxItems.length > 0) {
-    console.log('🎁 Gift box items found in Liquid data:', giftBoxItems);
-  } else {
-    console.log('❌ No gift box items found in Liquid data');
-  }
-  
-  console.groupEnd();
-
-  console.log('🚀 GIFT BOX DEBUG: Starting gift box fix script...');
 
   // Reset gift box state in localStorage to ensure it starts as disabled
   function resetGiftBoxState() {
     const storageKey = 'chuug_mini_atc_selections';
     try {
       const saved = localStorage.getItem(storageKey);
-      console.log('🔍 DEBUG: Current localStorage state:', saved ? JSON.parse(saved) : 'null');
-
       if (saved) {
         const parsedState = JSON.parse(saved);
-        console.log('🔍 DEBUG: Parsed localStorage state:', parsedState);
-        console.log('🔍 DEBUG: giftBox state in localStorage:', parsedState.giftBox);
-
         if (parsedState.giftBox && parsedState.giftBox.enabled) {
-          console.log('🔄 Resetting gift box state from enabled to disabled in localStorage');
           parsedState.giftBox.enabled = false;
           localStorage.setItem(storageKey, JSON.stringify(parsedState));
-          console.log('✅ Gift box state reset to disabled');
-          console.log('🔍 DEBUG: Updated localStorage state:', JSON.parse(localStorage.getItem(storageKey)));
-        } else {
-          console.log('✅ Gift box state already disabled in localStorage');
         }
-      } else {
-        console.log('✅ No saved state found in localStorage');
       }
     } catch (error) {
-      console.error('❌ Error resetting gift box state:', error);
     }
   }
   
@@ -290,31 +266,14 @@
   
   // Also ensure mini-atc modal respects the disabled state
   function ensureGiftBoxDisabled() {
-    console.log('🔍 DEBUG: Checking mini-atc modal availability...');
-    console.log('🔍 DEBUG: window.miniAtcModal:', !!window.miniAtcModal);
-    console.log('🔍 DEBUG: window.miniAtcModal.state:', !!window.miniAtcModal?.state);
-    console.log('🔍 DEBUG: window.miniAtcModal.pricing:', !!window.miniAtcModal?.pricing);
-
-    // Wait for mini-atc modal to be available
     if (window.miniAtcModal && window.miniAtcModal.state && window.miniAtcModal.pricing) {
-      console.log('🔄 Ensuring mini-atc modal gift box state is disabled');
-      const currentState = window.miniAtcModal.state.getState();
-      console.log('🔍 DEBUG: Current mini-atc modal state:', currentState);
-      console.log('🔍 DEBUG: Current giftBox state:', currentState.giftBox);
-
       window.miniAtcModal.state.updatePersonalization('giftBox', { enabled: false });
-      console.log('✅ Mini-atc modal gift box state set to disabled');
-
+      
       // Force pricing recalculation to update the display
-      console.log('🔄 Forcing pricing recalculation...');
       const newState = window.miniAtcModal.state.getState();
-      console.log('🔍 DEBUG: State after update:', newState);
       const newPricing = window.miniAtcModal.pricing.calculateTotal(newState);
-      console.log('🔍 DEBUG: New pricing calculation:', newPricing);
       window.miniAtcModal.updatePricingDisplay(newPricing);
-      console.log('✅ Pricing recalculated and display updated');
     } else {
-      console.log('⚠️ Mini-atc modal not ready, retrying...');
       // Retry if not available yet
       ensureGiftBoxDisabled();
     }
@@ -328,11 +287,9 @@
     const giftBoxToggles = document.querySelectorAll('[data-addon-toggle="gift-box"]');
     giftBoxToggles.forEach(toggle => {
       if (toggle.checked) {
-        console.log('🔄 Setting gift box toggle to OFF in UI');
         toggle.checked = false;
         // Trigger change event to update any listeners
         toggle.dispatchEvent(new Event('change', { bubbles: true }));
-        console.log('✅ Gift box toggle set to OFF');
       }
     });
   }
@@ -342,68 +299,43 @@
   
   // Force update pricing display elements directly as backup
   function forceUpdatePricingDisplay() {
-    console.log('🔍 DEBUG: Force updating pricing display...');
-
     // Look for pricing placeholder elements
     const pricingPlaceholders = document.querySelectorAll('.pricing-placeholder');
     const currentPriceElements = document.querySelectorAll('[data-current-price], .mini-atc-modal__current-price');
-
-    console.log('🔍 DEBUG: Found pricing placeholders:', pricingPlaceholders.length);
-    console.log('🔍 DEBUG: Found current price elements:', currentPriceElements.length);
 
     // Check if we can get the correct price from POMC system
     if (window.pomcSystem && window.pomcSystem.getSelectedProductAmountData) {
       try {
         const productData = window.pomcSystem.getSelectedProductAmountData();
-        console.log('🔍 DEBUG: POMC product data:', productData);
 
         if (productData && productData.price) {
           const correctPrice = (productData.price / 100).toFixed(2);
           const formattedPrice = `£${correctPrice}`;
 
-          console.log('🔄 Force updating pricing display to correct price:', formattedPrice);
-          console.log('🔍 DEBUG: Current pricing placeholders content:',
-            Array.from(pricingPlaceholders).map(el => el.textContent));
-
           pricingPlaceholders.forEach(el => {
             if (el.textContent !== formattedPrice) {
-              console.log('🔄 Updating placeholder from:', el.textContent, 'to:', formattedPrice);
               el.textContent = formattedPrice;
-              console.log('✅ Updated pricing placeholder');
-            } else {
-              console.log('✅ Pricing placeholder already correct');
             }
           });
 
           currentPriceElements.forEach(el => {
             const placeholder = el.querySelector('.pricing-placeholder');
             if (placeholder && placeholder.textContent !== formattedPrice) {
-              console.log('🔄 Updating current price element from:', placeholder.textContent, 'to:', formattedPrice);
               placeholder.textContent = formattedPrice;
-              console.log('✅ Updated current price element');
             }
           });
-        } else {
-          console.log('⚠️ No product data or price available from POMC');
         }
       } catch (error) {
-        console.error('❌ Error force updating pricing display:', error);
       }
-    } else {
-      console.log('⚠️ POMC system not available for price calculation');
-      console.log('🔍 DEBUG: window.pomcSystem:', !!window.pomcSystem);
-      console.log('🔍 DEBUG: window.pomcSystem.getSelectedProductAmountData:', !!window.pomcSystem?.getSelectedProductAmountData);
     }
   }
   
   // Force update pricing display immediately if systems are ready
   forceUpdatePricingDisplay();
   
-  // Watch for dynamic price changes and log them for debugging
+  // Watch for dynamic price changes
   function watchForPriceChanges() {
     const targetNodes = document.querySelectorAll('.pricing-placeholder, [data-current-price]');
-
-    console.log('🔍 DEBUG: Setting up price change observer for', targetNodes.length, 'elements');
 
     if (targetNodes.length > 0) {
       const observer = new MutationObserver((mutations) => {
@@ -412,22 +344,9 @@
             const target = mutation.target;
             const element = target.nodeType === Node.TEXT_NODE ? target.parentElement : target;
 
-            // Log price changes for debugging
+            // Monitor price changes
             if (element && (element.classList.contains('pricing-placeholder') || element.hasAttribute('data-current-price'))) {
-              const currentText = element.textContent;
-              const elementInfo = {
-                tagName: element.tagName,
-                className: element.className,
-                id: element.id,
-                content: currentText
-              };
-              console.log('🔍 Price change detected:', elementInfo);
-              console.log('🔍 Mutation details:', {
-                type: mutation.type,
-                target: mutation.target,
-                oldValue: mutation.oldValue,
-                newValue: mutation.target.textContent
-              });
+              // Price change detected - could add logic here if needed
             }
           }
         });
@@ -440,10 +359,6 @@
           characterData: true
         });
       });
-
-      console.log('👁️ Price change observer activated for debugging');
-    } else {
-      console.log('⚠️ No pricing elements found to observe');
     }
   }
   
@@ -452,55 +367,27 @@
   
   // Auto-remove gift box items since container is disabled by default
   function autoRemoveGiftBoxItems() {
-    console.log('🔍 DEBUG: Checking cart manager availability...');
-    console.log('🔍 DEBUG: window.cartManager:', !!window.cartManager);
-
     if (window.cartManager) {
-      console.log('🧹 Checking for gift box items to remove (container disabled by default)...');
       window.cartManager.getCart()
         .then(cartData => {
-          console.log('🔍 DEBUG: Cart data received:', cartData);
-          console.log('🔍 DEBUG: Cart items:', cartData.items);
-
           const giftBoxItems = (cartData.items || []).filter(item => {
             const title = (item.product_title || item.title || '').toLowerCase();
             const isGiftBox = title.includes('gift') && title.includes('box');
             const hasGiftBoxProperty = item.properties && item.properties['Premium Gift Box'];
-            const matches = isGiftBox || hasGiftBoxProperty;
-
-            if (matches) {
-              console.log('🔍 DEBUG: Found potential gift box item:', {
-                id: item.id,
-                title: item.product_title || item.title,
-                properties: item.properties,
-                isGiftBox,
-                hasGiftBoxProperty
-              });
-            }
-
-            return matches;
+            return isGiftBox || hasGiftBoxProperty;
           });
 
-          console.log('🔍 DEBUG: Filtered gift box items:', giftBoxItems);
-
           if (giftBoxItems.length > 0) {
-            console.log('🗑️ Found gift box items to remove:', giftBoxItems);
             // Remove each gift box item
             giftBoxItems.forEach(item => {
-              console.log(`Removing gift box item: ${item.product_title || item.title} (ID: ${item.id})`);
               window.cartManager.removeItem(item.id)
-                .then(() => console.log(`✅ Successfully removed gift box item ${item.id}`))
-                .catch(error => console.error(`❌ Failed to remove gift box item ${item.id}:`, error));
+                .catch(error => {});
             });
-          } else {
-            console.log('✅ No gift box items found in cart');
           }
         })
         .catch(error => {
-          console.error('Failed to fetch cart data for gift box cleanup:', error);
         });
     } else {
-      console.log('Cart manager not available for gift box cleanup, retrying...');
       autoRemoveGiftBoxItems();
     }
   }
@@ -510,17 +397,12 @@
   
   // Also fetch current cart data via JavaScript API
   if (window.cartManager) {
-    console.log('📡 Fetching current cart data via JavaScript API...');
-    window.cartManager.getCart().catch(error => {
-      console.error('Failed to fetch cart data via API:', error);
-    });
+    window.cartManager.getCart().catch(error => {});
   } else {
     // Fallback if cart manager isn't available yet
     fetch('/cart.js')
       .then(response => response.json())
       .then(cartData => {
-        console.group('🛒 JAVASCRIPT CART DATA DEBUG');
-        console.log('JavaScript cart data (client-side):', cartData);
         
         // Check for gift box items in JavaScript data
         const jsGiftBoxItems = (cartData.items || []).filter(item => {
@@ -528,19 +410,10 @@
           return title.includes('gift') || title.includes('box');
         });
         
-        if (jsGiftBoxItems.length > 0) {
-          console.log('🎁 Gift box items found in JavaScript data:', jsGiftBoxItems);
-        } else {
-          console.log('❌ No gift box items found in JavaScript data');
-        }
-        
-        console.groupEnd();
       })
       .catch(error => {
-        console.error('Failed to fetch cart data:', error);
       });
   }
 
-  console.log('✅ GIFT BOX DEBUG: Gift box fix script completed');
 })();
 </script>
