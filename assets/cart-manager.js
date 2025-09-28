@@ -231,7 +231,46 @@ class CartManager {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return await response.json();
+      const cartData = await response.json();
+      
+      // LOG CART DATA FOR DEBUGGING
+      console.group('🛒 CART DATA DEBUG');
+      console.log('Full cart object:', cartData);
+      console.log('Items count:', cartData.item_count);
+      console.log('Total price:', cartData.total_price);
+      console.log('Cart note:', cartData.note);
+      console.log('Cart attributes:', cartData.attributes);
+      
+      if (cartData.items && cartData.items.length > 0) {
+        console.log('Cart items:');
+        cartData.items.forEach((item, index) => {
+          console.log(`  Item ${index + 1}:`, {
+            id: item.id,
+            title: item.title,
+            product_title: item.product_title,
+            variant_title: item.variant_title,
+            quantity: item.quantity,
+            price: item.price,
+            properties: item.properties,
+            product_type: item.product_type,
+            vendor: item.vendor
+          });
+          
+          // Check for gift box patterns
+          const isGiftBox = item.product_title?.toLowerCase().includes('gift') || 
+                           item.product_title?.toLowerCase().includes('box') ||
+                           item.title?.toLowerCase().includes('gift') ||
+                           item.title?.toLowerCase().includes('box');
+          if (isGiftBox) {
+            console.log(`    🎁 POTENTIAL GIFT BOX DETECTED: "${item.product_title || item.title}"`);
+          }
+        });
+      } else {
+        console.log('No items in cart');
+      }
+      console.groupEnd();
+
+      return cartData;
     } catch (error) {
       console.error('Error fetching cart data:', error);
       throw error;
