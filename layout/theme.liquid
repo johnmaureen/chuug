@@ -418,6 +418,12 @@ head.appendChild(script);
       {%- include 'cart-drawer' -%}
     {%- endif -%}
 
+    {% comment %} Mini ATC Modal - Global inclusion for cart icon integration {% endcomment %}
+    {% render 'mini-atc-modal-complete' %}
+
+    {% comment %} Cart Icon to Mini ATC Modal Integration {% endcomment %}
+    <script src="{{ 'cart-icon-mini-atc-integration.js' | asset_url }}" defer></script>
+
 
 <div style="position: sticky; top: 0px; z-index: 9999;"><div class="bss-pl-banner-wrapper" style="
             width: 100%;

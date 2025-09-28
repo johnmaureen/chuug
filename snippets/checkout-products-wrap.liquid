@@ -55,7 +55,7 @@
 
         <!-- Product Options/Chips -->
         <div class="checkout-products-wrap__options">
-          {% if item.properties.size > 0 %}
+          {% comment %} {% if item.properties.size > 0 %}
             {% for property in item.properties %}
               {% unless property.first contains '_' %}
                 <div class="checkout-products-wrap__option-chip">
@@ -63,16 +63,25 @@
                 </div>
               {% endunless %}
             {% endfor %}
-          {% endif %}
+          {% endif %} {% endcomment %}
           
           <!-- Default options for CHUUG products -->
           {% if item.product.title contains 'CHUUG' or item.product.title contains 'Chuug' %}
-            <div class="checkout-products-wrap__option-chip">
-              🔨 Engraved Initials, [TXT]
-            </div>
-            <div class="checkout-products-wrap__option-chip">
+            {% assign engraving_text = '' %}
+            {% for property in item.properties %}
+              {% if property.first contains 'Engraving' %}
+                {% assign engraving_text = property.last %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+            {% if engraving_text != blank %}
+              <div class="checkout-products-wrap__option-chip">
+                🔨 Engraved Initials, {{ engraving_text }}
+              </div>
+            {% endif %}
+            {% comment %} <div class="checkout-products-wrap__option-chip">
               🍺 Silver Insulated Cup
-            </div>
+            </div> {% endcomment %}
           {% endif %}
         </div>
 
@@ -95,37 +104,73 @@
     </div>
   </div>
 
-  <div class="premium-gift-box">
-    <div class="premium-gift-box__container">
-      <!-- Product Image -->
-      <div class="premium-gift-box__image">
-        <img src="{{ 'premium-gift-box.png' | asset_url }}" alt="Premium Gift Box & Wrap" width="71" height="89" />
-      </div>
-      
-      <!-- Content Area -->
-      <div class="premium-gift-box__content">
-        <div class="premium-gift-box__details">
-          <div class="premium-gift-box__text">
-            <h4 class="premium-gift-box__title">Premium Gift Box & Wrap<br>With All CHUUG Orders</h4>
-          </div>
-          <div class="premium-gift-box__price">£2.00</div>
+  <!-- Premium Gift Box - Only show if it's in the cart -->
+  {% assign show_gift_box = false %}
+  {% assign gift_box_item = null %}
+  
+  <!-- Check if Premium Gift Box is mentioned in cart note or attributes -->
+  {% if cart.note contains 'Premium Gift Box' or cart.attributes['Premium Gift Box'] %}
+    {% assign show_gift_box = true %}
+  {% endif %}
+  
+  <!-- Look for actual gift box item in cart -->
+  {% for gift_item in cart.items %}
+    {% if gift_item.product.title contains 'Premium Gift Box' or gift_item.product.title contains 'Gift Box' %}
+      {% assign show_gift_box = true %}
+      {% assign gift_box_item = gift_item %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+  
+  {% if show_gift_box %}
+    <div class="premium-gift-box">
+      <div class="premium-gift-box__container">
+        <!-- Product Image -->
+        <div class="premium-gift-box__image">
+          {% if gift_box_item and gift_box_item.image %}
+            <img src="{{ gift_box_item.image | image_url: width: 71, height: 89 }}" alt="{{ gift_box_item.image.alt | escape }}" width="71" height="89" />
+          {% else %}
+            <img src="{{ 'premium-gift-box.png' | asset_url }}" alt="Premium Gift Box & Wrap" width="71" height="89" />
+          {% endif %}
         </div>
         
-        <!-- Toggle Section -->
-        <button 
-          type="button" 
-          class="checkout-products-wrap__delete"
-          onclick="window.cartManager.removeItem('{{ item.id }}')"
-          aria-label="Remove {{ item.product.title }} from cart"
-        >
-          <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
+        <!-- Content Area -->
+        <div class="premium-gift-box__content">
+          <div class="premium-gift-box__details">
+            <div class="premium-gift-box__text">
+              <h4 class="premium-gift-box__title">
+                {% if gift_box_item %}
+                  {{ gift_box_item.product.title }}
+                {% else %}
+                  Premium Gift Box & Wrap<br>With All CHUUG Orders
+                {% endif %}
+              </h4>
+            </div>
+            <div class="premium-gift-box__price">
+              {% if gift_box_item %}
+                {{ gift_box_item.final_price | money }}
+              {% else %}
+                £2.00
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Toggle Section -->
+          <button 
+            type="button" 
+            class="checkout-products-wrap__delete"
+            onclick="{% if gift_box_item %}window.cartManager.removeItem('{{ gift_box_item.id }}'){% else %}window.cartManager.removeGiftBox(){% endif %}"
+            aria-label="Remove Premium Gift Box from cart"
+          >
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  {% endif %}
 </div>

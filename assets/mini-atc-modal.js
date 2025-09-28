@@ -62,12 +62,12 @@
 			return `£${(cents / 100).toFixed(2)}`;
 		},
 
-	sanitizeInput(input) {
-		return input
-			.replace(/[^A-Za-z]/g, "")
-			.toUpperCase()
-			.slice(0, 3);
-	},
+		sanitizeInput(input) {
+			return input
+				.replace(/[^A-Za-z]/g, "")
+				.toUpperCase()
+				.slice(0, 3);
+		},
 
 		trapFocus(element) {
 			const focusableElements = element.querySelectorAll(
@@ -678,18 +678,27 @@
 			// Counter events
 			this.modal.addEventListener("click", this.handleCounterClick.bind(this));
 
-		// Input events
-		this.modal.addEventListener("input", this.handleVesselInput.bind(this));
-		this.modal.addEventListener("keypress", (event) => {
-			if (event.target.closest("[data-vessel-input]")) {
-				this.handleVesselKeyPress(event);
-			}
-		});
-		this.modal.addEventListener("paste", (event) => {
-			if (event.target.closest("[data-vessel-input]")) {
-				this.handleVesselPaste(event);
-			}
-		});
+			// Remove item events (for dynamically added checkout items)
+			this.modal.addEventListener("click", (event) => {
+				const removeBtn = event.target.closest("[data-remove-item]");
+				if (removeBtn) {
+					const itemId = removeBtn.getAttribute("data-remove-item");
+					this.removeCartItem(itemId);
+				}
+			});
+
+			// Input events
+			this.modal.addEventListener("input", this.handleVesselInput.bind(this));
+			this.modal.addEventListener("keypress", (event) => {
+				if (event.target.closest("[data-vessel-input]")) {
+					this.handleVesselKeyPress(event);
+				}
+			});
+			this.modal.addEventListener("paste", (event) => {
+				if (event.target.closest("[data-vessel-input]")) {
+					this.handleVesselPaste(event);
+				}
+			});
 
 			// State change events
 			this.state.on(
@@ -914,25 +923,27 @@
 		handleVesselPaste(event) {
 			// Prevent default paste behavior
 			event.preventDefault();
-			
+
 			// Get pasted text from clipboard
-			const paste = (event.clipboardData || window.clipboardData).getData('text');
-			
+			const paste = (event.clipboardData || window.clipboardData).getData(
+				"text"
+			);
+
 			// Sanitize the pasted content to only allow letters
 			const sanitizedPaste = Utils.sanitizeInput(paste);
-			
+
 			// Set the sanitized value to the input
 			const input = event.target;
 			input.value = sanitizedPaste;
-			
+
 			// Trigger input event to update state
-			input.dispatchEvent(new Event('input', { bubbles: true }));
+			input.dispatchEvent(new Event("input", { bubbles: true }));
 		}
 
 		handleAction(actionType) {
 			switch (actionType) {
 				case "add-to-cart":
-					this.switchView("checkout");
+					this.addToCart();
 					break;
 				case "back-to-personalize":
 					this.switchView("personalize");
@@ -1673,15 +1684,20 @@
 				}
 			}
 
-			// Update button label based on view
-			if (btnTextEl) {
+			// Update button label and action based on view
+			if (btnTextEl && addToCartBtn) {
 				switch (viewName) {
 					case "checkout":
 						btnTextEl.textContent = "CHECK OUT";
+						addToCartBtn.setAttribute(
+							"data-modal-action",
+							"proceed-to-checkout"
+						);
 						break;
 					case "personalize":
 					default:
 						btnTextEl.textContent = "ADD TO CART";
+						addToCartBtn.setAttribute("data-modal-action", "add-to-cart");
 						break;
 				}
 			}
@@ -1769,17 +1785,790 @@
 			this.emit("modalClosed");
 		}
 
-		proceedToCheckout() {
-			// Future integration point for Shopify checkout
+		async addToCart() {
+			try {
+				// Show loading state
+				this.setLoadingState(true);
+
+				// Collect all data for cart
+				const cartData = this.collectCartData();
+
+				if (!cartData || cartData.items.length === 0) {
+					throw new Error("No items to add to cart");
+				}
+
+				// Add items to Shopify cart
+				const response = await this.addItemsToShopifyCart(cartData);
+
+				if (response.status) {
+					// Handle Shopify error response
+					throw new Error(
+						response.description || "Failed to add items to cart"
+					);
+				}
+
+				// Success - emit event and switch to checkout view
+				this.emit("cartUpdated", { cartData: response, items: cartData.items });
+
+				// Update cart UI if cart drawer exists
+				if (window.cart && typeof window.cart.renderContents === "function") {
+					window.cart.renderContents(response);
+				}
+
+				// Switch to checkout view instead of closing
+				this.switchView("checkout");
+
+				// Update checkout view with new cart items
+				await this.updateCheckoutView(response);
+
+				// Show success feedback
+				this.showAddToCartSuccess(cartData.items.length);
+
+				// Optional: redirect to cart page after delay
+				// setTimeout(() => {
+				//   window.location.href = window.routes.cart_url || '/cart';
+				// }, 2000);
+			} catch (error) {
+				console.error("Add to cart error:", error);
+				this.handleAddToCartError(error.message);
+			} finally {
+				this.setLoadingState(false);
+			}
+		}
+
+		collectCartData() {
 			const state = this.state.getState();
+			console.log("🔍 Mini ATC Debug - Modal state:", state);
 
-			// This would integrate with Shopify cart API
-			// Example:
-			// await this.addToCart(state);
-			// window.location.href = '/cart';
+			const items = [];
 
+			// 1. Collect vessel products from POMC system
+			console.log("🔍 Mini ATC Debug - Collecting vessel products...");
+			const vesselItems = this.collectVesselProducts(state);
+			console.log("🔍 Mini ATC Debug - Vessel items collected:", vesselItems);
+			items.push(...vesselItems);
+
+			// 2. Collect add-on products (gift box, mix & match, extra cups)
+			console.log("🔍 Mini ATC Debug - Collecting addon products...");
+			const addonItems = this.collectAddonProducts(state);
+			console.log("🔍 Mini ATC Debug - Addon items collected:", addonItems);
+			items.push(...addonItems);
+
+			const cartData = {
+				items,
+				note: this.collectOrderNote(state),
+				attributes: this.collectOrderAttributes(state),
+			};
+
+			console.log("🔍 Mini ATC Debug - Final cart data:", cartData);
+			return cartData;
+		}
+
+		collectVesselProducts(state) {
+			const items = [];
+
+			// Get vessel selections from POMC system
+			console.log(
+				"🔍 Mini ATC Debug - Checking POMC system:",
+				!!window.pomcSystem
+			);
+			if (!window.pomcSystem) {
+				console.warn("🚨 Mini ATC Debug - POMC system not available");
+				return items;
+			}
+
+			const vesselSelections = window.pomcSystem.getAllVesselSelections();
+			const multiplier = window.pomcSystem.getMultiplier() || 1;
+			const selectedProductAmountData =
+				window.pomcSystem.getSelectedProductAmountData();
+
+			console.log("🔍 Mini ATC Debug - POMC data:", {
+				vesselSelections,
+				multiplier,
+				selectedProductAmountData,
+			});
+
+			// Determine if engraving is enabled
+			const engravingEnabled = this.isEngravingEnabled();
+			console.log("🔍 Mini ATC Debug - Engraving enabled:", engravingEnabled);
+
+			// Process each vessel
+			Object.entries(vesselSelections).forEach(
+				([vesselIndex, selection], index) => {
+					console.log(
+						`🔍 Mini ATC Debug - Processing vessel ${vesselIndex}:`,
+						selection
+					);
+
+					// Check for variant ID - POMC system uses woodVariantId/ropeVariantId
+					let variantId =
+						selection.variantId ||
+						selection.woodVariantId ||
+						selection.ropeVariantId;
+
+					if (!variantId) {
+						console.warn(
+							`🚨 Mini ATC Debug - No variant ID found for vessel ${vesselIndex}. Available keys:`,
+							Object.keys(selection)
+						);
+						return;
+					}
+
+					const vesselNumber = parseInt(vesselIndex);
+					const vesselEngraving =
+						state.engraving?.vessels?.[vesselNumber] || "";
+
+					console.log(
+						`🔍 Mini ATC Debug - Vessel ${vesselNumber} engraving:`,
+						vesselEngraving
+					);
+
+					// For POMC system, we might need to determine variant based on engraving differently
+					// Check if there's an engraving variant available
+					if (engravingEnabled && selection.engravingVariantId) {
+						variantId = selection.engravingVariantId;
+						console.log(
+							`🔍 Mini ATC Debug - Using engraving variant: ${variantId}`
+						);
+					} else {
+						console.log(
+							`🔍 Mini ATC Debug - Using regular variant: ${variantId}`
+						);
+					}
+
+					// Create properties object
+					const properties = {};
+
+					// Add vessel engraving if provided
+					if (
+						engravingEnabled &&
+						vesselEngraving &&
+						vesselEngraving.trim() !== ""
+					) {
+						properties[`Vessel ${vesselNumber} Engraving`] = vesselEngraving
+							.trim()
+							.toUpperCase();
+					}
+
+					// Add vessel selection details
+					if (selection.productHandle) {
+						properties[`Vessel ${vesselNumber} Product`] =
+							selection.productHandle;
+					}
+					if (selection.woodType) {
+						properties[`Vessel ${vesselNumber} Wood Type`] = selection.woodType;
+					}
+					if (selection.ropeType) {
+						properties[`Vessel ${vesselNumber} Rope Type`] = selection.ropeType;
+					}
+
+					const item = {
+						id: variantId,
+						quantity: 1,
+						properties,
+					};
+
+					console.log(`🔍 Mini ATC Debug - Adding vessel item:`, item);
+					items.push(item);
+				}
+			);
+
+			// Fallback: If no vessel items were collected, try to get from selectedProductAmountData
+			if (items.length === 0 && selectedProductAmountData) {
+				console.log(
+					"🔍 Mini ATC Debug - No vessel items found, trying selectedProductAmountData fallback"
+				);
+
+				// Use the selected product amount data as fallback
+				const fallbackVariantIndex = engravingEnabled ? 1 : 0;
+				const fallbackVariant =
+					selectedProductAmountData.variants?.[fallbackVariantIndex];
+
+				if (fallbackVariant?.id) {
+					const fallbackItem = {
+						id: fallbackVariant.id,
+						quantity: multiplier || 1,
+						properties: {
+							"Product Source": "Selected Product Amount Data",
+							...(engravingEnabled && { Engraving: "Enabled" }),
+						},
+					};
+
+					console.log(
+						"🔍 Mini ATC Debug - Adding fallback item:",
+						fallbackItem
+					);
+					items.push(fallbackItem);
+				}
+			}
+
+			console.log("🔍 Mini ATC Debug - Total vessel items:", items.length);
+			return items;
+		}
+
+		collectAddonProducts(state) {
+			const items = [];
+
+			// 1. Gift Box
+			console.log("🔍 Mini ATC Debug - Gift box state:", state.giftBox);
+			if (state.giftBox?.enabled) {
+				// Get gift box variant ID from modal config or default
+				const giftBoxVariantId = this.getGiftBoxVariantId();
+				console.log(
+					"🔍 Mini ATC Debug - Gift box variant ID:",
+					giftBoxVariantId
+				);
+				if (giftBoxVariantId) {
+					const giftBoxItem = {
+						id: giftBoxVariantId,
+						quantity: 1,
+						properties: {
+							"Add-on": "Premium Gift Box",
+						},
+					};
+					console.log("🔍 Mini ATC Debug - Adding gift box item:", giftBoxItem);
+					items.push(giftBoxItem);
+				}
+			}
+
+			// 2. Mix & Match variants
+			console.log("🔍 Mini ATC Debug - Mix & Match state:", state.mixMatch);
+			if (state.mixMatch?.enabled && state.mixMatch.variants) {
+				Object.entries(state.mixMatch.variants).forEach(
+					([variantId, quantity]) => {
+						console.log(
+							`🔍 Mini ATC Debug - Mix & Match variant ${variantId}: quantity ${quantity}`
+						);
+						if (quantity > 0) {
+							const mixMatchItem = {
+								id: variantId,
+								quantity: quantity,
+								properties: {
+									"Add-on": "Mix & Match",
+								},
+							};
+							console.log(
+								"🔍 Mini ATC Debug - Adding mix & match item:",
+								mixMatchItem
+							);
+							items.push(mixMatchItem);
+						}
+					}
+				);
+			}
+
+			// 3. Extra Cups variants
+			console.log("🔍 Mini ATC Debug - Extra Cups state:", state.extraCups);
+			if (state.extraCups?.enabled && state.extraCups.variants) {
+				Object.entries(state.extraCups.variants).forEach(
+					([variantId, quantity]) => {
+						console.log(
+							`🔍 Mini ATC Debug - Extra Cups variant ${variantId}: quantity ${quantity}`
+						);
+						if (quantity > 0) {
+							const extraCupsItem = {
+								id: variantId,
+								quantity: quantity,
+								properties: {
+									"Add-on": "Extra Cups",
+								},
+							};
+							console.log(
+								"🔍 Mini ATC Debug - Adding extra cups item:",
+								extraCupsItem
+							);
+							items.push(extraCupsItem);
+						}
+					}
+				);
+			}
+
+			console.log("🔍 Mini ATC Debug - Total addon items:", items.length);
+			return items;
+		}
+
+		collectOrderNote(state) {
+			const notes = [];
+
+			// Add personalization summary
+			if (state.engraving?.enabled) {
+				const vesselCount = Object.keys(state.engraving.vessels || {}).length;
+				if (vesselCount > 0) {
+					notes.push(`Personalized ${vesselCount} vessel(s) with engraving`);
+				}
+			}
+
+			// Add add-on summary
+			const addons = [];
+			if (state.giftBox?.enabled) addons.push("Premium Gift Box");
+			if (state.mixMatch?.enabled) addons.push("Mix & Match");
+			if (state.extraCups?.enabled) addons.push("Extra Cups");
+
+			if (addons.length > 0) {
+				notes.push(`Add-ons: ${addons.join(", ")}`);
+			}
+
+			return notes.join(" | ");
+		}
+
+		collectOrderAttributes(state) {
+			const attributes = {};
+
+			// Add modal source
+			attributes["Order Source"] = "Mini ATC Modal";
+
+			// Add personalization details
+			if (state.engraving?.enabled) {
+				attributes["Engraving Enabled"] = "Yes";
+
+				// Add individual vessel engravings
+				Object.entries(state.engraving.vessels || {}).forEach(
+					([vesselId, text]) => {
+						if (text && text.trim() !== "") {
+							attributes[`Vessel ${vesselId} Text`] = text.trim().toUpperCase();
+						}
+					}
+				);
+			}
+
+			// Add POMC system data
+			if (window.pomcSystem) {
+				const multiplier = window.pomcSystem.getMultiplier();
+				if (multiplier) {
+					attributes["Vessel Count"] = multiplier.toString();
+				}
+			}
+
+			return attributes;
+		}
+
+		getGiftBoxVariantId() {
+			// Try to get from modal config first
+			const config = this.config;
+			if (config.giftBox?.variantId) {
+				return config.giftBox.variantId;
+			}
+
+			// Try to get from DOM
+			const giftBoxToggle = this.modal.querySelector(
+				"[data-gift-box-variant-id]"
+			);
+			if (giftBoxToggle) {
+				return giftBoxToggle.getAttribute("data-gift-box-variant-id");
+			}
+
+			// Fallback - you may need to set this based on your actual gift box product
+			return null;
+		}
+
+		async addItemsToShopifyCart(cartData) {
+			const config = {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+				body: JSON.stringify({
+					items: cartData.items,
+					...(cartData.note && { note: cartData.note }),
+					...(Object.keys(cartData.attributes).length > 0 && {
+						attributes: cartData.attributes,
+					}),
+				}),
+			};
+
+			const response = await fetch("/cart/add.js", config);
+			return await response.json();
+		}
+
+		setLoadingState(loading) {
+			const addToCartBtn = this.modal.querySelector(
+				".mini-atc-modal__add-to-cart-btn"
+			);
+			const btnText = addToCartBtn?.querySelector(".mini-atc-modal__btn-text");
+
+			if (loading) {
+				addToCartBtn?.classList.add("loading");
+				addToCartBtn?.setAttribute("disabled", "true");
+				if (btnText) btnText.textContent = "ADDING TO CART...";
+			} else {
+				addToCartBtn?.classList.remove("loading");
+				addToCartBtn?.removeAttribute("disabled");
+				if (btnText) btnText.textContent = "ADD TO CART";
+			}
+		}
+
+		showAddToCartSuccess(itemCount) {
+			// Create or update success message
+			let successMessage = this.modal.querySelector(".add-to-cart-success");
+
+			if (!successMessage) {
+				successMessage = document.createElement("div");
+				successMessage.className = "add-to-cart-success";
+				successMessage.setAttribute("role", "status");
+				successMessage.setAttribute("aria-live", "polite");
+
+				// Insert at the top of the checkout view
+				const checkoutView = this.modal.querySelector('[data-view="checkout"]');
+				if (checkoutView) {
+					checkoutView.insertBefore(successMessage, checkoutView.firstChild);
+				}
+			}
+
+			// Update message content
+			const itemText = itemCount === 1 ? "item" : "items";
+			successMessage.innerHTML = `
+				<div class="success-content">
+					<svg class="success-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+						<circle cx="10" cy="10" r="10" fill="#4CAF50"/>
+						<path d="M6 10L8.5 12.5L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+					<span class="success-text">✅ Successfully added ${itemCount} ${itemText} to cart!</span>
+				</div>
+			`;
+
+			// Add CSS if not already present
+			if (!document.querySelector("#add-to-cart-success-styles")) {
+				const style = document.createElement("style");
+				style.id = "add-to-cart-success-styles";
+				style.textContent = `
+					.add-to-cart-success {
+						background: #e8f5e8;
+						border: 1px solid #4CAF50;
+						border-radius: 8px;
+						padding: 12px 16px;
+						margin-bottom: 16px;
+						animation: slideInSuccess 0.3s ease-out;
+					}
+					
+					.success-content {
+						display: flex;
+						align-items: center;
+						gap: 8px;
+					}
+					
+					.success-icon {
+						flex-shrink: 0;
+					}
+					
+					.success-text {
+						color: #2e7d32;
+						font-family: Gabarito, sans-serif;
+						font-size: 14px;
+						font-weight: 600;
+					}
+					
+					@keyframes slideInSuccess {
+						from {
+							opacity: 0;
+							transform: translateY(-10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateY(0);
+						}
+					}
+				`;
+				document.head.appendChild(style);
+			}
+
+			// Auto-hide after 5 seconds
+			setTimeout(() => {
+				if (successMessage && successMessage.parentNode) {
+					successMessage.style.opacity = "0";
+					setTimeout(() => {
+						if (successMessage && successMessage.parentNode) {
+							successMessage.remove();
+						}
+					}, 300);
+				}
+			}, 5000);
+		}
+
+		handleAddToCartError(errorMessage) {
+			// Show error message to user
+			console.error("Add to cart failed:", errorMessage);
+
+			// You can implement a toast notification or modal error display here
+			// For now, we'll use a simple alert
+			alert(`Failed to add items to cart: ${errorMessage}`);
+
+			// Emit error event for external handling
+			this.emit("cartError", { message: errorMessage });
+		}
+
+		async updateCheckoutView(cartResponse) {
+			try {
+				// Fetch updated cart data from Shopify
+				const cartData = await this.fetchUpdatedCartData();
+
+				if (!cartData || !cartData.items) {
+					console.warn("No cart data available for checkout view update");
+					return;
+				}
+
+				// Find the checkout items container
+				const checkoutContainer = this.modal.querySelector(
+					"[data-checkout-items]"
+				);
+				const emptyState = this.modal.querySelector("[data-empty-state]");
+
+				if (!checkoutContainer) {
+					console.warn("Checkout items container not found");
+					return;
+				}
+
+				// Clear existing items (except empty state)
+				const existingItems = checkoutContainer.querySelectorAll(
+					".checkout-product-item-wrap"
+				);
+				existingItems.forEach((item) => item.remove());
+
+				if (cartData.items.length === 0) {
+					// Show empty state
+					if (emptyState) {
+						emptyState.style.display = "block";
+					}
+				} else {
+					// Hide empty state
+					if (emptyState) {
+						emptyState.style.display = "none";
+					}
+
+					// Render cart items using the checkout-products-wrap snippet approach
+					for (const item of cartData.items.slice(0, 3)) {
+						// Limit to 3 items like the original
+						const itemElement = await this.renderCheckoutItem(item);
+						if (itemElement) {
+							checkoutContainer.appendChild(itemElement);
+						}
+					}
+				}
+
+				console.log(
+					"✅ Checkout view updated with",
+					cartData.items.length,
+					"items"
+				);
+			} catch (error) {
+				console.error("Failed to update checkout view:", error);
+			}
+		}
+
+		async fetchUpdatedCartData() {
+			try {
+				const response = await fetch("/cart.js");
+				if (!response.ok) {
+					throw new Error(`Failed to fetch cart: ${response.status}`);
+				}
+				return await response.json();
+			} catch (error) {
+				console.error("Failed to fetch updated cart data:", error);
+				return null;
+			}
+		}
+
+		async renderCheckoutItem(item) {
+			try {
+				// Create a checkout item element similar to checkout-products-wrap snippet
+				const itemWrapper = document.createElement("div");
+				itemWrapper.className = "checkout-product-item-wrap";
+
+				// Get product image URL
+				const imageUrl = item.image
+					? item.image.replace(/\.(jpg|jpeg|png|gif|webp)/, "_128x128.$1")
+					: null;
+
+				// Format price
+				const formatPrice = (cents) => {
+					return new Intl.NumberFormat("en-GB", {
+						style: "currency",
+						currency: "GBP",
+					}).format(cents / 100);
+				};
+
+				// Build the HTML structure
+				itemWrapper.innerHTML = `
+					<div class="checkout-products-wrap" data-item-id="${item.id}">
+						<div class="checkout-products-wrap__container">
+							<!-- Product Image Section -->
+							<div class="checkout-products-wrap__image">
+								<div class="checkout-products-wrap__image-container">
+									${
+										imageUrl
+											? `
+										<img 
+											src="${imageUrl}"
+											alt="${item.product_title || "Product"}"
+											width="128"
+											height="128"
+											loading="lazy"
+											class="checkout-products-wrap__product-image"
+										/>
+									`
+											: `
+										<div class="checkout-products-wrap__placeholder">
+											<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+												<rect width="128" height="128" fill="#f3f3f3"/>
+												<text x="64" y="64" text-anchor="middle" dy=".3em" fill="#666">No Image</text>
+											</svg>
+										</div>
+									`
+									}
+								</div>
+							</div>
+
+							<!-- Product Details Section -->
+							<div class="checkout-products-wrap__details">
+								<!-- Product Title and Delete Button -->
+								<div class="checkout-products-wrap__header">
+									<h3 class="checkout-products-wrap__title">
+										${item.product_title || "Product"}
+									</h3>
+									<button 
+										type="button" 
+										class="checkout-products-wrap__delete"
+										data-remove-item="${item.id}"
+										aria-label="Remove ${item.product_title || "item"} from cart"
+									>
+										<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+											<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+											<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+											<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</button>
+								</div>
+
+								<!-- Product Options/Chips -->
+								<div class="checkout-products-wrap__options">
+									${this.renderItemProperties(item)}
+								</div>
+
+								<!-- Pricing Section -->
+								<div class="checkout-products-wrap__pricing">
+									${
+										item.original_price !== item.final_price
+											? `
+										<span class="checkout-products-wrap__current-price">
+											${formatPrice(item.final_price)}
+										</span>
+										<span class="checkout-products-wrap__original-price">
+											${formatPrice(item.original_price)}
+										</span>
+									`
+											: `
+										<span class="checkout-products-wrap__current-price">
+											${formatPrice(item.original_price)}
+										</span>
+									`
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+
+				return itemWrapper;
+			} catch (error) {
+				console.error("Failed to render checkout item:", error);
+				return null;
+			}
+		}
+
+		renderItemProperties(item) {
+			let propertiesHtml = "";
+
+			// Handle item properties
+			// if (item.properties && Object.keys(item.properties).length > 0) {
+			// 	Object.entries(item.properties).forEach(([key, value]) => {
+			// 		if (!key.startsWith('_') && value) {
+			// 			propertiesHtml += `
+			// 				<div class="checkout-products-wrap__option-chip">
+			// 					${key}: ${value}
+			// 				</div>
+			// 			`;
+			// 		}
+			// 	});
+			// }
+
+			// Add default CHUUG options if it's a CHUUG product
+			if (
+				item.product_title &&
+				(item.product_title.includes("CHUUG") ||
+					item.product_title.includes("Chuug"))
+			) {
+				// Check for engraving in properties
+				let engravingText = "";
+				if (item.properties) {
+					Object.entries(item.properties).forEach(([key, value]) => {
+						if (key.toLowerCase().includes("engraving") && value) {
+							engravingText = value;
+						}
+					});
+				}
+
+				if (engravingText) {
+					propertiesHtml += `
+						<div class="checkout-products-wrap__option-chip">
+							🔨 Engraved Initials, ${engravingText}
+						</div>
+					`;
+				}
+
+				propertiesHtml += `
+					<div class="checkout-products-wrap__option-chip">
+						🍺 Silver Insulated Cup
+					</div>
+				`;
+			}
+
+			return propertiesHtml;
+		}
+
+		async removeCartItem(itemId) {
+			try {
+				// Remove item from Shopify cart
+				const response = await fetch("/cart/change.js", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/json",
+					},
+					body: JSON.stringify({
+						id: itemId,
+						quantity: 0,
+					}),
+				});
+
+				if (!response.ok) {
+					throw new Error(`Failed to remove item: ${response.status}`);
+				}
+
+				const cartData = await response.json();
+
+				// Update the checkout view with the new cart state
+				await this.updateCheckoutView(cartData);
+
+				// Update cart UI if cart drawer exists
+				if (window.cart && typeof window.cart.renderContents === "function") {
+					window.cart.renderContents(cartData);
+				}
+
+				console.log("✅ Item removed from cart and checkout view updated");
+			} catch (error) {
+				console.error("Failed to remove cart item:", error);
+			}
+		}
+
+		proceedToCheckout() {
+			// This method is called from checkout view
+			// It should redirect to checkout page
+			const state = this.state.getState();
 			this.emit("checkoutInitiated", state);
-			this.close();
+
+			// Redirect to checkout
+			window.location.href = window.routes?.checkout_url || "/checkout";
 		}
 
 		// Public API methods

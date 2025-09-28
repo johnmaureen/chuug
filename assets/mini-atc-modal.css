@@ -1329,6 +1329,35 @@
 	transform: scale(0.98);
 }
 
+.mini-atc-modal__add-to-cart-btn.loading {
+	opacity: 0.7;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.mini-atc-modal__add-to-cart-btn.loading .mini-atc-modal__btn-text {
+	position: relative;
+}
+
+.mini-atc-modal__add-to-cart-btn.loading .mini-atc-modal__btn-text::after {
+	content: "";
+	position: absolute;
+	right: -30px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 20px;
+	height: 20px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top: 2px solid #ffffff;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: translateY(-50%) rotate(0deg); }
+	100% { transform: translateY(-50%) rotate(360deg); }
+}
+
 /* Back Button */
 .mini-atc-modal__back-btn {
 	background: transparent;
