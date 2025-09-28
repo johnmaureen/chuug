@@ -413,13 +413,8 @@
 		constructor(modalInstance) {
 			super();
 			this.modalInstance = modalInstance; // Reference to the modal instance
-			this.basePrices = {
-				product: 7800, // £78.00 in cents (base vessel pricing)
-				giftBox: 200, // £2.00 in cents (fallback)
-				variant: 1299, // £12.99 in cents
-				originalPrice: 18000, // £180.00 in cents (base original pricing)
-			};
 			this.dynamicPrices = {
+				vessel: null, // Will be updated from POMC selectedProductAmountData
 				giftBox: null, // Will be updated from product data
 			};
 		}
@@ -430,55 +425,44 @@
 			let vesselOnlyTotal = 0;
 			let vesselOnlyOriginal = 0;
 
-			// Calculate pricing based on POMC system vessel selections
-			if (window.pomcSystem) {
-				const vesselSelections = window.pomcSystem.getAllVesselSelections();
-				const multiplier = window.pomcSystem.getMultiplier();
-				const selectedProductAmountData =
-					window.pomcSystem.getSelectedProductAmountData();
-
-				// Get pricing for the current vessel count (1x, 2x, or 3x)
-				const vesselPricing = this.getVesselPricingForMultiplier(multiplier);
-				if (vesselPricing) {
-					vesselOnlyTotal = vesselPricing.price;
-					vesselOnlyOriginal = vesselPricing.originalPrice;
-					total = vesselPricing.price;
-					originalTotal = vesselPricing.originalPrice;
-				}
-			}
-
-			// Fallback to base pricing if no POMC data
-			if (total === 0) {
-				vesselOnlyTotal = this.basePrices.product;
-				vesselOnlyOriginal = this.basePrices.originalPrice;
-				total = this.basePrices.product;
-				originalTotal = this.basePrices.originalPrice;
+			// Get pricing from POMC system - this is the source of truth
+			const vesselPricing = this.getVesselPricingForMultiplier();
+			if (vesselPricing) {
+				vesselOnlyTotal = vesselPricing.price;
+				vesselOnlyOriginal = vesselPricing.originalPrice;
+				total = vesselPricing.price;
+				originalTotal = vesselPricing.originalPrice;
+			} else {
+				// If no POMC data available, return zero pricing
+				console.warn("No vessel pricing data available from POMC system");
+				return { total: 0, originalPrice: 0, savings: 0 };
 			}
 
 			// Handle gift box pricing - only add when enabled
 			// The gift box price is loaded dynamically from product data
-			const giftBoxPrice =
-				this.dynamicPrices.giftBox || this.basePrices.giftBox;
+			const giftBoxPrice = this.dynamicPrices.giftBox;
 
-			if (state.giftBox?.enabled) {
+			if (state.giftBox?.enabled && giftBoxPrice) {
 				// Gift box is enabled - add to both totals for consistent comparison
 				total += giftBoxPrice;
 				originalTotal += giftBoxPrice;
 			}
 			// When disabled, show vessel prices only
 
-			// Add mix & match variants
+			// Add mix & match variants (if pricing is available)
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
 				Object.values(state.mixMatch.variants).forEach((quantity) => {
-					const variantPrice = quantity * this.basePrices.variant;
+					// TODO: Get actual variant pricing from product data
+					const variantPrice = quantity * 1299; // £12.99 fallback
 					total += variantPrice;
 				});
 			}
 
-			// Add extra cups variants
+			// Add extra cups variants (if pricing is available)
 			if (state.extraCups?.enabled && state.extraCups.variants) {
 				Object.values(state.extraCups.variants).forEach((quantity) => {
-					const variantPrice = quantity * this.basePrices.variant;
+					// TODO: Get actual variant pricing from product data
+					const variantPrice = quantity * 1299; // £12.99 fallback
 					total += variantPrice;
 				});
 			}
@@ -502,53 +486,13 @@
 		}
 
 		getVesselPricing(selection) {
-			// Get pricing from the modal configuration that matches vessel-number-wrap
-			const config = this.modal.querySelector("[data-mini-atc-config]");
-			if (!config) {
-				return { price: 7800, originalPrice: 18000 };
-			}
-
-			try {
-				const modalConfig = JSON.parse(config.textContent);
-				const vesselPricing = modalConfig.pricing?.vesselPricing;
-
-				if (!vesselPricing) {
-					return { price: 7800, originalPrice: 18000 };
-				}
-
-				// Get the current multiplier from POMC system
-				const multiplier = window.pomcSystem
-					? window.pomcSystem.getMultiplier()
-					: 1;
-				const vesselKey =
-					multiplier === 1 ? "one" : multiplier === 2 ? "two" : "three";
-
-				// Check if engraving is enabled (this would need to be determined from the current state)
-				// For now, we'll use noEngraving as default, but this should be dynamic
-				const engravingEnabled = this.isEngravingEnabled();
-				const priceKey = engravingEnabled ? "engraving" : "noEngraving";
-				const compareAtKey = engravingEnabled
-					? "compareAtEngraving"
-					: "compareAtNoEngraving";
-
-				const pricing = vesselPricing[vesselKey];
-				if (pricing) {
-					return {
-						price: pricing[priceKey] || 7800,
-						originalPrice: pricing[compareAtKey] || 18000,
-					};
-				}
-			} catch (error) {}
-
-			// Fallback pricing
-			return {
-				price: this.basePrices.product,
-				originalPrice: this.basePrices.originalPrice,
-			};
+			// This method is deprecated - use getVesselPricingForMultiplier() instead
+			// which gets pricing directly from POMC selectedProductAmountData
+			return this.getVesselPricingForMultiplier();
 		}
 
-		getVesselPricingForMultiplier(multiplier) {
-			// Get pricing from POMC system - this provides the correct variant-specific pricing
+		getVesselPricingForMultiplier() {
+			// Get pricing from POMC system - this is the source of truth
 			if (window.pomcSystem) {
 				const selectedProductAmountData =
 					window.pomcSystem.getSelectedProductAmountData();
@@ -558,6 +502,12 @@
 
 					const variant = selectedProductAmountData.variants[variantIndex];
 					if (variant) {
+						// Store the pricing for reference
+						this.dynamicPrices.vessel = {
+							price: variant.price,
+							originalPrice: variant.compare_at_price,
+						};
+						
 						return {
 							price: variant.price,
 							originalPrice: variant.compare_at_price,
@@ -566,11 +516,8 @@
 				}
 			}
 
-			// Simple fallback to base pricing
-			return {
-				price: this.basePrices.product,
-				originalPrice: this.basePrices.originalPrice,
-			};
+			// No pricing data available
+			return null;
 		}
 
 		updateGiftBoxPrice(priceInCents) {
