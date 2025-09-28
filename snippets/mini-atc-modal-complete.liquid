@@ -188,7 +188,8 @@
                           class="vessel-name-input" 
                           placeholder="Maximum of 3 Letters"
                           maxlength="3"
-                          disabled
+                          pattern="[A-Za-z]{0,3}"
+                          title="Only letters are allowed (maximum 3)"
                           data-vessel-input="{{ i }}"
                           data-property="properties[Vessel {{ i }} Engraving]"
                           aria-describedby="{{ modal_id }}-vessel-{{ i }}-description"

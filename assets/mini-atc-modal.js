@@ -62,12 +62,12 @@
 			return `£${(cents / 100).toFixed(2)}`;
 		},
 
-		sanitizeInput(input) {
-			return input
-				.replace(/[^A-Za-z0-9]/g, "")
-				.toUpperCase()
-				.slice(0, 3);
-		},
+	sanitizeInput(input) {
+		return input
+			.replace(/[^A-Za-z]/g, "")
+			.toUpperCase()
+			.slice(0, 3);
+	},
 
 		trapFocus(element) {
 			const focusableElements = element.querySelectorAll(
@@ -678,8 +678,18 @@
 			// Counter events
 			this.modal.addEventListener("click", this.handleCounterClick.bind(this));
 
-			// Input events
-			this.modal.addEventListener("input", this.handleVesselInput.bind(this));
+		// Input events
+		this.modal.addEventListener("input", this.handleVesselInput.bind(this));
+		this.modal.addEventListener("keypress", (event) => {
+			if (event.target.closest("[data-vessel-input]")) {
+				this.handleVesselKeyPress(event);
+			}
+		});
+		this.modal.addEventListener("paste", (event) => {
+			if (event.target.closest("[data-vessel-input]")) {
+				this.handleVesselPaste(event);
+			}
+		});
 
 			// State change events
 			this.state.on(
@@ -893,6 +903,32 @@
 			this.state.updateVesselEngraving(vesselId, sanitizedValue);
 		}
 
+		handleVesselKeyPress(event) {
+			// Only allow letters (A-Z, a-z)
+			const char = String.fromCharCode(event.which);
+			if (!/[A-Za-z]/.test(char)) {
+				event.preventDefault();
+			}
+		}
+
+		handleVesselPaste(event) {
+			// Prevent default paste behavior
+			event.preventDefault();
+			
+			// Get pasted text from clipboard
+			const paste = (event.clipboardData || window.clipboardData).getData('text');
+			
+			// Sanitize the pasted content to only allow letters
+			const sanitizedPaste = Utils.sanitizeInput(paste);
+			
+			// Set the sanitized value to the input
+			const input = event.target;
+			input.value = sanitizedPaste;
+			
+			// Trigger input event to update state
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+		}
+
 		handleAction(actionType) {
 			switch (actionType) {
 				case "add-to-cart":
@@ -1036,7 +1072,8 @@
             class="vessel-name-input" 
             placeholder="Maximum of 3 Letters"
             maxlength="3"
-            disabled
+            pattern="[A-Za-z]{0,3}"
+            title="Only letters are allowed (maximum 3)"
             data-vessel-input="${vesselNumber}"
             data-property="properties[Vessel ${vesselNumber} Engraving]"
             aria-describedby="${modalId}-vessel-${vesselNumber}-description"
