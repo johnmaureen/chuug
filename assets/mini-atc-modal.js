@@ -1752,47 +1752,50 @@
 				}
 			}
 
-		// Scroll to top
-		const content = this.modal.querySelector(".mini-atc-modal__content");
-		if (content) {
-			content.scrollTop = 0;
-		}
-
-		// Handle footer visibility based on view and context
-		const footer = this.modal.querySelector(".mini-atc-modal__footer");
-		if (footer) {
-			if (viewName === "personalize" && this.openingContext === "add-multiple-products") {
-				// Always show footer in personalize view for add-multiple-products
-				footer.style.display = "";
-				footer.style.opacity = "1";
+			// Scroll to top
+			const content = this.modal.querySelector(".mini-atc-modal__content");
+			if (content) {
+				content.scrollTop = 0;
 			}
-			// For checkout view, footer visibility is handled by showCheckoutSections/hideCheckoutSections
-		}
 
-		this.currentView = viewName;
-		this.emit("viewChanged", viewName);
-		}
-
-	open(context = null) {
-		if (this.isActive) return;
-
-		// Store the opening context
-		this.openingContext = context;
-		
-		// Switch to appropriate view based on context
-		if (context === 'add-multiple-products') {
-			this.switchView("personalize");
-			// Ensure footer is visible for add-multiple-products context
+			// Handle footer visibility based on view and context
 			const footer = this.modal.querySelector(".mini-atc-modal__footer");
 			if (footer) {
-				footer.style.display = "";
-				footer.style.opacity = "1";
+				if (
+					viewName === "personalize" &&
+					this.openingContext === "add-multiple-products"
+				) {
+					// Always show footer in personalize view for add-multiple-products
+					footer.style.display = "";
+					footer.style.opacity = "1";
+				}
+				// For checkout view, footer visibility is handled by showCheckoutSections/hideCheckoutSections
 			}
-		} else if (context === 'cart-icon') {
-			this.switchView("checkout");
-			// Pre-hide sections for cart icon to prevent flash when cart is empty
-			this.hideCheckoutSections();
+
+			this.currentView = viewName;
+			this.emit("viewChanged", viewName);
 		}
+
+		open(context = null) {
+			if (this.isActive) return;
+
+			// Store the opening context
+			this.openingContext = context;
+
+			// Switch to appropriate view based on context
+			if (context === "add-multiple-products") {
+				this.switchView("personalize");
+				// Ensure footer is visible for add-multiple-products context
+				const footer = this.modal.querySelector(".mini-atc-modal__footer");
+				if (footer) {
+					footer.style.display = "";
+					footer.style.opacity = "1";
+				}
+			} else if (context === "cart-icon") {
+				this.switchView("checkout");
+				// Pre-hide sections for cart icon to prevent flash when cart is empty
+				this.hideCheckoutSections();
+			}
 
 			// Ensure modal is properly hidden before showing
 			this.modal.style.visibility = "hidden";
@@ -2726,130 +2729,133 @@
 			}
 		}
 
-	hideCheckoutSections() {
-		// Always hide these checkout-specific sections (they should only be visible when cart has items in checkout view)
-		const stepProcessSection = this.modal.querySelector(
-			".step-process-section"
-		);
-		if (stepProcessSection) {
-			stepProcessSection.style.display = "none";
-		}
-
-		const countdownSection = this.modal.querySelector(".countdown-section");
-		if (countdownSection) {
-			countdownSection.style.display = "none";
-		}
-
-		const additionalRecommendationsSection = this.modal.querySelector(
-			".additional-recommendations-section"
-		);
-		if (additionalRecommendationsSection) {
-			additionalRecommendationsSection.style.display = "none";
-		}
-
-		// Handle footer based on current view and context
-		const footer = this.modal.querySelector(".mini-atc-modal__footer");
-		if (footer) {
-			if (this.currentView === "checkout") {
-				// In checkout view, only hide footer if context allows it
-				const shouldShowFooter = this.shouldShowFooter(false); // Cart is empty if we're hiding sections
-				if (!shouldShowFooter) {
-					footer.style.display = "none";
-				}
-			} else if (this.currentView === "personalize" && this.openingContext === "add-multiple-products") {
-				// In personalize view with add-multiple-products, keep footer visible
-				footer.style.display = "";
-				footer.style.opacity = "1";
-			}
-		}
-	}
-
-	showCheckoutSections() {
-		// Only show checkout-specific sections when in checkout view
-		if (this.currentView === "checkout") {
-			// Show step process section
+		hideCheckoutSections() {
+			// Always hide these checkout-specific sections (they should only be visible when cart has items in checkout view)
 			const stepProcessSection = this.modal.querySelector(
 				".step-process-section"
 			);
 			if (stepProcessSection) {
-				stepProcessSection.style.display = "";
-				stepProcessSection.style.opacity = "1";
+				stepProcessSection.style.display = "none";
 			}
 
-			// Show countdown section
 			const countdownSection = this.modal.querySelector(".countdown-section");
 			if (countdownSection) {
-				countdownSection.style.display = "";
-				countdownSection.style.opacity = "1";
+				countdownSection.style.display = "none";
 			}
 
-			// Show additional recommendations section
 			const additionalRecommendationsSection = this.modal.querySelector(
 				".additional-recommendations-section"
 			);
 			if (additionalRecommendationsSection) {
-				additionalRecommendationsSection.style.display = "";
-				additionalRecommendationsSection.style.opacity = "1";
+				additionalRecommendationsSection.style.display = "none";
 			}
 
-			// Show footer (pricing and add to cart button) - context-aware
+			// Handle footer based on current view and context
 			const footer = this.modal.querySelector(".mini-atc-modal__footer");
 			if (footer) {
-				// Check if we should show the footer based on context and cart state
-				const shouldShowFooter = this.shouldShowFooter(true); // Cart has items if we're showing sections
-				if (shouldShowFooter) {
+				if (this.currentView === "checkout") {
+					// In checkout view, only hide footer if context allows it
+					const shouldShowFooter = this.shouldShowFooter(false); // Cart is empty if we're hiding sections
+					if (!shouldShowFooter) {
+						footer.style.display = "none";
+					}
+				} else if (
+					this.currentView === "personalize" &&
+					this.openingContext === "add-multiple-products"
+				) {
+					// In personalize view with add-multiple-products, keep footer visible
 					footer.style.display = "";
 					footer.style.opacity = "1";
-				} else {
-					footer.style.display = "none";
 				}
 			}
 		}
-		// In personalize view, always show footer for add-multiple-products context
-		else if (this.currentView === "personalize") {
-			const footer = this.modal.querySelector(".mini-atc-modal__footer");
-			if (footer) {
-				const shouldShowFooter = this.shouldShowFooter();
-				if (shouldShowFooter) {
-					footer.style.display = "";
-					footer.style.opacity = "1";
-				} else {
-					footer.style.display = "none";
-				}
-			}
-		}
-	}
 
-	shouldShowFooter(cartHasItems = null) {
-		// If opened via add-multiple-products, always show footer (in personalize view)
-		if (this.openingContext === "add-multiple-products") {
-			return true; // Always show footer for add-multiple-products context
-		}
-
-		// If opened via cart icon, only show footer if cart has items (in checkout view)
-		if (this.openingContext === "cart-icon") {
-			// If cart state is provided, use it; otherwise try to determine from DOM
-			if (cartHasItems !== null) {
-				return cartHasItems;
-			}
-
-			// Try to determine from current cart state
-			const checkoutContainer = this.modal.querySelector(
-				".checkout-products-container"
-			);
-			if (checkoutContainer) {
-				const cartItems = checkoutContainer.querySelectorAll(
-					".checkout-products-wrap"
+		showCheckoutSections() {
+			// Only show checkout-specific sections when in checkout view
+			if (this.currentView === "checkout") {
+				// Show step process section
+				const stepProcessSection = this.modal.querySelector(
+					".step-process-section"
 				);
-				return cartItems.length > 0;
-			}
+				if (stepProcessSection) {
+					stepProcessSection.style.display = "";
+					stepProcessSection.style.opacity = "1";
+				}
 
-			return false; // Default to hiding footer for cart-icon context
+				// Show countdown section
+				const countdownSection = this.modal.querySelector(".countdown-section");
+				if (countdownSection) {
+					countdownSection.style.display = "";
+					countdownSection.style.opacity = "1";
+				}
+
+				// Show additional recommendations section
+				const additionalRecommendationsSection = this.modal.querySelector(
+					".additional-recommendations-section"
+				);
+				if (additionalRecommendationsSection) {
+					additionalRecommendationsSection.style.display = "";
+					additionalRecommendationsSection.style.opacity = "1";
+				}
+
+				// Show footer (pricing and add to cart button) - context-aware
+				const footer = this.modal.querySelector(".mini-atc-modal__footer");
+				if (footer) {
+					// Check if we should show the footer based on context and cart state
+					const shouldShowFooter = this.shouldShowFooter(true); // Cart has items if we're showing sections
+					if (shouldShowFooter) {
+						footer.style.display = "";
+						footer.style.opacity = "1";
+					} else {
+						footer.style.display = "none";
+					}
+				}
+			}
+			// In personalize view, always show footer for add-multiple-products context
+			else if (this.currentView === "personalize") {
+				const footer = this.modal.querySelector(".mini-atc-modal__footer");
+				if (footer) {
+					const shouldShowFooter = this.shouldShowFooter();
+					if (shouldShowFooter) {
+						footer.style.display = "";
+						footer.style.opacity = "1";
+					} else {
+						footer.style.display = "none";
+					}
+				}
+			}
 		}
 
-		// Default behavior - show footer
-		return true;
-	}
+		shouldShowFooter(cartHasItems = null) {
+			// If opened via add-multiple-products, always show footer (in personalize view)
+			if (this.openingContext === "add-multiple-products") {
+				return true; // Always show footer for add-multiple-products context
+			}
+
+			// If opened via cart icon, only show footer if cart has items (in checkout view)
+			if (this.openingContext === "cart-icon") {
+				// If cart state is provided, use it; otherwise try to determine from DOM
+				if (cartHasItems !== null) {
+					return cartHasItems;
+				}
+
+				// Try to determine from current cart state
+				const checkoutContainer = this.modal.querySelector(
+					".checkout-products-container"
+				);
+				if (checkoutContainer) {
+					const cartItems = checkoutContainer.querySelectorAll(
+						".checkout-products-wrap"
+					);
+					return cartItems.length > 0;
+				}
+
+				return false; // Default to hiding footer for cart-icon context
+			}
+
+			// Default behavior - show footer
+			return true;
+		}
 
 		showEmptyCartMessage() {
 			// Find or create empty cart message
@@ -3135,7 +3141,10 @@
 				if (countdown && countdown.dataset.originalDisplay !== undefined) {
 					delete countdown.dataset.originalDisplay;
 				}
-				if (recommendations && recommendations.dataset.originalDisplay !== undefined) {
+				if (
+					recommendations &&
+					recommendations.dataset.originalDisplay !== undefined
+				) {
 					delete recommendations.dataset.originalDisplay;
 				}
 
@@ -3224,6 +3233,7 @@
 						border-radius: 50%;
 						animation: removeItemSpin 1s linear infinite;
 						margin: 0 auto 12px;
+            display: block !important;
 					}
 					
 					.remove-item-loader__text {
