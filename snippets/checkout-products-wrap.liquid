@@ -127,7 +127,6 @@
     {% endfor %}
   </div>
   
-  {% comment %}
   <!-- Check if Premium Gift Box is mentioned in cart note or attributes -->
   {% if cart.note contains 'Premium Gift Box' or cart.attributes['Premium Gift Box'] %}
     {% assign show_gift_box = true %}
@@ -149,7 +148,6 @@
       {% break %}
     {% endif %}
   {% endfor %}
-  {% endcomment %}
   
   <!-- Gift box container is now hidden by default - show_gift_box remains false -->
   
@@ -237,6 +235,13 @@
     ]
   };
   
+  // Console log the cart data for debugging
+  console.log('🛒 LIQUID CART DATA:', liquidCartData);
+  console.log('🛒 Cart items count:', liquidCartData.itemCount);
+  console.log('🛒 Cart note:', liquidCartData.note);
+  console.log('🛒 Cart attributes:', liquidCartData.attributes);
+  console.log('🛒 All cart items:', liquidCartData.items);
+  
   
   // Check for gift box items in Liquid data
   const giftBoxItems = liquidCartData.items.filter(item => {
@@ -244,58 +249,11 @@
     return title.includes('gift') || title.includes('box');
   });
   
+  console.log('🛒 Gift box items in Liquid data:', giftBoxItems);
+  
 
-  // Reset gift box state in localStorage to ensure it starts as disabled
-  function resetGiftBoxState() {
-    const storageKey = 'chuug_mini_atc_selections';
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const parsedState = JSON.parse(saved);
-        if (parsedState.giftBox && parsedState.giftBox.enabled) {
-          parsedState.giftBox.enabled = false;
-          localStorage.setItem(storageKey, JSON.stringify(parsedState));
-        }
-      }
-    } catch (error) {
-    }
-  }
-  
-  // Reset gift box state first
-  resetGiftBoxState();
-  
-  // Also ensure mini-atc modal respects the disabled state
-  function ensureGiftBoxDisabled() {
-    if (window.miniAtcModal && window.miniAtcModal.state && window.miniAtcModal.pricing) {
-      window.miniAtcModal.state.updatePersonalization('giftBox', { enabled: false });
-      
-      // Force pricing recalculation to update the display
-      const newState = window.miniAtcModal.state.getState();
-      const newPricing = window.miniAtcModal.pricing.calculateTotal(newState);
-      window.miniAtcModal.updatePricingDisplay(newPricing);
-    } else {
-      // Retry if not available yet
-      ensureGiftBoxDisabled();
-    }
-  }
-  
-  // Ensure gift box is disabled in mini-atc modal
-  ensureGiftBoxDisabled();
-  
-  // Ensure gift box toggle UI reflects disabled state
-  function ensureGiftBoxToggleOff() {
-    const giftBoxToggles = document.querySelectorAll('[data-addon-toggle="gift-box"]');
-    giftBoxToggles.forEach(toggle => {
-      if (toggle.checked) {
-        toggle.checked = false;
-        // Trigger change event to update any listeners
-        toggle.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
-  }
-  
-  // Set toggles to OFF state
-  ensureGiftBoxToggleOff();
+  // Gift box state management - allow enabled state to persist
+  // Removed forced disabling logic to allow gift box to display when enabled
   
   // Force update pricing display elements directly as backup
   function forceUpdatePricingDisplay() {
@@ -365,44 +323,26 @@
   // Start watching for price changes
   watchForPriceChanges();
   
-  // Auto-remove gift box items since container is disabled by default
-  function autoRemoveGiftBoxItems() {
-    if (window.cartManager) {
-      window.cartManager.getCart()
-        .then(cartData => {
-          const giftBoxItems = (cartData.items || []).filter(item => {
-            const title = (item.product_title || item.title || '').toLowerCase();
-            const isGiftBox = title.includes('gift') && title.includes('box');
-            const hasGiftBoxProperty = item.properties && item.properties['Premium Gift Box'];
-            return isGiftBox || hasGiftBoxProperty;
-          });
-
-          if (giftBoxItems.length > 0) {
-            // Remove each gift box item
-            giftBoxItems.forEach(item => {
-              window.cartManager.removeItem(item.id)
-                .catch(error => {});
-            });
-          }
-        })
-        .catch(error => {
-        });
-    } else {
-      autoRemoveGiftBoxItems();
-    }
-  }
-  
-  // Run gift box cleanup
-  autoRemoveGiftBoxItems();
+  // Gift box items are now allowed to remain in cart
+  // Removed auto-removal logic to allow gift box display
   
   // Also fetch current cart data via JavaScript API
   if (window.cartManager) {
-    window.cartManager.getCart().catch(error => {});
+    window.cartManager.getCart()
+      .then(cartData => {
+        console.log('🛒 CART MANAGER DATA:', cartData);
+        console.log('🛒 Cart Manager items:', cartData.items);
+      })
+      .catch(error => {
+        console.error('🛒 Cart Manager error:', error);
+      });
   } else {
     // Fallback if cart manager isn't available yet
     fetch('/cart.js')
       .then(response => response.json())
       .then(cartData => {
+        console.log('🛒 FETCH CART DATA:', cartData);
+        console.log('🛒 Fetch items:', cartData.items);
         
         // Check for gift box items in JavaScript data
         const jsGiftBoxItems = (cartData.items || []).filter(item => {
@@ -410,8 +350,11 @@
           return title.includes('gift') || title.includes('box');
         });
         
+        console.log('🛒 Gift box items found:', jsGiftBoxItems);
+        
       })
       .catch(error => {
+        console.error('🛒 Fetch cart error:', error);
       });
   }
 

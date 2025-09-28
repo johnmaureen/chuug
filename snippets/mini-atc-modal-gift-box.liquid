@@ -2,7 +2,16 @@
   Mini ATC Modal - Gift Box Component
   
   Semantic component for premium gift box add-on option.
+  Uses Liquid template instead of AJAX for better performance.
 {% endcomment %}
+
+{%- liquid
+  assign gift_box_handle = 'premium-gift-box-tissue-wrap'
+  assign gift_box_product = all_products[gift_box_handle]
+  assign gift_box_variant = gift_box_product.variants.first
+  assign gift_box_price = gift_box_variant.price | money_without_currency
+  assign gift_box_image = gift_box_product.featured_image | default: gift_box_product.images.first
+-%}
 
 <article class="premium-gift-box" data-addon="gift-box">
   <h5 class="visually-hidden">Premium Gift Box Add-On</h5>
@@ -10,13 +19,23 @@
   <div class="premium-gift-box__container">
     <!-- Product Image -->
     <div class="premium-gift-box__image">
-      <img 
-        src="{{ 'premium-gift-box.png' | asset_url }}" 
-        alt="Premium Gift Box & Wrap" 
-        width="71" 
-        height="89"
-        data-gift-box-image
-      />
+      {%- if gift_box_image -%}
+        <img 
+          src="{{ gift_box_image | image_url: width: 142 }}" 
+          alt="{{ gift_box_product.title | escape }}" 
+          width="71" 
+          height="89"
+          data-gift-box-image
+        />
+      {%- else -%}
+        <img 
+          src="{{ 'premium-gift-box.png' | asset_url }}" 
+          alt="Premium Gift Box & Wrap" 
+          width="71" 
+          height="89"
+          data-gift-box-image
+        />
+      {%- endif -%}
     </div>
     
     <!-- Content Area -->
@@ -24,7 +43,11 @@
       <div class="premium-gift-box__details">
         <div class="premium-gift-box__text">
           <h6 class="premium-gift-box__title" data-gift-box-title>
-            Loading...
+            {%- if gift_box_product -%}
+              {{ gift_box_product.title }}<br>With All CHUUG Orders
+            {%- else -%}
+              Premium Gift Box & Tissue Wrap<br>With All CHUUG Orders
+            {%- endif -%}
           </h6>
         </div>
         <div 
@@ -32,7 +55,14 @@
           aria-label="Gift box price"
           data-gift-box-price
         >
-          Loading...
+          {%- if gift_box_variant -%}
+            £{{ gift_box_price }}
+          {%- else -%}
+            £2.00
+          {%- endif -%}
+        </div>
+        <div class="premium-gift-box__error" data-gift-box-error style="display: none; color: red; font-size: 12px; margin-top: 5px;">
+          <!-- Error messages will appear here -->
         </div>
       </div>
       
@@ -46,10 +76,9 @@
               class="premium-gift-box__toggle-input"
               data-addon-toggle="gift-box"
               aria-describedby="{{ modal_id }}-gift-box-description"
-              {% comment %} Future integration {% endcomment %}
               data-property="properties[Premium Gift Box]"
-              data-variant-id=""
-              data-gift-box-variant-id=""
+              data-variant-id="{{ gift_box_variant.id | default: '' }}"
+              data-gift-box-variant-id="{{ gift_box_variant.id | default: '' }}"
             >
             <span class="premium-gift-box__toggle-slider" aria-hidden="true"></span>
             <span class="visually-hidden">Add premium gift box to order</span>
@@ -64,84 +93,7 @@
   </div>
 </article>
 
-<script>
-  // Fetch gift box product data and update UI
-  (function() {
-    const giftBoxHandle = 'premium-gift-box-tissue-wrap';
-    
-    async function fetchGiftBoxProduct() {
-      try {
-        
-        const response = await fetch(`/products/${giftBoxHandle}.js`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch product ${giftBoxHandle}: ${response.status}`);
-        }
-        
-        const productData = await response.json();
-        
-        updateGiftBoxUI(productData);
-        
-      } catch (error) {
-        // Fallback to default values
-        updateGiftBoxUI(null);
-      }
-    }
-    
-    function updateGiftBoxUI(productData) {
-      const titleEl = document.querySelector('[data-gift-box-title]');
-      const priceEl = document.querySelector('[data-gift-box-price]');
-      const variantIdEl = document.querySelector('[data-gift-box-variant-id]');
-      const imageEl = document.querySelector('[data-gift-box-image]');
-      
-      if (productData && productData.variants && productData.variants.length > 0) {
-        const variant = productData.variants[0]; // Use first variant
-        
-        // Update title
-        if (titleEl) {
-          titleEl.innerHTML = `${productData.title}<br>With All CHUUG Orders`;
-        }
-        
-        // Update price
-        if (priceEl) {
-          const price = (variant.price / 100).toFixed(2);
-          priceEl.textContent = `£${price}`;
-        }
-        
-        // Update variant ID for cart integration
-        if (variantIdEl) {
-          variantIdEl.value = variant.id;
-        }
-        
-        // Update product image
-        if (imageEl) {
-          // Try different possible image properties
-          let imageUrl = productData.featured_image || 
-                        (productData.images && productData.images[0]) ||
-                        (productData.featured_image_url);
-          
-          if (imageUrl) {
-            imageEl.src = imageUrl;
-            imageEl.alt = productData.title || 'Premium Gift Box & Wrap';
-        }
-      } else {
-        // Fallback values
-        if (titleEl) {
-          titleEl.innerHTML = 'Premium Gift Box & Wrap<br>With All CHUUG Orders';
-        }
-        
-        if (priceEl) {
-          priceEl.textContent = '£2.00';
-        }
-        
-      }
-    }
-    
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', fetchGiftBoxProduct);
-    } else {
-      // Add a small delay to ensure the modal is fully rendered
-      setTimeout(fetchGiftBoxProduct, 100);
-    }
-  })();
-</script>
+{%- comment -%}
+  No JavaScript needed - all data is now rendered server-side via Liquid template
+  The gift box component is fully functional without AJAX calls
+{%- endcomment -%}

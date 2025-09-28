@@ -235,7 +235,7 @@
 
 		reset() {
 			this.state = {
-				engraving: { enabled: true, vessels: {} },
+				engraving: { enabled: false, vessels: {} },
 				mixMatch: { enabled: true, variants: {} },
 				extraCups: { enabled: false, variants: {} },
 				giftBox: { enabled: false },
@@ -414,10 +414,10 @@
 			super();
 			this.modalInstance = modalInstance; // Reference to the modal instance
 			this.basePrices = {
-				product: 7800, // £78.00 in cents
+				product: 7800, // £78.00 in cents (base vessel pricing)
 				giftBox: 200, // £2.00 in cents (fallback)
 				variant: 1299, // £12.99 in cents
-				originalPrice: 18000, // £180.00 in cents (updated to match actual data)
+				originalPrice: 18000, // £180.00 in cents (base original pricing)
 			};
 			this.dynamicPrices = {
 				giftBox: null, // Will be updated from product data
@@ -427,6 +427,8 @@
 		calculateTotal(state) {
 			let total = 0;
 			let originalTotal = 0;
+			let vesselOnlyTotal = 0;
+			let vesselOnlyOriginal = 0;
 
 			// Calculate pricing based on POMC system vessel selections
 			if (window.pomcSystem) {
@@ -438,6 +440,8 @@
 				// Get pricing for the current vessel count (1x, 2x, or 3x)
 				const vesselPricing = this.getVesselPricingForMultiplier(multiplier);
 				if (vesselPricing) {
+					vesselOnlyTotal = vesselPricing.price;
+					vesselOnlyOriginal = vesselPricing.originalPrice;
 					total = vesselPricing.price;
 					originalTotal = vesselPricing.originalPrice;
 				}
@@ -445,20 +449,23 @@
 
 			// Fallback to base pricing if no POMC data
 			if (total === 0) {
+				vesselOnlyTotal = this.basePrices.product;
+				vesselOnlyOriginal = this.basePrices.originalPrice;
 				total = this.basePrices.product;
 				originalTotal = this.basePrices.originalPrice;
 			}
 
-			// Handle gift box pricing
+			// Handle gift box pricing - only add when enabled
+			// The gift box price is loaded dynamically from product data
 			const giftBoxPrice =
 				this.dynamicPrices.giftBox || this.basePrices.giftBox;
 
 			if (state.giftBox?.enabled) {
-				// Gift box is enabled - add the gift box price to POMC price
+				// Gift box is enabled - add to both totals for consistent comparison
 				total += giftBoxPrice;
-			} else {
-				// Gift box is disabled - keep the original POMC price
+				originalTotal += giftBoxPrice;
 			}
+			// When disabled, show vessel prices only
 
 			// Add mix & match variants
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
@@ -476,7 +483,9 @@
 				});
 			}
 
-			const savings = originalTotal - total;
+			// Calculate vessel-only savings (this should not include add-ons)
+			const vesselSavings = vesselOnlyOriginal - vesselOnlyTotal;
+			const savings = vesselSavings;
 
 			const pricingData = {
 				total,
@@ -496,7 +505,7 @@
 			// Get pricing from the modal configuration that matches vessel-number-wrap
 			const config = this.modal.querySelector("[data-mini-atc-config]");
 			if (!config) {
-				return { price: 7800, originalPrice: 19000 };
+				return { price: 7800, originalPrice: 18000 };
 			}
 
 			try {
@@ -504,7 +513,7 @@
 				const vesselPricing = modalConfig.pricing?.vesselPricing;
 
 				if (!vesselPricing) {
-					return { price: 7800, originalPrice: 19000 };
+					return { price: 7800, originalPrice: 18000 };
 				}
 
 				// Get the current multiplier from POMC system
@@ -526,7 +535,7 @@
 				if (pricing) {
 					return {
 						price: pricing[priceKey] || 7800,
-						originalPrice: pricing[compareAtKey] || 19000,
+						originalPrice: pricing[compareAtKey] || 18000,
 					};
 				}
 			} catch (error) {}
@@ -539,66 +548,25 @@
 		}
 
 		getVesselPricingForMultiplier(multiplier) {
-			// First try to get pricing from POMC system selectedProductAmountData
+			// Get pricing from POMC system - this provides the correct variant-specific pricing
 			if (window.pomcSystem) {
 				const selectedProductAmountData =
 					window.pomcSystem.getSelectedProductAmountData();
-				if (selectedProductAmountData) {
-					// Check if engraving is enabled - we'll get this from the modal instance
+				if (selectedProductAmountData && selectedProductAmountData.variants) {
 					const engravingEnabled = this.getEngravingState();
 					const variantIndex = engravingEnabled ? 1 : 0;
 
-					// Get the variant data
 					const variant = selectedProductAmountData.variants[variantIndex];
-					const price =
-						variant?.price || selectedProductAmountData.price || 7800;
-					const compareAtPrice =
-						variant?.compare_at_price ||
-						selectedProductAmountData.compare_at_price ||
-						18000;
-
-					return {
-						price: price,
-						originalPrice: compareAtPrice,
-					};
+					if (variant) {
+						return {
+							price: variant.price,
+							originalPrice: variant.compare_at_price,
+						};
+					}
 				}
 			}
 
-			// Fallback to modal configuration
-			const config = this.modal.querySelector("[data-mini-atc-config]");
-			if (!config) {
-				return { price: 7800, originalPrice: 19000 };
-			}
-
-			try {
-				const modalConfig = JSON.parse(config.textContent);
-				const vesselPricing = modalConfig.pricing?.vesselPricing;
-
-				if (!vesselPricing) {
-					return { price: 7800, originalPrice: 19000 };
-				}
-
-				// Get the vessel key based on multiplier
-				const vesselKey =
-					multiplier === 1 ? "one" : multiplier === 2 ? "two" : "three";
-
-				// Check if engraving is enabled
-				const engravingEnabled = this.getEngravingState();
-				const priceKey = engravingEnabled ? "engraving" : "noEngraving";
-				const compareAtKey = engravingEnabled
-					? "compareAtEngraving"
-					: "compareAtNoEngraving";
-
-				const pricing = vesselPricing[vesselKey];
-				if (pricing) {
-					return {
-						price: pricing[priceKey] || 7800,
-						originalPrice: pricing[compareAtKey] || 19000,
-					};
-				}
-			} catch (error) {}
-
-			// Fallback pricing
+			// Simple fallback to base pricing
 			return {
 				price: this.basePrices.product,
 				originalPrice: this.basePrices.originalPrice,
@@ -870,16 +838,29 @@
 			);
 			if (!toggle) return;
 
+			console.log("🔄 Toggle changed:", {
+				element: toggle,
+				checked: toggle.checked,
+				hasPersonalizationToggle: toggle.hasAttribute("data-personalization-toggle"),
+				hasAddonToggle: toggle.hasAttribute("data-addon-toggle"),
+				hasVesselToggle: toggle.hasAttribute("data-vessel-toggle"),
+				hasGiftBoxVariantId: toggle.hasAttribute("data-gift-box-variant-id")
+			});
+
 			if (toggle.hasAttribute("data-personalization-toggle")) {
 				const type = toggle.getAttribute("data-personalization-toggle");
+				console.log("🔄 Updating personalization:", type, "enabled:", toggle.checked);
 				this.state.updatePersonalization(type, { enabled: toggle.checked });
 			} else if (toggle.hasAttribute("data-addon-toggle")) {
 				const type = toggle.getAttribute("data-addon-toggle");
+				console.log("🔄 Addon toggle:", type, "enabled:", toggle.checked);
 				// Handle gift box toggle specifically with correct key
 				if (type === "gift-box") {
+					console.log("🎁 Gift box toggle changed to:", toggle.checked);
 					this.state.updatePersonalization("giftBox", {
 						enabled: toggle.checked,
 					});
+					console.log("🎁 Gift box state after update:", this.state.state.giftBox);
 				} else {
 					this.state.updatePersonalization(type, { enabled: toggle.checked });
 				}
@@ -1593,7 +1574,7 @@
 			// Fallback to modal state
 			const state = this.state.getState();
 			const engravingEnabled =
-				state.personalization?.engraving?.enabled || false;
+				state.engraving?.enabled || false;
 
 			// Also check the main product page variant index for consistency
 			const inputs = document.querySelectorAll(".inputs");
@@ -2067,20 +2048,38 @@
 		collectAddonProducts(state) {
 			const items = [];
 
-			// 1. Gift Box
+			// 1. Gift Box - Add one per vessel
 			if (state.giftBox?.enabled) {
+				console.log("🎁 Gift box is enabled in state:", state.giftBox);
+				
+				// Get vessel count from POMC system
+				const vesselCount = window.pomcSystem ? window.pomcSystem.getMultiplier() || 1 : 1;
+				console.log("🎁 Vessel count for gift boxes:", vesselCount);
+				
 				// Get gift box variant ID from modal config or default
 				const giftBoxVariantId = this.getGiftBoxVariantId();
+				console.log("🎁 Gift box variant ID:", giftBoxVariantId);
+				
 				if (giftBoxVariantId) {
-					const giftBoxItem = {
-						id: giftBoxVariantId,
-						quantity: 1,
-						properties: {
-							"Add-on": "Premium Gift Box",
-						},
-					};
-					items.push(giftBoxItem);
+					// Add one gift box per vessel
+					for (let i = 0; i < vesselCount; i++) {
+						const giftBoxItem = {
+							id: giftBoxVariantId,
+							quantity: 1,
+							properties: {
+								"Add-on": "Premium Gift Box",
+								"Product Handle": "premium-gift-box-tissue-wrap",
+								"Vessel Number": i + 1,
+							},
+						};
+						console.log(`🎁 Gift box item ${i + 1} being added:`, giftBoxItem);
+						items.push(giftBoxItem);
+					}
+				} else {
+					console.log("❌ No gift box variant ID found!");
 				}
+			} else {
+				console.log("❌ Gift box is NOT enabled in state:", state.giftBox);
 			}
 
 			// 2. Mix & Match variants
@@ -2178,9 +2177,13 @@
 		}
 
 		getGiftBoxVariantId() {
+			console.log("🔍 Getting gift box variant ID...");
+			
 			// Try to get from modal config first
 			const config = this.config;
+			console.log("🔍 Modal config:", config);
 			if (config.giftBox?.variantId) {
+				console.log("✅ Found variant ID in config:", config.giftBox.variantId);
 				return config.giftBox.variantId;
 			}
 
@@ -2188,11 +2191,15 @@
 			const giftBoxToggle = this.modal.querySelector(
 				"[data-gift-box-variant-id]"
 			);
+			console.log("🔍 Gift box toggle element:", giftBoxToggle);
 			if (giftBoxToggle) {
-				return giftBoxToggle.getAttribute("data-gift-box-variant-id");
+				const variantId = giftBoxToggle.getAttribute("data-gift-box-variant-id");
+				console.log("✅ Found variant ID in DOM:", variantId);
+				return variantId;
 			}
 
 			// Fallback - you may need to set this based on your actual gift box product
+			console.log("❌ No gift box variant ID found in config or DOM");
 			return null;
 		}
 
@@ -2342,7 +2349,7 @@
 					return;
 				}
 
-				// Find the checkout items container
+				// Find the checkout items container and empty state
 				const checkoutContainer = this.modal.querySelector(
 					"[data-checkout-items]"
 				);
@@ -2352,12 +2359,6 @@
 					console.warn("Checkout items container not found");
 					return;
 				}
-
-				// Clear existing items (except empty state)
-				const existingItems = checkoutContainer.querySelectorAll(
-					".checkout-product-item-wrap"
-				);
-				existingItems.forEach((item) => item.remove());
 
 				if (cartData.items.length === 0) {
 					// Show empty state
@@ -2382,14 +2383,8 @@
 					// Hide empty cart message
 					this.hideEmptyCartMessage();
 
-					// Render cart items using the checkout-products-wrap snippet approach
-					for (const item of cartData.items.slice(0, 3)) {
-						// Limit to 3 items like the original
-						const itemElement = await this.renderCheckoutItem(item);
-						if (itemElement) {
-							checkoutContainer.appendChild(itemElement);
-						}
-					}
+					// Use Liquid template approach - reload the checkout view with fresh cart data
+					await this.loadCheckoutViewWithLiquidTemplate(cartData);
 				}
 
 			} catch (error) {
@@ -2408,6 +2403,120 @@
 				console.error("Failed to fetch updated cart data:", error);
 				return null;
 			}
+		}
+
+		async loadCheckoutViewWithLiquidTemplate(cartData) {
+			try {
+				// The Liquid template approach won't work via AJAX since it needs cart context
+				// Let's use enhanced JavaScript rendering with better debugging
+				console.log("🛒 Using enhanced JavaScript rendering with debugging");
+				await this.renderCheckoutItemsWithBetterData(cartData);
+			} catch (error) {
+				console.error("Failed to load checkout view:", error);
+				// Fallback to enhanced JavaScript rendering
+				await this.renderCheckoutItemsWithBetterData(cartData);
+			}
+		}
+
+		bindCheckoutItemEvents() {
+			// Re-bind remove item events for dynamically loaded content
+			const removeButtons = this.modal.querySelectorAll("[data-remove-item]");
+			removeButtons.forEach(button => {
+				button.addEventListener('click', (event) => {
+					event.preventDefault();
+					const itemId = button.getAttribute('data-remove-item');
+					if (itemId) {
+						this.removeCartItem(itemId);
+					}
+				});
+			});
+		}
+
+		async renderCheckoutItemsWithBetterData(cartData) {
+			// Enhanced method with comprehensive debugging
+			const checkoutContainer = this.modal.querySelector("[data-checkout-items]");
+			if (!checkoutContainer) return;
+
+			// Clear existing items
+			const existingItems = checkoutContainer.querySelectorAll(".checkout-product-item-wrap");
+			existingItems.forEach((item) => item.remove());
+
+			// COMPREHENSIVE DEBUGGING
+			console.log("🔍 COMPREHENSIVE CART DEBUG:");
+			console.log("📊 Total cart items:", cartData.items.length);
+			console.log("📋 Full cart data:", cartData);
+			console.log("📝 Cart note:", cartData.note);
+			console.log("🏷️ Cart attributes:", cartData.attributes);
+
+			// Debug each item individually
+			cartData.items.forEach((item, index) => {
+				console.log(`\n🔍 ITEM ${index + 1}:`, {
+					id: item.id,
+					title: item.product_title,
+					handle: item.handle,
+					variant_title: item.variant_title,
+					product_type: item.product_type,
+					vendor: item.vendor,
+					price: item.price,
+					final_price: item.final_price,
+					quantity: item.quantity,
+					properties: item.properties,
+					keys: Object.keys(item)
+				});
+
+				// Check for gift box indicators
+				const giftBoxIndicators = {
+					title_contains_gift: (item.product_title || '').toLowerCase().includes('gift'),
+					title_contains_box: (item.product_title || '').toLowerCase().includes('box'),
+					title_contains_premium: (item.product_title || '').toLowerCase().includes('premium'),
+					handle_contains_gift: (item.handle || '').toLowerCase().includes('gift'),
+					handle_contains_box: (item.handle || '').toLowerCase().includes('box'),
+					has_addon_property: item.properties && item.properties["Add-on"] === "Premium Gift Box",
+					has_product_handle: item.properties && item.properties["Product Handle"] === "premium-gift-box-tissue-wrap"
+				};
+
+				console.log("🎁 Gift box indicators:", giftBoxIndicators);
+				console.log("🎁 Is gift box?", this.isGiftBoxItem(item));
+			});
+
+			// Render items using the existing methods but with enhanced detection
+			for (const item of cartData.items.slice(0, 3)) {
+				let itemElement;
+				
+				// Enhanced gift box detection with debugging
+				const isGiftBox = this.isGiftBoxItem(item);
+				console.log(`\n🎨 RENDERING ITEM: "${item.product_title}"`);
+				console.log("🎁 Is gift box?", isGiftBox);
+				
+				if (isGiftBox) {
+					console.log("🎁 Rendering as gift box item");
+					itemElement = await this.renderGiftBoxItem(item);
+				} else {
+					console.log("📦 Rendering as regular item");
+					itemElement = await this.renderCheckoutItem(item);
+				}
+				
+				if (itemElement) {
+					checkoutContainer.appendChild(itemElement);
+					console.log("✅ Item rendered successfully");
+				} else {
+					console.log("❌ Failed to render item");
+				}
+			}
+
+			console.log("🏁 Rendering complete. Total items in DOM:", checkoutContainer.children.length);
+		}
+
+		isGiftBoxItem(item) {
+			// Enhanced gift box detection with multiple criteria
+			return (
+				(item.product_title && item.product_title.toLowerCase().includes('gift box')) ||
+				(item.product_title && item.product_title.toLowerCase().includes('premium')) ||
+				(item.handle && item.handle.toLowerCase().includes('gift-box')) ||
+				(item.properties && item.properties["Add-on"] === "Premium Gift Box") ||
+				(item.properties && item.properties["Product Handle"] === "premium-gift-box-tissue-wrap") ||
+				(item.product_type && item.product_type.toLowerCase().includes('gift'))
+			);
 		}
 
 		async renderCheckoutItem(item) {
@@ -2521,18 +2630,34 @@
 		renderItemProperties(item) {
 			let propertiesHtml = "";
 
-			// Handle item properties
-			// if (item.properties && Object.keys(item.properties).length > 0) {
-			// 	Object.entries(item.properties).forEach(([key, value]) => {
-			// 		if (!key.startsWith('_') && value) {
-			// 			propertiesHtml += `
-			// 				<div class="checkout-products-wrap__option-chip">
-			// 					${key}: ${value}
-			// 				</div>
-			// 			`;
-			// 		}
-			// 	});
-			// }
+			// Handle item properties - only show specific add-on properties, not vessel details
+			if (item.properties && Object.keys(item.properties).length > 0) {
+				Object.entries(item.properties).forEach(([key, value]) => {
+					if (!key.startsWith('_') && value) {
+						// Only show specific add-on properties, not vessel configuration details
+						if (key === 'Add-on' || 
+							key.toLowerCase().includes('mix') || 
+							key.toLowerCase().includes('extra') ||
+							key.toLowerCase().includes('gift')) {
+							
+							let emoji = '';
+							if (key === 'Add-on') {
+								emoji = '🎁 ';
+							} else if (key.toLowerCase().includes('mix')) {
+								emoji = '🔄 ';
+							} else if (key.toLowerCase().includes('extra')) {
+								emoji = '➕ ';
+							}
+							
+							propertiesHtml += `
+								<div class="checkout-products-wrap__option-chip">
+									${emoji}${key}: ${value}
+								</div>
+							`;
+						}
+					}
+				});
+			}
 
 			// Add default CHUUG options if it's a CHUUG product
 			if (
@@ -2581,6 +2706,91 @@
 			}
 
 			return propertiesHtml;
+		}
+
+		async renderGiftBoxItem(item) {
+			try {
+				// Create a gift box item element using the premium-gift-box structure
+				const itemWrapper = document.createElement("div");
+				itemWrapper.className = "checkout-product-item-wrap";
+
+				// Get product image URL
+				const imageUrl = item.image
+					? item.image.replace(/\.(jpg|jpeg|png|gif|webp)/, "_71x89.$1")
+					: null;
+
+				// Format price
+				const formatPrice = (cents) => {
+					return new Intl.NumberFormat("en-GB", {
+						style: "currency",
+						currency: "GBP",
+					}).format(cents / 100);
+				};
+
+				// Build the HTML structure using the premium-gift-box component structure
+				itemWrapper.innerHTML = `
+					<div class="premium-gift-box">
+						<div class="premium-gift-box__container">
+							<!-- Product Image -->
+							<div class="premium-gift-box__image">
+								${
+									imageUrl
+										? `
+									<img 
+										src="${imageUrl}"
+										alt="${item.product_title || 'Premium Gift Box & Wrap'}"
+										width="71"
+										height="89"
+									/>
+								`
+										: `
+									<img 
+										src="${window.Shopify?.routes?.root || ''}/assets/premium-gift-box.png"
+										alt="Premium Gift Box & Wrap"
+										width="71"
+										height="89"
+									/>
+								`
+								}
+							</div>
+							
+							<!-- Content Area -->
+							<div class="premium-gift-box__content">
+								<div class="premium-gift-box__details">
+									<div class="premium-gift-box__text">
+										<h4 class="premium-gift-box__title">
+											${item.product_title || 'Premium Gift Box & Wrap<br>With All CHUUG Orders'}
+										</h4>
+									</div>
+									<div class="premium-gift-box__price">
+										${formatPrice(item.final_price || item.original_price)}
+									</div>
+								</div>
+								
+								<!-- Remove Button -->
+								<button 
+									type="button" 
+									class="checkout-products-wrap__delete"
+									data-remove-item="${item.id}"
+									aria-label="Remove Premium Gift Box from cart"
+								>
+									<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+								</button>
+							</div>
+						</div>
+					</div>
+				`;
+
+				return itemWrapper;
+			} catch (error) {
+				console.error("Failed to render gift box item:", error);
+				return null;
+			}
 		}
 
 		async removeCartItem(itemId) {
