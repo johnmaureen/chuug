@@ -632,6 +632,7 @@
 			this.isActive = false;
 			this.currentView = "personalize";
 			this.focusTrap = null;
+			this.openingContext = null; // Track how modal was opened: 'cart-icon' or 'add-multiple-products'
 
 			// Initialize components
 			this.state = new PersonalizationState();
@@ -661,6 +662,7 @@
 			this.initializeComponents();
 			this.setupAccessibility();
 			this.initializeGiftBoxPricing();
+			this.addModalTransitionStyles();
 		}
 
 		bindEvents() {
@@ -757,6 +759,54 @@
 					event.stopPropagation();
 					this.close();
 				});
+			}
+		}
+
+		addModalTransitionStyles() {
+			// Add smooth transition styles to prevent HTML flash
+			if (!document.querySelector("#mini-atc-modal-transitions")) {
+				const style = document.createElement("style");
+				style.id = "mini-atc-modal-transitions";
+				style.textContent = `
+					.mini-atc-modal {
+						opacity: 0;
+						visibility: hidden;
+						transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+					}
+					
+					.mini-atc-modal--active {
+						opacity: 1;
+						visibility: visible;
+					}
+					
+					.mini-atc-modal__container {
+						transform: translateY(20px);
+						transition: transform 0.2s ease-in-out;
+					}
+					
+					.mini-atc-modal--active .mini-atc-modal__container {
+						transform: translateY(0);
+					}
+					
+					/* Prevent content flash during transitions */
+					.mini-atc-modal:not(.mini-atc-modal--active) .mini-atc-modal__content {
+						opacity: 0;
+					}
+					
+					.mini-atc-modal--active .mini-atc-modal__content {
+						opacity: 1;
+						transition: opacity 0.1s ease-in-out 0.1s;
+					}
+					
+					/* Smooth transitions for checkout sections */
+					.step-process-section,
+					.countdown-section,
+					.additional-recommendations-section,
+					.mini-atc-modal__footer {
+						transition: opacity 0.15s ease-in-out;
+					}
+				`;
+				document.head.appendChild(style);
 			}
 		}
 
@@ -1702,18 +1752,51 @@
 				}
 			}
 
-			// Scroll to top
-			const content = this.modal.querySelector(".mini-atc-modal__content");
-			if (content) {
-				content.scrollTop = 0;
-			}
-
-			this.currentView = viewName;
-			this.emit("viewChanged", viewName);
+		// Scroll to top
+		const content = this.modal.querySelector(".mini-atc-modal__content");
+		if (content) {
+			content.scrollTop = 0;
 		}
 
-		open() {
-			if (this.isActive) return;
+		// Handle footer visibility based on view and context
+		const footer = this.modal.querySelector(".mini-atc-modal__footer");
+		if (footer) {
+			if (viewName === "personalize" && this.openingContext === "add-multiple-products") {
+				// Always show footer in personalize view for add-multiple-products
+				footer.style.display = "";
+				footer.style.opacity = "1";
+			}
+			// For checkout view, footer visibility is handled by showCheckoutSections/hideCheckoutSections
+		}
+
+		this.currentView = viewName;
+		this.emit("viewChanged", viewName);
+		}
+
+	open(context = null) {
+		if (this.isActive) return;
+
+		// Store the opening context
+		this.openingContext = context;
+		
+		// Switch to appropriate view based on context
+		if (context === 'add-multiple-products') {
+			this.switchView("personalize");
+			// Ensure footer is visible for add-multiple-products context
+			const footer = this.modal.querySelector(".mini-atc-modal__footer");
+			if (footer) {
+				footer.style.display = "";
+				footer.style.opacity = "1";
+			}
+		} else if (context === 'cart-icon') {
+			this.switchView("checkout");
+			// Pre-hide sections for cart icon to prevent flash when cart is empty
+			this.hideCheckoutSections();
+		}
+
+			// Ensure modal is properly hidden before showing
+			this.modal.style.visibility = "hidden";
+			this.modal.style.opacity = "0";
 
 			this.modal.classList.add("mini-atc-modal--active");
 			this.modal.setAttribute("aria-hidden", "false");
@@ -1724,6 +1807,18 @@
 
 			this.isActive = true;
 			this.emit("modalOpened");
+
+			// Show modal with smooth transition after a brief delay
+			requestAnimationFrame(() => {
+				this.modal.style.visibility = "visible";
+				this.modal.style.opacity = "1";
+			});
+
+			// If opening directly to checkout view (like from cart icon),
+			// hide sections immediately to prevent flash
+			if (this.currentView === "checkout") {
+				this.hideCheckoutSections();
+			}
 
 			// Dispatch modal opened event for POMC integration
 			this.modal.dispatchEvent(new CustomEvent("modalOpened"));
@@ -1768,21 +1863,28 @@
 				return;
 			}
 
-			this.modal.classList.remove("mini-atc-modal--active");
-			this.modal.setAttribute("aria-hidden", "true");
-			document.body.style.overflow = "";
+			// Start fade out animation
+			this.modal.style.opacity = "0";
 
-			// Remove focus trap
-			if (this.focusTrap) {
-				this.focusTrap();
-				this.focusTrap = null;
-			}
+			// Wait for fade out animation to complete before hiding
+			setTimeout(() => {
+				this.modal.classList.remove("mini-atc-modal--active");
+				this.modal.setAttribute("aria-hidden", "true");
+				this.modal.style.visibility = "hidden";
+				document.body.style.overflow = "";
 
-			// Reset to preview (personalize) view when closing
-			this.switchView("personalize");
+				// Remove focus trap
+				if (this.focusTrap) {
+					this.focusTrap();
+					this.focusTrap = null;
+				}
 
-			this.isActive = false;
-			this.emit("modalClosed");
+				// Reset to preview (personalize) view when closing
+				this.switchView("personalize");
+
+				this.isActive = false;
+				this.emit("modalClosed");
+			}, 200); // Match this with CSS transition duration
 		}
 
 		async addToCart() {
@@ -2329,11 +2431,23 @@
 					if (emptyState) {
 						emptyState.style.display = "block";
 					}
+
+					// Hide checkout sections when cart is empty
+					this.hideCheckoutSections();
+
+					// Show empty cart message
+					this.showEmptyCartMessage();
 				} else {
 					// Hide empty state
 					if (emptyState) {
 						emptyState.style.display = "none";
 					}
+
+					// Show checkout sections when cart has items
+					this.showCheckoutSections();
+
+					// Hide empty cart message
+					this.hideEmptyCartMessage();
 
 					// Render cart items using the checkout-products-wrap snippet approach
 					for (const item of cartData.items.slice(0, 3)) {
@@ -2498,12 +2612,24 @@
 				(item.product_title.includes("CHUUG") ||
 					item.product_title.includes("Chuug"))
 			) {
-				// Check for engraving in properties
+				// Check for engraving and insulated cup in properties
 				let engravingText = "";
+				let hasInsulatedCup = false;
+
 				if (item.properties) {
 					Object.entries(item.properties).forEach(([key, value]) => {
 						if (key.toLowerCase().includes("engraving") && value) {
 							engravingText = value;
+						}
+						// Check for insulated cup property
+						if (
+							key.toLowerCase().includes("insulated") ||
+							key.toLowerCase().includes("cup") ||
+							key.toLowerCase().includes("silver cup") ||
+							(key.toLowerCase().includes("silver") &&
+								key.toLowerCase().includes("insulated"))
+						) {
+							hasInsulatedCup = true;
 						}
 					});
 				}
@@ -2516,36 +2642,68 @@
 					`;
 				}
 
-				propertiesHtml += `
-					<div class="checkout-products-wrap__option-chip">
-						🍺 Silver Insulated Cup
-					</div>
-				`;
+				// Only show insulated cup if the property exists
+				if (hasInsulatedCup) {
+					propertiesHtml += `
+						<div class="checkout-products-wrap__option-chip">
+							🍺 Silver Insulated Cup
+						</div>
+					`;
+				}
 			}
 
 			return propertiesHtml;
 		}
 
 		async removeCartItem(itemId) {
+			// Prevent multiple simultaneous removal attempts
+			if (this.isRemovingItem) {
+				console.warn("Item removal already in progress");
+				return;
+			}
+
 			try {
-				// Remove item from Shopify cart
-				const response = await fetch("/cart/change.js", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						Accept: "application/json",
-					},
-					body: JSON.stringify({
-						id: itemId,
-						quantity: 0,
-					}),
-				});
+				this.isRemovingItem = true;
 
-				if (!response.ok) {
-					throw new Error(`Failed to remove item: ${response.status}`);
+				// Show loading overlay
+				this.showRemoveItemLoader();
+
+				let cartData;
+
+				// Handle special gift box case
+				if (itemId === "gift-box") {
+					// Use the existing gift box removal method if available
+					if (
+						window.cartManager &&
+						typeof window.cartManager.removeGiftBox === "function"
+					) {
+						await window.cartManager.removeGiftBox();
+						// Fetch updated cart data
+						cartData = await this.fetchUpdatedCartData();
+					} else {
+						console.warn("Gift box removal method not available");
+						return;
+					}
+				} else {
+					// Remove regular item from Shopify cart
+					const response = await fetch("/cart/change.js", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/json",
+						},
+						body: JSON.stringify({
+							id: itemId,
+							quantity: 0,
+						}),
+					});
+
+					if (!response.ok) {
+						throw new Error(`Failed to remove item: ${response.status}`);
+					}
+
+					cartData = await response.json();
 				}
-
-				const cartData = await response.json();
 
 				// Update the checkout view with the new cart state
 				await this.updateCheckoutView(cartData);
@@ -2558,7 +2716,648 @@
 				console.log("✅ Item removed from cart and checkout view updated");
 			} catch (error) {
 				console.error("Failed to remove cart item:", error);
+				// Show error message to user
+				this.showRemoveItemError(error.message);
+			} finally {
+				// Hide loading overlay
+				this.hideRemoveItemLoader();
+				// Reset removal flag
+				this.isRemovingItem = false;
 			}
+		}
+
+	hideCheckoutSections() {
+		// Always hide these checkout-specific sections (they should only be visible when cart has items in checkout view)
+		const stepProcessSection = this.modal.querySelector(
+			".step-process-section"
+		);
+		if (stepProcessSection) {
+			stepProcessSection.style.display = "none";
+		}
+
+		const countdownSection = this.modal.querySelector(".countdown-section");
+		if (countdownSection) {
+			countdownSection.style.display = "none";
+		}
+
+		const additionalRecommendationsSection = this.modal.querySelector(
+			".additional-recommendations-section"
+		);
+		if (additionalRecommendationsSection) {
+			additionalRecommendationsSection.style.display = "none";
+		}
+
+		// Handle footer based on current view and context
+		const footer = this.modal.querySelector(".mini-atc-modal__footer");
+		if (footer) {
+			if (this.currentView === "checkout") {
+				// In checkout view, only hide footer if context allows it
+				const shouldShowFooter = this.shouldShowFooter(false); // Cart is empty if we're hiding sections
+				if (!shouldShowFooter) {
+					footer.style.display = "none";
+				}
+			} else if (this.currentView === "personalize" && this.openingContext === "add-multiple-products") {
+				// In personalize view with add-multiple-products, keep footer visible
+				footer.style.display = "";
+				footer.style.opacity = "1";
+			}
+		}
+	}
+
+	showCheckoutSections() {
+		// Only show checkout-specific sections when in checkout view
+		if (this.currentView === "checkout") {
+			// Show step process section
+			const stepProcessSection = this.modal.querySelector(
+				".step-process-section"
+			);
+			if (stepProcessSection) {
+				stepProcessSection.style.display = "";
+				stepProcessSection.style.opacity = "1";
+			}
+
+			// Show countdown section
+			const countdownSection = this.modal.querySelector(".countdown-section");
+			if (countdownSection) {
+				countdownSection.style.display = "";
+				countdownSection.style.opacity = "1";
+			}
+
+			// Show additional recommendations section
+			const additionalRecommendationsSection = this.modal.querySelector(
+				".additional-recommendations-section"
+			);
+			if (additionalRecommendationsSection) {
+				additionalRecommendationsSection.style.display = "";
+				additionalRecommendationsSection.style.opacity = "1";
+			}
+
+			// Show footer (pricing and add to cart button) - context-aware
+			const footer = this.modal.querySelector(".mini-atc-modal__footer");
+			if (footer) {
+				// Check if we should show the footer based on context and cart state
+				const shouldShowFooter = this.shouldShowFooter(true); // Cart has items if we're showing sections
+				if (shouldShowFooter) {
+					footer.style.display = "";
+					footer.style.opacity = "1";
+				} else {
+					footer.style.display = "none";
+				}
+			}
+		}
+		// In personalize view, always show footer for add-multiple-products context
+		else if (this.currentView === "personalize") {
+			const footer = this.modal.querySelector(".mini-atc-modal__footer");
+			if (footer) {
+				const shouldShowFooter = this.shouldShowFooter();
+				if (shouldShowFooter) {
+					footer.style.display = "";
+					footer.style.opacity = "1";
+				} else {
+					footer.style.display = "none";
+				}
+			}
+		}
+	}
+
+	shouldShowFooter(cartHasItems = null) {
+		// If opened via add-multiple-products, always show footer (in personalize view)
+		if (this.openingContext === "add-multiple-products") {
+			return true; // Always show footer for add-multiple-products context
+		}
+
+		// If opened via cart icon, only show footer if cart has items (in checkout view)
+		if (this.openingContext === "cart-icon") {
+			// If cart state is provided, use it; otherwise try to determine from DOM
+			if (cartHasItems !== null) {
+				return cartHasItems;
+			}
+
+			// Try to determine from current cart state
+			const checkoutContainer = this.modal.querySelector(
+				".checkout-products-container"
+			);
+			if (checkoutContainer) {
+				const cartItems = checkoutContainer.querySelectorAll(
+					".checkout-products-wrap"
+				);
+				return cartItems.length > 0;
+			}
+
+			return false; // Default to hiding footer for cart-icon context
+		}
+
+		// Default behavior - show footer
+		return true;
+	}
+
+		showEmptyCartMessage() {
+			// Find or create empty cart message
+			let emptyMessage = this.modal.querySelector(".empty-cart-message");
+
+			if (!emptyMessage) {
+				emptyMessage = document.createElement("div");
+				emptyMessage.className = "empty-cart-message";
+				emptyMessage.innerHTML = `
+					<div class="empty-cart-message__content">
+						<div class="empty-cart-message__icon">
+							<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<circle cx="32" cy="32" r="32" fill="#f8f9fa"/>
+								<path d="M20 24h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L42 24H20zm0 0L18 20H14" stroke="#6c757d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								<circle cx="29" cy="44" r="2" stroke="#6c757d" stroke-width="2"/>
+								<circle cx="40" cy="44" r="2" stroke="#6c757d" stroke-width="2"/>
+							</svg>
+						</div>
+						<h3 class="empty-cart-message__title">Cart is empty...</h3>
+						<p class="empty-cart-message__description">Add some items to your cart to continue</p>
+						<button type="button" class="empty-cart-message__continue-shopping" data-modal-close>
+							Continue Shopping
+						</button>
+					</div>
+				`;
+
+				// Insert after the checkout summary heading
+				const checkoutSummarySection = this.modal.querySelector(
+					".checkout-summary-section"
+				);
+				if (checkoutSummarySection) {
+					checkoutSummarySection.appendChild(emptyMessage);
+				}
+			}
+
+			// Add CSS if not already present
+			if (!document.querySelector("#empty-cart-message-styles")) {
+				const style = document.createElement("style");
+				style.id = "empty-cart-message-styles";
+				style.textContent = `
+					.empty-cart-message {
+						text-align: center;
+						padding: 40px 20px;
+						margin: 20px 0;
+					}
+					
+					.empty-cart-message__content {
+						max-width: 300px;
+						margin: 0 auto;
+					}
+					
+					.empty-cart-message__icon {
+						margin-bottom: 20px;
+						display:flex;
+						justify-content:center;
+					}
+					
+					.empty-cart-message__title {
+						font-family: Gabarito, sans-serif;
+						font-size: 24px;
+						font-weight: 600;
+						color: #0D2026;
+						margin: 0 0 12px 0;
+					}
+					
+					.empty-cart-message__description {
+						font-family: Gabarito, sans-serif;
+						font-size: 16px;
+						color: #6c757d;
+						margin: 0 0 24px 0;
+						line-height: 1.5;
+					}
+					
+					.empty-cart-message__continue-shopping {
+						background: #0D2026;
+						color: white;
+						border: none;
+						border-radius: 8px;
+						padding: 12px 24px;
+						font-family: Gabarito, sans-serif;
+						font-size: 16px;
+						font-weight: 600;
+						cursor: pointer;
+						transition: all 0.2s ease;
+						text-decoration: none;
+						display: inline-block;
+					}
+					
+					.empty-cart-message__continue-shopping:hover {
+						background: #1a2f36;
+						transform: translateY(-1px);
+					}
+					
+					.empty-cart-message__continue-shopping:active {
+						transform: translateY(0);
+					}
+				`;
+				document.head.appendChild(style);
+			}
+
+			emptyMessage.style.display = "block";
+		}
+
+		hideEmptyCartMessage() {
+			const emptyMessage = this.modal.querySelector(".empty-cart-message");
+			if (emptyMessage) {
+				emptyMessage.style.display = "none";
+			}
+		}
+
+		showCartLoadingSpinner() {
+			// Find the checkout view container
+			const checkoutView = this.modal.querySelector('[data-view="checkout"]');
+
+			if (!checkoutView) {
+				console.warn("Checkout view not found for cart loading spinner");
+				return;
+			}
+
+			// Hide all checkout content while loading
+			const checkoutContainer = checkoutView.querySelector(
+				".checkout-products-container"
+			);
+			const emptyState = checkoutView.querySelector(".checkout-empty-state");
+			const stepProcess = this.modal.querySelector(".step-process-section");
+			const countdown = this.modal.querySelector(".countdown-section");
+			const recommendations = this.modal.querySelector(
+				".additional-recommendations-section"
+			);
+			const footer = this.modal.querySelector(".mini-atc-modal__footer");
+
+			// Store original display states and hide elements
+			if (checkoutContainer) {
+				checkoutContainer.dataset.originalDisplay =
+					checkoutContainer.style.display || "";
+				checkoutContainer.style.display = "none";
+			}
+			if (emptyState) {
+				emptyState.dataset.originalDisplay = emptyState.style.display || "";
+				emptyState.style.display = "none";
+			}
+			if (stepProcess) {
+				stepProcess.dataset.originalDisplay = stepProcess.style.display || "";
+				stepProcess.style.display = "none";
+			}
+			if (countdown) {
+				countdown.dataset.originalDisplay = countdown.style.display || "";
+				countdown.style.display = "none";
+			}
+			if (recommendations) {
+				recommendations.dataset.originalDisplay =
+					recommendations.style.display || "";
+				recommendations.style.display = "none";
+			}
+			if (footer) {
+				footer.dataset.originalDisplay = footer.style.display || "";
+				footer.style.display = "none";
+			}
+
+			// Create or show loading overlay
+			let loader = this.modal.querySelector(".cart-loading-spinner");
+			if (!loader) {
+				loader = document.createElement("div");
+				loader.className = "cart-loading-spinner";
+				loader.innerHTML = `
+				<div class="cart-loading-spinner__overlay">
+					<div class="cart-loading-spinner__content">
+						<div class="cart-loading-spinner__spinner"></div>
+						<div class="cart-loading-spinner__text">Loading cart...</div>
+					</div>
+				</div>
+			`;
+				checkoutView.appendChild(loader);
+			}
+
+			// Add loading styles if not already present
+			if (!document.querySelector("#cart-loading-spinner-styles")) {
+				const style = document.createElement("style");
+				style.id = "cart-loading-spinner-styles";
+				style.textContent = `
+				.cart-loading-spinner {
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					z-index: 1001;
+					pointer-events: all;
+					min-height: 87vh;
+				}
+				
+				.cart-loading-spinner__overlay {
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+          backdrop-filter: blur(2px);
+				}
+				
+				.cart-loading-spinner__content {
+					text-align: center;
+					color: #333;
+				}
+				
+				.cart-loading-spinner__spinner {
+					width: 40px;
+					height: 40px;
+					border: 4px solid #f3f3f3;
+					border-top: 4px solid #0D2026;
+					border-radius: 50%;
+					animation: cartLoadingSpin 1s linear infinite;
+					margin: 0 auto 16px;
+					display: block !important;
+				}
+				
+				.cart-loading-spinner__text {
+					font-family: Gabarito, sans-serif;
+					font-size: 16px;
+					font-weight: 500;
+					color: #0D2026;
+				}
+				
+				@keyframes cartLoadingSpin {
+					0% { transform: rotate(0deg); }
+					100% { transform: rotate(360deg); }
+				}
+			`;
+				document.head.appendChild(style);
+			}
+
+			// Ensure checkout view has relative positioning
+			const viewStyle = window.getComputedStyle(checkoutView);
+			if (viewStyle.position === "static") {
+				checkoutView.style.position = "relative";
+			}
+
+			loader.style.display = "block";
+		}
+
+		hideCartLoadingSpinner() {
+			const loader = this.modal.querySelector(".cart-loading-spinner");
+			if (loader) {
+				loader.style.display = "none";
+			}
+
+			// Restore original display states of hidden elements
+			const checkoutView = this.modal.querySelector('[data-view="checkout"]');
+			if (checkoutView) {
+				const checkoutContainer = checkoutView.querySelector(
+					".checkout-products-container"
+				);
+				const emptyState = checkoutView.querySelector(".checkout-empty-state");
+				const stepProcess = this.modal.querySelector(".step-process-section");
+				const countdown = this.modal.querySelector(".countdown-section");
+				const recommendations = this.modal.querySelector(
+					".additional-recommendations-section"
+				);
+				const footer = this.modal.querySelector(".mini-atc-modal__footer");
+
+				// Restore container and empty state
+				if (
+					checkoutContainer &&
+					checkoutContainer.dataset.originalDisplay !== undefined
+				) {
+					checkoutContainer.style.display =
+						checkoutContainer.dataset.originalDisplay;
+					delete checkoutContainer.dataset.originalDisplay;
+				}
+				if (emptyState && emptyState.dataset.originalDisplay !== undefined) {
+					emptyState.style.display = emptyState.dataset.originalDisplay;
+					delete emptyState.dataset.originalDisplay;
+				}
+
+				// Don't restore checkout sections - let updateCheckoutView handle their visibility
+				// Just clean up the stored data
+				if (stepProcess && stepProcess.dataset.originalDisplay !== undefined) {
+					delete stepProcess.dataset.originalDisplay;
+				}
+				if (countdown && countdown.dataset.originalDisplay !== undefined) {
+					delete countdown.dataset.originalDisplay;
+				}
+				if (recommendations && recommendations.dataset.originalDisplay !== undefined) {
+					delete recommendations.dataset.originalDisplay;
+				}
+
+				// Restore footer only if it should be visible
+				if (footer && footer.dataset.originalDisplay !== undefined) {
+					const shouldShowFooter = this.shouldShowFooter();
+					if (shouldShowFooter) {
+						footer.style.display = footer.dataset.originalDisplay;
+					}
+					delete footer.dataset.originalDisplay;
+				}
+			}
+		}
+
+		showRemoveItemLoader() {
+			// Find or create the checkout container
+			const checkoutContainer =
+				this.modal.querySelector("[data-checkout-items]") ||
+				this.modal.querySelector(".checkout-products-container");
+
+			if (!checkoutContainer) {
+				console.warn("Checkout container not found for loader");
+				return;
+			}
+
+			// Ensure checkout container has relative positioning
+			const containerStyle = window.getComputedStyle(checkoutContainer);
+			if (containerStyle.position === "static") {
+				checkoutContainer.style.position = "relative";
+			}
+
+			// Create or show loading overlay
+			let loader = this.modal.querySelector(".remove-item-loader");
+			if (!loader) {
+				loader = document.createElement("div");
+				loader.className = "remove-item-loader";
+				loader.innerHTML = `
+					<div class="remove-item-loader__overlay">
+						<div class="remove-item-loader__content">
+							<div class="remove-item-loader__spinner"></div>
+							<div class="remove-item-loader__text">Removing item...</div>
+						</div>
+					</div>
+				`;
+				checkoutContainer.appendChild(loader);
+			}
+
+			// Add loading styles if not already present
+			if (!document.querySelector("#remove-item-loader-styles")) {
+				const style = document.createElement("style");
+				style.id = "remove-item-loader-styles";
+				style.textContent = `
+					.remove-item-loader {
+						position: absolute;
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						z-index: 1000;
+						pointer-events: all;
+					}
+					
+					.remove-item-loader__overlay {
+						position: absolute;
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						border-radius: 8px;
+						backdrop-filter: blur(2px);
+					}
+					
+					.remove-item-loader__content {
+						text-align: center;
+						color: #333;
+					}
+					
+					.remove-item-loader__spinner {
+						width: 32px;
+						height: 32px;
+						border: 3px solid #f3f3f3;
+						border-top: 3px solid #0D2026;
+						border-radius: 50%;
+						animation: removeItemSpin 1s linear infinite;
+						margin: 0 auto 12px;
+					}
+					
+					.remove-item-loader__text {
+						font-family: Gabarito, sans-serif;
+						font-size: 14px;
+						font-weight: 500;
+						color: #0D2026;
+					}
+					
+					@keyframes removeItemSpin {
+						0% { transform: rotate(0deg); }
+						100% { transform: rotate(360deg); }
+					}
+				`;
+				document.head.appendChild(style);
+			}
+
+			loader.style.display = "block";
+		}
+
+		hideRemoveItemLoader() {
+			const loader = this.modal.querySelector(".remove-item-loader");
+			if (loader) {
+				loader.style.display = "none";
+			}
+		}
+
+		showRemoveItemError(errorMessage) {
+			// Create or update error message
+			let errorElement = this.modal.querySelector(".remove-item-error");
+
+			if (!errorElement) {
+				errorElement = document.createElement("div");
+				errorElement.className = "remove-item-error";
+				errorElement.setAttribute("role", "alert");
+				errorElement.setAttribute("aria-live", "assertive");
+
+				// Insert at the top of the checkout view
+				const checkoutView = this.modal.querySelector('[data-view="checkout"]');
+				if (checkoutView) {
+					checkoutView.insertBefore(errorElement, checkoutView.firstChild);
+				}
+			}
+
+			// Update error content
+			errorElement.innerHTML = `
+				<div class="remove-item-error__content">
+					<svg class="remove-item-error__icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+						<circle cx="10" cy="10" r="10" fill="#dc3545"/>
+						<path d="M10 6v4M10 14h.01" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+					<span class="remove-item-error__text">Failed to remove item: ${errorMessage}</span>
+					<button type="button" class="remove-item-error__close" onclick="this.parentElement.parentElement.remove()">×</button>
+				</div>
+			`;
+
+			// Add CSS if not already present
+			if (!document.querySelector("#remove-item-error-styles")) {
+				const style = document.createElement("style");
+				style.id = "remove-item-error-styles";
+				style.textContent = `
+					.remove-item-error {
+						background: #f8d7da;
+						border: 1px solid #dc3545;
+						border-radius: 8px;
+						padding: 12px 16px;
+						margin-bottom: 16px;
+						animation: slideInError 0.3s ease-out;
+					}
+					
+					.remove-item-error__content {
+						display: flex;
+						align-items: center;
+						gap: 8px;
+					}
+					
+					.remove-item-error__icon {
+						flex-shrink: 0;
+					}
+					
+					.remove-item-error__text {
+						color: #721c24;
+						font-family: Gabarito, sans-serif;
+						font-size: 14px;
+						font-weight: 500;
+						flex: 1;
+					}
+					
+					.remove-item-error__close {
+						background: none;
+						border: none;
+						color: #721c24;
+						font-size: 18px;
+						font-weight: bold;
+						cursor: pointer;
+						padding: 0;
+						width: 20px;
+						height: 20px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						border-radius: 50%;
+						transition: background-color 0.2s;
+					}
+					
+					.remove-item-error__close:hover {
+						background-color: rgba(114, 28, 36, 0.1);
+					}
+					
+					@keyframes slideInError {
+						from {
+							opacity: 0;
+							transform: translateY(-10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateY(0);
+						}
+					}
+				`;
+				document.head.appendChild(style);
+			}
+
+			// Auto-hide after 5 seconds
+			setTimeout(() => {
+				if (errorElement && errorElement.parentNode) {
+					errorElement.style.opacity = "0";
+					setTimeout(() => {
+						if (errorElement && errorElement.parentNode) {
+							errorElement.remove();
+						}
+					}, 300);
+				}
+			}, 5000);
 		}
 
 		proceedToCheckout() {
@@ -2673,9 +3472,14 @@
 	});
 
 	// Global functions for backward compatibility and external triggers
-	window.openMiniATCModal = function (modalId) {
+	window.openMiniATCModal = function (modalId, context = null) {
 		if (window.MiniATCModal) {
-			window.MiniATCModal.openModal(modalId);
+			const instance = window.MiniATCModal.getInstance(modalId);
+			if (instance) {
+				instance.open(context);
+			} else {
+				window.MiniATCModal.openModal(modalId);
+			}
 		}
 	};
 

@@ -41,7 +41,7 @@
           <button 
             type="button" 
             class="checkout-products-wrap__delete"
-            onclick="window.cartManager.removeItem('{{ item.id }}')"
+            data-remove-item="{{ item.id }}"
             aria-label="Remove {{ item.product.title }} from cart"
           >
             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -68,10 +68,14 @@
           <!-- Default options for CHUUG products -->
           {% if item.product.title contains 'CHUUG' or item.product.title contains 'Chuug' %}
             {% assign engraving_text = '' %}
+            {% assign has_insulated_cup = false %}
             {% for property in item.properties %}
               {% if property.first contains 'Engraving' %}
                 {% assign engraving_text = property.last %}
-                {% break %}
+              {% endif %}
+              {% assign property_key_lower = property.first | downcase %}
+              {% if property_key_lower contains 'insulated' or property_key_lower contains 'cup' or property_key_lower contains 'silver cup' %}
+                {% assign has_insulated_cup = true %}
               {% endif %}
             {% endfor %}
             {% if engraving_text != blank %}
@@ -79,9 +83,11 @@
                 🔨 Engraved Initials, {{ engraving_text }}
               </div>
             {% endif %}
-            {% comment %} <div class="checkout-products-wrap__option-chip">
-              🍺 Silver Insulated Cup
-            </div> {% endcomment %}
+            {% if has_insulated_cup %}
+              <div class="checkout-products-wrap__option-chip">
+                🍺 Silver Insulated Cup
+              </div>
+            {% endif %}
           {% endif %}
         </div>
 
@@ -159,7 +165,7 @@
           <button 
             type="button" 
             class="checkout-products-wrap__delete"
-            onclick="{% if gift_box_item %}window.cartManager.removeItem('{{ gift_box_item.id }}'){% else %}window.cartManager.removeGiftBox(){% endif %}"
+            data-remove-item="{% if gift_box_item %}{{ gift_box_item.id }}{% else %}gift-box{% endif %}"
             aria-label="Remove Premium Gift Box from cart"
           >
             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">

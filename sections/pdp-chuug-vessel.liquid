@@ -602,16 +602,33 @@
     // Try multiple approaches to open the modal
     const tryOpenModal = () => {
       // Method 1: Use the main MiniATCModal API
+      if (window.MiniATCModal && typeof window.MiniATCModal.getInstance === 'function') {
+        console.log("Using window.MiniATCModal.getInstance");
+        const instance = window.MiniATCModal.getInstance(modalId);
+        if (instance) {
+          instance.open('add-multiple-products');
+          return true;
+        }
+      }
+      
+      // Fallback: Use the openModal method
       if (window.MiniATCModal && typeof window.MiniATCModal.openModal === 'function') {
-        console.log("Using window.MiniATCModal.openModal");
+        console.log("Using window.MiniATCModal.openModal (fallback)");
         window.MiniATCModal.openModal(modalId);
+        // Set context after opening
+        setTimeout(() => {
+          const instance = window.MiniATCModal.getInstance(modalId);
+          if (instance) {
+            instance.openingContext = 'add-multiple-products';
+          }
+        }, 10);
         return true;
       }
       
       // Method 2: Use the global helper function
       if (window.openMiniATCModal && typeof window.openMiniATCModal === 'function') {
         console.log("Using window.openMiniATCModal");
-        window.openMiniATCModal(modalId);
+        window.openMiniATCModal(modalId, 'add-multiple-products');
         return true;
       }
       

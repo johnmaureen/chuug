@@ -76,7 +76,6 @@
     
     {% comment %} Placeholder for when no items {% endcomment %}
     <div class="checkout-empty-state" data-empty-state style="display: none;">
-      <p>Your personalized items will appear here</p>
     </div>
   </div>
 </section>
@@ -129,7 +128,7 @@
 </section>
 
 <!-- Checkout Actions -->
-<nav class="checkout-actions-section" aria-labelledby="{{ modal_id }}-actions-heading">
+{% comment %} <nav class="checkout-actions-section" aria-labelledby="{{ modal_id }}-actions-heading">
   <h3 id="{{ modal_id }}-actions-heading" class="visually-hidden">Checkout Actions</h3>
   
   <button 
@@ -144,4 +143,4 @@
   <div id="{{ modal_id }}-back-description" class="visually-hidden">
     Return to the personalization view to modify your selections
   </div>
-</nav>
+</nav> {% endcomment %}
