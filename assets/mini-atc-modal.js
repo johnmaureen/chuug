@@ -1850,8 +1850,17 @@
 				// Switch to checkout view instead of closing
 				this.switchView("checkout");
 
-				// Update checkout view with new cart items
-				await this.updateCheckoutView(response);
+				// Show cart loading spinner while fetching fresh cart data
+				this.showCartLoadingSpinner();
+
+				// Fetch fresh cart data and update checkout view
+				const freshCartData = await this.fetchUpdatedCartData();
+				if (freshCartData) {
+					await this.updateCheckoutViewWithCartData(freshCartData);
+				}
+
+				// Hide cart loading spinner
+				this.hideCartLoadingSpinner();
 
 				// Show success feedback
 				this.showAddToCartSuccess(cartData.items.length);
@@ -1863,6 +1872,8 @@
 			} catch (error) {
 				console.error("Add to cart error:", error);
 				this.handleAddToCartError(error.message);
+				// Hide cart loading spinner on error
+				this.hideCartLoadingSpinner();
 			} finally {
 				this.setLoadingState(false);
 			}
@@ -2335,6 +2346,15 @@
 					return;
 				}
 
+				await this.updateCheckoutViewWithCartData(cartData);
+
+			} catch (error) {
+				console.error("Failed to update checkout view:", error);
+			}
+		}
+
+		async updateCheckoutViewWithCartData(cartData) {
+			try {
 				// Find the checkout items container and empty state
 				const checkoutContainer = this.modal.querySelector(
 					"[data-checkout-items]"
@@ -2374,13 +2394,19 @@
 					// Hide empty cart message
 					this.hideEmptyCartMessage();
 
-					// Since we're using Liquid templates, the items are already rendered
-					// We just need to re-bind event handlers for the newly rendered items
+					// Clear existing items
+					const allExistingItems = checkoutContainer.querySelectorAll(".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]");
+					allExistingItems.forEach((item) => item.remove());
+
+					// Render new cart items
+					await this.renderCartItems(cartData.items, checkoutContainer);
+
+					// Re-bind event handlers for the newly rendered items
 					this.bindCheckoutItemEvents();
 				}
 
 			} catch (error) {
-				console.error("Failed to update checkout view:", error);
+				console.error("Failed to update checkout view with cart data:", error);
 			}
 		}
 
@@ -2395,6 +2421,378 @@
 				console.error("Failed to fetch updated cart data:", error);
 				return null;
 			}
+		}
+
+		async renderCartItems(cartItems, container) {
+			try {
+				// Create a temporary container to hold the rendered items
+				const tempContainer = document.createElement('div');
+				
+				// Render each cart item in reverse order (newest first, like Liquid template)
+				for (let i = cartItems.length - 1; i >= 0; i--) {
+					const item = cartItems[i];
+					const itemElement = await this.renderCartItem(item, cartItems);
+					if (itemElement) {
+						tempContainer.appendChild(itemElement);
+					}
+				}
+				
+				// Append all items to the main container
+				while (tempContainer.firstChild) {
+					container.appendChild(tempContainer.firstChild);
+				}
+				
+			} catch (error) {
+				console.error("Failed to render cart items:", error);
+			}
+		}
+
+		async renderCartItem(item, allCartItems) {
+			try {
+				// Check if this is an add-on item that should be grouped with a vessel
+				const isAddon = item.properties && Object.entries(item.properties).some(([key, value]) => key === 'Add-on');
+				
+				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
+				if (isAddon) {
+					return null;
+				}
+				
+				// Create the main wrapper element
+				const wrapper = document.createElement('div');
+				wrapper.className = 'checkout-product-item-wrap';
+				
+				// Create the checkout products wrap element
+				const itemElement = document.createElement('div');
+				itemElement.className = 'checkout-products-wrap';
+				itemElement.setAttribute('data-item-id', item.id);
+				
+				// Create the container
+				const container = document.createElement('div');
+				container.className = 'checkout-products-wrap__container';
+				
+				// Create image section
+				const imageSection = document.createElement('div');
+				imageSection.className = 'checkout-products-wrap__image';
+				
+				const imageContainer = document.createElement('div');
+				imageContainer.className = 'checkout-products-wrap__image-container';
+				
+				if (item.image) {
+					const img = document.createElement('img');
+					img.src = item.image;
+					img.alt = item.product_title || '';
+					img.width = 128;
+					img.height = 128;
+					img.loading = 'lazy';
+					img.className = 'checkout-products-wrap__product-image';
+					imageContainer.appendChild(img);
+				} else {
+					const placeholder = document.createElement('div');
+					placeholder.className = 'checkout-products-wrap__placeholder';
+					placeholder.innerHTML = '<svg class="placeholder-svg" viewBox="0 0 525 525" xmlns="http://www.w3.org/2000/svg"><rect width="525" height="525" fill="#f6f6f6"/><text x="50%" y="50%" font-family="Arial, sans-serif" font-size="18" fill="#999" text-anchor="middle" dy=".3em">No image</text></svg>';
+					imageContainer.appendChild(placeholder);
+				}
+				
+				imageSection.appendChild(imageContainer);
+				
+				// Create details section
+				const detailsSection = document.createElement('div');
+				detailsSection.className = 'checkout-products-wrap__details';
+				
+				// Create header with title and delete button
+				const header = document.createElement('div');
+				header.className = 'checkout-products-wrap__header';
+				
+				const title = document.createElement('h3');
+				title.className = 'checkout-products-wrap__title';
+				title.textContent = item.product_title || '';
+				
+				const deleteBtn = document.createElement('button');
+				deleteBtn.type = 'button';
+				deleteBtn.className = 'checkout-products-wrap__delete';
+				deleteBtn.setAttribute('data-remove-item', item.id);
+				deleteBtn.setAttribute('aria-label', `Remove ${item.product_title || ''} from cart`);
+				deleteBtn.innerHTML = `
+					<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				`;
+				
+				header.appendChild(title);
+				header.appendChild(deleteBtn);
+				
+				// Create options section
+				const optionsSection = document.createElement('div');
+				optionsSection.className = 'checkout-products-wrap__options';
+				
+				// Add options based on item properties (matching Liquid logic)
+				if (item.properties && (item.product_title.includes('CHUUG') || item.product_title.includes('Chuug'))) {
+					let engravingText = '';
+					let hasInsulatedCup = false;
+					
+					Object.entries(item.properties).forEach(([key, value]) => {
+						if (key.includes('Engraving')) {
+							engravingText = value;
+						}
+						const keyLower = key.toLowerCase();
+						if (keyLower.includes('insulated') || keyLower.includes('cup') || keyLower.includes('silver cup')) {
+							hasInsulatedCup = true;
+						}
+					});
+					
+					if (engravingText) {
+						const optionChip = document.createElement('div');
+						optionChip.className = 'checkout-products-wrap__option-chip';
+						optionChip.textContent = `🔨 Engraved Initials, ${engravingText}`;
+						optionsSection.appendChild(optionChip);
+					}
+					
+					if (hasInsulatedCup) {
+						const optionChip = document.createElement('div');
+						optionChip.className = 'checkout-products-wrap__option-chip';
+						optionChip.textContent = '🍺 Silver Insulated Cup';
+						optionsSection.appendChild(optionChip);
+					}
+				}
+				
+				// Add-on Products Section (matching Liquid logic)
+				const currentVesselNumber = this.extractVesselNumber(item);
+				
+				// Find add-on for this vessel
+				if (currentVesselNumber) {
+					const currentItemIndex = allCartItems.findIndex(cartItem => cartItem.id === item.id);
+					if (currentItemIndex !== -1 && currentItemIndex < allCartItems.length - 1) {
+						const nextItem = allCartItems[currentItemIndex + 1];
+						if (nextItem && nextItem.properties) {
+							const isAddonForVessel = Object.entries(nextItem.properties).some(([key, value]) => 
+								key === 'Add-on' && value === 'Premium Gift Box'
+							) && Object.entries(nextItem.properties).some(([key, value]) => 
+								key === 'Vessel Number' && value === currentVesselNumber
+							);
+							
+							if (isAddonForVessel) {
+								const addonSection = document.createElement('div');
+								addonSection.className = 'checkout-products-wrap__addon';
+								
+								const addonItem = document.createElement('div');
+								addonItem.className = 'checkout-products-wrap__addon-item';
+								
+								const addonIcon = document.createElement('div');
+								addonIcon.className = 'checkout-products-wrap__addon-icon';
+								addonIcon.textContent = '🎁';
+								
+								const addonDetails = document.createElement('div');
+								addonDetails.className = 'checkout-products-wrap__addon-details';
+								
+								const addonTitle = document.createElement('span');
+								addonTitle.className = 'checkout-products-wrap__addon-title';
+								addonTitle.textContent = 'Premium Gift Box';
+								
+								const addonPrice = document.createElement('span');
+								addonPrice.className = 'checkout-products-wrap__addon-price';
+								addonPrice.textContent = this.formatMoney(nextItem.final_price || nextItem.price);
+								
+								addonDetails.appendChild(addonTitle);
+								addonDetails.appendChild(addonPrice);
+								
+								const addonRemove = document.createElement('button');
+								addonRemove.type = 'button';
+								addonRemove.className = 'checkout-products-wrap__addon-remove';
+								addonRemove.setAttribute('data-remove-item', nextItem.id);
+								addonRemove.setAttribute('aria-label', 'Remove Premium Gift Box from cart');
+								addonRemove.innerHTML = `
+									<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M2 4H3H13" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M5 4V3C5 2.44772 5.44772 2 6 2H9C9.55228 2 10 2.44772 10 3V4M12 4V13C12 13.5523 11.5523 14 11 14H4C3.44772 14 3 13.5523 3 13V4H12Z" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M7 7V11" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M9 7V11" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+								`;
+								
+								addonItem.appendChild(addonIcon);
+								addonItem.appendChild(addonDetails);
+								addonItem.appendChild(addonRemove);
+								addonSection.appendChild(addonItem);
+								
+								// Add addon section to details
+								detailsSection.appendChild(addonSection);
+							}
+						}
+					}
+				}
+				
+				// Create pricing section
+				const pricingSection = document.createElement('div');
+				pricingSection.className = 'checkout-products-wrap__pricing';
+				
+				const currentPrice = document.createElement('span');
+				currentPrice.className = 'checkout-products-wrap__current-price';
+				currentPrice.textContent = this.formatMoney(item.final_price || item.price);
+				
+				pricingSection.appendChild(currentPrice);
+				
+				// If there's a discount, show original price
+				if (item.original_price && item.original_price !== item.final_price) {
+					const originalPrice = document.createElement('span');
+					originalPrice.className = 'checkout-products-wrap__original-price';
+					originalPrice.textContent = this.formatMoney(item.original_price);
+					pricingSection.appendChild(originalPrice);
+				}
+				
+				// Assemble the details section
+				detailsSection.appendChild(header);
+				detailsSection.appendChild(optionsSection);
+				detailsSection.appendChild(pricingSection);
+				
+				// Assemble the container
+				container.appendChild(imageSection);
+				container.appendChild(detailsSection);
+				
+				// Assemble the item element
+				itemElement.appendChild(container);
+				wrapper.appendChild(itemElement);
+				
+				// Premium Gift Box section (matching Liquid logic)
+				// Look for gift box add-ons that belong to this specific vessel
+				const vesselNumber = this.extractVesselNumber(item);
+				console.log(`🎁 DEBUG: Item ${item.id} (${item.product_title}) has vessel number:`, vesselNumber);
+				
+				if (vesselNumber) {
+					// Debug: Log all gift box items
+					const allGiftBoxes = allCartItems.filter(giftItem => 
+						giftItem.properties && giftItem.properties['Add-on'] === 'Premium Gift Box'
+					);
+					console.log(`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`, allGiftBoxes.map(gb => ({
+						id: gb.id,
+						title: gb.product_title,
+						vesselNumber: gb.properties['Vessel Number']
+					})));
+					
+					const giftBoxForThisVessel = allCartItems.find(giftItem => 
+						giftItem.properties && 
+						giftItem.properties['Add-on'] === 'Premium Gift Box' &&
+						String(giftItem.properties['Vessel Number']) === String(vesselNumber)
+					);
+					
+					console.log(`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`, giftBoxForThisVessel ? {
+						id: giftBoxForThisVessel.id,
+						title: giftBoxForThisVessel.product_title
+					} : 'NOT FOUND');
+					
+					if (giftBoxForThisVessel) {
+						const giftBoxSection = document.createElement('div');
+						giftBoxSection.className = 'premium-gift-box';
+						
+						const giftBoxContainer = document.createElement('div');
+						giftBoxContainer.className = 'premium-gift-box__container';
+						
+						// Product Image
+						const giftBoxImage = document.createElement('div');
+						giftBoxImage.className = 'premium-gift-box__image';
+						
+						if (giftBoxForThisVessel.image) {
+							const img = document.createElement('img');
+							img.src = giftBoxForThisVessel.image;
+							img.alt = giftBoxForThisVessel.product_title || 'Premium Gift Box & Wrap';
+							img.width = 71;
+							img.height = 89;
+							giftBoxImage.appendChild(img);
+						} else {
+							const img = document.createElement('img');
+							img.src = '/assets/premium-gift-box.png'; // Fallback image
+							img.alt = 'Premium Gift Box & Wrap';
+							img.width = 71;
+							img.height = 89;
+							giftBoxImage.appendChild(img);
+						}
+						
+						// Content Area
+						const giftBoxContent = document.createElement('div');
+						giftBoxContent.className = 'premium-gift-box__content';
+						
+						const giftBoxDetails = document.createElement('div');
+						giftBoxDetails.className = 'premium-gift-box__details';
+						
+						const giftBoxText = document.createElement('div');
+						giftBoxText.className = 'premium-gift-box__text';
+						
+						const giftBoxTitle = document.createElement('h4');
+						giftBoxTitle.className = 'premium-gift-box__title';
+						giftBoxTitle.textContent = giftBoxForThisVessel.product_title;
+						
+						const giftBoxPrice = document.createElement('div');
+						giftBoxPrice.className = 'premium-gift-box__price';
+						giftBoxPrice.textContent = this.formatMoney(giftBoxForThisVessel.final_price || giftBoxForThisVessel.price);
+						
+						giftBoxText.appendChild(giftBoxTitle);
+						giftBoxDetails.appendChild(giftBoxText);
+						giftBoxDetails.appendChild(giftBoxPrice);
+						
+						// Toggle Section
+						const giftBoxDelete = document.createElement('button');
+						giftBoxDelete.type = 'button';
+						giftBoxDelete.className = 'checkout-products-wrap__delete';
+						giftBoxDelete.setAttribute('data-remove-item', giftBoxForThisVessel.id);
+						giftBoxDelete.setAttribute('aria-label', 'Remove Premium Gift Box from cart');
+						giftBoxDelete.innerHTML = `
+							<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+						`;
+						
+						giftBoxContent.appendChild(giftBoxDetails);
+						giftBoxContent.appendChild(giftBoxDelete);
+						
+						giftBoxContainer.appendChild(giftBoxImage);
+						giftBoxContainer.appendChild(giftBoxContent);
+						giftBoxSection.appendChild(giftBoxContainer);
+						
+						// Add gift box section to wrapper
+						wrapper.appendChild(giftBoxSection);
+					}
+				}
+				
+				return wrapper;
+				
+			} catch (error) {
+				console.error("Failed to render cart item:", error);
+				return null;
+			}
+		}
+
+		formatMoney(cents) {
+			// Simple money formatting - you may want to use Shopify's money formatting
+			const amount = (cents / 100).toFixed(2);
+			return `£${amount}`;
+		}
+
+		extractVesselNumber(item) {
+			// Extract vessel number from item properties
+			// Look for properties like "Vessel 1 Product", "Vessel 2 Product", etc.
+			console.log(`🔍 DEBUG: Extracting vessel number for item ${item.id}:`, item.properties);
+			
+			if (item.properties) {
+				for (const [key, value] of Object.entries(item.properties)) {
+					console.log(`🔍 DEBUG: Checking property: ${key} = ${value}`);
+					if (key.includes('Vessel') && key.includes('Product')) {
+						const parts = key.split(' ');
+						console.log(`🔍 DEBUG: Found vessel property, parts:`, parts);
+						if (parts.length >= 2) {
+							const vesselNum = parts[1];
+							console.log(`🔍 DEBUG: Extracted vessel number: ${vesselNum}`);
+							return vesselNum; // Return the vessel number
+						}
+					}
+				}
+			}
+			console.log(`🔍 DEBUG: No vessel number found for item ${item.id}`);
+			return null;
 		}
 
 		async findAssociatedGiftBoxesFromCartData(vesselItemId, cartData) {
