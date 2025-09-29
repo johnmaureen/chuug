@@ -1872,13 +1872,51 @@
 
 			const items = [];
 
-			// 1. Collect vessel products from POMC system
+			// Collect vessel products and their associated add-ons in interleaved order
 			const vesselItems = this.collectVesselProducts(state);
-			items.push(...vesselItems);
-
-			// 2. Collect add-on products (gift box, mix & match, extra cups)
 			const addonItems = this.collectAddonProducts(state);
-			items.push(...addonItems);
+
+			// Group add-ons by vessel number for easier lookup
+			const addonsByVessel = {};
+			addonItems.forEach(addon => {
+				const vesselNumber = addon.properties['Vessel Number'];
+				if (vesselNumber) {
+					if (!addonsByVessel[vesselNumber]) {
+						addonsByVessel[vesselNumber] = [];
+					}
+					addonsByVessel[vesselNumber].push(addon);
+				}
+			});
+
+			// Interleave vessels with their add-ons
+			vesselItems.forEach(vessel => {
+				// Add the vessel first
+				items.push(vessel);
+
+				// Find vessel number from properties
+				let vesselNumber = null;
+				for (const [key, value] of Object.entries(vessel.properties)) {
+					if (key.includes('Vessel') && key.includes('Product')) {
+						const parts = key.split(' ');
+						if (parts.length >= 2) {
+							vesselNumber = parts[1];
+							break;
+						}
+					}
+				}
+
+				// Add associated add-ons immediately after the vessel
+				if (vesselNumber && addonsByVessel[vesselNumber]) {
+					items.push(...addonsByVessel[vesselNumber]);
+				}
+			});
+
+			// Add any remaining add-ons that don't have a specific vessel number
+			addonItems.forEach(addon => {
+				if (!addon.properties['Vessel Number']) {
+					items.push(addon);
+				}
+			});
 
 			const cartData = {
 				items,
@@ -2308,6 +2346,11 @@
 				}
 
 				if (cartData.items.length === 0) {
+					// Clear all existing items first to ensure clean empty state
+					const allExistingItems = checkoutContainer.querySelectorAll(".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]");
+					console.log(`🧹 Empty cart: Clearing ${allExistingItems.length} existing items to show clean empty state`);
+					allExistingItems.forEach((item) => item.remove());
+					
 					// Show empty state
 					if (emptyState) {
 						emptyState.style.display = "block";
@@ -2330,8 +2373,9 @@
 					// Hide empty cart message
 					this.hideEmptyCartMessage();
 
-					// Use Liquid template approach - reload the checkout view with fresh cart data
-					await this.loadCheckoutViewWithLiquidTemplate(cartData);
+					// Since we're using Liquid templates, the items are already rendered
+					// We just need to re-bind event handlers for the newly rendered items
+					this.bindCheckoutItemEvents();
 				}
 
 			} catch (error) {
@@ -2352,18 +2396,6 @@
 			}
 		}
 
-		async loadCheckoutViewWithLiquidTemplate(cartData) {
-			try {
-				// The Liquid template approach won't work via AJAX since it needs cart context
-				// Let's use enhanced JavaScript rendering with better debugging
-				console.log("🛒 Using enhanced JavaScript rendering with debugging");
-				await this.renderCheckoutItemsWithBetterData(cartData);
-			} catch (error) {
-				console.error("Failed to load checkout view:", error);
-				// Fallback to enhanced JavaScript rendering
-				await this.renderCheckoutItemsWithBetterData(cartData);
-			}
-		}
 
 		bindCheckoutItemEvents() {
 			// Re-bind remove item events for dynamically loaded content
@@ -2379,366 +2411,9 @@
 			});
 		}
 
-		async renderCheckoutItemsWithBetterData(cartData) {
-			// Enhanced method with comprehensive debugging
-			const checkoutContainer = this.modal.querySelector("[data-checkout-items]");
-			if (!checkoutContainer) return;
+		// REMOVED: renderCheckoutItemsWithBetterData and related functions - using Liquid templates instead
 
-			// Clear existing items
-			const existingItems = checkoutContainer.querySelectorAll(".checkout-product-item-wrap");
-			existingItems.forEach((item) => item.remove());
-
-			// COMPREHENSIVE DEBUGGING
-			console.log("🔍 COMPREHENSIVE CART DEBUG:");
-			console.log("📊 Total cart items:", cartData.items.length);
-			console.log("📋 Full cart data:", cartData);
-			console.log("📝 Cart note:", cartData.note);
-			console.log("🏷️ Cart attributes:", cartData.attributes);
-
-			// Debug each item individually
-			cartData.items.forEach((item, index) => {
-				console.log(`\n🔍 ITEM ${index + 1}:`, {
-					id: item.id,
-					title: item.product_title,
-					handle: item.handle,
-					variant_title: item.variant_title,
-					product_type: item.product_type,
-					vendor: item.vendor,
-					price: item.price,
-					final_price: item.final_price,
-					quantity: item.quantity,
-					properties: item.properties,
-					keys: Object.keys(item)
-				});
-
-				// Check for gift box indicators
-				const giftBoxIndicators = {
-					title_contains_gift: (item.product_title || '').toLowerCase().includes('gift'),
-					title_contains_box: (item.product_title || '').toLowerCase().includes('box'),
-					title_contains_premium: (item.product_title || '').toLowerCase().includes('premium'),
-					handle_contains_gift: (item.handle || '').toLowerCase().includes('gift'),
-					handle_contains_box: (item.handle || '').toLowerCase().includes('box'),
-					has_addon_property: item.properties && item.properties["Add-on"] === "Premium Gift Box",
-					has_product_handle: item.properties && item.properties["Product Handle"] === "premium-gift-box-tissue-wrap"
-				};
-
-				console.log("🎁 Gift box indicators:", giftBoxIndicators);
-				console.log("🎁 Is gift box?", this.isGiftBoxItem(item));
-			});
-
-			// Render items using the existing methods but with enhanced detection
-			for (const item of cartData.items.slice(0, 3)) {
-				let itemElement;
-				
-				// Enhanced gift box detection with debugging
-				const isGiftBox = this.isGiftBoxItem(item);
-				console.log(`\n🎨 RENDERING ITEM: "${item.product_title}"`);
-				console.log("🎁 Is gift box?", isGiftBox);
-				
-				if (isGiftBox) {
-					console.log("🎁 Rendering as gift box item");
-					itemElement = await this.renderGiftBoxItem(item);
-				} else {
-					console.log("📦 Rendering as regular item");
-					itemElement = await this.renderCheckoutItem(item);
-				}
-				
-				if (itemElement) {
-					checkoutContainer.appendChild(itemElement);
-					console.log("✅ Item rendered successfully");
-				} else {
-					console.log("❌ Failed to render item");
-				}
-			}
-
-			console.log("🏁 Rendering complete. Total items in DOM:", checkoutContainer.children.length);
-		}
-
-		isGiftBoxItem(item) {
-			// Enhanced gift box detection with multiple criteria
-			return (
-				(item.product_title && item.product_title.toLowerCase().includes('gift box')) ||
-				(item.product_title && item.product_title.toLowerCase().includes('premium')) ||
-				(item.handle && item.handle.toLowerCase().includes('gift-box')) ||
-				(item.properties && item.properties["Add-on"] === "Premium Gift Box") ||
-				(item.properties && item.properties["Product Handle"] === "premium-gift-box-tissue-wrap") ||
-				(item.product_type && item.product_type.toLowerCase().includes('gift'))
-			);
-		}
-
-		async renderCheckoutItem(item) {
-			try {
-				// Create a checkout item element similar to checkout-products-wrap snippet
-				const itemWrapper = document.createElement("div");
-				itemWrapper.className = "checkout-product-item-wrap";
-
-				// Get product image URL
-				const imageUrl = item.image
-					? item.image.replace(/\.(jpg|jpeg|png|gif|webp)/, "_128x128.$1")
-					: null;
-
-				// Format price
-				const formatPrice = (cents) => {
-					return new Intl.NumberFormat("en-GB", {
-						style: "currency",
-						currency: "GBP",
-					}).format(cents / 100);
-				};
-
-				// Build the HTML structure
-				itemWrapper.innerHTML = `
-					<div class="checkout-products-wrap" data-item-id="${item.id}">
-						<div class="checkout-products-wrap__container">
-							<!-- Product Image Section -->
-							<div class="checkout-products-wrap__image">
-								<div class="checkout-products-wrap__image-container">
-									${
-										imageUrl
-											? `
-										<img 
-											src="${imageUrl}"
-											alt="${item.product_title || "Product"}"
-											width="128"
-											height="128"
-											loading="lazy"
-											class="checkout-products-wrap__product-image"
-										/>
-									`
-											: `
-										<div class="checkout-products-wrap__placeholder">
-											<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<rect width="128" height="128" fill="#f3f3f3"/>
-												<text x="64" y="64" text-anchor="middle" dy=".3em" fill="#666">No Image</text>
-											</svg>
-										</div>
-									`
-									}
-								</div>
-							</div>
-
-							<!-- Product Details Section -->
-							<div class="checkout-products-wrap__details">
-								<!-- Product Title and Delete Button -->
-								<div class="checkout-products-wrap__header">
-									<h3 class="checkout-products-wrap__title">
-										${item.product_title || "Product"}
-									</h3>
-									<button 
-										type="button" 
-										class="checkout-products-wrap__delete"
-										data-remove-item="${item.id}"
-										aria-label="Remove ${item.product_title || "item"} from cart"
-									>
-										<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-											<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-											<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-											<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-											<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-										</svg>
-									</button>
-								</div>
-
-								<!-- Product Options/Chips -->
-								<div class="checkout-products-wrap__options">
-									${this.renderItemProperties(item)}
-								</div>
-
-								<!-- Pricing Section -->
-								<div class="checkout-products-wrap__pricing">
-									${
-										item.original_price !== item.final_price
-											? `
-										<span class="checkout-products-wrap__current-price">
-											${formatPrice(item.final_price)}
-										</span>
-										<span class="checkout-products-wrap__original-price">
-											${formatPrice(item.original_price)}
-										</span>
-									`
-											: `
-										<span class="checkout-products-wrap__current-price">
-											${formatPrice(item.original_price)}
-										</span>
-									`
-									}
-								</div>
-							</div>
-						</div>
-					</div>
-				`;
-
-				return itemWrapper;
-			} catch (error) {
-				console.error("Failed to render checkout item:", error);
-				return null;
-			}
-		}
-
-		renderItemProperties(item) {
-			let propertiesHtml = "";
-
-			// Handle item properties - only show specific add-on properties, not vessel details
-			if (item.properties && Object.keys(item.properties).length > 0) {
-				Object.entries(item.properties).forEach(([key, value]) => {
-					if (!key.startsWith('_') && value) {
-						// Only show specific add-on properties, not vessel configuration details
-						if (key === 'Add-on' || 
-							key.toLowerCase().includes('mix') || 
-							key.toLowerCase().includes('extra') ||
-							key.toLowerCase().includes('gift')) {
-							
-							let emoji = '';
-							if (key === 'Add-on') {
-								emoji = '🎁 ';
-							} else if (key.toLowerCase().includes('mix')) {
-								emoji = '🔄 ';
-							} else if (key.toLowerCase().includes('extra')) {
-								emoji = '➕ ';
-							}
-							
-							propertiesHtml += `
-								<div class="checkout-products-wrap__option-chip">
-									${emoji}${key}: ${value}
-								</div>
-							`;
-						}
-					}
-				});
-			}
-
-			// Add default CHUUG options if it's a CHUUG product
-			if (
-				item.product_title &&
-				(item.product_title.includes("CHUUG") ||
-					item.product_title.includes("Chuug"))
-			) {
-				// Check for engraving and insulated cup in properties
-				let engravingText = "";
-				let hasInsulatedCup = false;
-
-				if (item.properties) {
-					Object.entries(item.properties).forEach(([key, value]) => {
-						if (key.toLowerCase().includes("engraving") && value) {
-							engravingText = value;
-						}
-						// Check for insulated cup property
-						if (
-							key.toLowerCase().includes("insulated") ||
-							key.toLowerCase().includes("cup") ||
-							key.toLowerCase().includes("silver cup") ||
-							(key.toLowerCase().includes("silver") &&
-								key.toLowerCase().includes("insulated"))
-						) {
-							hasInsulatedCup = true;
-						}
-					});
-				}
-
-				if (engravingText) {
-					propertiesHtml += `
-						<div class="checkout-products-wrap__option-chip">
-							🔨 Engraved Initials, ${engravingText}
-						</div>
-					`;
-				}
-
-				// Only show insulated cup if the property exists
-				if (hasInsulatedCup) {
-					propertiesHtml += `
-						<div class="checkout-products-wrap__option-chip">
-							🍺 Silver Insulated Cup
-						</div>
-					`;
-				}
-			}
-
-			return propertiesHtml;
-		}
-
-		async renderGiftBoxItem(item) {
-			try {
-				// Create a gift box item element using the premium-gift-box structure
-				const itemWrapper = document.createElement("div");
-				itemWrapper.className = "checkout-product-item-wrap";
-
-				// Get product image URL
-				const imageUrl = item.image
-					? item.image.replace(/\.(jpg|jpeg|png|gif|webp)/, "_71x89.$1")
-					: null;
-
-				// Format price
-				const formatPrice = (cents) => {
-					return new Intl.NumberFormat("en-GB", {
-						style: "currency",
-						currency: "GBP",
-					}).format(cents / 100);
-				};
-
-				// Build the HTML structure using the premium-gift-box component structure
-				itemWrapper.innerHTML = `
-					<div class="premium-gift-box">
-						<div class="premium-gift-box__container">
-							<!-- Product Image -->
-							<div class="premium-gift-box__image">
-								${
-									imageUrl
-										? `
-									<img 
-										src="${imageUrl}"
-										alt="${item.product_title || 'Premium Gift Box & Wrap'}"
-										width="71"
-										height="89"
-									/>
-								`
-										: `
-									<img 
-										src="${window.Shopify?.routes?.root || ''}/assets/premium-gift-box.png"
-										alt="Premium Gift Box & Wrap"
-										width="71"
-										height="89"
-									/>
-								`
-								}
-							</div>
-							
-							<!-- Content Area -->
-							<div class="premium-gift-box__content">
-								<div class="premium-gift-box__details">
-									<div class="premium-gift-box__text">
-										<h4 class="premium-gift-box__title">
-											${item.product_title || 'Premium Gift Box & Wrap<br>With All CHUUG Orders'}
-										</h4>
-									</div>
-									<div class="premium-gift-box__price">
-										${formatPrice(item.final_price || item.original_price)}
-									</div>
-								</div>
-								
-								<!-- Remove Button -->
-								<button 
-									type="button" 
-									class="checkout-products-wrap__delete"
-									data-remove-item="${item.id}"
-									aria-label="Remove Premium Gift Box from cart"
-								>
-									<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-										<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-										<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-										<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-									</svg>
-								</button>
-							</div>
-						</div>
-					</div>
-				`;
-
-				return itemWrapper;
-			} catch (error) {
-				console.error("Failed to render gift box item:", error);
-				return null;
-			}
-		}
+		// REMOVED: isGiftBoxItem, renderCheckoutItem, renderItemProperties, renderGiftBoxItem - using Liquid templates instead
 
 		async removeCartItem(itemId) {
 			// Prevent multiple simultaneous removal attempts

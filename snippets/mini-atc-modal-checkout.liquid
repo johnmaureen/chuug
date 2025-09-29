@@ -70,7 +70,7 @@
   
   <div class="checkout-products-container" data-checkout-items>
     {% comment %} Dynamic cart items will be populated here {% endcomment %}
-    {% for item in cart.items limit: 3 %}
+    {% for item in cart.items %}
       {% render 'checkout-products-wrap', item: item, modal_id: modal_id %}
     {% endfor %}
     
@@ -144,3 +144,160 @@
     Return to the personalization view to modify your selections
   </div>
 </nav> {% endcomment %}
+
+<script>
+// Log cart data for debugging - runs once when checkout view loads
+(function() {
+  // Prevent multiple executions
+  if (window.checkoutDebugScriptLoaded) {
+    return;
+  }
+  window.checkoutDebugScriptLoaded = true;
+  
+  // Log Liquid cart data that was available at render time
+  const liquidCartData = {
+    itemCount: {{ cart.items.size }},
+    note: {{ cart.note | json }},
+    attributes: {{ cart.attributes | json }},
+    items: [
+      {% for debug_item in cart.items %}
+        {
+          id: {{ debug_item.id }},
+          title: {{ debug_item.product.title | json }},
+          variant_title: {{ debug_item.variant.title | json }},
+          quantity: {{ debug_item.quantity }},
+          price: {{ debug_item.price }},
+          final_price: {{ debug_item.final_price }},
+          properties: {{ debug_item.properties | json }},
+          product_type: {{ debug_item.product.type | json }},
+          vendor: {{ debug_item.product.vendor | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  };
+  
+  // Console log the cart data for debugging
+  console.log('🛒 LIQUID CART DATA:', liquidCartData);
+  console.log('🛒 Cart items count:', liquidCartData.itemCount);
+  console.log('🛒 Cart note:', liquidCartData.note);
+  console.log('🛒 Cart attributes:', liquidCartData.attributes);
+  console.log('🛒 All cart items:', liquidCartData.items);
+  
+  
+  // Check for gift box items in Liquid data
+  const giftBoxItems = liquidCartData.items.filter(item => {
+    const title = (item.title || '').toLowerCase();
+    return title.includes('gift') || title.includes('box');
+  });
+  
+  console.log('🛒 Gift box items in Liquid data:', giftBoxItems);
+  
+
+  // Gift box state management - allow enabled state to persist
+  // Removed forced disabling logic to allow gift box to display when enabled
+  
+  // Force update pricing display elements directly as backup
+  function forceUpdatePricingDisplay() {
+    // Look for pricing placeholder elements
+    const pricingPlaceholders = document.querySelectorAll('.pricing-placeholder');
+    const currentPriceElements = document.querySelectorAll('[data-current-price], .mini-atc-modal__current-price');
+
+    // Check if we can get the correct price from POMC system
+    if (window.pomcSystem && window.pomcSystem.getSelectedProductAmountData) {
+      try {
+        const productData = window.pomcSystem.getSelectedProductAmountData();
+
+        if (productData && productData.price) {
+          const correctPrice = (productData.price / 100).toFixed(2);
+          const formattedPrice = `£${correctPrice}`;
+
+          pricingPlaceholders.forEach(el => {
+            if (el.textContent !== formattedPrice) {
+              el.textContent = formattedPrice;
+            }
+          });
+
+          currentPriceElements.forEach(el => {
+            const placeholder = el.querySelector('.pricing-placeholder');
+            if (placeholder && placeholder.textContent !== formattedPrice) {
+              placeholder.textContent = formattedPrice;
+            }
+          });
+        }
+      } catch (error) {
+      }
+    }
+  }
+  
+  // Force update pricing display immediately if systems are ready
+  forceUpdatePricingDisplay();
+  
+  // Watch for dynamic price changes
+  function watchForPriceChanges() {
+    const targetNodes = document.querySelectorAll('.pricing-placeholder, [data-current-price]');
+
+    if (targetNodes.length > 0) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'childList' || mutation.type === 'characterData') {
+            const target = mutation.target;
+            const element = target.nodeType === Node.TEXT_NODE ? target.parentElement : target;
+
+            // Monitor price changes
+            if (element && (element.classList.contains('pricing-placeholder') || element.hasAttribute('data-current-price'))) {
+              // Price change detected - could add logic here if needed
+            }
+          }
+        });
+      });
+
+      targetNodes.forEach(node => {
+        observer.observe(node, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+      });
+    }
+  }
+  
+  // Start watching for price changes
+  watchForPriceChanges();
+  
+  // Gift box items are now allowed to remain in cart
+  // Removed auto-removal logic to allow gift box display
+  
+  // Also fetch current cart data via JavaScript API
+  if (window.cartManager) {
+    window.cartManager.getCart()
+      .then(cartData => {
+        console.log('🛒 CART MANAGER DATA:', cartData);
+        console.log('🛒 Cart Manager items:', cartData.items);
+      })
+      .catch(error => {
+        console.error('🛒 Cart Manager error:', error);
+      });
+  } else {
+    // Fallback if cart manager isn't available yet
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(cartData => {
+        console.log('🛒 FETCH CART DATA:', cartData);
+        console.log('🛒 Fetch items:', cartData.items);
+        
+        // Check for gift box items in JavaScript data
+        const jsGiftBoxItems = (cartData.items || []).filter(item => {
+          const title = (item.product_title || item.title || '').toLowerCase();
+          return title.includes('gift') || title.includes('box');
+        });
+        
+        console.log('🛒 Gift box items found:', jsGiftBoxItems);
+        
+      })
+      .catch(error => {
+        console.error('🛒 Fetch cart error:', error);
+      });
+  }
+
+})();
+</script>
