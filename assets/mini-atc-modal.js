@@ -1561,6 +1561,97 @@
 		}
 
 		updatePricingDisplay(pricing) {
+			// Check which view is currently active
+			const checkoutView = this.modal.querySelector('.mini-atc-modal__view.mini-atc-modal__checkout-view');
+			const personalizeView = this.modal.querySelector('.mini-atc-modal__view.mini-atc-modal__personalise-view');
+			
+			console.log('Pricing update - checkoutView display:', checkoutView?.style.display);
+			console.log('Pricing update - personalizeView display:', personalizeView?.style.display);
+			console.log('Pricing update - checkoutView computed display:', window.getComputedStyle(checkoutView)?.display);
+			console.log('Pricing update - personalizeView computed display:', window.getComputedStyle(personalizeView)?.display);
+			
+			// Check if checkout view is active (visible) - use computed style
+			if (checkoutView && window.getComputedStyle(checkoutView).display !== 'none') {
+				console.log('Using checkout pricing');
+				this.updateCheckoutPricing();
+				return;
+			}
+			
+			// Check if personalize view is active (visible) - use computed style
+			if (personalizeView && window.getComputedStyle(personalizeView).display !== 'none') {
+				console.log('Using personalize pricing');
+				this.updatePersonalizePricing(pricing);
+				return;
+			}
+			
+			// Fallback to personalize pricing if no view is clearly active
+			console.log('Fallback to personalize pricing');
+			this.updatePersonalizePricing(pricing);
+		}
+
+		updateCheckoutPricing() {
+			// Get cart data and update pricing from cart totals
+			fetch('/cart.js')
+				.then(response => response.json())
+				.then(cartData => {
+					// Find pricing elements using the same selectors as personalize view
+					const currentPriceEl = this.modal.querySelector("[data-current-price]") ||
+						this.modal.querySelector(".mini-atc-modal__current-price");
+					const originalPriceEl = this.modal.querySelector("[data-original-price]") ||
+						this.modal.querySelector(".mini-atc-modal__original-price");
+					const savingsEl = this.modal.querySelector("[data-savings-amount]") ||
+						this.modal.querySelector(".mini-atc-modal__savings-text");
+					
+					if (currentPriceEl) {
+						const totalPrice = (cartData.total_price / 100).toFixed(2);
+						// Update only the text content, preserve structure
+						const placeholder = currentPriceEl.querySelector(".pricing-placeholder");
+						if (placeholder) {
+							placeholder.textContent = `£${totalPrice}`;
+						} else {
+							currentPriceEl.textContent = `£${totalPrice}`;
+						}
+					}
+					
+					if (savingsEl && cartData.total_discount > 0) {
+						const savings = (cartData.total_discount / 100).toFixed(2);
+						// Update only the text content, preserve structure
+						const placeholder = savingsEl.querySelector(".pricing-placeholder");
+						if (placeholder) {
+							placeholder.textContent = `You Saved £${savings}`;
+						} else {
+							savingsEl.textContent = `You Saved £${savings}`;
+						}
+					}
+				})
+				.catch(error => {
+					console.error('Failed to fetch cart data for pricing:', error);
+				});
+		}
+
+		updatePersonalizePricing(pricing) {
+			// Get pricing from chuug_vessel_selections -> selectedProductAmountData
+			if (window.chuug_vessel_selections && window.chuug_vessel_selections.selectedProductAmountData) {
+				const selectedData = window.chuug_vessel_selections.selectedProductAmountData;
+				if (selectedData.variants) {
+					const engravingEnabled = this.getEngravingState();
+					const variantIndex = engravingEnabled ? 1 : 0;
+					const variant = selectedData.variants[variantIndex];
+					
+					if (variant) {
+						// Use pricing from selectedProductAmountData
+						pricing = {
+							total: variant.price,
+							originalPrice: variant.compare_at_price,
+							savings: variant.compare_at_price - variant.price,
+							formattedTotal: Utils.formatPrice(variant.price),
+							formattedOriginal: Utils.formatPrice(variant.compare_at_price),
+							formattedSavings: Utils.formatPrice(variant.compare_at_price - variant.price)
+						};
+					}
+				}
+			}
+			
 			// Try multiple selectors to find the price elements
 			const currentPriceEl =
 				this.modal.querySelector("[data-current-price]") ||
@@ -1625,6 +1716,7 @@
 		}
 
 		switchView(viewName) {
+			console.log('Switching to view:', viewName);
 			const views = this.modal.querySelectorAll(".mini-atc-modal__view");
 			const targetView = this.modal.querySelector(`[data-view="${viewName}"]`);
 			const titleEl = this.modal.querySelector(".mini-atc-modal__title");
@@ -1878,6 +1970,9 @@
 				
 				// Update pricing after reset
 				this.calculatePricing();
+				
+				// Update checkout pricing to reflect cart totals
+				this.updateCheckoutPricing();
 
 				// Optional: redirect to cart page after delay
 				// setTimeout(() => {
