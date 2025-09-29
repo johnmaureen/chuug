@@ -1855,12 +1855,19 @@
 
 				// Fetch fresh cart data and update checkout view
 				const freshCartData = await this.fetchUpdatedCartData();
+				
 				if (freshCartData) {
 					await this.updateCheckoutViewWithCartData(freshCartData);
 				}
 
 				// Hide cart loading spinner
 				this.hideCartLoadingSpinner();
+				
+				// Ensure checkout container is visible
+				const checkoutContainer = this.modal.querySelector("[data-checkout-items]");
+				if (checkoutContainer) {
+					checkoutContainer.style.display = "";
+				}
 
 				// Show success feedback
 				this.showAddToCartSuccess(cartData.items.length);
@@ -2425,22 +2432,36 @@
 
 		async renderCartItems(cartItems, container) {
 			try {
+				console.log("🛒 renderCartItems called with:", cartItems.length, "items");
+				console.log("🛒 Container element:", container);
+				
 				// Create a temporary container to hold the rendered items
 				const tempContainer = document.createElement('div');
 				
 				// Render each cart item in reverse order (newest first, like Liquid template)
 				for (let i = cartItems.length - 1; i >= 0; i--) {
 					const item = cartItems[i];
+					console.log("🛒 Rendering item:", item.id, item.product_title);
 					const itemElement = await this.renderCartItem(item, cartItems);
 					if (itemElement) {
+						console.log("🛒 Item element created:", itemElement);
 						tempContainer.appendChild(itemElement);
+					} else {
+						console.warn("🛒 Item element was null for:", item.id);
 					}
 				}
+				
+				console.log("🛒 Temp container children:", tempContainer.children.length);
 				
 				// Append all items to the main container
 				while (tempContainer.firstChild) {
 					container.appendChild(tempContainer.firstChild);
 				}
+				
+				console.log("🛒 Final container children:", container.children.length);
+				console.log("🛒 Container HTML:", container.innerHTML);
+				console.log("🛒 Container classes:", container.className);
+				console.log("🛒 Container style:", container.style.cssText);
 				
 			} catch (error) {
 				console.error("Failed to render cart items:", error);
@@ -2449,11 +2470,15 @@
 
 		async renderCartItem(item, allCartItems) {
 			try {
+				console.log("🛒 renderCartItem called for:", item.id, item.product_title);
+				
 				// Check if this is an add-on item that should be grouped with a vessel
 				const isAddon = item.properties && Object.entries(item.properties).some(([key, value]) => key === 'Add-on');
+				console.log("🛒 Is addon:", isAddon);
 				
 				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
 				if (isAddon) {
+					console.log("🛒 Skipping addon item:", item.id);
 					return null;
 				}
 				
