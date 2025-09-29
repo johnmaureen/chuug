@@ -52,7 +52,7 @@
           <button 
             type="button" 
             class="checkout-products-wrap__delete"
-            data-remove-item="{{ item.id }}"
+            data-remove-item="{{ item.key }}"
             aria-label="Remove {{ item.product.title }} from cart"
           >
             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -146,7 +146,7 @@
                     <button 
                       type="button" 
                       class="checkout-products-wrap__addon-remove"
-                      data-remove-item="{{ cart_item.id }}"
+                      data-remove-item="{{ cart_item.key }}"
                       aria-label="Remove Premium Gift Box from cart"
                     >
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -250,7 +250,7 @@
           <button 
             type="button" 
             class="checkout-products-wrap__delete"
-            data-remove-item="{% if gift_box_item %}{{ gift_box_item.id }}{% else %}gift-box{% endif %}"
+            data-remove-item="{% if gift_box_item %}{{ gift_box_item.key }}{% else %}gift-box{% endif %}"
             aria-label="Remove Premium Gift Box from cart"
           >
             <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">

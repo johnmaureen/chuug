@@ -2637,7 +2637,7 @@
 				const deleteBtn = document.createElement('button');
 				deleteBtn.type = 'button';
 				deleteBtn.className = 'checkout-products-wrap__delete';
-				deleteBtn.setAttribute('data-remove-item', item.id);
+				deleteBtn.setAttribute('data-remove-item', item.key);
 				deleteBtn.setAttribute('aria-label', `Remove ${item.product_title || ''} from cart`);
 				deleteBtn.innerHTML = `
 					<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2728,7 +2728,7 @@
 								const addonRemove = document.createElement('button');
 								addonRemove.type = 'button';
 								addonRemove.className = 'checkout-products-wrap__addon-remove';
-								addonRemove.setAttribute('data-remove-item', nextItem.id);
+								addonRemove.setAttribute('data-remove-item', nextItem.key);
 								addonRemove.setAttribute('aria-label', 'Remove Premium Gift Box from cart');
 								addonRemove.innerHTML = `
 									<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2862,7 +2862,7 @@
 						const giftBoxDelete = document.createElement('button');
 						giftBoxDelete.type = 'button';
 						giftBoxDelete.className = 'checkout-products-wrap__delete';
-						giftBoxDelete.setAttribute('data-remove-item', giftBoxForThisVessel.id);
+						giftBoxDelete.setAttribute('data-remove-item', giftBoxForThisVessel.key);
 						giftBoxDelete.setAttribute('aria-label', 'Remove Premium Gift Box from cart');
 						giftBoxDelete.innerHTML = `
 							<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2954,9 +2954,9 @@
 			return null;
 		}
 
-		async findAssociatedGiftBoxesFromCartData(vesselItemId, cartData) {
+		async findAssociatedGiftBoxesFromCartData(vesselItemKey, cartData) {
 			try {
-				console.log(`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`);
+				console.log(`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`);
 				
 				if (!cartData || !cartData.items) {
 					console.log(`🔍 DEBUG: No cart data or items found`);
@@ -2965,20 +2965,22 @@
 
 				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
 				console.log(`🔍 DEBUG: All cart items:`, cartData.items.map(item => ({
+					key: item.key,
 					id: item.id,
 					title: item.product_title,
 					properties: item.properties
 				})));
 
 				// Find the vessel item to get its vessel number
-				const vesselItem = cartData.items.find(item => item.id.toString() === vesselItemId.toString());
+				const vesselItem = cartData.items.find(item => item.key === vesselItemKey);
 				if (!vesselItem) {
-					console.log(`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`);
-					console.log(`🔍 DEBUG: Available item IDs:`, cartData.items.map(item => item.id));
+					console.log(`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`);
+					console.log(`🔍 DEBUG: Available item keys:`, cartData.items.map(item => item.key));
 					return [];
 				}
 
 				console.log(`🔍 DEBUG: Found vessel item:`, {
+					key: vesselItem.key,
 					id: vesselItem.id,
 					title: vesselItem.product_title,
 					properties: vesselItem.properties
@@ -3004,7 +3006,7 @@
 				}
 
 				if (!vesselNumber) {
-					console.log(`🔍 DEBUG: No vessel number found for item ${vesselItemId}`);
+					console.log(`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`);
 					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
@@ -3012,13 +3014,13 @@
 				console.log(`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`);
 
 				// Find gift boxes with matching vessel number
-				const associatedGiftBoxIds = [];
+				const associatedGiftBoxKeys = [];
 				for (const item of cartData.items) {
-					if (item.id.toString() === vesselItemId.toString()) {
+					if (item.key === vesselItemKey) {
 						continue; // Skip the vessel item itself
 					}
 
-					console.log(`🔍 DEBUG: Checking item ${item.id}:`, {
+					console.log(`🔍 DEBUG: Checking item ${item.key}:`, {
 						title: item.product_title,
 						properties: item.properties
 					});
@@ -3034,26 +3036,26 @@
 						// Check if it's a gift box
 						if (key === 'Add-on' && value === 'Premium Gift Box') {
 							isGiftBox = true;
-							console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
+							console.log(`🔍 DEBUG: Item ${item.key} is a gift box`);
 						}
 						
 						// Check if it has the matching vessel number
 						if (key === 'Vessel Number' && value.toString() === vesselNumber.toString()) {
 							hasMatchingVesselNumber = true;
-							console.log(`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`);
+							console.log(`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`);
 						}
 					}
 
 					// If it's a gift box with matching vessel number, add to removal list
 					if (isGiftBox && hasMatchingVesselNumber) {
-						// Use the key instead of id for cart API
-						associatedGiftBoxIds.push(item.key);
+						// Use the key for cart API
+						associatedGiftBoxKeys.push(item.key);
 						console.log(`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`);
 					}
 				}
 
-				console.log(`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`, associatedGiftBoxIds);
-				return associatedGiftBoxIds;
+				console.log(`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`, associatedGiftBoxKeys);
+				return associatedGiftBoxKeys;
 
 			} catch (error) {
 				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
@@ -3189,8 +3191,8 @@
 
 		// REMOVED: isGiftBoxItem, renderCheckoutItem, renderItemProperties, renderGiftBoxItem - using Liquid templates instead
 
-		async removeCartItem(itemId) {
-			console.log(`🗑️ REMOVE ITEM: Starting removal of item ${itemId}`);
+		async removeCartItem(itemKey) {
+			console.log(`🗑️ REMOVE ITEM: Starting removal of item with key ${itemKey}`);
 			
 			// Prevent multiple simultaneous removal attempts
 			if (this.isRemovingItem) {
@@ -3207,7 +3209,7 @@
 				let cartData;
 
 				// Handle special gift box case
-				if (itemId === "gift-box") {
+				if (itemKey === "gift-box") {
 					// Use the existing gift box removal method if available
 					if (
 						window.cartManager &&
@@ -3221,79 +3223,110 @@
 						return;
 					}
 				} else {
-					console.log(`🗑️ REMOVE ITEM: Processing regular item removal for ${itemId}`);
+					console.log(`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`);
 					
-					// Get current cart data BEFORE removing the main item
+					// Get current cart data to check if this is a gift box item
 					const currentCartData = await this.fetchUpdatedCartData();
+					const itemToRemove = currentCartData.items.find(item => item.key === itemKey);
 					
-					// Find associated gift boxes BEFORE removing the main item
-					const associatedGiftBoxIds = await this.findAssociatedGiftBoxesFromCartData(itemId, currentCartData);
+					// Check if this is a gift box item
+					const isGiftBoxItem = itemToRemove && itemToRemove.properties && 
+						Object.entries(itemToRemove.properties).some(([key, value]) => 
+							key === 'Add-on' && value === 'Premium Gift Box'
+						);
 					
-					console.log(`🗑️ REMOVE ITEM: Found ${associatedGiftBoxIds.length} associated gift boxes to remove:`, associatedGiftBoxIds);
-
-					// Remove the main item first
-					const response = await fetch("/cart/change.js", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Accept: "application/json",
-						},
-						body: JSON.stringify({
-							id: itemId,
-							quantity: 0,
-						}),
-					});
-
-					if (!response.ok) {
-						throw new Error(`Failed to remove item: ${response.status}`);
-					}
-
-					cartData = await response.json();
-
-					// Remove associated gift boxes
-					if (associatedGiftBoxIds.length > 0) {
-						console.log(`🎁 Removing ${associatedGiftBoxIds.length} associated gift boxes`);
-						console.log(`🎁 Gift box IDs to remove:`, associatedGiftBoxIds);
-						
-						for (const giftBoxId of associatedGiftBoxIds) {
-							console.log(`🎁 Attempting to remove gift box with ID: ${giftBoxId}`);
-							console.log(`🎁 Request body:`, JSON.stringify({
-								id: giftBoxId,
+					if (isGiftBoxItem) {
+						console.log(`🎁 Removing gift box item with key ${itemKey} directly`);
+						// For gift box items, remove only this specific item using the key as id
+						const response = await fetch("/cart/change.js", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+								Accept: "application/json",
+							},
+							body: JSON.stringify({
+								id: itemKey,
 								quantity: 0,
-							}));
-							try {
-								const giftBoxResponse = await fetch("/cart/change.js", {
-									method: "POST",
-									headers: {
-										"Content-Type": "application/json",
-										Accept: "application/json",
-									},
-									body: JSON.stringify({
-										id: giftBoxId,
-										quantity: 0,
-									}),
-								});
+							}),
+						});
 
-								console.log(`🎁 Gift box removal response status:`, giftBoxResponse.status);
-
-								if (giftBoxResponse.ok) {
-									const responseData = await giftBoxResponse.json();
-									console.log(`✅ Removed gift box ${giftBoxId}`, responseData);
-								} else {
-									const errorText = await giftBoxResponse.text();
-									console.warn(`⚠️ Failed to remove gift box ${giftBoxId}: ${giftBoxResponse.status}`, errorText);
-								}
-							} catch (giftBoxError) {
-								console.error(`❌ Error removing gift box ${giftBoxId}:`, giftBoxError);
-							}
+						if (!response.ok) {
+							throw new Error(`Failed to remove gift box item: ${response.status}`);
 						}
 
-						console.log(`🎁 Finished removing gift boxes, fetching updated cart data...`);
-						// Fetch updated cart data after removing gift boxes
-						cartData = await this.fetchUpdatedCartData();
-						console.log(`🎁 Updated cart data:`, cartData);
+						cartData = await response.json();
 					} else {
-						console.log(`🎁 No gift boxes to remove`);
+						console.log(`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`);
+						
+						// Find associated gift boxes BEFORE removing the main item
+						const associatedGiftBoxKeys = await this.findAssociatedGiftBoxesFromCartData(itemKey, currentCartData);
+						
+						console.log(`🗑️ REMOVE ITEM: Found ${associatedGiftBoxKeys.length} associated gift boxes to remove:`, associatedGiftBoxKeys);
+
+						// Remove the main item first using the key as id
+						const response = await fetch("/cart/change.js", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+								Accept: "application/json",
+							},
+							body: JSON.stringify({
+								id: itemKey,
+								quantity: 0,
+							}),
+						});
+
+						if (!response.ok) {
+							throw new Error(`Failed to remove item: ${response.status}`);
+						}
+
+						cartData = await response.json();
+
+						// Remove associated gift boxes
+						if (associatedGiftBoxKeys.length > 0) {
+							console.log(`🎁 Removing ${associatedGiftBoxKeys.length} associated gift boxes`);
+							console.log(`🎁 Gift box keys to remove:`, associatedGiftBoxKeys);
+							
+							for (const giftBoxKey of associatedGiftBoxKeys) {
+								console.log(`🎁 Attempting to remove gift box with key: ${giftBoxKey}`);
+								console.log(`🎁 Request body:`, JSON.stringify({
+									id: giftBoxKey,
+									quantity: 0,
+								}));
+								try {
+									const giftBoxResponse = await fetch("/cart/change.js", {
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json",
+											Accept: "application/json",
+										},
+										body: JSON.stringify({
+											id: giftBoxKey,
+											quantity: 0,
+										}),
+									});
+
+									console.log(`🎁 Gift box removal response status:`, giftBoxResponse.status);
+
+									if (giftBoxResponse.ok) {
+										const responseData = await giftBoxResponse.json();
+										console.log(`✅ Removed gift box ${giftBoxKey}`, responseData);
+									} else {
+										const errorText = await giftBoxResponse.text();
+										console.warn(`⚠️ Failed to remove gift box ${giftBoxKey}: ${giftBoxResponse.status}`, errorText);
+									}
+								} catch (giftBoxError) {
+									console.error(`❌ Error removing gift box ${giftBoxKey}:`, giftBoxError);
+								}
+							}
+
+							console.log(`🎁 Finished removing gift boxes, fetching updated cart data...`);
+							// Fetch updated cart data after removing gift boxes
+							cartData = await this.fetchUpdatedCartData();
+							console.log(`🎁 Updated cart data:`, cartData);
+						} else {
+							console.log(`🎁 No gift boxes to remove`);
+						}
 					}
 				}
 
