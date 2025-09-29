@@ -235,7 +235,7 @@
 
 		reset() {
 			this.state = {
-				engraving: { enabled: false, vessels: {} },
+				engraving: { enabled: true, vessels: {} },
 				mixMatch: { enabled: true, variants: {} },
 				extraCups: { enabled: false, variants: {} },
 				giftBox: { enabled: false },
