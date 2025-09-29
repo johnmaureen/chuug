@@ -1872,6 +1872,13 @@
 				// Show success feedback
 				this.showAddToCartSuccess(cartData.items.length);
 
+				// Reset personalization toggles and gift box toggle after successful add to cart
+				this.resetPersonalizationToggles();
+				this.resetGiftBoxToggle();
+				
+				// Update pricing after reset
+				this.calculatePricing();
+
 				// Optional: redirect to cart page after delay
 				// setTimeout(() => {
 				//   window.location.href = window.routes.cart_url || '/cart';
@@ -2795,6 +2802,38 @@
 			// Simple money formatting - you may want to use Shopify's money formatting
 			const amount = (cents / 100).toFixed(2);
 			return `£${amount}`;
+		}
+
+		resetPersonalizationToggles() {
+			// Reset engraving toggle to true (default state)
+			const engravingToggle = this.modal.querySelector('[data-personalization-toggle="engraving"]');
+			if (engravingToggle) {
+				engravingToggle.checked = true;
+			}
+			
+			// Reset all other personalization toggles to false
+			const otherToggles = this.modal.querySelectorAll('[data-personalization-toggle]:not([data-personalization-toggle="engraving"])');
+			otherToggles.forEach(toggle => {
+				toggle.checked = false;
+			});
+		}
+
+		resetGiftBoxToggle() {
+			// Reset gift box toggle to false (default state)
+			const giftBoxToggle = this.modal.querySelector('.mini-atc-modal--gift-box-toggle');
+			if (giftBoxToggle) {
+				giftBoxToggle.checked = false;
+			}
+			
+			// Also reset any gift box toggle slider
+			const giftBoxToggleSlider = this.modal.querySelector('.premium-gift-box__toggle-slider');
+			if (giftBoxToggleSlider) {
+				// Find the associated checkbox input
+				const checkbox = giftBoxToggleSlider.closest('.premium-gift-box').querySelector('input[type="checkbox"]');
+				if (checkbox) {
+					checkbox.checked = false;
+				}
+			}
 		}
 
 		extractVesselNumber(item) {
