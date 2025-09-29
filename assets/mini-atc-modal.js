@@ -600,6 +600,7 @@
 				const removeBtn = event.target.closest("[data-remove-item]");
 				if (removeBtn) {
 					const itemId = removeBtn.getAttribute("data-remove-item");
+					console.log(`🖱️ CLICK: Delete button clicked for item ${itemId}`);
 					this.removeCartItem(itemId);
 				}
 			});
@@ -2396,6 +2397,222 @@
 			}
 		}
 
+		async findAssociatedGiftBoxesFromCartData(vesselItemId, cartData) {
+			try {
+				console.log(`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`);
+				
+				if (!cartData || !cartData.items) {
+					console.log(`🔍 DEBUG: No cart data or items found`);
+					return [];
+				}
+
+				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
+				console.log(`🔍 DEBUG: All cart items:`, cartData.items.map(item => ({
+					id: item.id,
+					title: item.product_title,
+					properties: item.properties
+				})));
+
+				// Find the vessel item to get its vessel number
+				const vesselItem = cartData.items.find(item => item.id.toString() === vesselItemId.toString());
+				if (!vesselItem) {
+					console.log(`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`);
+					console.log(`🔍 DEBUG: Available item IDs:`, cartData.items.map(item => item.id));
+					return [];
+				}
+
+				console.log(`🔍 DEBUG: Found vessel item:`, {
+					id: vesselItem.id,
+					title: vesselItem.product_title,
+					properties: vesselItem.properties
+				});
+
+				// Extract vessel number from the vessel item's properties
+				let vesselNumber = null;
+				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+				
+				// Properties are stored as an object, not an array
+				for (const [key, value] of Object.entries(vesselItem.properties || {})) {
+					console.log(`🔍 DEBUG: Checking property key: ${key}, value: ${value}`);
+					// Look for properties like "Vessel 2 Product", "Vessel 1 Product", etc.
+					if (key.includes('Vessel') && key.includes('Product')) {
+						// Extract number from property name like "Vessel 2 Product"
+						const vesselPropertyParts = key.split(' ');
+						if (vesselPropertyParts.length >= 2) {
+							vesselNumber = vesselPropertyParts[1];
+							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
+							break;
+						}
+					}
+				}
+
+				if (!vesselNumber) {
+					console.log(`🔍 DEBUG: No vessel number found for item ${vesselItemId}`);
+					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+					return [];
+				}
+
+				console.log(`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`);
+
+				// Find gift boxes with matching vessel number
+				const associatedGiftBoxIds = [];
+				for (const item of cartData.items) {
+					if (item.id.toString() === vesselItemId.toString()) {
+						continue; // Skip the vessel item itself
+					}
+
+					console.log(`🔍 DEBUG: Checking item ${item.id}:`, {
+						title: item.product_title,
+						properties: item.properties
+					});
+
+					// Check if this item is a gift box
+					let isGiftBox = false;
+					let hasMatchingVesselNumber = false;
+
+					// Properties are stored as an object, not an array
+					for (const [key, value] of Object.entries(item.properties || {})) {
+						console.log(`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`);
+						
+						// Check if it's a gift box
+						if (key === 'Add-on' && value === 'Premium Gift Box') {
+							isGiftBox = true;
+							console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
+						}
+						
+						// Check if it has the matching vessel number
+						if (key === 'Vessel Number' && value.toString() === vesselNumber.toString()) {
+							hasMatchingVesselNumber = true;
+							console.log(`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`);
+						}
+					}
+
+					// If it's a gift box with matching vessel number, add to removal list
+					if (isGiftBox && hasMatchingVesselNumber) {
+						// Use the key instead of id for cart API
+						associatedGiftBoxIds.push(item.key);
+						console.log(`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`);
+					}
+				}
+
+				console.log(`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`, associatedGiftBoxIds);
+				return associatedGiftBoxIds;
+
+			} catch (error) {
+				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
+				return [];
+			}
+		}
+
+		async findAssociatedGiftBoxes(vesselItemId) {
+			try {
+				console.log(`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`);
+				
+				// Fetch current cart data
+				const cartData = await this.fetchUpdatedCartData();
+				if (!cartData || !cartData.items) {
+					console.log(`🔍 DEBUG: No cart data or items found`);
+					return [];
+				}
+
+				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
+				console.log(`🔍 DEBUG: All cart items:`, cartData.items.map(item => ({
+					id: item.id,
+					title: item.product_title,
+					properties: item.properties
+				})));
+
+				// Find the vessel item to get its vessel number
+				const vesselItem = cartData.items.find(item => item.id.toString() === vesselItemId.toString());
+				if (!vesselItem) {
+					console.log(`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`);
+					console.log(`🔍 DEBUG: Available item IDs:`, cartData.items.map(item => item.id));
+					return [];
+				}
+
+				console.log(`🔍 DEBUG: Found vessel item:`, {
+					id: vesselItem.id,
+					title: vesselItem.product_title,
+					properties: vesselItem.properties
+				});
+
+				// Extract vessel number from the vessel item's properties
+				let vesselNumber = null;
+				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+				
+				// Properties are stored as an object, not an array
+				for (const [key, value] of Object.entries(vesselItem.properties || {})) {
+					console.log(`🔍 DEBUG: Checking property key: ${key}, value: ${value}`);
+					// Look for properties like "Vessel 2 Product", "Vessel 1 Product", etc.
+					if (key.includes('Vessel') && key.includes('Product')) {
+						// Extract number from property name like "Vessel 2 Product"
+						const vesselPropertyParts = key.split(' ');
+						if (vesselPropertyParts.length >= 2) {
+							vesselNumber = vesselPropertyParts[1];
+							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
+							break;
+						}
+					}
+				}
+
+				if (!vesselNumber) {
+					console.log(`🔍 DEBUG: No vessel number found for item ${vesselItemId}`);
+					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+					return [];
+				}
+
+				console.log(`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`);
+
+				// Find gift boxes with matching vessel number
+				const associatedGiftBoxIds = [];
+				for (const item of cartData.items) {
+					if (item.id.toString() === vesselItemId.toString()) {
+						continue; // Skip the vessel item itself
+					}
+
+					console.log(`🔍 DEBUG: Checking item ${item.id}:`, {
+						title: item.product_title,
+						properties: item.properties
+					});
+
+					// Check if this item is a gift box
+					let isGiftBox = false;
+					let hasMatchingVesselNumber = false;
+
+					// Properties are stored as an object, not an array
+					for (const [key, value] of Object.entries(item.properties || {})) {
+						console.log(`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`);
+						
+						// Check if it's a gift box
+						if (key === 'Add-on' && value === 'Premium Gift Box') {
+							isGiftBox = true;
+							console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
+						}
+						
+						// Check if it has the matching vessel number
+						if (key === 'Vessel Number' && value.toString() === vesselNumber.toString()) {
+							hasMatchingVesselNumber = true;
+							console.log(`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`);
+						}
+					}
+
+					// If it's a gift box with matching vessel number, add to removal list
+					if (isGiftBox && hasMatchingVesselNumber) {
+						// Use the key instead of id for cart API
+						associatedGiftBoxIds.push(item.key);
+						console.log(`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`);
+					}
+				}
+
+				console.log(`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`, associatedGiftBoxIds);
+				return associatedGiftBoxIds;
+
+			} catch (error) {
+				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
+				return [];
+			}
+		}
+
 
 		bindCheckoutItemEvents() {
 			// Re-bind remove item events for dynamically loaded content
@@ -2416,6 +2633,8 @@
 		// REMOVED: isGiftBoxItem, renderCheckoutItem, renderItemProperties, renderGiftBoxItem - using Liquid templates instead
 
 		async removeCartItem(itemId) {
+			console.log(`🗑️ REMOVE ITEM: Starting removal of item ${itemId}`);
+			
 			// Prevent multiple simultaneous removal attempts
 			if (this.isRemovingItem) {
 				console.warn("Item removal already in progress");
@@ -2445,7 +2664,17 @@
 						return;
 					}
 				} else {
-					// Remove regular item from Shopify cart
+					console.log(`🗑️ REMOVE ITEM: Processing regular item removal for ${itemId}`);
+					
+					// Get current cart data BEFORE removing the main item
+					const currentCartData = await this.fetchUpdatedCartData();
+					
+					// Find associated gift boxes BEFORE removing the main item
+					const associatedGiftBoxIds = await this.findAssociatedGiftBoxesFromCartData(itemId, currentCartData);
+					
+					console.log(`🗑️ REMOVE ITEM: Found ${associatedGiftBoxIds.length} associated gift boxes to remove:`, associatedGiftBoxIds);
+
+					// Remove the main item first
 					const response = await fetch("/cart/change.js", {
 						method: "POST",
 						headers: {
@@ -2463,6 +2692,52 @@
 					}
 
 					cartData = await response.json();
+
+					// Remove associated gift boxes
+					if (associatedGiftBoxIds.length > 0) {
+						console.log(`🎁 Removing ${associatedGiftBoxIds.length} associated gift boxes`);
+						console.log(`🎁 Gift box IDs to remove:`, associatedGiftBoxIds);
+						
+						for (const giftBoxId of associatedGiftBoxIds) {
+							console.log(`🎁 Attempting to remove gift box with ID: ${giftBoxId}`);
+							console.log(`🎁 Request body:`, JSON.stringify({
+								id: giftBoxId,
+								quantity: 0,
+							}));
+							try {
+								const giftBoxResponse = await fetch("/cart/change.js", {
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json",
+										Accept: "application/json",
+									},
+									body: JSON.stringify({
+										id: giftBoxId,
+										quantity: 0,
+									}),
+								});
+
+								console.log(`🎁 Gift box removal response status:`, giftBoxResponse.status);
+
+								if (giftBoxResponse.ok) {
+									const responseData = await giftBoxResponse.json();
+									console.log(`✅ Removed gift box ${giftBoxId}`, responseData);
+								} else {
+									const errorText = await giftBoxResponse.text();
+									console.warn(`⚠️ Failed to remove gift box ${giftBoxId}: ${giftBoxResponse.status}`, errorText);
+								}
+							} catch (giftBoxError) {
+								console.error(`❌ Error removing gift box ${giftBoxId}:`, giftBoxError);
+							}
+						}
+
+						console.log(`🎁 Finished removing gift boxes, fetching updated cart data...`);
+						// Fetch updated cart data after removing gift boxes
+						cartData = await this.fetchUpdatedCartData();
+						console.log(`🎁 Updated cart data:`, cartData);
+					} else {
+						console.log(`🎁 No gift boxes to remove`);
+					}
 				}
 
 				// Update the checkout view with the new cart state
