@@ -2548,33 +2548,75 @@
 					const allExistingItems = checkoutContainer.querySelectorAll(".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]");
 					allExistingItems.forEach((item) => item.remove());
 
-					// Render new cart items
-					await this.renderCartItems(cartData.items, checkoutContainer);
+				// Render new cart items
+				await this.renderCartItems(cartData.items, checkoutContainer);
 
-					// Re-bind event handlers for the newly rendered items
-					this.bindCheckoutItemEvents();
-					
-					// Refresh pricing to reflect the updated cart totals
-					this.updateCheckoutPricing();
-				}
-
-			} catch (error) {
-				console.error("Failed to update checkout view with cart data:", error);
+				// Re-bind event handlers for the newly rendered items
+				this.bindCheckoutItemEvents();
+				
+				// Refresh pricing to reflect the updated cart totals
+				this.updateCheckoutPricing();
+				
+				// Update progress indicator based on non-gift-box item count
+				this.updateProgressIndicator(cartData);
 			}
-		}
 
-		async fetchUpdatedCartData() {
-			try {
-				const response = await fetch("/cart.js");
-				if (!response.ok) {
-					throw new Error(`Failed to fetch cart: ${response.status}`);
-				}
-				return await response.json();
-			} catch (error) {
-				console.error("Failed to fetch updated cart data:", error);
-				return null;
+	} catch (error) {
+		console.error("Failed to update checkout view with cart data:", error);
+	}
+}
+
+	updateProgressIndicator(cartData) {
+		try {
+			// Count non-gift-box items in the cart
+			let nonGiftBoxItemCount = 0;
+			
+			if (cartData && cartData.items) {
+				nonGiftBoxItemCount = cartData.items.filter(item => {
+					// Check if this item is NOT a gift box
+					if (item.properties && item.properties['Add-on'] === 'Premium Gift Box') {
+						return false; // Exclude gift boxes
+					}
+					return true; // Include all other items
+				}).length;
 			}
+			
+			console.log(`📊 Progress Indicator: ${nonGiftBoxItemCount} non-gift-box items in cart`);
+			
+			// Find the progress fill element
+			const progressFill = this.modal.querySelector('.step-process-indicator__progress-fill');
+			
+			if (progressFill) {
+				// Set width based on non-gift-box item count
+				if (nonGiftBoxItemCount >= 2) {
+					progressFill.style.width = '96%';
+					console.log('📊 Progress Indicator: Set to 100% (2+ items)');
+				} else if (nonGiftBoxItemCount === 1) {
+					progressFill.style.width = '50%';
+					console.log('📊 Progress Indicator: Set to 50% (1 item)');
+				} else {
+					// Reset to default CSS width for 0 items
+					progressFill.style.width = '';
+					console.log('📊 Progress Indicator: Reset to default width (0 items)');
+				}
+			}
+		} catch (error) {
+			console.error("Failed to update progress indicator:", error);
 		}
+	}
+
+	async fetchUpdatedCartData() {
+		try {
+			const response = await fetch("/cart.js");
+			if (!response.ok) {
+				throw new Error(`Failed to fetch cart: ${response.status}`);
+			}
+			return await response.json();
+		} catch (error) {
+			console.error("Failed to fetch updated cart data:", error);
+			return null;
+		}
+	}
 
 		async renderCartItems(cartItems, container) {
 			try {
