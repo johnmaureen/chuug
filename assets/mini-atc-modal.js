@@ -190,16 +190,36 @@
 			this.loadState();
 		}
 
-		loadState() {
-			const saved = StorageManager.load(CONFIG.STORAGE_KEY);
-			if (saved) {
-				this.state = { ...this.state, ...saved };
+	loadState() {
+		const saved = StorageManager.load(CONFIG.STORAGE_KEY);
+		if (saved) {
+			// Only restore engraving and mixMatch states
+			// Gift box and extra cups should always start at their defaults
+			if (saved.engraving) {
+				this.state.engraving = { ...this.state.engraving, ...saved.engraving };
 			}
+			if (saved.mixMatch) {
+				this.state.mixMatch = { ...this.state.mixMatch, ...saved.mixMatch };
+			}
+			// Explicitly keep giftBox and extraCups at their defaults (don't load from storage)
+			console.log("💾 Loaded state (selective):", {
+				restored: { engraving: saved.engraving || null, mixMatch: saved.mixMatch || null },
+				keptAtDefaults: { giftBox: this.state.giftBox, extraCups: this.state.extraCups },
+				ignoredFromStorage: { giftBox: saved.giftBox || null, extraCups: saved.extraCups || null }
+			});
 		}
+	}
 
-		saveState() {
-			StorageManager.save(CONFIG.STORAGE_KEY, this.state);
-		}
+	saveState() {
+		// Only persist engraving and mixMatch selections
+		// Gift box and extra cups are per-session decisions
+		const stateToPersist = {
+			engraving: this.state.engraving,
+			mixMatch: this.state.mixMatch,
+			// Explicitly exclude giftBox and extraCups from persistence
+		};
+		StorageManager.save(CONFIG.STORAGE_KEY, stateToPersist);
+	}
 
 		updatePersonalization(type, data) {
 			this.state[type] = { ...this.state[type], ...data };
@@ -1801,16 +1821,26 @@
 			// Store the opening context
 			this.openingContext = context;
 
-			// Switch to appropriate view based on context
-			if (context === "add-multiple-products") {
-				this.switchView("personalize");
-				// Ensure footer is visible for add-multiple-products context
-				const footer = this.modal.querySelector(".mini-atc-modal__footer");
-				if (footer) {
-					footer.style.display = "";
-					footer.style.opacity = "1";
-				}
-			} else if (context === "cart-icon") {
+		// Switch to appropriate view based on context
+		if (context === "add-multiple-products") {
+			this.switchView("personalize");
+			// Ensure footer is visible for add-multiple-products context
+			const footer = this.modal.querySelector(".mini-atc-modal__footer");
+			if (footer) {
+				footer.style.display = "";
+				footer.style.opacity = "1";
+			}
+			
+			// Console log state after clicking add-multiple-products
+			console.log("🛒 State after clicking add-multiple-products:", {
+				context: this.openingContext,
+				currentView: this.currentView,
+				isActive: this.isActive,
+				state: this.state.getState(),
+				modalId: this.modal.id,
+				timestamp: new Date().toISOString()
+			});
+		} else if (context === "cart-icon") {
 				this.switchView("checkout");
 				// Pre-hide sections for cart icon to prevent flash when cart is empty
 				this.hideCheckoutSections();
@@ -1964,12 +1994,20 @@
 				// Show success feedback
 				this.showAddToCartSuccess(cartData.items.length);
 
-				// Reset personalization toggles and gift box toggle after successful add to cart
-				this.resetPersonalizationToggles();
-				this.resetGiftBoxToggle();
-				
-				// Update pricing after reset
-				this.calculatePricing();
+			// Reset personalization toggles and gift box toggle after successful add to cart
+			this.resetPersonalizationToggles();
+			this.resetGiftBoxToggle();
+			
+			// Reset gift box state (not just the toggle UI)
+			this.state.updatePersonalization('giftBox', { enabled: false });
+			
+			// Reset extra cups state as well
+			this.state.updatePersonalization('extraCups', { enabled: false });
+			
+			console.log("🔄 Reset add-on states after cart addition:", this.state.getState());
+			
+			// Update pricing after reset
+			this.calculatePricing();
 				
 				// Update checkout pricing to reflect cart totals
 				this.updateCheckoutPricing();
