@@ -190,36 +190,48 @@
 			this.loadState();
 		}
 
-	loadState() {
-		const saved = StorageManager.load(CONFIG.STORAGE_KEY);
-		if (saved) {
-			// Only restore engraving and mixMatch states
-			// Gift box and extra cups should always start at their defaults
-			if (saved.engraving) {
-				this.state.engraving = { ...this.state.engraving, ...saved.engraving };
+		loadState() {
+			const saved = StorageManager.load(CONFIG.STORAGE_KEY);
+			if (saved) {
+				// Only restore engraving and mixMatch states
+				// Gift box and extra cups should always start at their defaults
+				if (saved.engraving) {
+					this.state.engraving = {
+						...this.state.engraving,
+						...saved.engraving,
+					};
+				}
+				if (saved.mixMatch) {
+					this.state.mixMatch = { ...this.state.mixMatch, ...saved.mixMatch };
+				}
+				// Explicitly keep giftBox and extraCups at their defaults (don't load from storage)
+				console.log("💾 Loaded state (selective):", {
+					restored: {
+						engraving: saved.engraving || null,
+						mixMatch: saved.mixMatch || null,
+					},
+					keptAtDefaults: {
+						giftBox: this.state.giftBox,
+						extraCups: this.state.extraCups,
+					},
+					ignoredFromStorage: {
+						giftBox: saved.giftBox || null,
+						extraCups: saved.extraCups || null,
+					},
+				});
 			}
-			if (saved.mixMatch) {
-				this.state.mixMatch = { ...this.state.mixMatch, ...saved.mixMatch };
-			}
-			// Explicitly keep giftBox and extraCups at their defaults (don't load from storage)
-			console.log("💾 Loaded state (selective):", {
-				restored: { engraving: saved.engraving || null, mixMatch: saved.mixMatch || null },
-				keptAtDefaults: { giftBox: this.state.giftBox, extraCups: this.state.extraCups },
-				ignoredFromStorage: { giftBox: saved.giftBox || null, extraCups: saved.extraCups || null }
-			});
 		}
-	}
 
-	saveState() {
-		// Only persist engraving and mixMatch selections
-		// Gift box and extra cups are per-session decisions
-		const stateToPersist = {
-			engraving: this.state.engraving,
-			mixMatch: this.state.mixMatch,
-			// Explicitly exclude giftBox and extraCups from persistence
-		};
-		StorageManager.save(CONFIG.STORAGE_KEY, stateToPersist);
-	}
+		saveState() {
+			// Only persist engraving and mixMatch selections
+			// Gift box and extra cups are per-session decisions
+			const stateToPersist = {
+				engraving: this.state.engraving,
+				mixMatch: this.state.mixMatch,
+				// Explicitly exclude giftBox and extraCups from persistence
+			};
+			StorageManager.save(CONFIG.STORAGE_KEY, stateToPersist);
+		}
 
 		updatePersonalization(type, data) {
 			this.state[type] = { ...this.state[type], ...data };
@@ -460,19 +472,27 @@
 
 			// FORCE GIFT BOX PRICING - This is a direct fix to ensure gift box pricing is always applied
 			if (state.giftBox?.enabled) {
-				console.log('🎁 FORCE: Gift box enabled, adding pricing');
+				console.log("🎁 FORCE: Gift box enabled, adding pricing");
 				const giftBoxPrice = this.dynamicPrices.giftBox || 200; // Default to £2.00 if not loaded
 				const multiplier = window.pomcSystem?.getMultiplier() || 2; // Default to 2 vessels
 				const giftBoxTotal = giftBoxPrice * multiplier;
-				console.log('🎁 FORCE: Adding gift box pricing:', giftBoxTotal, 'cents (', giftBoxPrice, 'x', multiplier, ')');
+				console.log(
+					"🎁 FORCE: Adding gift box pricing:",
+					giftBoxTotal,
+					"cents (",
+					giftBoxPrice,
+					"x",
+					multiplier,
+					")"
+				);
 				total += giftBoxTotal;
 				originalTotal += giftBoxTotal;
-				console.log('🎁 FORCE: New totals:', { total, originalTotal });
+				console.log("🎁 FORCE: New totals:", { total, originalTotal });
 			}
 
-		// Gift box pricing is now handled by the FORCE section above
-		// No need to add it again here to avoid double counting
-		// When disabled, show vessel prices only
+			// Gift box pricing is now handled by the FORCE section above
+			// No need to add it again here to avoid double counting
+			// When disabled, show vessel prices only
 
 			// Add mix & match variants (if pricing is available)
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
@@ -532,7 +552,7 @@
 							price: variant.price,
 							originalPrice: variant.compare_at_price,
 						};
-						
+
 						return {
 							price: variant.price,
 							originalPrice: variant.compare_at_price,
@@ -814,15 +834,22 @@
 			console.log("🔄 Toggle changed:", {
 				element: toggle,
 				checked: toggle.checked,
-				hasPersonalizationToggle: toggle.hasAttribute("data-personalization-toggle"),
+				hasPersonalizationToggle: toggle.hasAttribute(
+					"data-personalization-toggle"
+				),
 				hasAddonToggle: toggle.hasAttribute("data-addon-toggle"),
 				hasVesselToggle: toggle.hasAttribute("data-vessel-toggle"),
-				hasGiftBoxVariantId: toggle.hasAttribute("data-gift-box-variant-id")
+				hasGiftBoxVariantId: toggle.hasAttribute("data-gift-box-variant-id"),
 			});
 
 			if (toggle.hasAttribute("data-personalization-toggle")) {
 				const type = toggle.getAttribute("data-personalization-toggle");
-				console.log("🔄 Updating personalization:", type, "enabled:", toggle.checked);
+				console.log(
+					"🔄 Updating personalization:",
+					type,
+					"enabled:",
+					toggle.checked
+				);
 				this.state.updatePersonalization(type, { enabled: toggle.checked });
 			} else if (toggle.hasAttribute("data-addon-toggle")) {
 				const type = toggle.getAttribute("data-addon-toggle");
@@ -833,7 +860,10 @@
 					this.state.updatePersonalization("giftBox", {
 						enabled: toggle.checked,
 					});
-					console.log("🎁 Gift box state after update:", this.state.state.giftBox);
+					console.log(
+						"🎁 Gift box state after update:",
+						this.state.state.giftBox
+					);
 				} else {
 					this.state.updatePersonalization(type, { enabled: toggle.checked });
 				}
@@ -1510,117 +1540,130 @@
 			}
 		}
 
-	setupEngravingToggleListener() {
-		const engravingToggle = this.modal.querySelector(
-			'[data-personalization-toggle="engraving"]'
-		);
-
-		if (engravingToggle) {
-			// Remove any existing listeners to avoid duplicates
-			engravingToggle.removeEventListener(
-				"change",
-				this.handleEngravingToggleChange
+		setupEngravingToggleListener() {
+			const engravingToggle = this.modal.querySelector(
+				'[data-personalization-toggle="engraving"]'
 			);
 
-			// Add the new listener
-			this.handleEngravingToggleChange = async (event) => {
-				this.calculatePricing();
-				// Only update cart item compare-at prices if we're in checkout view
-				// In personalize view, we don't need to update existing cart items
-				const checkoutView = this.modal.querySelector('.mini-atc-modal__checkout');
-				if (checkoutView && checkoutView.style.display !== 'none') {
-					await this.updateCartItemCompareAtPrices(event.target.checked);
-				}
-			};
-
-			engravingToggle.addEventListener(
-				"change",
-				this.handleEngravingToggleChange
-			);
-		}
-	}
-
-	async updateCartItemCompareAtPrices(engravingEnabled) {
-		try {
-			// Get current cart data
-			const cartData = await this.fetchUpdatedCartData();
-			
-			if (!cartData || !cartData.items) {
-				return;
-			}
-
-			// Get the current multiplier from POMC system
-			const multiplier = window.pomcSystem?.getMultiplier() || 1;
-			const selectedProductAmountData = window.pomcSystem?.getSelectedProductAmountData();
-
-			if (!selectedProductAmountData?.variants) {
-				return;
-			}
-
-			// Calculate the new per-item compare-at price
-			const variantIndex = engravingEnabled ? 1 : 0;
-			const variantData = selectedProductAmountData.variants[variantIndex];
-			
-			if (!variantData?.compare_at_price) {
-				return;
-			}
-
-			const perItemCompareAtPrice = Math.round(variantData.compare_at_price / multiplier);
-
-			// Find and update all vessel items (items with Vessel properties)
-			const updates = [];
-			for (const item of cartData.items) {
-				// Check if this is a vessel item (has Vessel X Product property)
-				const isVesselItem = item.properties && Object.keys(item.properties).some(
-					key => key.includes('Vessel') && key.includes('Product')
+			if (engravingToggle) {
+				// Remove any existing listeners to avoid duplicates
+				engravingToggle.removeEventListener(
+					"change",
+					this.handleEngravingToggleChange
 				);
 
-				if (isVesselItem && item.properties['_Compare At Price']) {
-					// Only update if the compare-at price actually changed
-					if (item.properties['_Compare At Price'] !== perItemCompareAtPrice) {
-						updates.push({
-							key: item.key,
-							properties: {
-								...item.properties,
-								'_Compare At Price': perItemCompareAtPrice
-							}
-						});
+				// Add the new listener
+				this.handleEngravingToggleChange = async (event) => {
+					this.calculatePricing();
+					// Only update cart item compare-at prices if we're in checkout view
+					// In personalize view, we don't need to update existing cart items
+					const checkoutView = this.modal.querySelector(
+						".mini-atc-modal__checkout"
+					);
+					if (checkoutView && checkoutView.style.display !== "none") {
+						await this.updateCartItemCompareAtPrices(event.target.checked);
 					}
-				}
-			}
+				};
 
-			// Perform the updates
-			if (updates.length > 0) {
-				console.log(`📝 Updating compare-at prices for ${updates.length} items to £${(perItemCompareAtPrice/100).toFixed(2)}`);
-				
-				for (const update of updates) {
-					const response = await fetch('/cart/change.js', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							id: update.key,
-							properties: update.properties,
-							sections: 'cart-icon-bubble',
-							sections_url: window.location.pathname
-						})
-					});
-					
-					// Update cart icon bubble with the last response
-					if (update === updates[updates.length - 1]) {
-						const cartData = await response.json();
-						this.updateCartIconBubble(cartData);
-					}
-				}
-
-				// Refresh the checkout view to show updated prices
-				await this.updateCheckoutView();
+				engravingToggle.addEventListener(
+					"change",
+					this.handleEngravingToggleChange
+				);
 			}
-		} catch (error) {
-			console.error('Failed to update cart item compare-at prices:', error);
 		}
-	}
+
+		async updateCartItemCompareAtPrices(engravingEnabled) {
+			try {
+				// Get current cart data
+				const cartData = await this.fetchUpdatedCartData();
+
+				if (!cartData || !cartData.items) {
+					return;
+				}
+
+				// Get the current multiplier from POMC system
+				const multiplier = window.pomcSystem?.getMultiplier() || 1;
+				const selectedProductAmountData =
+					window.pomcSystem?.getSelectedProductAmountData();
+
+				if (!selectedProductAmountData?.variants) {
+					return;
+				}
+
+				// Calculate the new per-item compare-at price
+				const variantIndex = engravingEnabled ? 1 : 0;
+				const variantData = selectedProductAmountData.variants[variantIndex];
+
+				if (!variantData?.compare_at_price) {
+					return;
+				}
+
+				const perItemCompareAtPrice = Math.round(
+					variantData.compare_at_price / multiplier
+				);
+
+				// Find and update all vessel items (items with Vessel properties)
+				const updates = [];
+				for (const item of cartData.items) {
+					// Check if this is a vessel item (has Vessel X Product property)
+					const isVesselItem =
+						item.properties &&
+						Object.keys(item.properties).some(
+							(key) => key.includes("Vessel") && key.includes("Product")
+						);
+
+					if (isVesselItem && item.properties["_Compare At Price"]) {
+						// Only update if the compare-at price actually changed
+						if (
+							item.properties["_Compare At Price"] !== perItemCompareAtPrice
+						) {
+							updates.push({
+								key: item.key,
+								properties: {
+									...item.properties,
+									"_Compare At Price": perItemCompareAtPrice,
+								},
+							});
+						}
+					}
+				}
+
+				// Perform the updates
+				if (updates.length > 0) {
+					console.log(
+						`📝 Updating compare-at prices for ${updates.length} items to £${(
+							perItemCompareAtPrice / 100
+						).toFixed(2)}`
+					);
+
+					for (const update of updates) {
+						const response = await fetch("/cart/change.js", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({
+								id: update.key,
+								properties: update.properties,
+								sections: "cart-icon-bubble",
+								sections_url: window.location.pathname,
+							}),
+						});
+
+						// Update cart icon bubble with the last response
+						if (update === updates[updates.length - 1]) {
+							const cartData = await response.json();
+							this.updateCartIconBubble(cartData);
+						}
+					}
+
+					// Refresh the checkout view to show updated prices
+					await this.updateCheckoutView();
+				}
+			} catch (error) {
+				console.error("Failed to update cart item compare-at prices:", error);
+			}
+		}
 
 		isEngravingEnabled() {
 			// First check the mini ATC modal engraving toggle
@@ -1634,8 +1677,7 @@
 
 			// Fallback to modal state
 			const state = this.state.getState();
-			const engravingEnabled =
-				state.engraving?.enabled || false;
+			const engravingEnabled = state.engraving?.enabled || false;
 
 			// Also check the main product page variant index for consistency
 			const inputs = document.querySelectorAll(".inputs");
@@ -1674,246 +1716,338 @@
 		}
 
 		async updatePricingDisplay(pricing) {
-			console.log('🚀🚀🚀 UPDATEPRICINGDISPLAY METHOD CALLED 🚀🚀🚀');
-			console.log('🚀 updatePricingDisplay called with pricing:', pricing);
+			console.log("🚀🚀🚀 UPDATEPRICINGDISPLAY METHOD CALLED 🚀🚀🚀");
+			console.log("🚀 updatePricingDisplay called with pricing:", pricing);
 			// Check which view is currently active
-			const checkoutView = this.modal.querySelector('.mini-atc-modal__view.mini-atc-modal__checkout-view');
-			const personalizeView = this.modal.querySelector('.mini-atc-modal__view.mini-atc-modal__personalise-view');
-			
-			console.log('Pricing update - checkoutView display:', checkoutView?.style.display);
-			console.log('Pricing update - personalizeView display:', personalizeView?.style.display);
-			console.log('Pricing update - checkoutView computed display:', window.getComputedStyle(checkoutView)?.display);
-			console.log('Pricing update - personalizeView computed display:', window.getComputedStyle(personalizeView)?.display);
-			
+			const checkoutView = this.modal.querySelector(
+				".mini-atc-modal__view.mini-atc-modal__checkout-view"
+			);
+			const personalizeView = this.modal.querySelector(
+				".mini-atc-modal__view.mini-atc-modal__personalise-view"
+			);
+
+			console.log(
+				"Pricing update - checkoutView display:",
+				checkoutView?.style.display
+			);
+			console.log(
+				"Pricing update - personalizeView display:",
+				personalizeView?.style.display
+			);
+			console.log(
+				"Pricing update - checkoutView computed display:",
+				window.getComputedStyle(checkoutView)?.display
+			);
+			console.log(
+				"Pricing update - personalizeView computed display:",
+				window.getComputedStyle(personalizeView)?.display
+			);
+
 			// Check if checkout view is active (visible) - use computed style
-			if (checkoutView && window.getComputedStyle(checkoutView).display !== 'none') {
-				console.log('Using checkout pricing');
+			if (
+				checkoutView &&
+				window.getComputedStyle(checkoutView).display !== "none"
+			) {
+				console.log("Using checkout pricing");
 				this.updateCheckoutPricing();
 				return;
 			}
-			
+
 			// Check if personalize view is active (visible) - use computed style
-			if (personalizeView && window.getComputedStyle(personalizeView).display !== 'none') {
-				console.log('Using personalize pricing');
+			if (
+				personalizeView &&
+				window.getComputedStyle(personalizeView).display !== "none"
+			) {
+				console.log("Using personalize pricing");
 				try {
 					await this.updatePersonalizePricing(pricing);
 				} catch (error) {
-					console.error('Error in updatePersonalizePricing:', error);
+					console.error("Error in updatePersonalizePricing:", error);
 				}
 				return;
 			}
-			
+
 			// Fallback to personalize pricing if no view is clearly active
-			console.log('Fallback to personalize pricing');
+			console.log("Fallback to personalize pricing");
 			try {
 				await this.updatePersonalizePricing(pricing);
 			} catch (error) {
-				console.error('Error in updatePersonalizePricing (fallback):', error);
+				console.error("Error in updatePersonalizePricing (fallback):", error);
 			}
 		}
 
-	updateCheckoutPricing() {
-		// Get cart data and update pricing from cart totals
-		fetch('/cart.js')
-			.then(response => response.json())
-			.then(cartData => {
-				// Find pricing elements using the same selectors as personalize view
-				const currentPriceEl = this.modal.querySelector("[data-current-price]") ||
-					this.modal.querySelector(".mini-atc-modal__current-price");
-				const originalPriceEl = this.modal.querySelector("[data-original-price]") ||
-					this.modal.querySelector(".mini-atc-modal__original-price");
-				const savingsEl = this.modal.querySelector("[data-savings-amount]") ||
-					this.modal.querySelector(".mini-atc-modal__savings-text");
-				
-				// Calculate total compare at price for both original price and savings
-				let totalCompareAtPrice = 0;
-				let currentTotal = cartData.total_price;
-				
-				cartData.items.forEach(item => {
-					if (item.properties && item.properties["_Compare At Price"]) {
-						const compareAtPrice = parseInt(item.properties["_Compare At Price"]) * item.quantity;
-						totalCompareAtPrice += compareAtPrice;
-					} else {
-						totalCompareAtPrice += item.original_line_price;
-					}
-				});
-				
-				if (currentPriceEl) {
-					const totalPrice = (cartData.total_price / 100).toFixed(2);
-					// Update only the text content, preserve structure
-					const placeholder = currentPriceEl.querySelector(".pricing-placeholder");
-					if (placeholder) {
-						placeholder.textContent = `£${totalPrice}`;
-					} else {
-						currentPriceEl.textContent = `£${totalPrice}`;
-					}
-				}
-				
-				if (originalPriceEl) {
-					const formattedOriginalPrice = (totalCompareAtPrice / 100).toFixed(2);
-					// Update only the text content, preserve structure
-					const placeholder = originalPriceEl.querySelector(".pricing-dynamic");
-					if (placeholder) {
-						placeholder.textContent = `£${formattedOriginalPrice}`;
-					} else {
-						originalPriceEl.textContent = `£${formattedOriginalPrice}`;
-					}
-				}
-					
-				if (savingsEl) {
-					const savings = totalCompareAtPrice - currentTotal;
-					
-					if (savings > 0) {
-						const formattedSavings = (savings / 100).toFixed(2);
-						// Update only the text content, preserve structure
-						const placeholder = savingsEl.querySelector(".pricing-dynamic");
-						if (placeholder) {
-							placeholder.textContent = `You Saved £${formattedSavings}`;
+		updateCheckoutPricing() {
+			// Get cart data and update pricing from cart totals
+			fetch("/cart.js")
+				.then((response) => response.json())
+				.then((cartData) => {
+					// Find pricing elements using the same selectors as personalize view
+					const currentPriceEl =
+						this.modal.querySelector("[data-current-price]") ||
+						this.modal.querySelector(".mini-atc-modal__current-price");
+					const originalPriceEl =
+						this.modal.querySelector("[data-original-price]") ||
+						this.modal.querySelector(".mini-atc-modal__original-price");
+					const savingsEl =
+						this.modal.querySelector("[data-savings-amount]") ||
+						this.modal.querySelector(".mini-atc-modal__savings-text");
+
+					// Calculate total compare at price for both original price and savings
+					let totalCompareAtPrice = 0;
+					let currentTotal = cartData.total_price;
+
+					cartData.items.forEach((item) => {
+						if (item.properties && item.properties["_Compare At Price"]) {
+							const compareAtPrice =
+								parseInt(item.properties["_Compare At Price"]) * item.quantity;
+							totalCompareAtPrice += compareAtPrice;
 						} else {
-							savingsEl.textContent = `You Saved £${formattedSavings}`;
+							totalCompareAtPrice += item.original_line_price;
+						}
+					});
+
+					if (currentPriceEl) {
+						const totalPrice = (cartData.total_price / 100).toFixed(2);
+						// Update only the text content, preserve structure
+						const placeholder = currentPriceEl.querySelector(
+							".pricing-placeholder"
+						);
+						if (placeholder) {
+							placeholder.textContent = `£${totalPrice}`;
+						} else {
+							currentPriceEl.textContent = `£${totalPrice}`;
 						}
 					}
-				}
+
+					if (originalPriceEl) {
+						const formattedOriginalPrice = (totalCompareAtPrice / 100).toFixed(
+							2
+						);
+						// Update only the text content, preserve structure
+						const placeholder =
+							originalPriceEl.querySelector(".pricing-dynamic");
+						if (placeholder) {
+							placeholder.textContent = `£${formattedOriginalPrice}`;
+						} else {
+							originalPriceEl.textContent = `£${formattedOriginalPrice}`;
+						}
+					}
+
+					if (savingsEl) {
+						const savings = totalCompareAtPrice - currentTotal;
+
+						if (savings > 0) {
+							const formattedSavings = (savings / 100).toFixed(2);
+							// Update only the text content, preserve structure
+							const placeholder = savingsEl.querySelector(".pricing-dynamic");
+							if (placeholder) {
+								placeholder.textContent = `You Saved £${formattedSavings}`;
+							} else {
+								savingsEl.textContent = `You Saved £${formattedSavings}`;
+							}
+						}
+					}
 				})
-				.catch(error => {
-					console.error('Failed to fetch cart data for pricing:', error);
+				.catch((error) => {
+					console.error("Failed to fetch cart data for pricing:", error);
 				});
 		}
 
 		async updatePersonalizePricing(pricing) {
-			console.log('🎁🎁🎁 UPDATEPERSONALIZEPRICING METHOD CALLED 🎁🎁🎁');
-			console.log('🎁 updatePersonalizePricing START - METHOD CALLED');
-			console.log('🎁 updatePersonalizePricing START');
-			console.log('🎁 METHOD IS DEFINITELY BEING CALLED NOW');
-			console.log('🎁 Received pricing parameter:', pricing);
-			console.log('🎁 this.state exists:', !!this.state);
-			console.log('🎁 window.chuug_vessel_selections exists:', !!window.chuug_vessel_selections);
-			console.log('🎁 window.chuug_vessel_selections.selectedProductAmountData exists:', !!(window.chuug_vessel_selections && window.chuug_vessel_selections.selectedProductAmountData));
-			console.log('🎁 Full window.chuug_vessel_selections:', window.chuug_vessel_selections);
-			console.log('🎁 window.pomcSystem exists:', !!window.pomcSystem);
-			console.log('🎁 window.pomcSystem.getMultiplier():', window.pomcSystem?.getMultiplier());
+			console.log("🎁🎁🎁 UPDATEPERSONALIZEPRICING METHOD CALLED 🎁🎁🎁");
+			console.log("🎁 updatePersonalizePricing START - METHOD CALLED");
+			console.log("🎁 updatePersonalizePricing START");
+			console.log("🎁 METHOD IS DEFINITELY BEING CALLED NOW");
+			console.log("🎁 Received pricing parameter:", pricing);
+			console.log("🎁 this.state exists:", !!this.state);
+			console.log(
+				"🎁 window.chuug_vessel_selections exists:",
+				!!window.chuug_vessel_selections
+			);
+			console.log(
+				"🎁 window.chuug_vessel_selections.selectedProductAmountData exists:",
+				!!(
+					window.chuug_vessel_selections &&
+					window.chuug_vessel_selections.selectedProductAmountData
+				)
+			);
+			console.log(
+				"🎁 Full window.chuug_vessel_selections:",
+				window.chuug_vessel_selections
+			);
+			console.log("🎁 window.pomcSystem exists:", !!window.pomcSystem);
+			console.log(
+				"🎁 window.pomcSystem.getMultiplier():",
+				window.pomcSystem?.getMultiplier()
+			);
 
 			// Get pricing from chuug_vessel_selections -> selectedProductAmountData
-			if (window.chuug_vessel_selections && window.chuug_vessel_selections.selectedProductAmountData) {
-				console.log('🎁 Found chuug_vessel_selections.selectedProductAmountData');
-				const selectedData = window.chuug_vessel_selections.selectedProductAmountData;
-				console.log('🎁 selectedData:', selectedData);
+			if (
+				window.chuug_vessel_selections &&
+				window.chuug_vessel_selections.selectedProductAmountData
+			) {
+				console.log(
+					"🎁 Found chuug_vessel_selections.selectedProductAmountData"
+				);
+				const selectedData =
+					window.chuug_vessel_selections.selectedProductAmountData;
+				console.log("🎁 selectedData:", selectedData);
 				if (selectedData.variants) {
-					console.log('🎁 Found variants in selectedData');
+					console.log("🎁 Found variants in selectedData");
 					const engravingEnabled = this.getEngravingState();
 					const variantIndex = engravingEnabled ? 1 : 0;
 					const variant = selectedData.variants[variantIndex];
-					console.log('🎁 Selected variant:', variant);
+					console.log("🎁 Selected variant:", variant);
 
-				if (variant) {
-					// Use pricing from selectedProductAmountData as base, but add gift box pricing
-					let total = variant.price;
-					let originalTotal = variant.compare_at_price;
-					
-					// Add gift box pricing if enabled
-					const state = this.state ? this.state.getState() : null;
-					let giftBoxPrice = this.dynamicPrices ? this.dynamicPrices.giftBox : null;
-					
-					if (!state) {
-						console.error('🎁 ERROR: this.state is undefined');
-						return;
-					}
-					
-					if (!this.dynamicPrices) {
-						console.log('🎁 this.dynamicPrices is undefined, using fallback approach');
-						// Use a fallback approach - get gift box price from global modal instance
-						const modalInstance = window.MiniATCModal?.getInstance?.();
-						if (modalInstance && modalInstance.pricing) {
-							giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
-							console.log('🎁 Got gift box price from modal instance:', giftBoxPrice);
-						}
-						
-						// If still no gift box price, use default
-						if (!giftBoxPrice && state.giftBox?.enabled) {
-							giftBoxPrice = 200; // Default £2.00 in cents
-							console.log('🎁 Using default gift box price:', giftBoxPrice);
-						}
-					} else {
-						// If gift box price isn't loaded yet, try to initialize it
-						if (!giftBoxPrice && state.giftBox?.enabled) {
-							console.log('🎁 Gift box price not loaded yet, initializing...');
-							await this.initializeGiftBoxPricing();
-							giftBoxPrice = this.dynamicPrices.giftBox;
-							console.log('🎁 Gift box price after initialization:', giftBoxPrice);
-						}
-					}
+					if (variant) {
+						// Use pricing from selectedProductAmountData as base, but add gift box pricing
+						let total = variant.price;
+						let originalTotal = variant.compare_at_price;
 
-					const multiplier = window.pomcSystem?.getMultiplier() || 1;
-					console.log('🎁 Personalize pricing debug:', {
-						giftBoxEnabled: state.giftBox?.enabled,
-						giftBoxPrice: giftBoxPrice,
-						multiplier: multiplier,
-						variantPrice: variant.price,
-						variantCompareAtPrice: variant.compare_at_price,
-						beforeTotal: total,
-						beforeOriginalTotal: originalTotal,
-						giftBoxPriceIsValid: giftBoxPrice && giftBoxPrice > 0
-					});
-					// Skip gift box pricing in main path since it's already applied by FORCE pricing
-					console.log('🎁 Main path: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting');
-					
-					// Validate values before formatting
-					console.log('🎁 Validating pricing values:', { total, originalTotal, savings: originalTotal - total });
-					
-					const validTotal = total && !isNaN(total) ? total : 0;
-					const validOriginalTotal = originalTotal && !isNaN(originalTotal) ? originalTotal : validTotal;
-					const validSavings = validOriginalTotal - validTotal;
-					
-					pricing = {
-						total: validTotal,
-						originalTotal: validOriginalTotal,
-						savings: validSavings,
-						formattedTotal: Utils.formatPrice(validTotal),
-						formattedOriginal: Utils.formatPrice(validOriginalTotal),
-						formattedSavings: Utils.formatPrice(validSavings)
-					};
-					
-					console.log('🎁 Final pricing object:', pricing);
-				}
+						// Add gift box pricing if enabled
+						const state = this.state ? this.state.getState() : null;
+						let giftBoxPrice = this.dynamicPrices
+							? this.dynamicPrices.giftBox
+							: null;
+
+						if (!state) {
+							console.error("🎁 ERROR: this.state is undefined");
+							return;
+						}
+
+						if (!this.dynamicPrices) {
+							console.log(
+								"🎁 this.dynamicPrices is undefined, using fallback approach"
+							);
+							// Use a fallback approach - get gift box price from global modal instance
+							const modalInstance = window.MiniATCModal?.getInstance?.();
+							if (modalInstance && modalInstance.pricing) {
+								giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
+								console.log(
+									"🎁 Got gift box price from modal instance:",
+									giftBoxPrice
+								);
+							}
+
+							// If still no gift box price, use default
+							if (!giftBoxPrice && state.giftBox?.enabled) {
+								giftBoxPrice = 200; // Default £2.00 in cents
+								console.log("🎁 Using default gift box price:", giftBoxPrice);
+							}
+						} else {
+							// If gift box price isn't loaded yet, try to initialize it
+							if (!giftBoxPrice && state.giftBox?.enabled) {
+								console.log(
+									"🎁 Gift box price not loaded yet, initializing..."
+								);
+								await this.initializeGiftBoxPricing();
+								giftBoxPrice = this.dynamicPrices.giftBox;
+								console.log(
+									"🎁 Gift box price after initialization:",
+									giftBoxPrice
+								);
+							}
+						}
+
+						const multiplier = window.pomcSystem?.getMultiplier() || 1;
+						console.log("🎁 Personalize pricing debug:", {
+							giftBoxEnabled: state.giftBox?.enabled,
+							giftBoxPrice: giftBoxPrice,
+							multiplier: multiplier,
+							variantPrice: variant.price,
+							variantCompareAtPrice: variant.compare_at_price,
+							beforeTotal: total,
+							beforeOriginalTotal: originalTotal,
+							giftBoxPriceIsValid: giftBoxPrice && giftBoxPrice > 0,
+						});
+						// Skip gift box pricing in main path since it's already applied by FORCE pricing
+						console.log(
+							"🎁 Main path: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting"
+						);
+
+						// Validate values before formatting
+						console.log("🎁 Validating pricing values:", {
+							total,
+							originalTotal,
+							savings: originalTotal - total,
+						});
+
+						const validTotal = total && !isNaN(total) ? total : 0;
+						const validOriginalTotal =
+							originalTotal && !isNaN(originalTotal)
+								? originalTotal
+								: validTotal;
+						const validSavings = validOriginalTotal - validTotal;
+
+						pricing = {
+							total: validTotal,
+							originalTotal: validOriginalTotal,
+							savings: validSavings,
+							formattedTotal: Utils.formatPrice(validTotal),
+							formattedOriginal: Utils.formatPrice(validOriginalTotal),
+							formattedSavings: Utils.formatPrice(validSavings),
+						};
+
+						console.log("🎁 Final pricing object:", pricing);
+					}
 				}
 			} else {
-				console.log('🎁 No chuug_vessel_selections.selectedProductAmountData found, using fallback pricing');
+				console.log(
+					"🎁 No chuug_vessel_selections.selectedProductAmountData found, using fallback pricing"
+				);
 				// Fallback: Add gift box pricing to the existing pricing parameter
 				const state = this.state ? this.state.getState() : null;
-				let giftBoxPrice = this.dynamicPrices ? this.dynamicPrices.giftBox : null;
-				
+				let giftBoxPrice = this.dynamicPrices
+					? this.dynamicPrices.giftBox
+					: null;
+
 				if (!state) {
-					console.error('🎁 FALLBACK ERROR: this.state is undefined');
+					console.error("🎁 FALLBACK ERROR: this.state is undefined");
 					return;
 				}
-				
+
 				if (!this.dynamicPrices) {
-					console.log('🎁 FALLBACK: this.dynamicPrices is undefined, using fallback approach');
+					console.log(
+						"🎁 FALLBACK: this.dynamicPrices is undefined, using fallback approach"
+					);
 					// Use a fallback approach - get gift box price from global modal instance
 					const modalInstance = window.MiniATCModal?.getInstance?.();
 					if (modalInstance && modalInstance.pricing) {
 						giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
-						console.log('🎁 FALLBACK: Got gift box price from modal instance:', giftBoxPrice);
+						console.log(
+							"🎁 FALLBACK: Got gift box price from modal instance:",
+							giftBoxPrice
+						);
 					}
-					
+
 					// If still no gift box price, use default
 					if (!giftBoxPrice && state.giftBox?.enabled) {
 						giftBoxPrice = 200; // Default £2.00 in cents
-						console.log('🎁 FALLBACK: Using default gift box price:', giftBoxPrice);
+						console.log(
+							"🎁 FALLBACK: Using default gift box price:",
+							giftBoxPrice
+						);
 					}
 				} else {
 					if (!giftBoxPrice && state.giftBox?.enabled) {
-						console.log('🎁 Fallback: Gift box price not loaded yet, initializing...');
+						console.log(
+							"🎁 Fallback: Gift box price not loaded yet, initializing..."
+						);
 						await this.initializeGiftBoxPricing();
 						giftBoxPrice = this.dynamicPrices.giftBox;
-						console.log('🎁 Fallback: Gift box price after initialization:', giftBoxPrice);
+						console.log(
+							"🎁 Fallback: Gift box price after initialization:",
+							giftBoxPrice
+						);
 					}
 				}
-				
+
 				// Skip gift box pricing in fallback since it's already applied by FORCE pricing
-				console.log('🎁 Fallback: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting');
+				console.log(
+					"🎁 Fallback: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting"
+				);
 			}
-			
+
 			// Try multiple selectors to find the price elements
 			const currentPriceEl =
 				this.modal.querySelector("[data-current-price]") ||
@@ -1975,11 +2109,11 @@
 					savingsEl.textContent = `You Saved ${pricing.formattedSavings}`;
 				}
 			}
-			console.log('🎁 updatePersonalizePricing END');
+			console.log("🎁 updatePersonalizePricing END");
 		}
 
 		switchView(viewName) {
-			console.log('Switching to view:', viewName);
+			console.log("Switching to view:", viewName);
 			const views = this.modal.querySelectorAll(".mini-atc-modal__view");
 			const targetView = this.modal.querySelector(`[data-view="${viewName}"]`);
 			const titleEl = this.modal.querySelector(".mini-atc-modal__title");
@@ -2064,26 +2198,26 @@
 			// Store the opening context
 			this.openingContext = context;
 
-		// Switch to appropriate view based on context
-		if (context === "add-multiple-products") {
-			this.switchView("personalize");
-			// Ensure footer is visible for add-multiple-products context
-			const footer = this.modal.querySelector(".mini-atc-modal__footer");
-			if (footer) {
-				footer.style.display = "";
-				footer.style.opacity = "1";
-			}
-			
-			// Console log state after clicking add-multiple-products
-			console.log("🛒 State after clicking add-multiple-products:", {
-				context: this.openingContext,
-				currentView: this.currentView,
-				isActive: this.isActive,
-				state: this.state.getState(),
-				modalId: this.modal.id,
-				timestamp: new Date().toISOString()
-			});
-		} else if (context === "cart-icon") {
+			// Switch to appropriate view based on context
+			if (context === "add-multiple-products") {
+				this.switchView("personalize");
+				// Ensure footer is visible for add-multiple-products context
+				const footer = this.modal.querySelector(".mini-atc-modal__footer");
+				if (footer) {
+					footer.style.display = "";
+					footer.style.opacity = "1";
+				}
+
+				// Console log state after clicking add-multiple-products
+				console.log("🛒 State after clicking add-multiple-products:", {
+					context: this.openingContext,
+					currentView: this.currentView,
+					isActive: this.isActive,
+					state: this.state.getState(),
+					modalId: this.modal.id,
+					timestamp: new Date().toISOString(),
+				});
+			} else if (context === "cart-icon") {
 				this.switchView("checkout");
 				// Pre-hide sections for cart icon to prevent flash when cart is empty
 				this.hideCheckoutSections();
@@ -2204,11 +2338,11 @@
 					);
 				}
 
-			// Success - emit event and switch to checkout view
-			this.emit("cartUpdated", { cartData: response, items: cartData.items });
+				// Success - emit event and switch to checkout view
+				this.emit("cartUpdated", { cartData: response, items: cartData.items });
 
-			// Update cart icon bubble and cart UI
-			this.updateCartIconBubble(response);
+				// Update cart icon bubble and cart UI
+				this.updateCartIconBubble(response);
 
 				// Switch to checkout view instead of closing
 				this.switchView("checkout");
@@ -2218,16 +2352,18 @@
 
 				// Fetch fresh cart data and update checkout view
 				const freshCartData = await this.fetchUpdatedCartData();
-				
+
 				if (freshCartData) {
 					await this.updateCheckoutViewWithCartData(freshCartData);
 				}
 
 				// Hide cart loading spinner
 				this.hideCartLoadingSpinner();
-				
+
 				// Ensure checkout container is visible
-				const checkoutContainer = this.modal.querySelector("[data-checkout-items]");
+				const checkoutContainer = this.modal.querySelector(
+					"[data-checkout-items]"
+				);
 				if (checkoutContainer) {
 					checkoutContainer.style.display = "";
 				}
@@ -2235,21 +2371,24 @@
 				// Show success feedback
 				this.showAddToCartSuccess(cartData.items.length);
 
-			// Reset personalization toggles and gift box toggle after successful add to cart
-			this.resetPersonalizationToggles();
-			this.resetGiftBoxToggle();
-			
-			// Reset gift box state (not just the toggle UI)
-			this.state.updatePersonalization('giftBox', { enabled: false });
-			
-			// Reset extra cups state as well
-			this.state.updatePersonalization('extraCups', { enabled: false });
-			
-			console.log("🔄 Reset add-on states after cart addition:", this.state.getState());
-			
-			// Update pricing after reset
-			this.calculatePricing();
-				
+				// Reset personalization toggles and gift box toggle after successful add to cart
+				this.resetPersonalizationToggles();
+				this.resetGiftBoxToggle();
+
+				// Reset gift box state (not just the toggle UI)
+				this.state.updatePersonalization("giftBox", { enabled: false });
+
+				// Reset extra cups state as well
+				this.state.updatePersonalization("extraCups", { enabled: false });
+
+				console.log(
+					"🔄 Reset add-on states after cart addition:",
+					this.state.getState()
+				);
+
+				// Update pricing after reset
+				this.calculatePricing();
+
 				// Update checkout pricing to reflect cart totals
 				this.updateCheckoutPricing();
 
@@ -2278,8 +2417,8 @@
 
 			// Group add-ons by vessel number for easier lookup
 			const addonsByVessel = {};
-			addonItems.forEach(addon => {
-				const vesselNumber = addon.properties['Vessel Number'];
+			addonItems.forEach((addon) => {
+				const vesselNumber = addon.properties["Vessel Number"];
 				if (vesselNumber) {
 					if (!addonsByVessel[vesselNumber]) {
 						addonsByVessel[vesselNumber] = [];
@@ -2289,15 +2428,15 @@
 			});
 
 			// Interleave vessels with their add-ons
-			vesselItems.forEach(vessel => {
+			vesselItems.forEach((vessel) => {
 				// Add the vessel first
 				items.push(vessel);
 
 				// Find vessel number from properties
 				let vesselNumber = null;
 				for (const [key, value] of Object.entries(vessel.properties)) {
-					if (key.includes('Vessel') && key.includes('Product')) {
-						const parts = key.split(' ');
+					if (key.includes("Vessel") && key.includes("Product")) {
+						const parts = key.split(" ");
 						if (parts.length >= 2) {
 							vesselNumber = parts[1];
 							break;
@@ -2312,8 +2451,8 @@
 			});
 
 			// Add any remaining add-ons that don't have a specific vessel number
-			addonItems.forEach(addon => {
-				if (!addon.properties['Vessel Number']) {
+			addonItems.forEach((addon) => {
+				if (!addon.properties["Vessel Number"]) {
 					items.push(addon);
 				}
 			});
@@ -2340,14 +2479,12 @@
 			const selectedProductAmountData =
 				window.pomcSystem.getSelectedProductAmountData();
 
-
-				// Determine if engraving is enabled
+			// Determine if engraving is enabled
 			const engravingEnabled = this.isEngravingEnabled();
 
 			// Process each vessel
 			Object.entries(vesselSelections).forEach(
 				([vesselIndex, selection], index) => {
-
 					// Check for variant ID - POMC system uses woodVariantId/ropeVariantId
 					let variantId =
 						selection.variantId ||
@@ -2361,7 +2498,6 @@
 					const vesselNumber = parseInt(vesselIndex);
 					const vesselEngraving =
 						state.engraving?.vessels?.[vesselNumber] || "";
-
 
 					// For POMC system, we might need to determine variant based on engraving differently
 					// Check if there's an engraving variant available
@@ -2395,16 +2531,19 @@
 						properties[`Vessel ${vesselNumber} Rope Type`] = selection.ropeType;
 					}
 
-				// Add compare-at price from selected product amount data (per item)
-				if (selectedProductAmountData?.variants) {
-					const variantIndex = engravingEnabled ? 1 : 0;
-					const variantData = selectedProductAmountData.variants[variantIndex];
-					if (variantData?.compare_at_price && multiplier > 0) {
-						// Divide bundle compare-at price by multiplier to get per-item price
-						const perItemCompareAtPrice = Math.round(variantData.compare_at_price / multiplier);
-						properties["_Compare At Price"] = perItemCompareAtPrice;
+					// Add compare-at price from selected product amount data (per item)
+					if (selectedProductAmountData?.variants) {
+						const variantIndex = engravingEnabled ? 1 : 0;
+						const variantData =
+							selectedProductAmountData.variants[variantIndex];
+						if (variantData?.compare_at_price && multiplier > 0) {
+							// Divide bundle compare-at price by multiplier to get per-item price
+							const perItemCompareAtPrice = Math.round(
+								variantData.compare_at_price / multiplier
+							);
+							properties["_Compare At Price"] = perItemCompareAtPrice;
+						}
 					}
-				}
 
 					const item = {
 						id: variantId,
@@ -2418,7 +2557,6 @@
 
 			// Fallback: If no vessel items were collected, try to get from selectedProductAmountData
 			if (items.length === 0 && selectedProductAmountData) {
-
 				// Use the selected product amount data as fallback
 				const fallbackVariantIndex = engravingEnabled ? 1 : 0;
 				const fallbackVariant =
@@ -2432,7 +2570,8 @@
 
 					// Add compare-at price if available
 					if (fallbackVariant.compare_at_price) {
-						fallbackProperties["_Compare At Price"] = fallbackVariant.compare_at_price;
+						fallbackProperties["_Compare At Price"] =
+							fallbackVariant.compare_at_price;
 					}
 
 					const fallbackItem = {
@@ -2454,15 +2593,17 @@
 			// 1. Gift Box - Add one per vessel
 			if (state.giftBox?.enabled) {
 				console.log("🎁 Gift box is enabled in state:", state.giftBox);
-				
+
 				// Get vessel count from POMC system
-				const vesselCount = window.pomcSystem ? window.pomcSystem.getMultiplier() || 1 : 1;
+				const vesselCount = window.pomcSystem
+					? window.pomcSystem.getMultiplier() || 1
+					: 1;
 				console.log("🎁 Vessel count for gift boxes:", vesselCount);
-				
+
 				// Get gift box variant ID from modal config or default
 				const giftBoxVariantId = this.getGiftBoxVariantId();
 				console.log("🎁 Gift box variant ID:", giftBoxVariantId);
-				
+
 				if (giftBoxVariantId) {
 					// Add one gift box per vessel
 					for (let i = 0; i < vesselCount; i++) {
@@ -2581,7 +2722,7 @@
 
 		getGiftBoxVariantId() {
 			console.log("🔍 Getting gift box variant ID...");
-			
+
 			// Try to get from modal config first
 			const config = this.config;
 			console.log("🔍 Modal config:", config);
@@ -2596,7 +2737,9 @@
 			);
 			console.log("🔍 Gift box toggle element:", giftBoxToggle);
 			if (giftBoxToggle) {
-				const variantId = giftBoxToggle.getAttribute("data-gift-box-variant-id");
+				const variantId = giftBoxToggle.getAttribute(
+					"data-gift-box-variant-id"
+				);
 				console.log("✅ Found variant ID in DOM:", variantId);
 				return variantId;
 			}
@@ -2606,52 +2749,58 @@
 			return null;
 		}
 
-	async addItemsToShopifyCart(cartData) {
-		const config = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify({
-				items: cartData.items,
-				...(cartData.note && { note: cartData.note }),
-				...(Object.keys(cartData.attributes).length > 0 && {
-					attributes: cartData.attributes,
+		async addItemsToShopifyCart(cartData) {
+			const config = {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+				body: JSON.stringify({
+					items: cartData.items,
+					...(cartData.note && { note: cartData.note }),
+					...(Object.keys(cartData.attributes).length > 0 && {
+						attributes: cartData.attributes,
+					}),
+					// Request updated sections for cart icon bubble
+					sections: "cart-icon-bubble",
+					sections_url: window.location.pathname,
 				}),
-				// Request updated sections for cart icon bubble
-				sections: 'cart-icon-bubble',
-				sections_url: window.location.pathname
-			}),
-		};
+			};
 
-		const response = await fetch("/cart/add.js", config);
-		return await response.json();
-	}
+			const response = await fetch("/cart/add.js", config);
+			return await response.json();
+		}
 
-	updateCartIconBubble(response) {
-		// Update cart icon bubble with the returned section HTML
-		if (response.sections && response.sections['cart-icon-bubble']) {
-			const cartIconBubble = document.getElementById('cart-icon-bubble');
-			if (cartIconBubble) {
-				const parser = new DOMParser();
-				const doc = parser.parseFromString(response.sections['cart-icon-bubble'], 'text/html');
-				const newContent = doc.querySelector('.shopify-section');
-				if (newContent) {
-					cartIconBubble.innerHTML = newContent.innerHTML;
+		updateCartIconBubble(response) {
+			// Update cart icon bubble with the returned section HTML
+			if (response.sections && response.sections["cart-icon-bubble"]) {
+				const cartIconBubble = document.getElementById("cart-icon-bubble");
+				if (cartIconBubble) {
+					const parser = new DOMParser();
+					const doc = parser.parseFromString(
+						response.sections["cart-icon-bubble"],
+						"text/html"
+					);
+					const newContent = doc.querySelector(".shopify-section");
+					if (newContent) {
+						cartIconBubble.innerHTML = newContent.innerHTML;
+					}
 				}
 			}
-		}
 
-		// Update cart drawer or cart notification if they exist
-		const cartDrawer = document.querySelector('cart-drawer');
-		const cartNotification = document.querySelector('cart-notification');
-		if (cartDrawer && typeof cartDrawer.renderContents === 'function') {
-			cartDrawer.renderContents(response);
-		} else if (cartNotification && typeof cartNotification.renderContents === 'function') {
-			cartNotification.renderContents(response);
+			// Update cart drawer or cart notification if they exist
+			const cartDrawer = document.querySelector("cart-drawer");
+			const cartNotification = document.querySelector("cart-notification");
+			if (cartDrawer && typeof cartDrawer.renderContents === "function") {
+				cartDrawer.renderContents(response);
+			} else if (
+				cartNotification &&
+				typeof cartNotification.renderContents === "function"
+			) {
+				cartNotification.renderContents(response);
+			}
 		}
-	}
 
 		setLoadingState(loading) {
 			const addToCartBtn = this.modal.querySelector(
@@ -2759,7 +2908,7 @@
 						}
 					}, 300);
 				}
-			}, 5000);
+			}, 3000);
 		}
 
 		handleAddToCartError(errorMessage) {
@@ -2785,7 +2934,6 @@
 				}
 
 				await this.updateCheckoutViewWithCartData(cartData);
-
 			} catch (error) {
 				console.error("Failed to update checkout view:", error);
 			}
@@ -2806,10 +2954,14 @@
 
 				if (cartData.items.length === 0) {
 					// Clear all existing items first to ensure clean empty state
-					const allExistingItems = checkoutContainer.querySelectorAll(".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]");
-					console.log(`🧹 Empty cart: Clearing ${allExistingItems.length} existing items to show clean empty state`);
+					const allExistingItems = checkoutContainer.querySelectorAll(
+						".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]"
+					);
+					console.log(
+						`🧹 Empty cart: Clearing ${allExistingItems.length} existing items to show clean empty state`
+					);
 					allExistingItems.forEach((item) => item.remove());
-					
+
 					// Show empty state
 					if (emptyState) {
 						emptyState.style.display = "block";
@@ -2820,7 +2972,7 @@
 
 					// Show empty cart message
 					this.showEmptyCartMessage();
-					
+
 					// Refresh pricing to show empty cart (£0.00)
 					this.updateCheckoutPricing();
 				} else {
@@ -2836,134 +2988,168 @@
 					this.hideEmptyCartMessage();
 
 					// Clear existing items
-					const allExistingItems = checkoutContainer.querySelectorAll(".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]");
+					const allExistingItems = checkoutContainer.querySelectorAll(
+						".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]"
+					);
 					allExistingItems.forEach((item) => item.remove());
 
-				// Render new cart items
-				await this.renderCartItems(cartData.items, checkoutContainer);
+					// Render new cart items
+					await this.renderCartItems(cartData.items, checkoutContainer);
 
-				// Re-bind event handlers for the newly rendered items
-				this.bindCheckoutItemEvents();
-				
-				// Refresh pricing to reflect the updated cart totals
-				this.updateCheckoutPricing();
-				
-				// Update progress indicator based on non-gift-box item count
-				this.updateProgressIndicator(cartData);
+					// Re-bind event handlers for the newly rendered items
+					this.bindCheckoutItemEvents();
+
+					// Refresh pricing to reflect the updated cart totals
+					this.updateCheckoutPricing();
+
+					// Update progress indicator based on non-gift-box item count
+					this.updateProgressIndicator(cartData);
+				}
+			} catch (error) {
+				console.error("Failed to update checkout view with cart data:", error);
 			}
-		} catch (error) {
-			console.error("Failed to update checkout view with cart data:", error);
 		}
-	}
 
-	updateProgressIndicator(cartData) {
-		try {
-			// Count non-gift-box items in the cart
-			let nonGiftBoxItemCount = 0;
-			
-			if (cartData && cartData.items) {
-				nonGiftBoxItemCount = cartData.items.filter(item => {
-					// Check if this item is NOT a gift box
-					if (item.properties && item.properties['Add-on'] === 'Premium Gift Box') {
-						return false; // Exclude gift boxes
+		updateProgressIndicator(cartData) {
+			try {
+				// Count non-gift-box items in the cart
+				let nonGiftBoxItemCount = 0;
+
+				if (cartData && cartData.items) {
+					nonGiftBoxItemCount = cartData.items.filter((item) => {
+						// Check if this item is NOT a gift box
+						if (
+							item.properties &&
+							item.properties["Add-on"] === "Premium Gift Box"
+						) {
+							return false; // Exclude gift boxes
+						}
+						return true; // Include all other items
+					}).length;
+				}
+
+				console.log(
+					`📊 Progress Indicator: ${nonGiftBoxItemCount} non-gift-box items in cart`
+				);
+
+				// Find the progress fill element
+				const progressFill = this.modal.querySelector(
+					".step-process-indicator__progress-fill"
+				);
+
+				if (progressFill) {
+					// Set width based on non-gift-box item count
+					if (nonGiftBoxItemCount >= 2) {
+						progressFill.style.width = "96%";
+						console.log("📊 Progress Indicator: Set to 100% (2+ items)");
+					} else if (nonGiftBoxItemCount === 1) {
+						progressFill.style.width = "50%";
+						console.log("📊 Progress Indicator: Set to 50% (1 item)");
+					} else {
+						// Reset to default CSS width for 0 items
+						progressFill.style.width = "";
+						console.log(
+							"📊 Progress Indicator: Reset to default width (0 items)"
+						);
 					}
-					return true; // Include all other items
-				}).length;
-			}
-			
-			console.log(`📊 Progress Indicator: ${nonGiftBoxItemCount} non-gift-box items in cart`);
-			
-		// Find the progress fill element
-		const progressFill = this.modal.querySelector('.step-process-indicator__progress-fill');
-		
-		if (progressFill) {
-			// Set width based on non-gift-box item count
-			if (nonGiftBoxItemCount >= 2) {
-				progressFill.style.width = '96%';
-				console.log('📊 Progress Indicator: Set to 100% (2+ items)');
-			} else if (nonGiftBoxItemCount === 1) {
-				progressFill.style.width = '50%';
-				console.log('📊 Progress Indicator: Set to 50% (1 item)');
-			} else {
-				// Reset to default CSS width for 0 items
-				progressFill.style.width = '';
-				console.log('📊 Progress Indicator: Reset to default width (0 items)');
-			}
-		}
-		
-		// Update the third step (£30 OFF step)
-		const allSteps = this.modal.querySelectorAll('.step-process-indicator__step');
-		const thirdStep = allSteps[2]; // Third step (index 2)
-		
-		if (thirdStep) {
-			const thirdStepCircle = thirdStep.querySelector('.step-process-indicator__step-circle');
-			
-			if (nonGiftBoxItemCount >= 2) {
-				// Mark step as completed
-				thirdStep.classList.remove('step-process-indicator__step--active');
-				thirdStep.classList.add('step-process-indicator__step--completed');
-				
-				// Show checkmark SVG
-				if (thirdStepCircle) {
-					thirdStepCircle.innerHTML = `
+				}
+
+				// Update the third step (£30 OFF step)
+				const allSteps = this.modal.querySelectorAll(
+					".step-process-indicator__step"
+				);
+				const thirdStep = allSteps[2]; // Third step (index 2)
+
+				if (thirdStep) {
+					const thirdStepCircle = thirdStep.querySelector(
+						".step-process-indicator__step-circle"
+					);
+
+					if (nonGiftBoxItemCount >= 2) {
+						// Mark step as completed
+						thirdStep.classList.remove("step-process-indicator__step--active");
+						thirdStep.classList.add("step-process-indicator__step--completed");
+
+						// Show checkmark SVG
+						if (thirdStepCircle) {
+							thirdStepCircle.innerHTML = `
 						<svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
 						</svg>
 					`;
-				}
-				console.log('📊 Progress Indicator: Third step marked as completed with checkmark (2+ items)');
-			} else {
-				// Mark step as active
-				thirdStep.classList.remove('step-process-indicator__step--completed');
-				thirdStep.classList.add('step-process-indicator__step--active');
-				
-				// Show pound symbol
-				if (thirdStepCircle) {
-					thirdStepCircle.innerHTML = '<span class="step-process-indicator__pound-symbol">£</span>';
-				}
-				console.log('📊 Progress Indicator: Third step marked as active with pound symbol (<2 items)');
-			}
-		}
-		
-		// Update the header text
-		const headerElement = this.modal.querySelector('.step-process-indicator__header');
-		
-		if (headerElement) {
-			if (nonGiftBoxItemCount >= 2) {
-				// Show "You've unlock" text
-				headerElement.innerHTML = '🔥 You\'ve unlock <span>EXTRA £30 OFF</span>';
-				console.log('📊 Progress Indicator: Header text updated to "You\'ve unlock" (2+ items)');
-			} else {
-				// Show "You're only 1 CHUUG away" text
-				headerElement.innerHTML = '🔥 You\'re only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>';
-				console.log('📊 Progress Indicator: Header text updated to "You\'re only 1 CHUUG away" (<2 items)');
-			}
-		}
-		} catch (error) {
-			console.error("Failed to update progress indicator:", error);
-		}
-	}
+						}
+						console.log(
+							"📊 Progress Indicator: Third step marked as completed with checkmark (2+ items)"
+						);
+					} else {
+						// Mark step as active
+						thirdStep.classList.remove(
+							"step-process-indicator__step--completed"
+						);
+						thirdStep.classList.add("step-process-indicator__step--active");
 
-	async fetchUpdatedCartData() {
-		try {
-			const response = await fetch("/cart.js");
-			if (!response.ok) {
-				throw new Error(`Failed to fetch cart: ${response.status}`);
+						// Show pound symbol
+						if (thirdStepCircle) {
+							thirdStepCircle.innerHTML =
+								'<span class="step-process-indicator__pound-symbol">£</span>';
+						}
+						console.log(
+							"📊 Progress Indicator: Third step marked as active with pound symbol (<2 items)"
+						);
+					}
+				}
+
+				// Update the header text
+				const headerElement = this.modal.querySelector(
+					".step-process-indicator__header"
+				);
+
+				if (headerElement) {
+					if (nonGiftBoxItemCount >= 2) {
+						// Show "You've unlock" text
+						headerElement.innerHTML =
+							"🔥 You've unlock <span>EXTRA £30 OFF</span>";
+						console.log(
+							'📊 Progress Indicator: Header text updated to "You\'ve unlock" (2+ items)'
+						);
+					} else {
+						// Show "You're only 1 CHUUG away" text
+						headerElement.innerHTML =
+							"🔥 You're only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>";
+						console.log(
+							'📊 Progress Indicator: Header text updated to "You\'re only 1 CHUUG away" (<2 items)'
+						);
+					}
+				}
+			} catch (error) {
+				console.error("Failed to update progress indicator:", error);
 			}
-			return await response.json();
-		} catch (error) {
-			console.error("Failed to fetch updated cart data:", error);
-			return null;
 		}
-	}
+
+		async fetchUpdatedCartData() {
+			try {
+				const response = await fetch("/cart.js");
+				if (!response.ok) {
+					throw new Error(`Failed to fetch cart: ${response.status}`);
+				}
+				return await response.json();
+			} catch (error) {
+				console.error("Failed to fetch updated cart data:", error);
+				return null;
+			}
+		}
 
 		async renderCartItems(cartItems, container) {
 			try {
-				console.log("🛒 renderCartItems called with:", cartItems.length, "items");
-				
+				console.log(
+					"🛒 renderCartItems called with:",
+					cartItems.length,
+					"items"
+				);
+
 				// Create a temporary container to hold the rendered items
-				const tempContainer = document.createElement('div');
-				
+				const tempContainer = document.createElement("div");
+
 				// Render each cart item in reverse order (newest first, like Liquid template)
 				for (let i = cartItems.length - 1; i >= 0; i--) {
 					const item = cartItems[i];
@@ -2976,86 +3162,97 @@
 						console.warn("🛒 Item element was null for:", item.id);
 					}
 				}
-				
-			// Append all items to the main container
-			while (tempContainer.firstChild) {
-				container.appendChild(tempContainer.firstChild);
+
+				// Append all items to the main container
+				while (tempContainer.firstChild) {
+					container.appendChild(tempContainer.firstChild);
+				}
+			} catch (error) {
+				console.error("Failed to render cart items:", error);
 			}
-			
-		} catch (error) {
-			console.error("Failed to render cart items:", error);
-		}
 		}
 
 		async renderCartItem(item, allCartItems) {
 			try {
-				console.log("🛒 renderCartItem called for:", item.id, item.product_title);
-				
+				console.log(
+					"🛒 renderCartItem called for:",
+					item.id,
+					item.product_title
+				);
+
 				// Check if this is an add-on item that should be grouped with a vessel
-				const isAddon = item.properties && Object.entries(item.properties).some(([key, value]) => key === 'Add-on');
+				const isAddon =
+					item.properties &&
+					Object.entries(item.properties).some(
+						([key, value]) => key === "Add-on"
+					);
 				console.log("🛒 Is addon:", isAddon);
-				
+
 				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
 				if (isAddon) {
 					console.log("🛒 Skipping addon item:", item.id);
 					return null;
 				}
-				
+
 				// Create the main wrapper element
-				const wrapper = document.createElement('div');
-				wrapper.className = 'checkout-product-item-wrap';
-				
+				const wrapper = document.createElement("div");
+				wrapper.className = "checkout-product-item-wrap";
+
 				// Create the checkout products wrap element
-				const itemElement = document.createElement('div');
-				itemElement.className = 'checkout-products-wrap';
-				itemElement.setAttribute('data-item-id', item.id);
-				
+				const itemElement = document.createElement("div");
+				itemElement.className = "checkout-products-wrap";
+				itemElement.setAttribute("data-item-id", item.id);
+
 				// Create the container
-				const container = document.createElement('div');
-				container.className = 'checkout-products-wrap__container';
-				
+				const container = document.createElement("div");
+				container.className = "checkout-products-wrap__container";
+
 				// Create image section
-				const imageSection = document.createElement('div');
-				imageSection.className = 'checkout-products-wrap__image';
-				
-				const imageContainer = document.createElement('div');
-				imageContainer.className = 'checkout-products-wrap__image-container';
-				
+				const imageSection = document.createElement("div");
+				imageSection.className = "checkout-products-wrap__image";
+
+				const imageContainer = document.createElement("div");
+				imageContainer.className = "checkout-products-wrap__image-container";
+
 				if (item.image) {
-					const img = document.createElement('img');
+					const img = document.createElement("img");
 					img.src = item.image;
-					img.alt = item.product_title || '';
+					img.alt = item.product_title || "";
 					img.width = 128;
 					img.height = 128;
-					img.loading = 'lazy';
-					img.className = 'checkout-products-wrap__product-image';
+					img.loading = "lazy";
+					img.className = "checkout-products-wrap__product-image";
 					imageContainer.appendChild(img);
 				} else {
-					const placeholder = document.createElement('div');
-					placeholder.className = 'checkout-products-wrap__placeholder';
-					placeholder.innerHTML = '<svg class="placeholder-svg" viewBox="0 0 525 525" xmlns="http://www.w3.org/2000/svg"><rect width="525" height="525" fill="#f6f6f6"/><text x="50%" y="50%" font-family="Arial, sans-serif" font-size="18" fill="#999" text-anchor="middle" dy=".3em">No image</text></svg>';
+					const placeholder = document.createElement("div");
+					placeholder.className = "checkout-products-wrap__placeholder";
+					placeholder.innerHTML =
+						'<svg class="placeholder-svg" viewBox="0 0 525 525" xmlns="http://www.w3.org/2000/svg"><rect width="525" height="525" fill="#f6f6f6"/><text x="50%" y="50%" font-family="Arial, sans-serif" font-size="18" fill="#999" text-anchor="middle" dy=".3em">No image</text></svg>';
 					imageContainer.appendChild(placeholder);
 				}
-				
+
 				imageSection.appendChild(imageContainer);
-				
+
 				// Create details section
-				const detailsSection = document.createElement('div');
-				detailsSection.className = 'checkout-products-wrap__details';
-				
+				const detailsSection = document.createElement("div");
+				detailsSection.className = "checkout-products-wrap__details";
+
 				// Create header with title and delete button
-				const header = document.createElement('div');
-				header.className = 'checkout-products-wrap__header';
-				
-				const title = document.createElement('h3');
-				title.className = 'checkout-products-wrap__title';
-				title.textContent = item.product_title || '';
-				
-				const deleteBtn = document.createElement('button');
-				deleteBtn.type = 'button';
-				deleteBtn.className = 'checkout-products-wrap__delete';
-				deleteBtn.setAttribute('data-remove-item', item.key);
-				deleteBtn.setAttribute('aria-label', `Remove ${item.product_title || ''} from cart`);
+				const header = document.createElement("div");
+				header.className = "checkout-products-wrap__header";
+
+				const title = document.createElement("h3");
+				title.className = "checkout-products-wrap__title";
+				title.textContent = item.product_title || "";
+
+				const deleteBtn = document.createElement("button");
+				deleteBtn.type = "button";
+				deleteBtn.className = "checkout-products-wrap__delete";
+				deleteBtn.setAttribute("data-remove-item", item.key);
+				deleteBtn.setAttribute(
+					"aria-label",
+					`Remove ${item.product_title || ""} from cart`
+				);
 				deleteBtn.innerHTML = `
 					<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3064,89 +3261,112 @@
 						<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 					</svg>
 				`;
-				
+
 				header.appendChild(title);
 				header.appendChild(deleteBtn);
-				
+
 				// Create options section
-				const optionsSection = document.createElement('div');
-				optionsSection.className = 'checkout-products-wrap__options';
-				
+				const optionsSection = document.createElement("div");
+				optionsSection.className = "checkout-products-wrap__options";
+
 				// Add options based on item properties (matching Liquid logic)
-				if (item.properties && (item.product_title.includes('CHUUG') || item.product_title.includes('Chuug'))) {
-					let engravingText = '';
+				if (
+					item.properties &&
+					(item.product_title.includes("CHUUG") ||
+						item.product_title.includes("Chuug"))
+				) {
+					let engravingText = "";
 					let hasInsulatedCup = false;
-					
+
 					Object.entries(item.properties).forEach(([key, value]) => {
-						if (key.includes('Engraving')) {
+						if (key.includes("Engraving")) {
 							engravingText = value;
 						}
 						const keyLower = key.toLowerCase();
-						if (keyLower.includes('insulated') || keyLower.includes('cup') || keyLower.includes('silver cup')) {
+						if (
+							keyLower.includes("insulated") ||
+							keyLower.includes("cup") ||
+							keyLower.includes("silver cup")
+						) {
 							hasInsulatedCup = true;
 						}
 					});
-					
+
 					if (engravingText) {
-						const optionChip = document.createElement('div');
-						optionChip.className = 'checkout-products-wrap__option-chip';
+						const optionChip = document.createElement("div");
+						optionChip.className = "checkout-products-wrap__option-chip";
 						optionChip.textContent = `🔨 Engraved Initials, ${engravingText}`;
 						optionsSection.appendChild(optionChip);
 					}
-					
+
 					if (hasInsulatedCup) {
-						const optionChip = document.createElement('div');
-						optionChip.className = 'checkout-products-wrap__option-chip';
-						optionChip.textContent = '🍺 Silver Insulated Cup';
+						const optionChip = document.createElement("div");
+						optionChip.className = "checkout-products-wrap__option-chip";
+						optionChip.textContent = "🍺 Silver Insulated Cup";
 						optionsSection.appendChild(optionChip);
 					}
 				}
-				
+
 				// Add-on Products Section (matching Liquid logic)
 				const currentVesselNumber = this.extractVesselNumber(item);
-				
+
 				// Find add-on for this vessel
 				if (currentVesselNumber) {
-					const currentItemIndex = allCartItems.findIndex(cartItem => cartItem.id === item.id);
-					if (currentItemIndex !== -1 && currentItemIndex < allCartItems.length - 1) {
+					const currentItemIndex = allCartItems.findIndex(
+						(cartItem) => cartItem.id === item.id
+					);
+					if (
+						currentItemIndex !== -1 &&
+						currentItemIndex < allCartItems.length - 1
+					) {
 						const nextItem = allCartItems[currentItemIndex + 1];
 						if (nextItem && nextItem.properties) {
-							const isAddonForVessel = Object.entries(nextItem.properties).some(([key, value]) => 
-								key === 'Add-on' && value === 'Premium Gift Box'
-							) && Object.entries(nextItem.properties).some(([key, value]) => 
-								key === 'Vessel Number' && value === currentVesselNumber
-							);
-							
+							const isAddonForVessel =
+								Object.entries(nextItem.properties).some(
+									([key, value]) =>
+										key === "Add-on" && value === "Premium Gift Box"
+								) &&
+								Object.entries(nextItem.properties).some(
+									([key, value]) =>
+										key === "Vessel Number" && value === currentVesselNumber
+								);
+
 							if (isAddonForVessel) {
-								const addonSection = document.createElement('div');
-								addonSection.className = 'checkout-products-wrap__addon';
-								
-								const addonItem = document.createElement('div');
-								addonItem.className = 'checkout-products-wrap__addon-item';
-								
-								const addonIcon = document.createElement('div');
-								addonIcon.className = 'checkout-products-wrap__addon-icon';
-								addonIcon.textContent = '🎁';
-								
-								const addonDetails = document.createElement('div');
-								addonDetails.className = 'checkout-products-wrap__addon-details';
-								
-								const addonTitle = document.createElement('span');
-								addonTitle.className = 'checkout-products-wrap__addon-title';
-								addonTitle.textContent = 'Premium Gift Box';
-								
-								const addonPrice = document.createElement('span');
-								addonPrice.className = 'checkout-products-wrap__addon-price';
-								addonPrice.textContent = this.formatMoney(nextItem.final_price || nextItem.price);
-								
+								const addonSection = document.createElement("div");
+								addonSection.className = "checkout-products-wrap__addon";
+
+								const addonItem = document.createElement("div");
+								addonItem.className = "checkout-products-wrap__addon-item";
+
+								const addonIcon = document.createElement("div");
+								addonIcon.className = "checkout-products-wrap__addon-icon";
+								addonIcon.textContent = "🎁";
+
+								const addonDetails = document.createElement("div");
+								addonDetails.className =
+									"checkout-products-wrap__addon-details";
+
+								const addonTitle = document.createElement("span");
+								addonTitle.className = "checkout-products-wrap__addon-title";
+								addonTitle.textContent = "Premium Gift Box";
+
+								const addonPrice = document.createElement("span");
+								addonPrice.className = "checkout-products-wrap__addon-price";
+								addonPrice.textContent = this.formatMoney(
+									nextItem.final_price || nextItem.price
+								);
+
 								addonDetails.appendChild(addonTitle);
 								addonDetails.appendChild(addonPrice);
-								
-								const addonRemove = document.createElement('button');
-								addonRemove.type = 'button';
-								addonRemove.className = 'checkout-products-wrap__addon-remove';
-								addonRemove.setAttribute('data-remove-item', nextItem.key);
-								addonRemove.setAttribute('aria-label', 'Remove Premium Gift Box from cart');
+
+								const addonRemove = document.createElement("button");
+								addonRemove.type = "button";
+								addonRemove.className = "checkout-products-wrap__addon-remove";
+								addonRemove.setAttribute("data-remove-item", nextItem.key);
+								addonRemove.setAttribute(
+									"aria-label",
+									"Remove Premium Gift Box from cart"
+								);
 								addonRemove.innerHTML = `
 									<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 										<path d="M2 4H3H13" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3155,132 +3375,158 @@
 										<path d="M9 7V11" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 									</svg>
 								`;
-								
+
 								addonItem.appendChild(addonIcon);
 								addonItem.appendChild(addonDetails);
 								addonItem.appendChild(addonRemove);
 								addonSection.appendChild(addonItem);
-								
+
 								// Add addon section to details
 								detailsSection.appendChild(addonSection);
 							}
 						}
 					}
 				}
-				
+
 				// Create pricing section
-				const pricingSection = document.createElement('div');
-				pricingSection.className = 'checkout-products-wrap__pricing';
-				
-				const currentPrice = document.createElement('span');
-				currentPrice.className = 'checkout-products-wrap__current-price';
-				currentPrice.textContent = this.formatMoney(item.final_price || item.price);
-				
+				const pricingSection = document.createElement("div");
+				pricingSection.className = "checkout-products-wrap__pricing";
+
+				const currentPrice = document.createElement("span");
+				currentPrice.className = "checkout-products-wrap__current-price";
+				currentPrice.textContent = this.formatMoney(
+					item.final_price || item.price
+				);
+
 				pricingSection.appendChild(currentPrice);
-				
+
 				// If there's a discount, show original price
 				if (item.original_price && item.original_price !== item.final_price) {
-					const originalPrice = document.createElement('span');
-					originalPrice.className = 'checkout-products-wrap__original-price';
+					const originalPrice = document.createElement("span");
+					originalPrice.className = "checkout-products-wrap__original-price";
 					originalPrice.textContent = this.formatMoney(item.original_price);
 					pricingSection.appendChild(originalPrice);
 				}
-				
+
 				// Assemble the details section
 				detailsSection.appendChild(header);
 				detailsSection.appendChild(optionsSection);
 				detailsSection.appendChild(pricingSection);
-				
+
 				// Assemble the container
 				container.appendChild(imageSection);
 				container.appendChild(detailsSection);
-				
+
 				// Assemble the item element
 				itemElement.appendChild(container);
 				wrapper.appendChild(itemElement);
-				
+
 				// Premium Gift Box section (matching Liquid logic)
 				// Look for gift box add-ons that belong to this specific vessel
 				const vesselNumber = this.extractVesselNumber(item);
-				console.log(`🎁 DEBUG: Item ${item.id} (${item.product_title}) has vessel number:`, vesselNumber);
-				
+				console.log(
+					`🎁 DEBUG: Item ${item.id} (${item.product_title}) has vessel number:`,
+					vesselNumber
+				);
+
 				if (vesselNumber) {
 					// Debug: Log all gift box items
-					const allGiftBoxes = allCartItems.filter(giftItem => 
-						giftItem.properties && giftItem.properties['Add-on'] === 'Premium Gift Box'
+					const allGiftBoxes = allCartItems.filter(
+						(giftItem) =>
+							giftItem.properties &&
+							giftItem.properties["Add-on"] === "Premium Gift Box"
 					);
-					console.log(`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`, allGiftBoxes.map(gb => ({
-						id: gb.id,
-						title: gb.product_title,
-						vesselNumber: gb.properties['Vessel Number']
-					})));
-					
-					const giftBoxForThisVessel = allCartItems.find(giftItem => 
-						giftItem.properties && 
-						giftItem.properties['Add-on'] === 'Premium Gift Box' &&
-						String(giftItem.properties['Vessel Number']) === String(vesselNumber)
+					console.log(
+						`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`,
+						allGiftBoxes.map((gb) => ({
+							id: gb.id,
+							title: gb.product_title,
+							vesselNumber: gb.properties["Vessel Number"],
+						}))
 					);
-					
-					console.log(`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`, giftBoxForThisVessel ? {
-						id: giftBoxForThisVessel.id,
-						title: giftBoxForThisVessel.product_title
-					} : 'NOT FOUND');
-					
+
+					const giftBoxForThisVessel = allCartItems.find(
+						(giftItem) =>
+							giftItem.properties &&
+							giftItem.properties["Add-on"] === "Premium Gift Box" &&
+							String(giftItem.properties["Vessel Number"]) ===
+								String(vesselNumber)
+					);
+
+					console.log(
+						`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`,
+						giftBoxForThisVessel
+							? {
+									id: giftBoxForThisVessel.id,
+									title: giftBoxForThisVessel.product_title,
+							  }
+							: "NOT FOUND"
+					);
+
 					if (giftBoxForThisVessel) {
-						const giftBoxSection = document.createElement('div');
-						giftBoxSection.className = 'premium-gift-box';
-						
-						const giftBoxContainer = document.createElement('div');
-						giftBoxContainer.className = 'premium-gift-box__container';
-						
+						const giftBoxSection = document.createElement("div");
+						giftBoxSection.className = "premium-gift-box";
+
+						const giftBoxContainer = document.createElement("div");
+						giftBoxContainer.className = "premium-gift-box__container";
+
 						// Product Image
-						const giftBoxImage = document.createElement('div');
-						giftBoxImage.className = 'premium-gift-box__image';
-						
+						const giftBoxImage = document.createElement("div");
+						giftBoxImage.className = "premium-gift-box__image";
+
 						if (giftBoxForThisVessel.image) {
-							const img = document.createElement('img');
+							const img = document.createElement("img");
 							img.src = giftBoxForThisVessel.image;
-							img.alt = giftBoxForThisVessel.product_title || 'Premium Gift Box & Wrap';
+							img.alt =
+								giftBoxForThisVessel.product_title || "Premium Gift Box & Wrap";
 							img.width = 71;
 							img.height = 89;
 							giftBoxImage.appendChild(img);
 						} else {
-							const img = document.createElement('img');
-							img.src = '/assets/premium-gift-box.png'; // Fallback image
-							img.alt = 'Premium Gift Box & Wrap';
+							const img = document.createElement("img");
+							img.src = "/assets/premium-gift-box.png"; // Fallback image
+							img.alt = "Premium Gift Box & Wrap";
 							img.width = 71;
 							img.height = 89;
 							giftBoxImage.appendChild(img);
 						}
-						
+
 						// Content Area
-						const giftBoxContent = document.createElement('div');
-						giftBoxContent.className = 'premium-gift-box__content';
-						
-						const giftBoxDetails = document.createElement('div');
-						giftBoxDetails.className = 'premium-gift-box__details';
-						
-						const giftBoxText = document.createElement('div');
-						giftBoxText.className = 'premium-gift-box__text';
-						
-						const giftBoxTitle = document.createElement('h4');
-						giftBoxTitle.className = 'premium-gift-box__title';
+						const giftBoxContent = document.createElement("div");
+						giftBoxContent.className = "premium-gift-box__content";
+
+						const giftBoxDetails = document.createElement("div");
+						giftBoxDetails.className = "premium-gift-box__details";
+
+						const giftBoxText = document.createElement("div");
+						giftBoxText.className = "premium-gift-box__text";
+
+						const giftBoxTitle = document.createElement("h4");
+						giftBoxTitle.className = "premium-gift-box__title";
 						giftBoxTitle.textContent = giftBoxForThisVessel.product_title;
-						
-						const giftBoxPrice = document.createElement('div');
-						giftBoxPrice.className = 'premium-gift-box__price';
-						giftBoxPrice.textContent = this.formatMoney(giftBoxForThisVessel.final_price || giftBoxForThisVessel.price);
-						
+
+						const giftBoxPrice = document.createElement("div");
+						giftBoxPrice.className = "premium-gift-box__price";
+						giftBoxPrice.textContent = this.formatMoney(
+							giftBoxForThisVessel.final_price || giftBoxForThisVessel.price
+						);
+
 						giftBoxText.appendChild(giftBoxTitle);
 						giftBoxDetails.appendChild(giftBoxText);
 						giftBoxDetails.appendChild(giftBoxPrice);
-						
+
 						// Toggle Section
-						const giftBoxDelete = document.createElement('button');
-						giftBoxDelete.type = 'button';
-						giftBoxDelete.className = 'checkout-products-wrap__delete';
-						giftBoxDelete.setAttribute('data-remove-item', giftBoxForThisVessel.key);
-						giftBoxDelete.setAttribute('aria-label', 'Remove Premium Gift Box from cart');
+						const giftBoxDelete = document.createElement("button");
+						giftBoxDelete.type = "button";
+						giftBoxDelete.className = "checkout-products-wrap__delete";
+						giftBoxDelete.setAttribute(
+							"data-remove-item",
+							giftBoxForThisVessel.key
+						);
+						giftBoxDelete.setAttribute(
+							"aria-label",
+							"Remove Premium Gift Box from cart"
+						);
 						giftBoxDelete.innerHTML = `
 							<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3289,21 +3535,20 @@
 								<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 							</svg>
 						`;
-						
+
 						giftBoxContent.appendChild(giftBoxDetails);
 						giftBoxContent.appendChild(giftBoxDelete);
-						
+
 						giftBoxContainer.appendChild(giftBoxImage);
 						giftBoxContainer.appendChild(giftBoxContent);
 						giftBoxSection.appendChild(giftBoxContainer);
-						
+
 						// Add gift box section to wrapper
 						wrapper.appendChild(giftBoxSection);
 					}
 				}
-				
+
 				return wrapper;
-				
 			} catch (error) {
 				console.error("Failed to render cart item:", error);
 				return null;
@@ -3318,30 +3563,40 @@
 
 		resetPersonalizationToggles() {
 			// Reset engraving toggle to true (default state)
-			const engravingToggle = this.modal.querySelector('[data-personalization-toggle="engraving"]');
+			const engravingToggle = this.modal.querySelector(
+				'[data-personalization-toggle="engraving"]'
+			);
 			if (engravingToggle) {
 				engravingToggle.checked = true;
 			}
-			
+
 			// Reset all other personalization toggles to false
-			const otherToggles = this.modal.querySelectorAll('[data-personalization-toggle]:not([data-personalization-toggle="engraving"])');
-			otherToggles.forEach(toggle => {
+			const otherToggles = this.modal.querySelectorAll(
+				'[data-personalization-toggle]:not([data-personalization-toggle="engraving"])'
+			);
+			otherToggles.forEach((toggle) => {
 				toggle.checked = false;
 			});
 		}
 
 		resetGiftBoxToggle() {
 			// Reset gift box toggle to false (default state)
-			const giftBoxToggle = this.modal.querySelector('.mini-atc-modal--gift-box-toggle');
+			const giftBoxToggle = this.modal.querySelector(
+				".mini-atc-modal--gift-box-toggle"
+			);
 			if (giftBoxToggle) {
 				giftBoxToggle.checked = false;
 			}
-			
+
 			// Also reset any gift box toggle slider
-			const giftBoxToggleSlider = this.modal.querySelector('.premium-gift-box__toggle-slider');
+			const giftBoxToggleSlider = this.modal.querySelector(
+				".premium-gift-box__toggle-slider"
+			);
 			if (giftBoxToggleSlider) {
 				// Find the associated checkbox input
-				const checkbox = giftBoxToggleSlider.closest('.premium-gift-box').querySelector('input[type="checkbox"]');
+				const checkbox = giftBoxToggleSlider
+					.closest(".premium-gift-box")
+					.querySelector('input[type="checkbox"]');
 				if (checkbox) {
 					checkbox.checked = false;
 				}
@@ -3351,13 +3606,16 @@
 		extractVesselNumber(item) {
 			// Extract vessel number from item properties
 			// Look for properties like "Vessel 1 Product", "Vessel 2 Product", etc.
-			console.log(`🔍 DEBUG: Extracting vessel number for item ${item.id}:`, item.properties);
-			
+			console.log(
+				`🔍 DEBUG: Extracting vessel number for item ${item.id}:`,
+				item.properties
+			);
+
 			if (item.properties) {
 				for (const [key, value] of Object.entries(item.properties)) {
 					console.log(`🔍 DEBUG: Checking property: ${key} = ${value}`);
-					if (key.includes('Vessel') && key.includes('Product')) {
-						const parts = key.split(' ');
+					if (key.includes("Vessel") && key.includes("Product")) {
+						const parts = key.split(" ");
 						console.log(`🔍 DEBUG: Found vessel property, parts:`, parts);
 						if (parts.length >= 2) {
 							const vesselNum = parts[1];
@@ -3373,26 +3631,38 @@
 
 		async findAssociatedGiftBoxesFromCartData(vesselItemKey, cartData) {
 			try {
-				console.log(`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`);
-				
+				console.log(
+					`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`
+				);
+
 				if (!cartData || !cartData.items) {
 					console.log(`🔍 DEBUG: No cart data or items found`);
 					return [];
 				}
 
 				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-				console.log(`🔍 DEBUG: All cart items:`, cartData.items.map(item => ({
-					key: item.key,
-					id: item.id,
-					title: item.product_title,
-					properties: item.properties
-				})));
+				console.log(
+					`🔍 DEBUG: All cart items:`,
+					cartData.items.map((item) => ({
+						key: item.key,
+						id: item.id,
+						title: item.product_title,
+						properties: item.properties,
+					}))
+				);
 
 				// Find the vessel item to get its vessel number
-				const vesselItem = cartData.items.find(item => item.key === vesselItemKey);
+				const vesselItem = cartData.items.find(
+					(item) => item.key === vesselItemKey
+				);
 				if (!vesselItem) {
-					console.log(`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`);
-					console.log(`🔍 DEBUG: Available item keys:`, cartData.items.map(item => item.key));
+					console.log(
+						`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`
+					);
+					console.log(
+						`🔍 DEBUG: Available item keys:`,
+						cartData.items.map((item) => item.key)
+					);
 					return [];
 				}
 
@@ -3400,20 +3670,24 @@
 					key: vesselItem.key,
 					id: vesselItem.id,
 					title: vesselItem.product_title,
-					properties: vesselItem.properties
+					properties: vesselItem.properties,
 				});
 
 				// Extract vessel number from the vessel item's properties
 				let vesselNumber = null;
 				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
-				
+
 				// Properties are stored as an object, not an array
-				for (const [key, value] of Object.entries(vesselItem.properties || {})) {
-					console.log(`🔍 DEBUG: Checking property key: ${key}, value: ${value}`);
+				for (const [key, value] of Object.entries(
+					vesselItem.properties || {}
+				)) {
+					console.log(
+						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
+					);
 					// Look for properties like "Vessel 2 Product", "Vessel 1 Product", etc.
-					if (key.includes('Vessel') && key.includes('Product')) {
+					if (key.includes("Vessel") && key.includes("Product")) {
 						// Extract number from property name like "Vessel 2 Product"
-						const vesselPropertyParts = key.split(' ');
+						const vesselPropertyParts = key.split(" ");
 						if (vesselPropertyParts.length >= 2) {
 							vesselNumber = vesselPropertyParts[1];
 							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
@@ -3423,12 +3697,16 @@
 				}
 
 				if (!vesselNumber) {
-					console.log(`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`);
+					console.log(
+						`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`
+					);
 					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`);
+				console.log(
+					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
+				);
 
 				// Find gift boxes with matching vessel number
 				const associatedGiftBoxKeys = [];
@@ -3439,7 +3717,7 @@
 
 					console.log(`🔍 DEBUG: Checking item ${item.key}:`, {
 						title: item.product_title,
-						properties: item.properties
+						properties: item.properties,
 					});
 
 					// Check if this item is a gift box
@@ -3448,18 +3726,25 @@
 
 					// Properties are stored as an object, not an array
 					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`);
-						
+						console.log(
+							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
+						);
+
 						// Check if it's a gift box
-						if (key === 'Add-on' && value === 'Premium Gift Box') {
+						if (key === "Add-on" && value === "Premium Gift Box") {
 							isGiftBox = true;
 							console.log(`🔍 DEBUG: Item ${item.key} is a gift box`);
 						}
-						
+
 						// Check if it has the matching vessel number
-						if (key === 'Vessel Number' && value.toString() === vesselNumber.toString()) {
+						if (
+							key === "Vessel Number" &&
+							value.toString() === vesselNumber.toString()
+						) {
 							hasMatchingVesselNumber = true;
-							console.log(`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`);
+							console.log(
+								`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`
+							);
 						}
 					}
 
@@ -3467,13 +3752,17 @@
 					if (isGiftBox && hasMatchingVesselNumber) {
 						// Use the key for cart API
 						associatedGiftBoxKeys.push(item.key);
-						console.log(`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`);
+						console.log(
+							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`
+						);
 					}
 				}
 
-				console.log(`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`, associatedGiftBoxKeys);
+				console.log(
+					`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`,
+					associatedGiftBoxKeys
+				);
 				return associatedGiftBoxKeys;
-
 			} catch (error) {
 				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
 				return [];
@@ -3482,8 +3771,10 @@
 
 		async findAssociatedGiftBoxes(vesselItemId) {
 			try {
-				console.log(`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`);
-				
+				console.log(
+					`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`
+				);
+
 				// Fetch current cart data
 				const cartData = await this.fetchUpdatedCartData();
 				if (!cartData || !cartData.items) {
@@ -3492,37 +3783,51 @@
 				}
 
 				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-				console.log(`🔍 DEBUG: All cart items:`, cartData.items.map(item => ({
-					id: item.id,
-					title: item.product_title,
-					properties: item.properties
-				})));
+				console.log(
+					`🔍 DEBUG: All cart items:`,
+					cartData.items.map((item) => ({
+						id: item.id,
+						title: item.product_title,
+						properties: item.properties,
+					}))
+				);
 
 				// Find the vessel item to get its vessel number
-				const vesselItem = cartData.items.find(item => item.id.toString() === vesselItemId.toString());
+				const vesselItem = cartData.items.find(
+					(item) => item.id.toString() === vesselItemId.toString()
+				);
 				if (!vesselItem) {
-					console.log(`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`);
-					console.log(`🔍 DEBUG: Available item IDs:`, cartData.items.map(item => item.id));
+					console.log(
+						`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`
+					);
+					console.log(
+						`🔍 DEBUG: Available item IDs:`,
+						cartData.items.map((item) => item.id)
+					);
 					return [];
 				}
 
 				console.log(`🔍 DEBUG: Found vessel item:`, {
 					id: vesselItem.id,
 					title: vesselItem.product_title,
-					properties: vesselItem.properties
+					properties: vesselItem.properties,
 				});
 
 				// Extract vessel number from the vessel item's properties
 				let vesselNumber = null;
 				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
-				
+
 				// Properties are stored as an object, not an array
-				for (const [key, value] of Object.entries(vesselItem.properties || {})) {
-					console.log(`🔍 DEBUG: Checking property key: ${key}, value: ${value}`);
+				for (const [key, value] of Object.entries(
+					vesselItem.properties || {}
+				)) {
+					console.log(
+						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
+					);
 					// Look for properties like "Vessel 2 Product", "Vessel 1 Product", etc.
-					if (key.includes('Vessel') && key.includes('Product')) {
+					if (key.includes("Vessel") && key.includes("Product")) {
 						// Extract number from property name like "Vessel 2 Product"
-						const vesselPropertyParts = key.split(' ');
+						const vesselPropertyParts = key.split(" ");
 						if (vesselPropertyParts.length >= 2) {
 							vesselNumber = vesselPropertyParts[1];
 							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
@@ -3532,12 +3837,16 @@
 				}
 
 				if (!vesselNumber) {
-					console.log(`🔍 DEBUG: No vessel number found for item ${vesselItemId}`);
+					console.log(
+						`🔍 DEBUG: No vessel number found for item ${vesselItemId}`
+					);
 					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`);
+				console.log(
+					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
+				);
 
 				// Find gift boxes with matching vessel number
 				const associatedGiftBoxIds = [];
@@ -3548,7 +3857,7 @@
 
 					console.log(`🔍 DEBUG: Checking item ${item.id}:`, {
 						title: item.product_title,
-						properties: item.properties
+						properties: item.properties,
 					});
 
 					// Check if this item is a gift box
@@ -3557,18 +3866,25 @@
 
 					// Properties are stored as an object, not an array
 					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`);
-						
+						console.log(
+							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
+						);
+
 						// Check if it's a gift box
-						if (key === 'Add-on' && value === 'Premium Gift Box') {
+						if (key === "Add-on" && value === "Premium Gift Box") {
 							isGiftBox = true;
 							console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
 						}
-						
+
 						// Check if it has the matching vessel number
-						if (key === 'Vessel Number' && value.toString() === vesselNumber.toString()) {
+						if (
+							key === "Vessel Number" &&
+							value.toString() === vesselNumber.toString()
+						) {
 							hasMatchingVesselNumber = true;
-							console.log(`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`);
+							console.log(
+								`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
+							);
 						}
 					}
 
@@ -3576,27 +3892,30 @@
 					if (isGiftBox && hasMatchingVesselNumber) {
 						// Use the key instead of id for cart API
 						associatedGiftBoxIds.push(item.key);
-						console.log(`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`);
+						console.log(
+							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`
+						);
 					}
 				}
 
-				console.log(`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`, associatedGiftBoxIds);
+				console.log(
+					`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`,
+					associatedGiftBoxIds
+				);
 				return associatedGiftBoxIds;
-
 			} catch (error) {
 				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
 				return [];
 			}
 		}
 
-
 		bindCheckoutItemEvents() {
 			// Re-bind remove item events for dynamically loaded content
 			const removeButtons = this.modal.querySelectorAll("[data-remove-item]");
-			removeButtons.forEach(button => {
-				button.addEventListener('click', (event) => {
+			removeButtons.forEach((button) => {
+				button.addEventListener("click", (event) => {
 					event.preventDefault();
-					const itemId = button.getAttribute('data-remove-item');
+					const itemId = button.getAttribute("data-remove-item");
 					if (itemId) {
 						this.removeCartItem(itemId);
 					}
@@ -3609,8 +3928,10 @@
 		// REMOVED: isGiftBoxItem, renderCheckoutItem, renderItemProperties, renderGiftBoxItem - using Liquid templates instead
 
 		async removeCartItem(itemKey) {
-			console.log(`🗑️ REMOVE ITEM: Starting removal of item with key ${itemKey}`);
-			
+			console.log(
+				`🗑️ REMOVE ITEM: Starting removal of item with key ${itemKey}`
+			);
+
 			// Prevent multiple simultaneous removal attempts
 			if (this.isRemovingItem) {
 				console.warn("Item removal already in progress");
@@ -3625,90 +3946,109 @@
 
 				let cartData;
 
-		// Handle special gift box case
-		if (itemKey === "gift-box") {
-			// Use the existing gift box removal method if available
-			if (
-				window.cartManager &&
-				typeof window.cartManager.removeGiftBox === "function"
-			) {
-				await window.cartManager.removeGiftBox();
-				// Fetch updated cart data
-				cartData = await this.fetchUpdatedCartData();
-				
-				// Fetch the cart icon bubble section separately
-				const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
-				try {
-					const sectionResponse = await fetch(sectionUrl);
-					if (sectionResponse.ok) {
-						const sectionData = await sectionResponse.json();
-						// Create a response object with sections for updateCartIconBubble
-						const responseWithSections = {
-							...cartData,
-							sections: sectionData
-						};
-						this.updateCartIconBubble(responseWithSections);
+				// Handle special gift box case
+				if (itemKey === "gift-box") {
+					// Use the existing gift box removal method if available
+					if (
+						window.cartManager &&
+						typeof window.cartManager.removeGiftBox === "function"
+					) {
+						await window.cartManager.removeGiftBox();
+						// Fetch updated cart data
+						cartData = await this.fetchUpdatedCartData();
+
+						// Fetch the cart icon bubble section separately
+						const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
+						try {
+							const sectionResponse = await fetch(sectionUrl);
+							if (sectionResponse.ok) {
+								const sectionData = await sectionResponse.json();
+								// Create a response object with sections for updateCartIconBubble
+								const responseWithSections = {
+									...cartData,
+									sections: sectionData,
+								};
+								this.updateCartIconBubble(responseWithSections);
+							}
+						} catch (error) {
+							console.warn("Failed to fetch cart icon bubble section:", error);
+						}
+
+						// Update checkout view
+						await this.updateCheckoutViewWithCartData(cartData);
+						cartData.checkoutViewAlreadyUpdated = true;
+					} else {
+						console.warn("Gift box removal method not available");
+						return;
 					}
-				} catch (error) {
-					console.warn("Failed to fetch cart icon bubble section:", error);
-				}
-				
-				// Update checkout view
-				await this.updateCheckoutViewWithCartData(cartData);
-				cartData.checkoutViewAlreadyUpdated = true;
-			} else {
-				console.warn("Gift box removal method not available");
-				return;
-			}
-		} else {
-					console.log(`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`);
-					
+				} else {
+					console.log(
+						`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`
+					);
+
 					// Get current cart data to check if this is a gift box item
 					const currentCartData = await this.fetchUpdatedCartData();
-					const itemToRemove = currentCartData.items.find(item => item.key === itemKey);
-					
+					const itemToRemove = currentCartData.items.find(
+						(item) => item.key === itemKey
+					);
+
 					// Check if this is a gift box item
-					const isGiftBoxItem = itemToRemove && itemToRemove.properties && 
-						Object.entries(itemToRemove.properties).some(([key, value]) => 
-							key === 'Add-on' && value === 'Premium Gift Box'
+					const isGiftBoxItem =
+						itemToRemove &&
+						itemToRemove.properties &&
+						Object.entries(itemToRemove.properties).some(
+							([key, value]) => key === "Add-on" && value === "Premium Gift Box"
 						);
-					
-				if (isGiftBoxItem) {
-					console.log(`🎁 Removing gift box item with key ${itemKey} directly`);
-					// For gift box items, remove only this specific item using the key as id
-					const response = await fetch("/cart/change.js", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Accept: "application/json",
-						},
-						body: JSON.stringify({
-							id: itemKey,
-							quantity: 0,
-							sections: 'cart-icon-bubble',
-							sections_url: window.location.pathname
-						}),
-					});
 
-					if (!response.ok) {
-						throw new Error(`Failed to remove gift box item: ${response.status}`);
-					}
+					if (isGiftBoxItem) {
+						console.log(
+							`🎁 Removing gift box item with key ${itemKey} directly`
+						);
+						// For gift box items, remove only this specific item using the key as id
+						const response = await fetch("/cart/change.js", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+								Accept: "application/json",
+							},
+							body: JSON.stringify({
+								id: itemKey,
+								quantity: 0,
+								sections: "cart-icon-bubble",
+								sections_url: window.location.pathname,
+							}),
+						});
 
-					cartData = await response.json();
-					
-					// Update cart icon bubble immediately with the response that has sections
-					this.updateCartIconBubble(cartData);
-					
-					// Update checkout view for gift box removal
-					await this.updateCheckoutViewWithCartData(cartData);
-					cartData.checkoutViewAlreadyUpdated = true;
+						if (!response.ok) {
+							throw new Error(
+								`Failed to remove gift box item: ${response.status}`
+							);
+						}
+
+						cartData = await response.json();
+
+						// Update cart icon bubble immediately with the response that has sections
+						this.updateCartIconBubble(cartData);
+
+						// Update checkout view for gift box removal
+						await this.updateCheckoutViewWithCartData(cartData);
+						cartData.checkoutViewAlreadyUpdated = true;
 					} else {
-						console.log(`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`);
-						
+						console.log(
+							`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`
+						);
+
 						// Find associated gift boxes BEFORE removing the main item
-						const associatedGiftBoxKeys = await this.findAssociatedGiftBoxesFromCartData(itemKey, currentCartData);
-						
-						console.log(`🗑️ REMOVE ITEM: Found ${associatedGiftBoxKeys.length} associated gift boxes to remove:`, associatedGiftBoxKeys);
+						const associatedGiftBoxKeys =
+							await this.findAssociatedGiftBoxesFromCartData(
+								itemKey,
+								currentCartData
+							);
+
+						console.log(
+							`🗑️ REMOVE ITEM: Found ${associatedGiftBoxKeys.length} associated gift boxes to remove:`,
+							associatedGiftBoxKeys
+						);
 
 						// Remove the main item first using the key as id
 						const response = await fetch("/cart/change.js", {
@@ -3720,8 +4060,8 @@
 							body: JSON.stringify({
 								id: itemKey,
 								quantity: 0,
-								sections: 'cart-icon-bubble',
-								sections_url: window.location.pathname
+								sections: "cart-icon-bubble",
+								sections_url: window.location.pathname,
 							}),
 						});
 
@@ -3730,23 +4070,30 @@
 						}
 
 						cartData = await response.json();
-						
+
 						// Update cart icon bubble immediately with the response that has sections
 						this.updateCartIconBubble(cartData);
 
 						// Remove associated gift boxes
 						if (associatedGiftBoxKeys.length > 0) {
-							console.log(`🎁 Removing ${associatedGiftBoxKeys.length} associated gift boxes`);
+							console.log(
+								`🎁 Removing ${associatedGiftBoxKeys.length} associated gift boxes`
+							);
 							console.log(`🎁 Gift box keys to remove:`, associatedGiftBoxKeys);
-							
+
 							for (const giftBoxKey of associatedGiftBoxKeys) {
-								console.log(`🎁 Attempting to remove gift box with key: ${giftBoxKey}`);
-								console.log(`🎁 Request body:`, JSON.stringify({
-									id: giftBoxKey,
-									quantity: 0,
-									sections: 'cart-icon-bubble',
-									sections_url: window.location.pathname
-								}));
+								console.log(
+									`🎁 Attempting to remove gift box with key: ${giftBoxKey}`
+								);
+								console.log(
+									`🎁 Request body:`,
+									JSON.stringify({
+										id: giftBoxKey,
+										quantity: 0,
+										sections: "cart-icon-bubble",
+										sections_url: window.location.pathname,
+									})
+								);
 								try {
 									const giftBoxResponse = await fetch("/cart/change.js", {
 										method: "POST",
@@ -3757,36 +4104,50 @@
 										body: JSON.stringify({
 											id: giftBoxKey,
 											quantity: 0,
-											sections: 'cart-icon-bubble',
-											sections_url: window.location.pathname
+											sections: "cart-icon-bubble",
+											sections_url: window.location.pathname,
 										}),
 									});
 
-									console.log(`🎁 Gift box removal response status:`, giftBoxResponse.status);
+									console.log(
+										`🎁 Gift box removal response status:`,
+										giftBoxResponse.status
+									);
 
 									if (giftBoxResponse.ok) {
 										const responseData = await giftBoxResponse.json();
-										console.log(`✅ Removed gift box ${giftBoxKey}`, responseData);
-										
+										console.log(
+											`✅ Removed gift box ${giftBoxKey}`,
+											responseData
+										);
+
 										// Update cart icon bubble with the latest response
 										this.updateCartIconBubble(responseData);
-										
+
 										// Update cartData to the latest response for final checkout view update
 										cartData = responseData;
 									} else {
 										const errorText = await giftBoxResponse.text();
-										console.warn(`⚠️ Failed to remove gift box ${giftBoxKey}: ${giftBoxResponse.status}`, errorText);
+										console.warn(
+											`⚠️ Failed to remove gift box ${giftBoxKey}: ${giftBoxResponse.status}`,
+											errorText
+										);
 									}
 								} catch (giftBoxError) {
-									console.error(`❌ Error removing gift box ${giftBoxKey}:`, giftBoxError);
+									console.error(
+										`❌ Error removing gift box ${giftBoxKey}:`,
+										giftBoxError
+									);
 								}
 							}
 
-							console.log(`🎁 Finished removing gift boxes, fetching updated cart data...`);
+							console.log(
+								`🎁 Finished removing gift boxes, fetching updated cart data...`
+							);
 							// Fetch updated cart data after removing gift boxes (for checkout view update)
 							const updatedCartData = await this.fetchUpdatedCartData();
 							console.log(`🎁 Updated cart data:`, updatedCartData);
-							
+
 							// Use updated cart data for checkout view and replace cartData
 							if (updatedCartData) {
 								// Update checkout view with fresh data
@@ -3804,17 +4165,16 @@
 					}
 				}
 
-			// Update the checkout view with the new cart state (if not already updated above)
-			if (!cartData.checkoutViewAlreadyUpdated) {
-				if (!cartData.sections || !cartData.sections['cart-icon-bubble']) {
-					// cartData was fetched without sections, update checkout view normally
-					await this.updateCheckoutView(cartData);
-				} else {
-					// cartData has sections, just update checkout view without re-fetching
-					await this.updateCheckoutViewWithCartData(cartData);
+				// Update the checkout view with the new cart state (if not already updated above)
+				if (!cartData.checkoutViewAlreadyUpdated) {
+					if (!cartData.sections || !cartData.sections["cart-icon-bubble"]) {
+						// cartData was fetched without sections, update checkout view normally
+						await this.updateCheckoutView(cartData);
+					} else {
+						// cartData has sections, just update checkout view without re-fetching
+						await this.updateCheckoutViewWithCartData(cartData);
+					}
 				}
-			}
-
 			} catch (error) {
 				console.error("Failed to remove cart item:", error);
 				// Show error message to user
@@ -3827,43 +4187,43 @@
 			}
 		}
 
-	hideCheckoutSections() {
-		// Always hide these checkout-specific sections (they should only be visible when cart has items in checkout view)
-		const stepProcessSection = this.modal.querySelector(
-			".step-process-section"
-		);
-		if (stepProcessSection) {
-			stepProcessSection.style.display = "none";
-		}
+		hideCheckoutSections() {
+			// Always hide these checkout-specific sections (they should only be visible when cart has items in checkout view)
+			const stepProcessSection = this.modal.querySelector(
+				".step-process-section"
+			);
+			if (stepProcessSection) {
+				stepProcessSection.style.display = "none";
+			}
 
-		const countdownSection = this.modal.querySelector(".countdown-section");
-		if (countdownSection) {
-			countdownSection.style.display = "none";
-		}
+			const countdownSection = this.modal.querySelector(".countdown-section");
+			if (countdownSection) {
+				countdownSection.style.display = "none";
+			}
 
-		const additionalRecommendationsSection = this.modal.querySelector(
-			".additional-recommendations-section"
-		);
-		if (additionalRecommendationsSection) {
-			additionalRecommendationsSection.style.display = "none";
-		}
+			const additionalRecommendationsSection = this.modal.querySelector(
+				".additional-recommendations-section"
+			);
+			if (additionalRecommendationsSection) {
+				additionalRecommendationsSection.style.display = "none";
+			}
 
-		// Handle footer based on current view and context
-		const footer = this.modal.querySelector(".mini-atc-modal__footer");
-		if (footer) {
-			if (this.currentView === "checkout") {
-				// In checkout view with empty cart, always hide the footer
-				footer.style.display = "none";
-			} else if (
-				this.currentView === "personalize" &&
-				this.openingContext === "add-multiple-products"
-			) {
-				// In personalize view with add-multiple-products, keep footer visible
-				footer.style.display = "";
-				footer.style.opacity = "1";
+			// Handle footer based on current view and context
+			const footer = this.modal.querySelector(".mini-atc-modal__footer");
+			if (footer) {
+				if (this.currentView === "checkout") {
+					// In checkout view with empty cart, always hide the footer
+					footer.style.display = "none";
+				} else if (
+					this.currentView === "personalize" &&
+					this.openingContext === "add-multiple-products"
+				) {
+					// In personalize view with add-multiple-products, keep footer visible
+					footer.style.display = "";
+					footer.style.opacity = "1";
+				}
 			}
 		}
-	}
 
 		showCheckoutSections() {
 			// Only show checkout-specific sections when in checkout view
