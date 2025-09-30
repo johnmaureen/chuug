@@ -1505,29 +1505,105 @@
 			}
 		}
 
-		setupEngravingToggleListener() {
-			const engravingToggle = this.modal.querySelector(
-				'[data-personalization-toggle="engraving"]'
+	setupEngravingToggleListener() {
+		const engravingToggle = this.modal.querySelector(
+			'[data-personalization-toggle="engraving"]'
+		);
+
+		if (engravingToggle) {
+			// Remove any existing listeners to avoid duplicates
+			engravingToggle.removeEventListener(
+				"change",
+				this.handleEngravingToggleChange
 			);
 
-			if (engravingToggle) {
-				// Remove any existing listeners to avoid duplicates
-				engravingToggle.removeEventListener(
-					"change",
-					this.handleEngravingToggleChange
-				);
+			// Add the new listener
+			this.handleEngravingToggleChange = async (event) => {
+				this.calculatePricing();
+				// Update compare-at prices for existing cart items
+				await this.updateCartItemCompareAtPrices(event.target.checked);
+			};
 
-				// Add the new listener
-				this.handleEngravingToggleChange = (event) => {
-					this.calculatePricing();
-				};
-
-				engravingToggle.addEventListener(
-					"change",
-					this.handleEngravingToggleChange
-				);
-			}
+			engravingToggle.addEventListener(
+				"change",
+				this.handleEngravingToggleChange
+			);
 		}
+	}
+
+	async updateCartItemCompareAtPrices(engravingEnabled) {
+		try {
+			// Get current cart data
+			const cartData = await this.fetchUpdatedCartData();
+			
+			if (!cartData || !cartData.items) {
+				return;
+			}
+
+			// Get the current multiplier from POMC system
+			const multiplier = window.pomcSystem?.getMultiplier() || 1;
+			const selectedProductAmountData = window.pomcSystem?.getSelectedProductAmountData();
+
+			if (!selectedProductAmountData?.variants) {
+				return;
+			}
+
+			// Calculate the new per-item compare-at price
+			const variantIndex = engravingEnabled ? 1 : 0;
+			const variantData = selectedProductAmountData.variants[variantIndex];
+			
+			if (!variantData?.compare_at_price) {
+				return;
+			}
+
+			const perItemCompareAtPrice = Math.round(variantData.compare_at_price / multiplier);
+
+			// Find and update all vessel items (items with Vessel properties)
+			const updates = [];
+			for (const item of cartData.items) {
+				// Check if this is a vessel item (has Vessel X Product property)
+				const isVesselItem = item.properties && Object.keys(item.properties).some(
+					key => key.includes('Vessel') && key.includes('Product')
+				);
+
+				if (isVesselItem && item.properties['_Compare At Price']) {
+					// Only update if the compare-at price actually changed
+					if (item.properties['_Compare At Price'] !== perItemCompareAtPrice) {
+						updates.push({
+							key: item.key,
+							properties: {
+								...item.properties,
+								'_Compare At Price': perItemCompareAtPrice
+							}
+						});
+					}
+				}
+			}
+
+			// Perform the updates
+			if (updates.length > 0) {
+				console.log(`📝 Updating compare-at prices for ${updates.length} items to £${(perItemCompareAtPrice/100).toFixed(2)}`);
+				
+				for (const update of updates) {
+					await fetch('/cart/change.js', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							id: update.key,
+							properties: update.properties
+						})
+					});
+				}
+
+				// Refresh the checkout view to show updated prices
+				await this.updateCheckoutView();
+			}
+		} catch (error) {
+			console.error('Failed to update cart item compare-at prices:', error);
+		}
+	}
 
 		isEngravingEnabled() {
 			// First check the mini ATC modal engraving toggle
@@ -1633,14 +1709,31 @@
 						}
 					}
 					
-					if (savingsEl && cartData.total_discount > 0) {
-						const savings = (cartData.total_discount / 100).toFixed(2);
-						// Update only the text content, preserve structure
-						const placeholder = savingsEl.querySelector(".pricing-placeholder");
-						if (placeholder) {
-							placeholder.textContent = `You Saved £${savings}`;
-						} else {
-							savingsEl.textContent = `You Saved £${savings}`;
+					if (savingsEl) {
+						// Calculate savings from compare at prices
+						let totalCompareAtPrice = 0;
+						let currentTotal = cartData.total_price;
+						
+						cartData.items.forEach(item => {
+							if (item.properties && item.properties["_Compare At Price"]) {
+								const compareAtPrice = parseInt(item.properties["_Compare At Price"]) * item.quantity;
+								totalCompareAtPrice += compareAtPrice;
+							} else {
+								totalCompareAtPrice += item.original_line_price;
+							}
+						});
+						
+						const savings = totalCompareAtPrice - currentTotal;
+						
+						if (savings > 0) {
+							const formattedSavings = (savings / 100).toFixed(2);
+							// Update only the text content, preserve structure
+							const placeholder = savingsEl.querySelector(".pricing-placeholder");
+							if (placeholder) {
+								placeholder.textContent = `You Saved £${formattedSavings}`;
+							} else {
+								savingsEl.textContent = `You Saved £${formattedSavings}`;
+							}
 						}
 					}
 				})
@@ -2100,7 +2193,7 @@
 				window.pomcSystem.getSelectedProductAmountData();
 
 
-			// Determine if engraving is enabled
+				// Determine if engraving is enabled
 			const engravingEnabled = this.isEngravingEnabled();
 
 			// Process each vessel
@@ -2154,6 +2247,17 @@
 						properties[`Vessel ${vesselNumber} Rope Type`] = selection.ropeType;
 					}
 
+				// Add compare-at price from selected product amount data (per item)
+				if (selectedProductAmountData?.variants) {
+					const variantIndex = engravingEnabled ? 1 : 0;
+					const variantData = selectedProductAmountData.variants[variantIndex];
+					if (variantData?.compare_at_price && multiplier > 0) {
+						// Divide bundle compare-at price by multiplier to get per-item price
+						const perItemCompareAtPrice = Math.round(variantData.compare_at_price / multiplier);
+						properties["_Compare At Price"] = perItemCompareAtPrice;
+					}
+				}
+
 					const item = {
 						id: variantId,
 						quantity: 1,
@@ -2173,13 +2277,20 @@
 					selectedProductAmountData.variants?.[fallbackVariantIndex];
 
 				if (fallbackVariant?.id) {
+					const fallbackProperties = {
+						"Product Source": "Selected Product Amount Data",
+						...(engravingEnabled && { Engraving: "Enabled" }),
+					};
+
+					// Add compare-at price if available
+					if (fallbackVariant.compare_at_price) {
+						fallbackProperties["_Compare At Price"] = fallbackVariant.compare_at_price;
+					}
+
 					const fallbackItem = {
 						id: fallbackVariant.id,
 						quantity: multiplier || 1,
-						properties: {
-							"Product Source": "Selected Product Amount Data",
-							...(engravingEnabled && { Engraving: "Enabled" }),
-						},
+						properties: fallbackProperties,
 					};
 
 					items.push(fallbackItem);
@@ -2641,19 +2752,14 @@
 				
 				console.log("🛒 Temp container children:", tempContainer.children.length);
 				
-				// Append all items to the main container
-				while (tempContainer.firstChild) {
-					container.appendChild(tempContainer.firstChild);
-				}
-				
-				console.log("🛒 Final container children:", container.children.length);
-				console.log("🛒 Container HTML:", container.innerHTML);
-				console.log("🛒 Container classes:", container.className);
-				console.log("🛒 Container style:", container.style.cssText);
-				
-			} catch (error) {
-				console.error("Failed to render cart items:", error);
+			// Append all items to the main container
+			while (tempContainer.firstChild) {
+				container.appendChild(tempContainer.firstChild);
 			}
+			
+		} catch (error) {
+			console.error("Failed to render cart items:", error);
+		}
 		}
 
 		async renderCartItem(item, allCartItems) {

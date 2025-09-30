@@ -27,7 +27,17 @@
           data-original-price="true"
           aria-label="Original price before discounts"
         >
-          <span class="pricing-placeholder">£190.00</span>
+          {%- comment -%} Calculate total original price from compare at prices {%- endcomment -%}
+          {%- assign modal_total_compare_at_price = 0 -%}
+          {%- for item in cart.items -%}
+            {%- if item.properties["_Compare At Price"] -%}
+              {%- assign compare_at_line_price = item.properties["_Compare At Price"] | times: item.quantity -%}
+              {%- assign modal_total_compare_at_price = modal_total_compare_at_price | plus: compare_at_line_price -%}
+            {%- else -%}
+              {%- assign modal_total_compare_at_price = modal_total_compare_at_price | plus: item.original_line_price -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <span class="pricing-dynamic">{{ modal_total_compare_at_price | money }}</span>
         </span>
       </div>
     </div>
@@ -43,8 +53,20 @@
       >
         <path d="M7.5 0L9.18 5.18L15 5.18L10.41 8.32L12.09 13.5L7.5 10.36L2.91 13.5L4.59 8.32L0 5.18L5.82 5.18L7.5 0Z" fill="#A43223"/>
       </svg>
-      <span class="mini-atc-modal__savings-text" data-savings-amount="true">
-        <span class="pricing-placeholder">You Saved £45.64</span>
+      {%- comment -%} Calculate total savings amount {%- endcomment -%}
+      {%- assign modal_total_compare_at_price = 0 -%}
+      {%- for item in cart.items -%}
+        {%- if item.properties["_Compare At Price"] -%}
+          {%- assign compare_at_line_price = item.properties["_Compare At Price"] | times: item.quantity -%}
+          {%- assign modal_total_compare_at_price = modal_total_compare_at_price | plus: compare_at_line_price -%}
+        {%- else -%}
+          {%- assign modal_total_compare_at_price = modal_total_compare_at_price | plus: item.original_line_price -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign modal_total_savings = modal_total_compare_at_price | minus: cart.total_price -%}
+      
+      <span class="mini-atc-modal__savings-text" data-savings-amount="{{ modal_total_savings }}">
+        <span class="pricing-dynamic">You Saved {{ modal_total_savings | money }}</span>
       </span>
     </div>
   </div>

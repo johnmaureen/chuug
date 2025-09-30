@@ -179,7 +179,13 @@
               {{ item.final_price | money }}
             </span>
             <span class="checkout-products-wrap__original-price">
-              {{ item.original_price | money }}
+              {% if item.properties["_Compare At Price"] %}
+                {{ item.properties["_Compare At Price"] | money }}
+              {% elsif item.variant.compare_at_price and item.variant.compare_at_price > item.original_price %}
+                {{ item.variant.compare_at_price | money }}
+              {% else %}
+                {{ item.original_price | money }}
+              {% endif %}
             </span>
           {% else %}
             <span class="checkout-products-wrap__current-price">

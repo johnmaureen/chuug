@@ -514,9 +514,33 @@
             {%- endif -%}
           </div>
 
+          {%- comment -%} Calculate total original price and savings from compare at prices {%- endcomment -%}
+          {%- assign drawer_total_compare_at_price = 0 -%}
+          {%- for item in cart.items -%}
+            {%- if item.properties["_Compare At Price"] -%}
+              {%- assign compare_at_line_price = item.properties["_Compare At Price"] | times: item.quantity -%}
+              {%- assign drawer_total_compare_at_price = drawer_total_compare_at_price | plus: compare_at_line_price -%}
+            {%- else -%}
+              {%- assign drawer_total_compare_at_price = drawer_total_compare_at_price | plus: item.original_line_price -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- assign drawer_total_savings = drawer_total_compare_at_price | minus: wcp_total_price -%}
+
           <div class="totals" role="status">
             <h2 class="totals__total">{{ 'sections.cart.estimated_total' | t }}</h2>
             <p class="totals__total-value">{{ wcp_total_price | money}}</p>
+            
+            {%- if drawer_total_savings > 0 -%}
+              <div class="totals__savings" data-savings-amount="{{ drawer_total_savings }}">
+                <span class="totals__savings-label">You Saved</span>
+                <span class="totals__savings-value">{{ drawer_total_savings | money }}</span>
+              </div>
+            {%- endif -%}
+            
+            <div class="totals__original-price" data-original-price="{{ drawer_total_compare_at_price }}" style="display: none;">
+              <span class="totals__original-price-label">Original Price</span>
+              <span class="totals__original-price-value">{{ drawer_total_compare_at_price | money }}</span>
+            </div>
           </div>
 
 

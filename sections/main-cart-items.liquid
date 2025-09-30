@@ -262,7 +262,13 @@ checkCartItems();
                           {{ 'products.product.price.regular_price' | t }}
                         </span>
                         <s  data-hulkapps-ci-price data-key='{{item.key}}' class="cart-item__old-price product-option">
-                          {{- item.original_price | money -}}
+                          {%- if item.properties["_Compare At Price"] -%}
+                            {{- item.properties["_Compare At Price"] | money -}}
+                          {%- elsif item.variant.compare_at_price and item.variant.compare_at_price > item.original_price -%}
+                            {{- item.variant.compare_at_price | money -}}
+                          {%- else -%}
+                            {{- item.original_price | money -}}
+                          {%- endif -%}
                         </s>
                         <span class="visually-hidden">
                           {{ 'products.product.price.sale_price' | t }}
@@ -348,7 +354,15 @@ checkCartItems();
                           </dt>
                           <dd>
                             <s  data-hulkapps-line-price data-key='{{item.key}}' class="cart-item__old-price price price--end">
-                              {{ item.original_line_price | money }}
+                              {%- if item.properties["_Compare At Price"] -%}
+                                {%- assign compare_at_line_price = item.properties["_Compare At Price"] | times: item.quantity -%}
+                                {{ compare_at_line_price | money }}
+                              {%- elsif item.variant.compare_at_price and item.variant.compare_at_price > item.original_price -%}
+                                {%- assign compare_at_line_price = item.variant.compare_at_price | times: item.quantity -%}
+                                {{ compare_at_line_price | money }}
+                              {%- else -%}
+                                {{ item.original_line_price | money }}
+                              {%- endif -%}
                             </s>
                           </dd>
                           <dt class="visually-hidden">
@@ -577,7 +591,15 @@ checkCartItems();
                           </dt>
                           <dd>
                             <s  data-hulkapps-line-price data-key='{{item.key}}' class="cart-item__old-price price price--end">
-                              {{ item.original_line_price | money }}
+                              {%- if item.properties["_Compare At Price"] -%}
+                                {%- assign compare_at_line_price = item.properties["_Compare At Price"] | times: item.quantity -%}
+                                {{ compare_at_line_price | money }}
+                              {%- elsif item.variant.compare_at_price and item.variant.compare_at_price > item.original_price -%}
+                                {%- assign compare_at_line_price = item.variant.compare_at_price | times: item.quantity -%}
+                                {{ compare_at_line_price | money }}
+                              {%- else -%}
+                                {{ item.original_line_price | money }}
+                              {%- endif -%}
                             </s>
                           </dd>
                           <dt class="visually-hidden">
