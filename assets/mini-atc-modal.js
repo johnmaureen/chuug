@@ -3560,38 +3560,42 @@
 
 				let cartData;
 
-			// Handle special gift box case
-			if (itemKey === "gift-box") {
-				// Use the existing gift box removal method if available
-				if (
-					window.cartManager &&
-					typeof window.cartManager.removeGiftBox === "function"
-				) {
-					await window.cartManager.removeGiftBox();
-					// Fetch updated cart data
-					cartData = await this.fetchUpdatedCartData();
-					
-					// Fetch the cart icon bubble section separately
-					const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
-					try {
-						const sectionResponse = await fetch(sectionUrl);
-						if (sectionResponse.ok) {
-							const sectionData = await sectionResponse.json();
-							// Create a response object with sections for updateCartIconBubble
-							const responseWithSections = {
-								...cartData,
-								sections: sectionData
-							};
-							this.updateCartIconBubble(responseWithSections);
-						}
-					} catch (error) {
-						console.warn("Failed to fetch cart icon bubble section:", error);
+		// Handle special gift box case
+		if (itemKey === "gift-box") {
+			// Use the existing gift box removal method if available
+			if (
+				window.cartManager &&
+				typeof window.cartManager.removeGiftBox === "function"
+			) {
+				await window.cartManager.removeGiftBox();
+				// Fetch updated cart data
+				cartData = await this.fetchUpdatedCartData();
+				
+				// Fetch the cart icon bubble section separately
+				const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
+				try {
+					const sectionResponse = await fetch(sectionUrl);
+					if (sectionResponse.ok) {
+						const sectionData = await sectionResponse.json();
+						// Create a response object with sections for updateCartIconBubble
+						const responseWithSections = {
+							...cartData,
+							sections: sectionData
+						};
+						this.updateCartIconBubble(responseWithSections);
 					}
-				} else {
-					console.warn("Gift box removal method not available");
-					return;
+				} catch (error) {
+					console.warn("Failed to fetch cart icon bubble section:", error);
 				}
+				
+				// Update checkout view
+				await this.updateCheckoutViewWithCartData(cartData);
+				cartData.checkoutViewAlreadyUpdated = true;
 			} else {
+				console.warn("Gift box removal method not available");
+				return;
+			}
+		} else {
 					console.log(`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`);
 					
 					// Get current cart data to check if this is a gift box item
@@ -3604,31 +3608,35 @@
 							key === 'Add-on' && value === 'Premium Gift Box'
 						);
 					
-					if (isGiftBoxItem) {
-						console.log(`🎁 Removing gift box item with key ${itemKey} directly`);
-						// For gift box items, remove only this specific item using the key as id
-						const response = await fetch("/cart/change.js", {
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
-								Accept: "application/json",
-							},
-							body: JSON.stringify({
-								id: itemKey,
-								quantity: 0,
-								sections: 'cart-icon-bubble',
-								sections_url: window.location.pathname
-							}),
-						});
+				if (isGiftBoxItem) {
+					console.log(`🎁 Removing gift box item with key ${itemKey} directly`);
+					// For gift box items, remove only this specific item using the key as id
+					const response = await fetch("/cart/change.js", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/json",
+						},
+						body: JSON.stringify({
+							id: itemKey,
+							quantity: 0,
+							sections: 'cart-icon-bubble',
+							sections_url: window.location.pathname
+						}),
+					});
 
-						if (!response.ok) {
-							throw new Error(`Failed to remove gift box item: ${response.status}`);
-						}
+					if (!response.ok) {
+						throw new Error(`Failed to remove gift box item: ${response.status}`);
+					}
 
-						cartData = await response.json();
-						
-						// Update cart icon bubble immediately with the response that has sections
-						this.updateCartIconBubble(cartData);
+					cartData = await response.json();
+					
+					// Update cart icon bubble immediately with the response that has sections
+					this.updateCartIconBubble(cartData);
+					
+					// Update checkout view for gift box removal
+					await this.updateCheckoutViewWithCartData(cartData);
+					cartData.checkoutViewAlreadyUpdated = true;
 					} else {
 						console.log(`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`);
 						
@@ -3697,6 +3705,9 @@
 										
 										// Update cart icon bubble with the latest response
 										this.updateCartIconBubble(responseData);
+										
+										// Update cartData to the latest response for final checkout view update
+										cartData = responseData;
 									} else {
 										const errorText = await giftBoxResponse.text();
 										console.warn(`⚠️ Failed to remove gift box ${giftBoxKey}: ${giftBoxResponse.status}`, errorText);
@@ -3711,24 +3722,32 @@
 							const updatedCartData = await this.fetchUpdatedCartData();
 							console.log(`🎁 Updated cart data:`, updatedCartData);
 							
-							// Use updated cart data for checkout view, but keep cartData for final cart icon update
+							// Use updated cart data for checkout view and replace cartData
 							if (updatedCartData) {
 								// Update checkout view with fresh data
 								await this.updateCheckoutViewWithCartData(updatedCartData);
+								// Don't update again below, so set a flag or return early
+								cartData = updatedCartData;
+								cartData.checkoutViewAlreadyUpdated = true;
 							}
 						} else {
 							console.log(`🎁 No gift boxes to remove`);
+							// Update checkout view for single item removal (no gift boxes)
+							await this.updateCheckoutViewWithCartData(cartData);
+							cartData.checkoutViewAlreadyUpdated = true;
 						}
 					}
 				}
 
 			// Update the checkout view with the new cart state (if not already updated above)
-			if (!cartData.sections || !cartData.sections['cart-icon-bubble']) {
-				// cartData was fetched without sections, update checkout view normally
-				await this.updateCheckoutView(cartData);
-			} else {
-				// cartData has sections, just update checkout view without re-fetching
-				await this.updateCheckoutViewWithCartData(cartData);
+			if (!cartData.checkoutViewAlreadyUpdated) {
+				if (!cartData.sections || !cartData.sections['cart-icon-bubble']) {
+					// cartData was fetched without sections, update checkout view normally
+					await this.updateCheckoutView(cartData);
+				} else {
+					// cartData has sections, just update checkout view without re-fetching
+					await this.updateCheckoutViewWithCartData(cartData);
+				}
 			}
 
 			} catch (error) {
@@ -3743,46 +3762,43 @@
 			}
 		}
 
-		hideCheckoutSections() {
-			// Always hide these checkout-specific sections (they should only be visible when cart has items in checkout view)
-			const stepProcessSection = this.modal.querySelector(
-				".step-process-section"
-			);
-			if (stepProcessSection) {
-				stepProcessSection.style.display = "none";
-			}
+	hideCheckoutSections() {
+		// Always hide these checkout-specific sections (they should only be visible when cart has items in checkout view)
+		const stepProcessSection = this.modal.querySelector(
+			".step-process-section"
+		);
+		if (stepProcessSection) {
+			stepProcessSection.style.display = "none";
+		}
 
-			const countdownSection = this.modal.querySelector(".countdown-section");
-			if (countdownSection) {
-				countdownSection.style.display = "none";
-			}
+		const countdownSection = this.modal.querySelector(".countdown-section");
+		if (countdownSection) {
+			countdownSection.style.display = "none";
+		}
 
-			const additionalRecommendationsSection = this.modal.querySelector(
-				".additional-recommendations-section"
-			);
-			if (additionalRecommendationsSection) {
-				additionalRecommendationsSection.style.display = "none";
-			}
+		const additionalRecommendationsSection = this.modal.querySelector(
+			".additional-recommendations-section"
+		);
+		if (additionalRecommendationsSection) {
+			additionalRecommendationsSection.style.display = "none";
+		}
 
-			// Handle footer based on current view and context
-			const footer = this.modal.querySelector(".mini-atc-modal__footer");
-			if (footer) {
-				if (this.currentView === "checkout") {
-					// In checkout view, only hide footer if context allows it
-					const shouldShowFooter = this.shouldShowFooter(false); // Cart is empty if we're hiding sections
-					if (!shouldShowFooter) {
-						footer.style.display = "none";
-					}
-				} else if (
-					this.currentView === "personalize" &&
-					this.openingContext === "add-multiple-products"
-				) {
-					// In personalize view with add-multiple-products, keep footer visible
-					footer.style.display = "";
-					footer.style.opacity = "1";
-				}
+		// Handle footer based on current view and context
+		const footer = this.modal.querySelector(".mini-atc-modal__footer");
+		if (footer) {
+			if (this.currentView === "checkout") {
+				// In checkout view with empty cart, always hide the footer
+				footer.style.display = "none";
+			} else if (
+				this.currentView === "personalize" &&
+				this.openingContext === "add-multiple-products"
+			) {
+				// In personalize view with add-multiple-products, keep footer visible
+				footer.style.display = "";
+				footer.style.opacity = "1";
 			}
 		}
+	}
 
 		showCheckoutSections() {
 			// Only show checkout-specific sections when in checkout view
