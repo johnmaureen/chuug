@@ -2009,7 +2009,7 @@
 			if (btnTextEl && addToCartBtn) {
 				switch (viewName) {
 					case "checkout":
-						btnTextEl.textContent = "CHECK OUT";
+						btnTextEl.textContent = "PROCEED TO CHECKOUT";
 						addToCartBtn.setAttribute(
 							"data-modal-action",
 							"proceed-to-checkout"
