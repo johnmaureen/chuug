@@ -458,16 +458,20 @@
 				return { total: 0, originalPrice: 0, savings: 0 };
 			}
 
-		// Handle gift box pricing - only add when enabled
-		// The gift box price is loaded dynamically from product data
-		const giftBoxPrice = this.dynamicPrices.giftBox;
+			// FORCE GIFT BOX PRICING - This is a direct fix to ensure gift box pricing is always applied
+			if (state.giftBox?.enabled) {
+				console.log('🎁 FORCE: Gift box enabled, adding pricing');
+				const giftBoxPrice = this.dynamicPrices.giftBox || 200; // Default to £2.00 if not loaded
+				const multiplier = window.pomcSystem?.getMultiplier() || 2; // Default to 2 vessels
+				const giftBoxTotal = giftBoxPrice * multiplier;
+				console.log('🎁 FORCE: Adding gift box pricing:', giftBoxTotal, 'cents (', giftBoxPrice, 'x', multiplier, ')');
+				total += giftBoxTotal;
+				originalTotal += giftBoxTotal;
+				console.log('🎁 FORCE: New totals:', { total, originalTotal });
+			}
 
-		if (state.giftBox?.enabled && giftBoxPrice) {
-			// Gift box is enabled - multiply by number of vessels
-			const multiplier = window.pomcSystem?.getMultiplier() || 1;
-			total += giftBoxPrice * multiplier;
-			originalTotal += giftBoxPrice * multiplier;
-		}
+		// Gift box pricing is now handled by the FORCE section above
+		// No need to add it again here to avoid double counting
 		// When disabled, show vessel prices only
 
 			// Add mix & match variants (if pricing is available)
@@ -1657,7 +1661,9 @@
 			} catch (error) {}
 		}
 
-		updatePricingDisplay(pricing) {
+		async updatePricingDisplay(pricing) {
+			console.log('🚀🚀🚀 UPDATEPRICINGDISPLAY METHOD CALLED 🚀🚀🚀');
+			console.log('🚀 updatePricingDisplay called with pricing:', pricing);
 			// Check which view is currently active
 			const checkoutView = this.modal.querySelector('.mini-atc-modal__view.mini-atc-modal__checkout-view');
 			const personalizeView = this.modal.querySelector('.mini-atc-modal__view.mini-atc-modal__personalise-view');
@@ -1677,93 +1683,212 @@
 			// Check if personalize view is active (visible) - use computed style
 			if (personalizeView && window.getComputedStyle(personalizeView).display !== 'none') {
 				console.log('Using personalize pricing');
-				this.updatePersonalizePricing(pricing);
+				try {
+					await this.updatePersonalizePricing(pricing);
+				} catch (error) {
+					console.error('Error in updatePersonalizePricing:', error);
+				}
 				return;
 			}
 			
 			// Fallback to personalize pricing if no view is clearly active
 			console.log('Fallback to personalize pricing');
-			this.updatePersonalizePricing(pricing);
+			try {
+				await this.updatePersonalizePricing(pricing);
+			} catch (error) {
+				console.error('Error in updatePersonalizePricing (fallback):', error);
+			}
 		}
 
-		updateCheckoutPricing() {
-			// Get cart data and update pricing from cart totals
-			fetch('/cart.js')
-				.then(response => response.json())
-				.then(cartData => {
-					// Find pricing elements using the same selectors as personalize view
-					const currentPriceEl = this.modal.querySelector("[data-current-price]") ||
-						this.modal.querySelector(".mini-atc-modal__current-price");
-					const originalPriceEl = this.modal.querySelector("[data-original-price]") ||
-						this.modal.querySelector(".mini-atc-modal__original-price");
-					const savingsEl = this.modal.querySelector("[data-savings-amount]") ||
-						this.modal.querySelector(".mini-atc-modal__savings-text");
+	updateCheckoutPricing() {
+		// Get cart data and update pricing from cart totals
+		fetch('/cart.js')
+			.then(response => response.json())
+			.then(cartData => {
+				// Find pricing elements using the same selectors as personalize view
+				const currentPriceEl = this.modal.querySelector("[data-current-price]") ||
+					this.modal.querySelector(".mini-atc-modal__current-price");
+				const originalPriceEl = this.modal.querySelector("[data-original-price]") ||
+					this.modal.querySelector(".mini-atc-modal__original-price");
+				const savingsEl = this.modal.querySelector("[data-savings-amount]") ||
+					this.modal.querySelector(".mini-atc-modal__savings-text");
+				
+				if (currentPriceEl) {
+					const totalPrice = (cartData.total_price / 100).toFixed(2);
+					// Update only the text content, preserve structure
+					const placeholder = currentPriceEl.querySelector(".pricing-placeholder");
+					if (placeholder) {
+						placeholder.textContent = `£${totalPrice}`;
+					} else {
+						currentPriceEl.textContent = `£${totalPrice}`;
+					}
+				}
 					
-					if (currentPriceEl) {
-						const totalPrice = (cartData.total_price / 100).toFixed(2);
-						// Update only the text content, preserve structure
-						const placeholder = currentPriceEl.querySelector(".pricing-placeholder");
-						if (placeholder) {
-							placeholder.textContent = `£${totalPrice}`;
+				if (savingsEl) {
+					// Calculate savings from compare at prices
+					let totalCompareAtPrice = 0;
+					let currentTotal = cartData.total_price;
+					
+					cartData.items.forEach(item => {
+						if (item.properties && item.properties["_Compare At Price"]) {
+							const compareAtPrice = parseInt(item.properties["_Compare At Price"]) * item.quantity;
+							totalCompareAtPrice += compareAtPrice;
 						} else {
-							currentPriceEl.textContent = `£${totalPrice}`;
+							totalCompareAtPrice += item.original_line_price;
 						}
-					}
+					});
 					
-					if (savingsEl) {
-						// Calculate savings from compare at prices
-						let totalCompareAtPrice = 0;
-						let currentTotal = cartData.total_price;
-						
-						cartData.items.forEach(item => {
-							if (item.properties && item.properties["_Compare At Price"]) {
-								const compareAtPrice = parseInt(item.properties["_Compare At Price"]) * item.quantity;
-								totalCompareAtPrice += compareAtPrice;
-							} else {
-								totalCompareAtPrice += item.original_line_price;
-							}
-						});
-						
-						const savings = totalCompareAtPrice - currentTotal;
-						
-						if (savings > 0) {
-							const formattedSavings = (savings / 100).toFixed(2);
-							// Update only the text content, preserve structure
-							const placeholder = savingsEl.querySelector(".pricing-placeholder");
-							if (placeholder) {
-								placeholder.textContent = `You Saved £${formattedSavings}`;
-							} else {
-								savingsEl.textContent = `You Saved £${formattedSavings}`;
-							}
+					const savings = totalCompareAtPrice - currentTotal;
+					
+					if (savings > 0) {
+						const formattedSavings = (savings / 100).toFixed(2);
+						// Update only the text content, preserve structure
+						const placeholder = savingsEl.querySelector(".pricing-placeholder");
+						if (placeholder) {
+							placeholder.textContent = `You Saved £${formattedSavings}`;
+						} else {
+							savingsEl.textContent = `You Saved £${formattedSavings}`;
 						}
 					}
+				}
 				})
 				.catch(error => {
 					console.error('Failed to fetch cart data for pricing:', error);
 				});
 		}
 
-		updatePersonalizePricing(pricing) {
+		async updatePersonalizePricing(pricing) {
+			console.log('🎁🎁🎁 UPDATEPERSONALIZEPRICING METHOD CALLED 🎁🎁🎁');
+			console.log('🎁 updatePersonalizePricing START - METHOD CALLED');
+			console.log('🎁 updatePersonalizePricing START');
+			console.log('🎁 METHOD IS DEFINITELY BEING CALLED NOW');
+			console.log('🎁 Received pricing parameter:', pricing);
+			console.log('🎁 this.state exists:', !!this.state);
+			console.log('🎁 window.chuug_vessel_selections exists:', !!window.chuug_vessel_selections);
+			console.log('🎁 window.chuug_vessel_selections.selectedProductAmountData exists:', !!(window.chuug_vessel_selections && window.chuug_vessel_selections.selectedProductAmountData));
+			console.log('🎁 Full window.chuug_vessel_selections:', window.chuug_vessel_selections);
+			console.log('🎁 window.pomcSystem exists:', !!window.pomcSystem);
+			console.log('🎁 window.pomcSystem.getMultiplier():', window.pomcSystem?.getMultiplier());
+
 			// Get pricing from chuug_vessel_selections -> selectedProductAmountData
 			if (window.chuug_vessel_selections && window.chuug_vessel_selections.selectedProductAmountData) {
+				console.log('🎁 Found chuug_vessel_selections.selectedProductAmountData');
 				const selectedData = window.chuug_vessel_selections.selectedProductAmountData;
+				console.log('🎁 selectedData:', selectedData);
 				if (selectedData.variants) {
+					console.log('🎁 Found variants in selectedData');
 					const engravingEnabled = this.getEngravingState();
 					const variantIndex = engravingEnabled ? 1 : 0;
 					const variant = selectedData.variants[variantIndex];
+					console.log('🎁 Selected variant:', variant);
+
+				if (variant) {
+					// Use pricing from selectedProductAmountData as base, but add gift box pricing
+					let total = variant.price;
+					let originalTotal = variant.compare_at_price;
 					
-					if (variant) {
-						// Use pricing from selectedProductAmountData
-						pricing = {
-							total: variant.price,
-							originalPrice: variant.compare_at_price,
-							savings: variant.compare_at_price - variant.price,
-							formattedTotal: Utils.formatPrice(variant.price),
-							formattedOriginal: Utils.formatPrice(variant.compare_at_price),
-							formattedSavings: Utils.formatPrice(variant.compare_at_price - variant.price)
-						};
+					// Add gift box pricing if enabled
+					const state = this.state ? this.state.getState() : null;
+					let giftBoxPrice = this.dynamicPrices ? this.dynamicPrices.giftBox : null;
+					
+					if (!state) {
+						console.error('🎁 ERROR: this.state is undefined');
+						return;
+					}
+					
+					if (!this.dynamicPrices) {
+						console.log('🎁 this.dynamicPrices is undefined, using fallback approach');
+						// Use a fallback approach - get gift box price from global modal instance
+						const modalInstance = window.MiniATCModal?.getInstance?.();
+						if (modalInstance && modalInstance.pricing) {
+							giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
+							console.log('🎁 Got gift box price from modal instance:', giftBoxPrice);
+						}
+						
+						// If still no gift box price, use default
+						if (!giftBoxPrice && state.giftBox?.enabled) {
+							giftBoxPrice = 200; // Default £2.00 in cents
+							console.log('🎁 Using default gift box price:', giftBoxPrice);
+						}
+					} else {
+						// If gift box price isn't loaded yet, try to initialize it
+						if (!giftBoxPrice && state.giftBox?.enabled) {
+							console.log('🎁 Gift box price not loaded yet, initializing...');
+							await this.initializeGiftBoxPricing();
+							giftBoxPrice = this.dynamicPrices.giftBox;
+							console.log('🎁 Gift box price after initialization:', giftBoxPrice);
+						}
+					}
+
+					const multiplier = window.pomcSystem?.getMultiplier() || 1;
+					console.log('🎁 Personalize pricing debug:', {
+						giftBoxEnabled: state.giftBox?.enabled,
+						giftBoxPrice: giftBoxPrice,
+						multiplier: multiplier,
+						variantPrice: variant.price,
+						variantCompareAtPrice: variant.compare_at_price,
+						beforeTotal: total,
+						beforeOriginalTotal: originalTotal,
+						giftBoxPriceIsValid: giftBoxPrice && giftBoxPrice > 0
+					});
+					// Skip gift box pricing in main path since it's already applied by FORCE pricing
+					console.log('🎁 Main path: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting');
+					
+					// Validate values before formatting
+					console.log('🎁 Validating pricing values:', { total, originalTotal, savings: originalTotal - total });
+					
+					const validTotal = total && !isNaN(total) ? total : 0;
+					const validOriginalTotal = originalTotal && !isNaN(originalTotal) ? originalTotal : validTotal;
+					const validSavings = validOriginalTotal - validTotal;
+					
+					pricing = {
+						total: validTotal,
+						originalTotal: validOriginalTotal,
+						savings: validSavings,
+						formattedTotal: Utils.formatPrice(validTotal),
+						formattedOriginal: Utils.formatPrice(validOriginalTotal),
+						formattedSavings: Utils.formatPrice(validSavings)
+					};
+					
+					console.log('🎁 Final pricing object:', pricing);
+				}
+				}
+			} else {
+				console.log('🎁 No chuug_vessel_selections.selectedProductAmountData found, using fallback pricing');
+				// Fallback: Add gift box pricing to the existing pricing parameter
+				const state = this.state ? this.state.getState() : null;
+				let giftBoxPrice = this.dynamicPrices ? this.dynamicPrices.giftBox : null;
+				
+				if (!state) {
+					console.error('🎁 FALLBACK ERROR: this.state is undefined');
+					return;
+				}
+				
+				if (!this.dynamicPrices) {
+					console.log('🎁 FALLBACK: this.dynamicPrices is undefined, using fallback approach');
+					// Use a fallback approach - get gift box price from global modal instance
+					const modalInstance = window.MiniATCModal?.getInstance?.();
+					if (modalInstance && modalInstance.pricing) {
+						giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
+						console.log('🎁 FALLBACK: Got gift box price from modal instance:', giftBoxPrice);
+					}
+					
+					// If still no gift box price, use default
+					if (!giftBoxPrice && state.giftBox?.enabled) {
+						giftBoxPrice = 200; // Default £2.00 in cents
+						console.log('🎁 FALLBACK: Using default gift box price:', giftBoxPrice);
+					}
+				} else {
+					if (!giftBoxPrice && state.giftBox?.enabled) {
+						console.log('🎁 Fallback: Gift box price not loaded yet, initializing...');
+						await this.initializeGiftBoxPricing();
+						giftBoxPrice = this.dynamicPrices.giftBox;
+						console.log('🎁 Fallback: Gift box price after initialization:', giftBoxPrice);
 					}
 				}
+				
+				// Skip gift box pricing in fallback since it's already applied by FORCE pricing
+				console.log('🎁 Fallback: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting');
 			}
 			
 			// Try multiple selectors to find the price elements
@@ -1827,6 +1952,7 @@
 					savingsEl.textContent = `You Saved ${pricing.formattedSavings}`;
 				}
 			}
+			console.log('🎁 updatePersonalizePricing END');
 		}
 
 		switchView(viewName) {
@@ -2672,11 +2798,10 @@
 				// Update progress indicator based on non-gift-box item count
 				this.updateProgressIndicator(cartData);
 			}
-
-	} catch (error) {
-		console.error("Failed to update checkout view with cart data:", error);
+		} catch (error) {
+			console.error("Failed to update checkout view with cart data:", error);
+		}
 	}
-}
 
 	updateProgressIndicator(cartData) {
 		try {
@@ -2733,7 +2858,6 @@
 		async renderCartItems(cartItems, container) {
 			try {
 				console.log("🛒 renderCartItems called with:", cartItems.length, "items");
-				console.log("🛒 Container element:", container);
 				
 				// Create a temporary container to hold the rendered items
 				const tempContainer = document.createElement('div');
@@ -2750,8 +2874,6 @@
 						console.warn("🛒 Item element was null for:", item.id);
 					}
 				}
-				
-				console.log("🛒 Temp container children:", tempContainer.children.length);
 				
 			// Append all items to the main container
 			while (tempContainer.firstChild) {
