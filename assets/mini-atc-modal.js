@@ -1725,6 +1725,19 @@
 				const savingsEl = this.modal.querySelector("[data-savings-amount]") ||
 					this.modal.querySelector(".mini-atc-modal__savings-text");
 				
+				// Calculate total compare at price for both original price and savings
+				let totalCompareAtPrice = 0;
+				let currentTotal = cartData.total_price;
+				
+				cartData.items.forEach(item => {
+					if (item.properties && item.properties["_Compare At Price"]) {
+						const compareAtPrice = parseInt(item.properties["_Compare At Price"]) * item.quantity;
+						totalCompareAtPrice += compareAtPrice;
+					} else {
+						totalCompareAtPrice += item.original_line_price;
+					}
+				});
+				
 				if (currentPriceEl) {
 					const totalPrice = (cartData.total_price / 100).toFixed(2);
 					// Update only the text content, preserve structure
@@ -1735,27 +1748,25 @@
 						currentPriceEl.textContent = `£${totalPrice}`;
 					}
 				}
+				
+				if (originalPriceEl) {
+					const formattedOriginalPrice = (totalCompareAtPrice / 100).toFixed(2);
+					// Update only the text content, preserve structure
+					const placeholder = originalPriceEl.querySelector(".pricing-dynamic");
+					if (placeholder) {
+						placeholder.textContent = `£${formattedOriginalPrice}`;
+					} else {
+						originalPriceEl.textContent = `£${formattedOriginalPrice}`;
+					}
+				}
 					
 				if (savingsEl) {
-					// Calculate savings from compare at prices
-					let totalCompareAtPrice = 0;
-					let currentTotal = cartData.total_price;
-					
-					cartData.items.forEach(item => {
-						if (item.properties && item.properties["_Compare At Price"]) {
-							const compareAtPrice = parseInt(item.properties["_Compare At Price"]) * item.quantity;
-							totalCompareAtPrice += compareAtPrice;
-						} else {
-							totalCompareAtPrice += item.original_line_price;
-						}
-					});
-					
 					const savings = totalCompareAtPrice - currentTotal;
 					
 					if (savings > 0) {
 						const formattedSavings = (savings / 100).toFixed(2);
 						// Update only the text content, preserve structure
-						const placeholder = savingsEl.querySelector(".pricing-placeholder");
+						const placeholder = savingsEl.querySelector(".pricing-dynamic");
 						if (placeholder) {
 							placeholder.textContent = `You Saved £${formattedSavings}`;
 						} else {
