@@ -1594,16 +1594,24 @@
 				console.log(`📝 Updating compare-at prices for ${updates.length} items to £${(perItemCompareAtPrice/100).toFixed(2)}`);
 				
 				for (const update of updates) {
-					await fetch('/cart/change.js', {
+					const response = await fetch('/cart/change.js', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
 						},
 						body: JSON.stringify({
 							id: update.key,
-							properties: update.properties
+							properties: update.properties,
+							sections: 'cart-icon-bubble',
+							sections_url: window.location.pathname
 						})
 					});
+					
+					// Update cart icon bubble with the last response
+					if (update === updates[updates.length - 1]) {
+						const cartData = await response.json();
+						this.updateCartIconBubble(cartData);
+					}
 				}
 
 				// Refresh the checkout view to show updated prices
@@ -2185,13 +2193,11 @@
 					);
 				}
 
-				// Success - emit event and switch to checkout view
-				this.emit("cartUpdated", { cartData: response, items: cartData.items });
+			// Success - emit event and switch to checkout view
+			this.emit("cartUpdated", { cartData: response, items: cartData.items });
 
-				// Update cart UI if cart drawer exists
-				if (window.cart && typeof window.cart.renderContents === "function") {
-					window.cart.renderContents(response);
-				}
+			// Update cart icon bubble and cart UI
+			this.updateCartIconBubble(response);
 
 				// Switch to checkout view instead of closing
 				this.switchView("checkout");
@@ -2589,25 +2595,52 @@
 			return null;
 		}
 
-		async addItemsToShopifyCart(cartData) {
-			const config = {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-				body: JSON.stringify({
-					items: cartData.items,
-					...(cartData.note && { note: cartData.note }),
-					...(Object.keys(cartData.attributes).length > 0 && {
-						attributes: cartData.attributes,
-					}),
+	async addItemsToShopifyCart(cartData) {
+		const config = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+			body: JSON.stringify({
+				items: cartData.items,
+				...(cartData.note && { note: cartData.note }),
+				...(Object.keys(cartData.attributes).length > 0 && {
+					attributes: cartData.attributes,
 				}),
-			};
+				// Request updated sections for cart icon bubble
+				sections: 'cart-icon-bubble',
+				sections_url: window.location.pathname
+			}),
+		};
 
-			const response = await fetch("/cart/add.js", config);
-			return await response.json();
+		const response = await fetch("/cart/add.js", config);
+		return await response.json();
+	}
+
+	updateCartIconBubble(response) {
+		// Update cart icon bubble with the returned section HTML
+		if (response.sections && response.sections['cart-icon-bubble']) {
+			const cartIconBubble = document.getElementById('cart-icon-bubble');
+			if (cartIconBubble) {
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(response.sections['cart-icon-bubble'], 'text/html');
+				const newContent = doc.querySelector('.shopify-section');
+				if (newContent) {
+					cartIconBubble.innerHTML = newContent.innerHTML;
+				}
+			}
 		}
+
+		// Update cart drawer or cart notification if they exist
+		const cartDrawer = document.querySelector('cart-drawer');
+		const cartNotification = document.querySelector('cart-notification');
+		if (cartDrawer && typeof cartDrawer.renderContents === 'function') {
+			cartDrawer.renderContents(response);
+		} else if (cartNotification && typeof cartNotification.renderContents === 'function') {
+			cartNotification.renderContents(response);
+		}
+	}
 
 		setLoadingState(loading) {
 			const addToCartBtn = this.modal.querySelector(
@@ -3527,21 +3560,38 @@
 
 				let cartData;
 
-				// Handle special gift box case
-				if (itemKey === "gift-box") {
-					// Use the existing gift box removal method if available
-					if (
-						window.cartManager &&
-						typeof window.cartManager.removeGiftBox === "function"
-					) {
-						await window.cartManager.removeGiftBox();
-						// Fetch updated cart data
-						cartData = await this.fetchUpdatedCartData();
-					} else {
-						console.warn("Gift box removal method not available");
-						return;
+			// Handle special gift box case
+			if (itemKey === "gift-box") {
+				// Use the existing gift box removal method if available
+				if (
+					window.cartManager &&
+					typeof window.cartManager.removeGiftBox === "function"
+				) {
+					await window.cartManager.removeGiftBox();
+					// Fetch updated cart data
+					cartData = await this.fetchUpdatedCartData();
+					
+					// Fetch the cart icon bubble section separately
+					const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
+					try {
+						const sectionResponse = await fetch(sectionUrl);
+						if (sectionResponse.ok) {
+							const sectionData = await sectionResponse.json();
+							// Create a response object with sections for updateCartIconBubble
+							const responseWithSections = {
+								...cartData,
+								sections: sectionData
+							};
+							this.updateCartIconBubble(responseWithSections);
+						}
+					} catch (error) {
+						console.warn("Failed to fetch cart icon bubble section:", error);
 					}
 				} else {
+					console.warn("Gift box removal method not available");
+					return;
+				}
+			} else {
 					console.log(`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`);
 					
 					// Get current cart data to check if this is a gift box item
@@ -3566,6 +3616,8 @@
 							body: JSON.stringify({
 								id: itemKey,
 								quantity: 0,
+								sections: 'cart-icon-bubble',
+								sections_url: window.location.pathname
 							}),
 						});
 
@@ -3574,6 +3626,9 @@
 						}
 
 						cartData = await response.json();
+						
+						// Update cart icon bubble immediately with the response that has sections
+						this.updateCartIconBubble(cartData);
 					} else {
 						console.log(`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`);
 						
@@ -3592,6 +3647,8 @@
 							body: JSON.stringify({
 								id: itemKey,
 								quantity: 0,
+								sections: 'cart-icon-bubble',
+								sections_url: window.location.pathname
 							}),
 						});
 
@@ -3600,6 +3657,9 @@
 						}
 
 						cartData = await response.json();
+						
+						// Update cart icon bubble immediately with the response that has sections
+						this.updateCartIconBubble(cartData);
 
 						// Remove associated gift boxes
 						if (associatedGiftBoxKeys.length > 0) {
@@ -3611,6 +3671,8 @@
 								console.log(`🎁 Request body:`, JSON.stringify({
 									id: giftBoxKey,
 									quantity: 0,
+									sections: 'cart-icon-bubble',
+									sections_url: window.location.pathname
 								}));
 								try {
 									const giftBoxResponse = await fetch("/cart/change.js", {
@@ -3622,6 +3684,8 @@
 										body: JSON.stringify({
 											id: giftBoxKey,
 											quantity: 0,
+											sections: 'cart-icon-bubble',
+											sections_url: window.location.pathname
 										}),
 									});
 
@@ -3630,6 +3694,9 @@
 									if (giftBoxResponse.ok) {
 										const responseData = await giftBoxResponse.json();
 										console.log(`✅ Removed gift box ${giftBoxKey}`, responseData);
+										
+										// Update cart icon bubble with the latest response
+										this.updateCartIconBubble(responseData);
 									} else {
 										const errorText = await giftBoxResponse.text();
 										console.warn(`⚠️ Failed to remove gift box ${giftBoxKey}: ${giftBoxResponse.status}`, errorText);
@@ -3640,22 +3707,29 @@
 							}
 
 							console.log(`🎁 Finished removing gift boxes, fetching updated cart data...`);
-							// Fetch updated cart data after removing gift boxes
-							cartData = await this.fetchUpdatedCartData();
-							console.log(`🎁 Updated cart data:`, cartData);
+							// Fetch updated cart data after removing gift boxes (for checkout view update)
+							const updatedCartData = await this.fetchUpdatedCartData();
+							console.log(`🎁 Updated cart data:`, updatedCartData);
+							
+							// Use updated cart data for checkout view, but keep cartData for final cart icon update
+							if (updatedCartData) {
+								// Update checkout view with fresh data
+								await this.updateCheckoutViewWithCartData(updatedCartData);
+							}
 						} else {
 							console.log(`🎁 No gift boxes to remove`);
 						}
 					}
 				}
 
-				// Update the checkout view with the new cart state
+			// Update the checkout view with the new cart state (if not already updated above)
+			if (!cartData.sections || !cartData.sections['cart-icon-bubble']) {
+				// cartData was fetched without sections, update checkout view normally
 				await this.updateCheckoutView(cartData);
-
-				// Update cart UI if cart drawer exists
-				if (window.cart && typeof window.cart.renderContents === "function") {
-					window.cart.renderContents(cartData);
-				}
+			} else {
+				// cartData has sections, just update checkout view without re-fetching
+				await this.updateCheckoutViewWithCartData(cartData);
+			}
 
 			} catch (error) {
 				console.error("Failed to remove cart item:", error);
