@@ -15,7 +15,7 @@
 	width: 172px;
 	height: 111px;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
 	flex-shrink: 0;
 	border-radius: 10px;
@@ -23,6 +23,7 @@
 	background: #568594;
 	transition: all 0.3s ease;
 	position: relative;
+	padding: 14px 0;
 }
 .vessel_number_item.active {
 	border-radius: 10px;
