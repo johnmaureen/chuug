@@ -458,16 +458,17 @@
 				return { total: 0, originalPrice: 0, savings: 0 };
 			}
 
-			// Handle gift box pricing - only add when enabled
-			// The gift box price is loaded dynamically from product data
-			const giftBoxPrice = this.dynamicPrices.giftBox;
+		// Handle gift box pricing - only add when enabled
+		// The gift box price is loaded dynamically from product data
+		const giftBoxPrice = this.dynamicPrices.giftBox;
 
-			if (state.giftBox?.enabled && giftBoxPrice) {
-				// Gift box is enabled - add to both totals for consistent comparison
-				total += giftBoxPrice;
-				originalTotal += giftBoxPrice;
-			}
-			// When disabled, show vessel prices only
+		if (state.giftBox?.enabled && giftBoxPrice) {
+			// Gift box is enabled - multiply by number of vessels
+			const multiplier = window.pomcSystem?.getMultiplier() || 1;
+			total += giftBoxPrice * multiplier;
+			originalTotal += giftBoxPrice * multiplier;
+		}
+		// When disabled, show vessel prices only
 
 			// Add mix & match variants (if pricing is available)
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
