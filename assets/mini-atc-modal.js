@@ -2529,6 +2529,9 @@
 
 					// Show empty cart message
 					this.showEmptyCartMessage();
+					
+					// Refresh pricing to show empty cart (£0.00)
+					this.updateCheckoutPricing();
 				} else {
 					// Hide empty state
 					if (emptyState) {
@@ -2550,6 +2553,9 @@
 
 					// Re-bind event handlers for the newly rendered items
 					this.bindCheckoutItemEvents();
+					
+					// Refresh pricing to reflect the updated cart totals
+					this.updateCheckoutPricing();
 				}
 
 			} catch (error) {
