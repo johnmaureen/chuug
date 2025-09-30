@@ -2684,7 +2684,7 @@
 						<circle cx="10" cy="10" r="10" fill="#4CAF50"/>
 						<path d="M6 10L8.5 12.5L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 					</svg>
-					<span class="success-text">✅ Successfully added ${itemCount} ${itemText} to cart!</span>
+					<span class="success-text">Successfully added ${itemCount} ${itemText} to cart!</span>
 				</div>
 			`;
 
@@ -2700,6 +2700,11 @@
 						padding: 12px 16px;
 						margin-bottom: 16px;
 						animation: slideInSuccess 0.3s ease-out;
+						position:absolute;
+						top:0;
+						left:0;
+						right:0;
+						z-index:99;
 					}
 					
 					.success-content {
@@ -2857,23 +2862,72 @@
 			
 			console.log(`📊 Progress Indicator: ${nonGiftBoxItemCount} non-gift-box items in cart`);
 			
-			// Find the progress fill element
-			const progressFill = this.modal.querySelector('.step-process-indicator__progress-fill');
-			
-			if (progressFill) {
-				// Set width based on non-gift-box item count
-				if (nonGiftBoxItemCount >= 2) {
-					progressFill.style.width = '96%';
-					console.log('📊 Progress Indicator: Set to 100% (2+ items)');
-				} else if (nonGiftBoxItemCount === 1) {
-					progressFill.style.width = '50%';
-					console.log('📊 Progress Indicator: Set to 50% (1 item)');
-				} else {
-					// Reset to default CSS width for 0 items
-					progressFill.style.width = '';
-					console.log('📊 Progress Indicator: Reset to default width (0 items)');
-				}
+		// Find the progress fill element
+		const progressFill = this.modal.querySelector('.step-process-indicator__progress-fill');
+		
+		if (progressFill) {
+			// Set width based on non-gift-box item count
+			if (nonGiftBoxItemCount >= 2) {
+				progressFill.style.width = '96%';
+				console.log('📊 Progress Indicator: Set to 100% (2+ items)');
+			} else if (nonGiftBoxItemCount === 1) {
+				progressFill.style.width = '50%';
+				console.log('📊 Progress Indicator: Set to 50% (1 item)');
+			} else {
+				// Reset to default CSS width for 0 items
+				progressFill.style.width = '';
+				console.log('📊 Progress Indicator: Reset to default width (0 items)');
 			}
+		}
+		
+		// Update the third step (£30 OFF step)
+		const allSteps = this.modal.querySelectorAll('.step-process-indicator__step');
+		const thirdStep = allSteps[2]; // Third step (index 2)
+		
+		if (thirdStep) {
+			const thirdStepCircle = thirdStep.querySelector('.step-process-indicator__step-circle');
+			
+			if (nonGiftBoxItemCount >= 2) {
+				// Mark step as completed
+				thirdStep.classList.remove('step-process-indicator__step--active');
+				thirdStep.classList.add('step-process-indicator__step--completed');
+				
+				// Show checkmark SVG
+				if (thirdStepCircle) {
+					thirdStepCircle.innerHTML = `
+						<svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+						</svg>
+					`;
+				}
+				console.log('📊 Progress Indicator: Third step marked as completed with checkmark (2+ items)');
+			} else {
+				// Mark step as active
+				thirdStep.classList.remove('step-process-indicator__step--completed');
+				thirdStep.classList.add('step-process-indicator__step--active');
+				
+				// Show pound symbol
+				if (thirdStepCircle) {
+					thirdStepCircle.innerHTML = '<span class="step-process-indicator__pound-symbol">£</span>';
+				}
+				console.log('📊 Progress Indicator: Third step marked as active with pound symbol (<2 items)');
+			}
+		}
+		
+		// Update the header text
+		const headerElement = this.modal.querySelector('.step-process-indicator__header');
+		
+		if (headerElement) {
+			if (nonGiftBoxItemCount >= 2) {
+				// Show "You've unlock" text
+				headerElement.innerHTML = '🔥 You\'ve unlock <span>EXTRA £30 OFF</span>';
+				console.log('📊 Progress Indicator: Header text updated to "You\'ve unlock" (2+ items)');
+			} else {
+				// Show "You're only 1 CHUUG away" text
+				headerElement.innerHTML = '🔥 You\'re only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>';
+				console.log('📊 Progress Indicator: Header text updated to "You\'re only 1 CHUUG away" (<2 items)');
+			}
+		}
 		} catch (error) {
 			console.error("Failed to update progress indicator:", error);
 		}
