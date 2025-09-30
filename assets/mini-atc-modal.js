@@ -1525,8 +1525,12 @@
 			// Add the new listener
 			this.handleEngravingToggleChange = async (event) => {
 				this.calculatePricing();
-				// Update compare-at prices for existing cart items
-				await this.updateCartItemCompareAtPrices(event.target.checked);
+				// Only update cart item compare-at prices if we're in checkout view
+				// In personalize view, we don't need to update existing cart items
+				const checkoutView = this.modal.querySelector('.mini-atc-modal__checkout');
+				if (checkoutView && checkoutView.style.display !== 'none') {
+					await this.updateCartItemCompareAtPrices(event.target.checked);
+				}
 			};
 
 			engravingToggle.addEventListener(
