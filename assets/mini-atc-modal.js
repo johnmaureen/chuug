@@ -265,6 +265,26 @@
 			return { ...this.state };
 		}
 
+		resetEngraving() {
+			// Reset only the engraving vessels (clear all engraving text)
+			this.state.engraving = {
+				enabled: true, // Keep engraving enabled
+				vessels: {}, // Clear all vessel engravings
+			};
+			this.saveState();
+
+			// Force verification that localStorage was updated
+			const verification = StorageManager.load(CONFIG.STORAGE_KEY);
+			console.log("🔄 Engraving state reset - verification:", {
+				engravingVessels: verification?.engraving?.vessels,
+				shouldBeEmpty:
+					Object.keys(verification?.engraving?.vessels || {}).length === 0,
+			});
+
+			this.emit("engravingReset");
+			console.log("🔄 Engraving state reset - all vessel engravings cleared");
+		}
+
 		reset() {
 			this.state = {
 				engraving: { enabled: true, vessels: {} },
@@ -2150,30 +2170,32 @@
 				}
 			}
 
-	// Update button label and action based on view
-		if (btnTextEl && addToCartBtn) {
-			switch (viewName) {
-				case "checkout":
-					btnTextEl.textContent = "PROCEED TO CHECKOUT";
-					addToCartBtn.setAttribute(
-						"data-modal-action",
-						"proceed-to-checkout"
-					);
-					console.log("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
-					break;
-				case "personalize":
-				default:
-					btnTextEl.textContent = "ADD TO CART";
-					addToCartBtn.setAttribute("data-modal-action", "add-to-cart");
-					console.log("✅ Button updated for personalize view: ADD TO CART");
-					break;
+			// Update button label and action based on view
+			if (btnTextEl && addToCartBtn) {
+				switch (viewName) {
+					case "checkout":
+						btnTextEl.textContent = "PROCEED TO CHECKOUT";
+						addToCartBtn.setAttribute(
+							"data-modal-action",
+							"proceed-to-checkout"
+						);
+						console.log(
+							"✅ Button updated for checkout view: PROCEED TO CHECKOUT"
+						);
+						break;
+					case "personalize":
+					default:
+						btnTextEl.textContent = "ADD TO CART";
+						addToCartBtn.setAttribute("data-modal-action", "add-to-cart");
+						console.log("✅ Button updated for personalize view: ADD TO CART");
+						break;
+				}
+			} else {
+				console.warn("⚠️ Could not update button text:", {
+					btnTextEl: !!btnTextEl,
+					addToCartBtn: !!addToCartBtn,
+				});
 			}
-		} else {
-			console.warn("⚠️ Could not update button text:", {
-				btnTextEl: !!btnTextEl,
-				addToCartBtn: !!addToCartBtn
-			});
-		}
 
 			// Scroll to top
 			const content = this.modal.querySelector(".mini-atc-modal__content");
@@ -2208,6 +2230,21 @@
 			// Switch to appropriate view based on context
 			if (context === "add-multiple-products") {
 				this.switchView("personalize");
+
+				// Reset engraving state when opening from add-multiple-products
+				console.log(
+					"🔄 Resetting engraving state for add-multiple-products..."
+				);
+				this.state.resetEngraving();
+
+				// Reset engraving toggle to checked (default state)
+				const engravingToggle = this.modal.querySelector(
+					'[data-personalization-toggle="engraving"]'
+				);
+				if (engravingToggle) {
+					engravingToggle.checked = true;
+				}
+
 				// Ensure footer is visible for add-multiple-products context
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
@@ -2221,6 +2258,7 @@
 					currentView: this.currentView,
 					isActive: this.isActive,
 					state: this.state.getState(),
+					engravingVessels: this.state.getState().engraving?.vessels,
 					modalId: this.modal.id,
 					timestamp: new Date().toISOString(),
 				});
@@ -2261,6 +2299,26 @@
 
 			// Update vessel personalization rows based on current vessel count
 			this.updateVesselPersonalizationRows();
+
+			// If opening from add-multiple-products, ensure all vessel inputs are cleared
+			if (context === "add-multiple-products") {
+				// Use setTimeout to ensure inputs are cleared after DOM updates
+				setTimeout(() => {
+					const vesselInputs = this.modal.querySelectorAll(
+						"[data-vessel-input]"
+					);
+					vesselInputs.forEach((input) => {
+						const vesselId = input.getAttribute("data-vessel-input");
+						input.value = "";
+						// CRITICAL: Also update state since programmatic changes don't trigger 'input' event
+						this.state.updateVesselEngraving(vesselId, "");
+					});
+					console.log(
+						"🔄 Cleared all vessel input fields AND state:",
+						vesselInputs.length
+					);
+				}, 50);
+			}
 
 			// Fetch vessel selections data and update product images
 			this.fetchVesselSelectionsAndUpdateImages();
@@ -2327,6 +2385,30 @@
 			try {
 				// Show loading state
 				this.setLoadingState(true);
+
+				// CRITICAL: Sync input field values with state before collecting cart data
+				console.log(
+					"🔄 Syncing input field values with state before adding to cart..."
+				);
+				const vesselInputs = this.modal.querySelectorAll("[data-vessel-input]");
+				vesselInputs.forEach((input) => {
+					const vesselId = input.getAttribute("data-vessel-input");
+					const currentValue = input.value || "";
+					const stateValue =
+						this.state.getState().engraving?.vessels?.[vesselId] || "";
+
+					console.log(
+						`🔄 Vessel ${vesselId}: Input="${currentValue}", State="${stateValue}"`
+					);
+
+					// If values don't match, update state to match input
+					if (currentValue !== stateValue) {
+						console.log(
+							`⚠️ MISMATCH! Updating state to match input for Vessel ${vesselId}`
+						);
+						this.state.updateVesselEngraving(vesselId, currentValue);
+					}
+				});
 
 				// Collect all data for cart
 				const cartData = this.collectCartData();
@@ -2489,6 +2571,19 @@
 			// Determine if engraving is enabled
 			const engravingEnabled = this.isEngravingEnabled();
 
+			// DEBUG: Check actual input field values vs state
+			console.log("🔍 ENGRAVING STATE CHECK AT CART ADD TIME:");
+			console.log("🔍 State engraving vessels:", state.engraving?.vessels);
+			const vesselInputs = this.modal.querySelectorAll("[data-vessel-input]");
+			const inputValues = {};
+			vesselInputs.forEach((input) => {
+				const vesselId = input.getAttribute("data-vessel-input");
+				inputValues[vesselId] = input.value;
+				console.log(`🔍 Input field Vessel ${vesselId}: "${input.value}"`);
+			});
+			console.log("🔍 Input field values:", inputValues);
+			console.log("🔍 Engraving enabled:", engravingEnabled);
+
 			// Process each vessel
 			Object.entries(vesselSelections).forEach(
 				([vesselIndex, selection], index) => {
@@ -2505,6 +2600,13 @@
 					const vesselNumber = parseInt(vesselIndex);
 					const vesselEngraving =
 						state.engraving?.vessels?.[vesselNumber] || "";
+
+					// Debug log for engraving values
+					console.log(`📝 Building cart item for Vessel ${vesselNumber}:`, {
+						vesselEngraving,
+						engravingEnabled,
+						allEngravingVessels: state.engraving?.vessels,
+					});
 
 					// For POMC system, we might need to determine variant based on engraving differently
 					// Check if there's an engraving variant available
@@ -2524,6 +2626,14 @@
 						properties[`Vessel ${vesselNumber} Engraving`] = vesselEngraving
 							.trim()
 							.toUpperCase();
+						console.log(
+							`✅ Added engraving to cart item for Vessel ${vesselNumber}:`,
+							vesselEngraving
+						);
+					} else {
+						console.log(
+							`ℹ️ No engraving for Vessel ${vesselNumber} (empty or disabled)`
+						);
 					}
 
 					// Add vessel selection details
@@ -2809,34 +2919,38 @@
 			}
 		}
 
-	setLoadingState(loading) {
-		const addToCartBtn = this.modal.querySelector(
-			".mini-atc-modal__add-to-cart-btn"
-		);
-		const btnText = addToCartBtn?.querySelector(".mini-atc-modal__btn-text");
+		setLoadingState(loading) {
+			const addToCartBtn = this.modal.querySelector(
+				".mini-atc-modal__add-to-cart-btn"
+			);
+			const btnText = addToCartBtn?.querySelector(".mini-atc-modal__btn-text");
 
-		if (loading) {
-			addToCartBtn?.classList.add("loading");
-			addToCartBtn?.setAttribute("disabled", "true");
-			if (btnText) {
-				btnText.textContent = "ADDING TO CART...";
-				console.log("🔄 Button loading state: ADDING TO CART...");
-			}
-		} else {
-			addToCartBtn?.classList.remove("loading");
-			addToCartBtn?.removeAttribute("disabled");
-			// Set button text based on current view
-			if (btnText) {
-				if (this.currentView === "checkout") {
-					btnText.textContent = "PROCEED TO CHECKOUT";
-					console.log("✅ Button loading complete (checkout view): PROCEED TO CHECKOUT");
-				} else {
-					btnText.textContent = "ADD TO CART";
-					console.log("✅ Button loading complete (personalize view): ADD TO CART");
+			if (loading) {
+				addToCartBtn?.classList.add("loading");
+				addToCartBtn?.setAttribute("disabled", "true");
+				if (btnText) {
+					btnText.textContent = "ADDING TO CART...";
+					console.log("🔄 Button loading state: ADDING TO CART...");
+				}
+			} else {
+				addToCartBtn?.classList.remove("loading");
+				addToCartBtn?.removeAttribute("disabled");
+				// Set button text based on current view
+				if (btnText) {
+					if (this.currentView === "checkout") {
+						btnText.textContent = "PROCEED TO CHECKOUT";
+						console.log(
+							"✅ Button loading complete (checkout view): PROCEED TO CHECKOUT"
+						);
+					} else {
+						btnText.textContent = "ADD TO CART";
+						console.log(
+							"✅ Button loading complete (personalize view): ADD TO CART"
+						);
+					}
 				}
 			}
 		}
-	}
 
 		showAddToCartSuccess(itemCount) {
 			// Create or update success message
@@ -4377,7 +4491,7 @@
 					}
 					
 					.empty-cart-message__content {
-						max-width: 300px;
+						max-width: 310px;
 						margin: 0 auto;
 					}
 					
