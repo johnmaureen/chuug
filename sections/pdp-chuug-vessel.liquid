@@ -569,28 +569,18 @@
   window.hideVesselValidationError = hideVesselValidationError;
   window.thereAreNoIncompleteInputs = thereAreNoIncompleteInputs;
   
-  // Set current product ID and handle for POMC system (with retry mechanism)
-  function setProductDataForPOMC() {
-    if (window.pomcSystem) {
-      window.pomcSystem.setCurrentProductId({{ product.id }});
-      window.pomcSystem.setCurrentProductHandle('{{ product.handle }}');
-      console.log('Product data set for POMC system:', {
-        id: {{ product.id }},
-        handle: '{{ product.handle }}'
-      });
-      console.log('Verification - Current product handle:', window.pomcSystem.getCurrentProductHandle());
-      console.log('Direct test - Setting and getting handle:');
-      window.pomcSystem.setCurrentProductHandle('test-handle');
-      console.log('After setting test handle:', window.pomcSystem.getCurrentProductHandle());
-      window.pomcSystem.setCurrentProductHandle('{{ product.handle }}');
-      console.log('After setting real handle:', window.pomcSystem.getCurrentProductHandle());
-    } else {
-      console.log('POMC system not ready, retrying...');
-      // Retry if POMC system not ready yet
-      setTimeout(setProductDataForPOMC, 100);
-    }
+  // Set current product ID and handle for POMC system
+  // POMC system loads synchronously with high priority, so it's available immediately
+  if (window.pomcSystem) {
+    window.pomcSystem.setCurrentProductId({{ product.id }});
+    window.pomcSystem.setCurrentProductHandle('{{ product.handle }}');
+    console.log('✅ Product data set for POMC system:', {
+      id: {{ product.id }},
+      handle: '{{ product.handle }}'
+    });
+  } else {
+    console.error('❌ POMC system not available. Please check if pomc-system.js is loaded correctly.');
   }
-  setProductDataForPOMC();
 
   // Add event listener for the button when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {

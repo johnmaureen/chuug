@@ -64,39 +64,27 @@
           </button>
         </div>
 
-        <!-- Product Options/Chips -->
+        <!-- Product Options/Chips - Simplified Display -->
         <div class="checkout-products-wrap__options">
-          {% comment %} {% if item.properties.size > 0 %}
-            {% for property in item.properties %}
-              {% unless property.first contains '_' %}
-                <div class="checkout-products-wrap__option-chip">
-                  {{ property.first }}: {{ property.last }}
-                </div>
-              {% endunless %}
-            {% endfor %}
-          {% endif %} {% endcomment %}
-          
-          <!-- Default options for CHUUG products -->
+          {% comment %} Show only essential product details like in the reference images {% endcomment %}
           {% if item.product.title contains 'CHUUG' or item.product.title contains 'Chuug' %}
+            {% comment %} Find engraving text from properties {% endcomment %}
             {% assign engraving_text = '' %}
-            {% assign has_insulated_cup = false %}
             {% for property in item.properties %}
               {% if property.first contains 'Engraving' %}
                 {% assign engraving_text = property.last %}
-              {% endif %}
-              {% assign property_key_lower = property.first | downcase %}
-              {% if property_key_lower contains 'insulated' or property_key_lower contains 'cup' or property_key_lower contains 'silver cup' %}
-                {% assign has_insulated_cup = true %}
+                {% break %}
               {% endif %}
             {% endfor %}
+            
+            {% comment %} Show monogram information if present {% endcomment %}
             {% if engraving_text != blank %}
               <div class="checkout-products-wrap__option-chip">
-                🔨 Engraved Initials, {{ engraving_text }}
+                Monogram Initials: {{ engraving_text }}
               </div>
-            {% endif %}
-            {% if has_insulated_cup %}
+            {% else %}
               <div class="checkout-products-wrap__option-chip">
-                🍺 Silver Insulated Cup
+                Monogram Initials: N/A
               </div>
             {% endif %}
           {% endif %}
