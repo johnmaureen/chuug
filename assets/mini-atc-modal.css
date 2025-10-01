@@ -1432,6 +1432,66 @@
 		max-width: 100px;
 	}
 
+	/* Personalization Section Responsive */
+	.mini-atc-modal__product-section {
+		margin-bottom: 1.5rem;
+	}
+
+	.mini-atc-product-swiper {
+		height: 400px;
+	}
+
+	.mini-atc-product-swiper .swiper-slide {
+		height: 400px;
+	}
+
+	/* Personalization Cards */
+	.mini-atc-modal__personalization {
+		padding: 15px;
+	}
+
+	.mini-atc-modal__personalization-header {
+		gap: 10px;
+		margin-bottom: 0.75rem;
+	}
+
+	.mini-atc-modal__personalization-header h4 {
+		font-size: 18px;
+		min-width: auto;
+	}
+
+	.mini-atc-modal__personalization-icon {
+		width: 50px;
+		height: 50px;
+	}
+
+	.mini-atc-modal__design-link {
+		font-size: 14px;
+	}
+
+	/* Vessel Personalization Rows */
+	.vessel-personalization-row {
+		gap: 15px;
+	}
+
+	.vessel-info {
+		gap: 15px;
+	}
+
+	.vessel-label {
+		font-size: 16px;
+		min-width: 70px;
+	}
+
+	.vessel-input-container {
+		max-width: 100%;
+	}
+
+	.vessel-name-input {
+		height: 50px;
+		font-size: 16px;
+	}
+
 	/* Mix & Match Responsive */
 	.mini-atc-modal__mix-match-info-content {
 		width: 100%;
@@ -1621,6 +1681,106 @@
 }
 
 @media (max-width: 480px) {
+	/* Content Spacing */
+	.mini-atc-modal__content {
+		padding: 1rem;
+	}
+
+	.mini-atc-modal__product-section {
+		margin-bottom: 1rem;
+	}
+
+	.mini-atc-modal__personalization-section {
+		margin-bottom: 1rem;
+	}
+
+	/* Product Image */
+	.mini-atc-product-swiper {
+		height: 300px;
+	}
+
+	.mini-atc-product-swiper .swiper-slide {
+		height: 300px;
+	}
+
+	/* Personalization Cards */
+	.mini-atc-modal__personalization {
+		padding: 12px;
+		gap: 8px;
+	}
+
+	/* Personalization Header - Stack Elements */
+	.mini-atc-modal__personalization-header {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+		margin-bottom: 1rem;
+	}
+
+	.mini-atc-modal__personalization-header-content {
+		width: 100%;
+		justify-content: flex-start;
+		align-items: center;
+	}
+
+	.mini-atc-modal__personalization-header-content_right {
+		width: 100%;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.mini-atc-modal__personalization-header h4 {
+		font-size: 16px;
+		line-height: 140%;
+	}
+
+	.mini-atc-modal__personalization-icon {
+		width: 45px;
+		height: 45px;
+	}
+
+	.mini-atc-modal__personalization-header-content br {
+		display: none;
+	}
+	.mini-atc-modal__design-link {
+		font-size: 13px;
+	}
+
+	/* Vessel Personalization - Stack Vertically */
+	.vessel-personalization-row {
+		flex-direction: column;
+		gap: 10px;
+		align-items: stretch;
+	}
+
+	.vessel-info {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.vessel-label {
+		font-size: 15px;
+		min-width: auto;
+	}
+
+	.vessel-input-container {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.vessel-name-input {
+		height: 48px;
+		font-size: 15px;
+		padding: 0 15px;
+	}
+
+	/* Complete Set Button */
+	.mini-atc-modal__complete-set-btn {
+		width: 100%;
+		padding: 12px;
+		font-size: 15px;
+	}
+
 	.countdown-timer {
 		padding: 10px 15px;
 	}
@@ -1629,6 +1789,86 @@
 		font-size: 14px;
 		white-space: normal;
 		text-align: center;
+	}
+}
+
+@media (max-width: 375px) {
+	/* Extra Small Devices - Stack Everything */
+	.mini-atc-modal__content {
+		padding: 0.75rem;
+	}
+
+	/* Product Image - Smaller on tiny screens */
+	.mini-atc-product-swiper {
+		height: 250px;
+	}
+
+	.mini-atc-product-swiper .swiper-slide {
+		height: 250px;
+	}
+
+	/* Personalization Cards - Tighter */
+	.mini-atc-modal__personalization {
+		padding: 10px;
+		gap: 6px;
+	}
+
+	.mini-atc-modal__personalization-header {
+		gap: 10px;
+	}
+
+	.mini-atc-modal__personalization-header h4 {
+		font-size: 15px;
+		line-height: 140%;
+	}
+
+	.mini-atc-modal__personalization-icon {
+		width: 40px;
+		height: 40px;
+		margin-top: -6px;
+	}
+
+	.mini-atc-modal__design-link {
+		font-size: 12px;
+	}
+
+	/* Vessel Label and Input */
+	.vessel-label {
+		font-size: 14px;
+	}
+
+	.vessel-name-input {
+		height: 45px;
+		font-size: 14px;
+		padding: 0 12px;
+	}
+
+	/* Toggle Size */
+	.mini-atc-modal__toggle {
+		width: 45px;
+		height: 22px;
+	}
+
+	.mini-atc-modal__toggle-slider:before {
+		height: 16px;
+		width: 16px;
+	}
+
+	.mini-atc-modal__toggle
+		input:checked
+		+ .mini-atc-modal__toggle-slider:before {
+		transform: translateX(23px);
+	}
+
+	/* Complete Set Button */
+	.mini-atc-modal__complete-set-btn {
+		padding: 10px;
+		font-size: 14px;
+	}
+
+	/* Modal Personalization Wrap */
+	.modal__personalization-vessel-name-wrap {
+		gap: 10px;
 	}
 }
 
