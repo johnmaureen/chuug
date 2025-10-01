@@ -1727,6 +1727,7 @@
 		width: 100%;
 		justify-content: space-between;
 		align-items: center;
+		gap: 4px;
 	}
 
 	.mini-atc-modal__personalization-header h4 {
@@ -1742,8 +1743,15 @@
 	.mini-atc-modal__personalization-header-content br {
 		display: none;
 	}
+
 	.mini-atc-modal__design-link {
 		font-size: 13px;
+		margin-right: 4px;
+	}
+
+	/* Group the design link and tooltip together */
+	.mini-atc-modal__personalization-header-content_right .icon-question-mark-tooltip {
+		margin-right: auto;
 	}
 
 	/* Vessel Personalization - Stack Vertically */
@@ -1817,6 +1825,10 @@
 		gap: 10px;
 	}
 
+	.mini-atc-modal__personalization-header-content_right {
+		gap: 4px;
+	}
+
 	.mini-atc-modal__personalization-header h4 {
 		font-size: 15px;
 		line-height: 140%;
@@ -1830,6 +1842,12 @@
 
 	.mini-atc-modal__design-link {
 		font-size: 12px;
+		margin-right: 4px;
+	}
+
+	/* Group the design link and tooltip together */
+	.mini-atc-modal__personalization-header-content_right .icon-question-mark-tooltip {
+		margin-right: auto;
 	}
 
 	/* Vessel Label and Input */
