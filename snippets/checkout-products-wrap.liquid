@@ -11,7 +11,7 @@
 {% comment %} Check if this is an add-on item that should be grouped with a vessel {% endcomment %}
 {% assign is_addon = false %}
 {% for property in item.properties %}
-  {% if property.first == 'Add-on' %}
+  {% if property.first == '_Add-on' %}
     {% assign is_addon = true %}
   {% endif %}
 {% endfor %}
@@ -99,6 +99,7 @@
         {% for property in item.properties %}
           {% if property.first contains 'Vessel' and property.first contains 'Product' %}
             {% assign vessel_property_parts = property.first | split: ' ' %}
+            {% comment %} Handle both "_Vessel" and "Vessel" formats {% endcomment %}
             {% if vessel_property_parts.size >= 2 %}
               {% assign current_vessel_number = vessel_property_parts[1] %}
             {% endif %}
@@ -113,9 +114,9 @@
               {% comment %} Check if this next item is an add-on for the current vessel {% endcomment %}
               {% assign is_addon_for_vessel = false %}
               {% for property in cart_item.properties %}
-                {% if property.first == 'Add-on' and property.last == 'Premium Gift Box' %}
+                {% if property.first == '_Add-on' and property.last == 'Premium Gift Box' %}
                   {% for vessel_property in cart_item.properties %}
-                    {% if vessel_property.first == 'Vessel Number' and vessel_property.last == current_vessel_number %}
+                    {% if vessel_property.first == '_Vessel Number' and vessel_property.last == current_vessel_number %}
                       {% assign is_addon_for_vessel = true %}
                       {% break %}
                     {% endif %}

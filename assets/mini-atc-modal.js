@@ -1137,13 +1137,13 @@
             id="${modalId}-vessel-${vesselNumber}-name" 
             class="vessel-name-input" 
             placeholder="Maximum of 3 Letters"
-            maxlength="3"
-            pattern="[A-Za-z]{0,3}"
-            title="Only letters are allowed (maximum 3)"
-            data-vessel-input="${vesselNumber}"
-            data-property="properties[Vessel ${vesselNumber} Engraving]"
-            aria-describedby="${modalId}-vessel-${vesselNumber}-description"
-          >
+          maxlength="3"
+          pattern="[A-Za-z]{0,3}"
+          title="Only letters are allowed (maximum 3)"
+          data-vessel-input="${vesselNumber}"
+          data-property="properties[_Vessel ${vesselNumber} Engraving]"
+          aria-describedby="${modalId}-vessel-${vesselNumber}-description"
+        >
         </div>
         
         <div id="${modalId}-vessel-${vesselNumber}-description" class="visually-hidden">
@@ -2505,47 +2505,50 @@
 			const vesselItems = this.collectVesselProducts(state);
 			const addonItems = this.collectAddonProducts(state);
 
-			// Group add-ons by vessel number for easier lookup
-			const addonsByVessel = {};
-			addonItems.forEach((addon) => {
-				const vesselNumber = addon.properties["Vessel Number"];
-				if (vesselNumber) {
-					if (!addonsByVessel[vesselNumber]) {
-						addonsByVessel[vesselNumber] = [];
+		// Group add-ons by vessel number for easier lookup
+		const addonsByVessel = {};
+		addonItems.forEach((addon) => {
+			const vesselNumber = addon.properties["_Vessel Number"];
+			if (vesselNumber) {
+				if (!addonsByVessel[vesselNumber]) {
+					addonsByVessel[vesselNumber] = [];
+				}
+				addonsByVessel[vesselNumber].push(addon);
+			}
+		});
+
+		// Interleave vessels with their add-ons
+		vesselItems.forEach((vessel) => {
+			// Add the vessel first
+			items.push(vessel);
+
+			// Find vessel number from properties
+			let vesselNumber = null;
+			for (const [key, value] of Object.entries(vessel.properties)) {
+				if (key.includes("Vessel") && key.includes("Product")) {
+					// Extract the number from property name like "_Vessel 2 Product"
+					const parts = key.split(" ");
+					// Handle both "_Vessel" (split creates ["_Vessel"]) and old "Vessel" format
+					const numberIndex = parts[0].startsWith("_") ? 1 : 1;
+					if (parts.length >= 2) {
+						vesselNumber = parts[numberIndex];
+						break;
 					}
-					addonsByVessel[vesselNumber].push(addon);
 				}
-			});
+			}
 
-			// Interleave vessels with their add-ons
-			vesselItems.forEach((vessel) => {
-				// Add the vessel first
-				items.push(vessel);
+			// Add associated add-ons immediately after the vessel
+			if (vesselNumber && addonsByVessel[vesselNumber]) {
+				items.push(...addonsByVessel[vesselNumber]);
+			}
+		});
 
-				// Find vessel number from properties
-				let vesselNumber = null;
-				for (const [key, value] of Object.entries(vessel.properties)) {
-					if (key.includes("Vessel") && key.includes("Product")) {
-						const parts = key.split(" ");
-						if (parts.length >= 2) {
-							vesselNumber = parts[1];
-							break;
-						}
-					}
-				}
-
-				// Add associated add-ons immediately after the vessel
-				if (vesselNumber && addonsByVessel[vesselNumber]) {
-					items.push(...addonsByVessel[vesselNumber]);
-				}
-			});
-
-			// Add any remaining add-ons that don't have a specific vessel number
-			addonItems.forEach((addon) => {
-				if (!addon.properties["Vessel Number"]) {
-					items.push(addon);
-				}
-			});
+		// Add any remaining add-ons that don't have a specific vessel number
+		addonItems.forEach((addon) => {
+			if (!addon.properties["_Vessel Number"]) {
+				items.push(addon);
+			}
+		});
 
 			// Reverse the order of items before adding to cart
 			items.reverse();
@@ -2621,41 +2624,77 @@
 						variantId = selection.engravingVariantId;
 					}
 
-					// Create properties object
-					const properties = {};
+				// Create properties object
+				const properties = {};
 
-					// Add vessel engraving if provided
-					if (
-						engravingEnabled &&
-						vesselEngraving &&
-						vesselEngraving.trim() !== ""
-					) {
-						properties[`Vessel ${vesselNumber} Engraving`] = vesselEngraving
-							.trim()
-							.toUpperCase();
-						console.log(
-							`✅ Added engraving to cart item for Vessel ${vesselNumber}:`,
-							vesselEngraving
-						);
-					} else {
-						console.log(
-							`ℹ️ No engraving for Vessel ${vesselNumber} (empty or disabled)`
-						);
-					}
+				// VISIBLE PROPERTIES (for checkout display)
+				
+				// Add Monogram Initials (visible on checkout)
+				if (
+					engravingEnabled &&
+					vesselEngraving &&
+					vesselEngraving.trim() !== ""
+				) {
+					properties["Monogram Initials"] = vesselEngraving
+						.trim()
+						.toUpperCase();
+				} else {
+					properties["Monogram Initials"] = "N/A";
+				}
 
-					// Add vessel selection details
-					if (selection.productHandle) {
-						properties[`Vessel ${vesselNumber} Product`] =
-							selection.productHandle;
+				// Add Choose Your Coins info (visible on checkout)
+				if (selectedProductAmountData?.variants) {
+					const variantIndex = engravingEnabled ? 1 : 0;
+					const variantData = selectedProductAmountData.variants[variantIndex];
+					if (variantData?.title) {
+						properties["Choose Your Coins"] = variantData.title;
 					}
-					if (selection.woodType) {
-						properties[`Vessel ${vesselNumber} Wood Type`] = selection.woodType;
-					}
-					if (selection.ropeType) {
-						properties[`Vessel ${vesselNumber} Rope Type`] = selection.ropeType;
-					}
+				}
 
-					// Add compare-at price from selected product amount data (per item)
+			// Check if this vessel has a gift box associated with it
+			const hasGiftBox = state.giftBox?.enabled;
+			properties["Gift Box"] = hasGiftBox ? "yes" : "no";
+			
+			if (hasGiftBox) {
+				// Get the actual gift box product title dynamically
+				const giftBoxTitle = this.getGiftBoxProductTitle();
+				properties["Gift Option"] = giftBoxTitle;
+			}
+
+				// HIDDEN PROPERTIES (with underscore - for backend use only)
+				
+				// Add vessel engraving (hidden)
+				if (
+					engravingEnabled &&
+					vesselEngraving &&
+					vesselEngraving.trim() !== ""
+				) {
+					properties[`_Vessel ${vesselNumber} Engraving`] = vesselEngraving
+						.trim()
+						.toUpperCase();
+					console.log(
+						`✅ Added engraving to cart item for Vessel ${vesselNumber}:`,
+						vesselEngraving
+					);
+				} else {
+					console.log(
+						`ℹ️ No engraving for Vessel ${vesselNumber} (empty or disabled)`
+					);
+				}
+
+				// Add vessel selection details (hidden)
+				if (selection.productHandle) {
+					properties[`_Vessel ${vesselNumber} Product`] =
+						selection.productHandle;
+				}
+				if (selection.woodType) {
+					properties[`_Vessel ${vesselNumber} Wood Type`] = selection.woodType;
+				}
+				if (selection.ropeType) {
+					properties[`_Vessel ${vesselNumber} Rope Type`] = selection.ropeType;
+				}
+
+					// Add compare-at price (hidden)
 					if (selectedProductAmountData?.variants) {
 						const variantIndex = engravingEnabled ? 1 : 0;
 						const variantData =
@@ -2728,21 +2767,25 @@
 				const giftBoxVariantId = this.getGiftBoxVariantId();
 				console.log("🎁 Gift box variant ID:", giftBoxVariantId);
 
-				if (giftBoxVariantId) {
-					// Add one gift box per vessel
-					for (let i = 0; i < vesselCount; i++) {
-						const giftBoxItem = {
-							id: giftBoxVariantId,
-							quantity: 1,
-							properties: {
-								"Add-on": "Premium Gift Box",
-								"Product Handle": "premium-gift-box-tissue-wrap",
-								"Vessel Number": i + 1,
-							},
-						};
-						console.log(`🎁 Gift box item ${i + 1} being added:`, giftBoxItem);
-						items.push(giftBoxItem);
-					}
+			if (giftBoxVariantId) {
+				// Add one gift box per vessel
+				for (let i = 0; i < vesselCount; i++) {
+					const giftBoxItem = {
+						id: giftBoxVariantId,
+						quantity: 1,
+						properties: {
+							// VISIBLE PROPERTIES (for checkout display)
+							"Monogram Initials": "N/A",
+							
+							// HIDDEN PROPERTIES (for backend use only)
+							"_Add-on": "Premium Gift Box",
+							"_Product Handle": "premium-gift-box-tissue-wrap",
+							"_Vessel Number": i + 1,
+						},
+					};
+					console.log(`🎁 Gift box item ${i + 1} being added:`, giftBoxItem);
+					items.push(giftBoxItem);
+				}
 				} else {
 					console.log("❌ No gift box variant ID found!");
 				}
@@ -2759,7 +2802,7 @@
 								id: variantId,
 								quantity: quantity,
 								properties: {
-									"Add-on": "Mix & Match",
+									"_Add-on": "Mix & Match",
 								},
 							};
 							items.push(mixMatchItem);
@@ -2777,7 +2820,7 @@
 								id: variantId,
 								quantity: quantity,
 								properties: {
-									"Add-on": "Extra Cups",
+									"_Add-on": "Extra Cups",
 								},
 							};
 							items.push(extraCupsItem);
@@ -2844,34 +2887,61 @@
 			return attributes;
 		}
 
-		getGiftBoxVariantId() {
-			console.log("🔍 Getting gift box variant ID...");
+	getGiftBoxVariantId() {
+		console.log("🔍 Getting gift box variant ID...");
 
-			// Try to get from modal config first
-			const config = this.config;
-			console.log("🔍 Modal config:", config);
-			if (config.giftBox?.variantId) {
-				console.log("✅ Found variant ID in config:", config.giftBox.variantId);
-				return config.giftBox.variantId;
-			}
-
-			// Try to get from DOM
-			const giftBoxToggle = this.modal.querySelector(
-				"[data-gift-box-variant-id]"
-			);
-			console.log("🔍 Gift box toggle element:", giftBoxToggle);
-			if (giftBoxToggle) {
-				const variantId = giftBoxToggle.getAttribute(
-					"data-gift-box-variant-id"
-				);
-				console.log("✅ Found variant ID in DOM:", variantId);
-				return variantId;
-			}
-
-			// Fallback - you may need to set this based on your actual gift box product
-			console.log("❌ No gift box variant ID found in config or DOM");
-			return null;
+		// Try to get from modal config first
+		const config = this.config;
+		console.log("🔍 Modal config:", config);
+		if (config.giftBox?.variantId) {
+			console.log("✅ Found variant ID in config:", config.giftBox.variantId);
+			return config.giftBox.variantId;
 		}
+
+		// Try to get from DOM
+		const giftBoxToggle = this.modal.querySelector(
+			"[data-gift-box-variant-id]"
+		);
+		console.log("🔍 Gift box toggle element:", giftBoxToggle);
+		if (giftBoxToggle) {
+			const variantId = giftBoxToggle.getAttribute(
+				"data-gift-box-variant-id"
+			);
+			console.log("✅ Found variant ID in DOM:", variantId);
+			return variantId;
+		}
+
+		// Fallback - you may need to set this based on your actual gift box product
+		console.log("❌ No gift box variant ID found in config or DOM");
+		return null;
+	}
+
+	getGiftBoxProductTitle() {
+		console.log("🔍 Getting gift box product title...");
+
+		// Try to get from modal config first
+		const config = this.config;
+		if (config.giftBox?.productTitle) {
+			console.log("✅ Found product title in config:", config.giftBox.productTitle);
+			return config.giftBox.productTitle;
+		}
+
+		// Try to get from DOM
+		const giftBoxToggle = this.modal.querySelector(
+			"[data-gift-box-product-title]"
+		);
+		if (giftBoxToggle) {
+			const productTitle = giftBoxToggle.getAttribute(
+				"data-gift-box-product-title"
+			);
+			console.log("✅ Found product title in DOM:", productTitle);
+			return productTitle;
+		}
+
+		// Fallback
+		console.log("⚠️ No gift box product title found, using fallback");
+		return "Premium Gift Box and Tissue Wrap";
+	}
 
 		async addItemsToShopifyCart(cartData) {
 			const config = {
@@ -3155,17 +3225,17 @@
 				// Count non-gift-box items in the cart
 				let nonGiftBoxItemCount = 0;
 
-				if (cartData && cartData.items) {
-					nonGiftBoxItemCount = cartData.items.filter((item) => {
-						// Check if this item is NOT a gift box
-						if (
-							item.properties &&
-							item.properties["Add-on"] === "Premium Gift Box"
-						) {
-							return false; // Exclude gift boxes
-						}
-						return true; // Include all other items
-					}).length;
+			if (cartData && cartData.items) {
+				nonGiftBoxItemCount = cartData.items.filter((item) => {
+					// Check if this item is NOT a gift box
+					if (
+						item.properties &&
+						item.properties["_Add-on"] === "Premium Gift Box"
+					) {
+						return false; // Exclude gift boxes
+					}
+					return true; // Include all other items
+				}).length;
 				}
 
 				console.log(
@@ -3342,13 +3412,13 @@
 					item.product_title
 				);
 
-				// Check if this is an add-on item that should be grouped with a vessel
-				const isAddon =
-					item.properties &&
-					Object.entries(item.properties).some(
-						([key, value]) => key === "Add-on"
-					);
-				console.log("🛒 Is addon:", isAddon);
+			// Check if this is an add-on item that should be grouped with a vessel
+			const isAddon =
+				item.properties &&
+				Object.entries(item.properties).some(
+					([key, value]) => key === "_Add-on"
+				);
+			console.log("🛒 Is addon:", isAddon);
 
 				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
 				if (isAddon) {
@@ -3481,17 +3551,17 @@
 						currentItemIndex !== -1 &&
 						currentItemIndex < allCartItems.length - 1
 					) {
-						const nextItem = allCartItems[currentItemIndex + 1];
-						if (nextItem && nextItem.properties) {
-							const isAddonForVessel =
-								Object.entries(nextItem.properties).some(
-									([key, value]) =>
-										key === "Add-on" && value === "Premium Gift Box"
-								) &&
-								Object.entries(nextItem.properties).some(
-									([key, value]) =>
-										key === "Vessel Number" && value === currentVesselNumber
-								);
+					const nextItem = allCartItems[currentItemIndex + 1];
+					if (nextItem && nextItem.properties) {
+						const isAddonForVessel =
+							Object.entries(nextItem.properties).some(
+								([key, value]) =>
+									key === "_Add-on" && value === "Premium Gift Box"
+							) &&
+							Object.entries(nextItem.properties).some(
+								([key, value]) =>
+									key === "_Vessel Number" && value === currentVesselNumber
+							);
 
 							if (isAddonForVessel) {
 								const addonSection = document.createElement("div");
@@ -3592,28 +3662,28 @@
 				);
 
 				if (vesselNumber) {
-					// Debug: Log all gift box items
-					const allGiftBoxes = allCartItems.filter(
-						(giftItem) =>
-							giftItem.properties &&
-							giftItem.properties["Add-on"] === "Premium Gift Box"
-					);
-					console.log(
-						`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`,
-						allGiftBoxes.map((gb) => ({
-							id: gb.id,
-							title: gb.product_title,
-							vesselNumber: gb.properties["Vessel Number"],
-						}))
-					);
+			// Debug: Log all gift box items
+			const allGiftBoxes = allCartItems.filter(
+				(giftItem) =>
+					giftItem.properties &&
+					giftItem.properties["_Add-on"] === "Premium Gift Box"
+			);
+			console.log(
+				`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`,
+				allGiftBoxes.map((gb) => ({
+					id: gb.id,
+					title: gb.product_title,
+					vesselNumber: gb.properties["_Vessel Number"],
+				}))
+			);
 
-					const giftBoxForThisVessel = allCartItems.find(
-						(giftItem) =>
-							giftItem.properties &&
-							giftItem.properties["Add-on"] === "Premium Gift Box" &&
-							String(giftItem.properties["Vessel Number"]) ===
-								String(vesselNumber)
-					);
+			const giftBoxForThisVessel = allCartItems.find(
+				(giftItem) =>
+					giftItem.properties &&
+					giftItem.properties["_Add-on"] === "Premium Gift Box" &&
+					String(giftItem.properties["_Vessel Number"]) ===
+						String(vesselNumber)
+			);
 
 					console.log(
 						`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`,
@@ -3767,7 +3837,7 @@
 
 		extractVesselNumber(item) {
 			// Extract vessel number from item properties
-			// Look for properties like "Vessel 1 Product", "Vessel 2 Product", etc.
+			// Look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc.
 			console.log(
 				`🔍 DEBUG: Extracting vessel number for item ${item.id}:`,
 				item.properties
@@ -3835,36 +3905,36 @@
 					properties: vesselItem.properties,
 				});
 
-				// Extract vessel number from the vessel item's properties
-				let vesselNumber = null;
-				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+			// Extract vessel number from the vessel item's properties
+			let vesselNumber = null;
+			console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
 
-				// Properties are stored as an object, not an array
-				for (const [key, value] of Object.entries(
-					vesselItem.properties || {}
-				)) {
-					console.log(
-						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
-					);
-					// Look for properties like "Vessel 2 Product", "Vessel 1 Product", etc.
-					if (key.includes("Vessel") && key.includes("Product")) {
-						// Extract number from property name like "Vessel 2 Product"
-						const vesselPropertyParts = key.split(" ");
-						if (vesselPropertyParts.length >= 2) {
-							vesselNumber = vesselPropertyParts[1];
-							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
-							break;
-						}
+			// Properties are stored as an object, not an array
+			for (const [key, value] of Object.entries(
+				vesselItem.properties || {}
+			)) {
+				console.log(
+					`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
+				);
+				// Look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc.
+				if (key.includes("Vessel") && key.includes("Product")) {
+					// Extract number from property name like "_Vessel 2 Product"
+					const vesselPropertyParts = key.split(" ");
+					if (vesselPropertyParts.length >= 2) {
+						vesselNumber = vesselPropertyParts[1];
+						console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
+						break;
 					}
 				}
+			}
 
-				if (!vesselNumber) {
-					console.log(
-						`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`
-					);
-					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
-					return [];
-				}
+			if (!vesselNumber) {
+				console.log(
+					`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`
+				);
+				console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+				return [];
+			}
 
 				console.log(
 					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
@@ -3886,29 +3956,29 @@
 					let isGiftBox = false;
 					let hasMatchingVesselNumber = false;
 
-					// Properties are stored as an object, not an array
-					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(
-							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
-						);
+				// Properties are stored as an object, not an array
+				for (const [key, value] of Object.entries(item.properties || {})) {
+					console.log(
+						`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
+					);
 
-						// Check if it's a gift box
-						if (key === "Add-on" && value === "Premium Gift Box") {
-							isGiftBox = true;
-							console.log(`🔍 DEBUG: Item ${item.key} is a gift box`);
-						}
-
-						// Check if it has the matching vessel number
-						if (
-							key === "Vessel Number" &&
-							value.toString() === vesselNumber.toString()
-						) {
-							hasMatchingVesselNumber = true;
-							console.log(
-								`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`
-							);
-						}
+					// Check if it's a gift box
+					if (key === "_Add-on" && value === "Premium Gift Box") {
+						isGiftBox = true;
+						console.log(`🔍 DEBUG: Item ${item.key} is a gift box`);
 					}
+
+					// Check if it has the matching vessel number
+					if (
+						key === "_Vessel Number" &&
+						value.toString() === vesselNumber.toString()
+					) {
+						hasMatchingVesselNumber = true;
+						console.log(
+							`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`
+						);
+					}
+				}
 
 					// If it's a gift box with matching vessel number, add to removal list
 					if (isGiftBox && hasMatchingVesselNumber) {
@@ -3975,36 +4045,36 @@
 					properties: vesselItem.properties,
 				});
 
-				// Extract vessel number from the vessel item's properties
-				let vesselNumber = null;
-				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+			// Extract vessel number from the vessel item's properties
+			let vesselNumber = null;
+			console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
 
-				// Properties are stored as an object, not an array
-				for (const [key, value] of Object.entries(
-					vesselItem.properties || {}
-				)) {
-					console.log(
-						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
-					);
-					// Look for properties like "Vessel 2 Product", "Vessel 1 Product", etc.
-					if (key.includes("Vessel") && key.includes("Product")) {
-						// Extract number from property name like "Vessel 2 Product"
-						const vesselPropertyParts = key.split(" ");
-						if (vesselPropertyParts.length >= 2) {
-							vesselNumber = vesselPropertyParts[1];
-							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
-							break;
-						}
+			// Properties are stored as an object, not an array
+			for (const [key, value] of Object.entries(
+				vesselItem.properties || {}
+			)) {
+				console.log(
+					`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
+				);
+				// Look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc.
+				if (key.includes("Vessel") && key.includes("Product")) {
+					// Extract number from property name like "_Vessel 2 Product"
+					const vesselPropertyParts = key.split(" ");
+					if (vesselPropertyParts.length >= 2) {
+						vesselNumber = vesselPropertyParts[1];
+						console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
+						break;
 					}
 				}
+			}
 
-				if (!vesselNumber) {
-					console.log(
-						`🔍 DEBUG: No vessel number found for item ${vesselItemId}`
-					);
-					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
-					return [];
-				}
+			if (!vesselNumber) {
+				console.log(
+					`🔍 DEBUG: No vessel number found for item ${vesselItemId}`
+				);
+				console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+				return [];
+			}
 
 				console.log(
 					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
@@ -4026,34 +4096,34 @@
 					let isGiftBox = false;
 					let hasMatchingVesselNumber = false;
 
-					// Properties are stored as an object, not an array
-					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(
-							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
-						);
+				// Properties are stored as an object, not an array
+				for (const [key, value] of Object.entries(item.properties || {})) {
+					console.log(
+						`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
+					);
 
-						// Check if it's a gift box
-						if (key === "Add-on" && value === "Premium Gift Box") {
-							isGiftBox = true;
-							console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
-						}
-
-						// Check if it has the matching vessel number
-						if (
-							key === "Vessel Number" &&
-							value.toString() === vesselNumber.toString()
-						) {
-							hasMatchingVesselNumber = true;
-							console.log(
-								`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
-							);
-						}
+					// Check if it's a gift box
+					if (key === "_Add-on" && value === "Premium Gift Box") {
+						isGiftBox = true;
+						console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
 					}
 
-					// If it's a gift box with matching vessel number, add to removal list
-					if (isGiftBox && hasMatchingVesselNumber) {
-						// Use the key instead of id for cart API
-						associatedGiftBoxIds.push(item.key);
+					// Check if it has the matching vessel number
+					if (
+						key === "_Vessel Number" &&
+						value.toString() === vesselNumber.toString()
+					) {
+						hasMatchingVesselNumber = true;
+						console.log(
+							`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
+						);
+					}
+				}
+
+				// If it's a gift box with matching vessel number, add to removal list
+				if (isGiftBox && hasMatchingVesselNumber) {
+					// Use the key instead of id for cart API
+					associatedGiftBoxIds.push(item.key);
 						console.log(
 							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`
 						);
@@ -4154,13 +4224,13 @@
 						(item) => item.key === itemKey
 					);
 
-					// Check if this is a gift box item
-					const isGiftBoxItem =
-						itemToRemove &&
-						itemToRemove.properties &&
-						Object.entries(itemToRemove.properties).some(
-							([key, value]) => key === "Add-on" && value === "Premium Gift Box"
-						);
+				// Check if this is a gift box item
+				const isGiftBoxItem =
+					itemToRemove &&
+					itemToRemove.properties &&
+					Object.entries(itemToRemove.properties).some(
+						([key, value]) => key === "_Add-on" && value === "Premium Gift Box"
+					);
 
 					if (isGiftBoxItem) {
 						console.log(
