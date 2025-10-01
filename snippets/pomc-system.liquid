@@ -389,7 +389,7 @@
 {{ 'checkout-products-wrap.css' | asset_url | stylesheet_tag }}
 
 <!-- Include Cart Manager JavaScript -->
-<script src="{{ 'cart-manager.js' | asset_url }}" defer></script>
+<script src="{{ 'cart-manager.js' | asset_url }}" fetchpriority="high"></script>
 
 
 <!-- Include POMC System JavaScript -->

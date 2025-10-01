@@ -2322,7 +2322,7 @@
 			}
 
 			// Fetch vessel selections data and update product images
-			this.fetchVesselSelectionsAndUpdateImages();
+			// this.fetchVesselSelectionsAndUpdateImages();
 
 			// Calculate initial pricing
 			this.calculatePricing();

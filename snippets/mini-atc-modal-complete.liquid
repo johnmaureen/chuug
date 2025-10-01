@@ -90,8 +90,34 @@
                   <div class="product-image-wrap">
                     <div class="img-wrap">
                       <img 
-                        src="{{ 'vessel-sample.png' | asset_url }}" 
-                        alt="CHUUG Vessel - Current Selection" 
+                        src="{{ 'CoinPreview1.png' | asset_url }}" 
+                        alt="CHUUG Vessel - Coin Engraving Preview 1" 
+                        width="400" 
+                        height="400"
+                        data-selection-image
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-slide" data-image-type="selection">
+                  <div class="product-image-wrap">
+                    <div class="img-wrap">
+                      <img 
+                        src="{{ 'CoinPreview2.png' | asset_url }}" 
+                        alt="CHUUG Vessel - Coin Engraving Preview 2" 
+                        width="400" 
+                        height="400"
+                        data-selection-image
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-slide" data-image-type="selection">
+                  <div class="product-image-wrap">
+                    <div class="img-wrap">
+                      <img 
+                        src="{{ 'CoinPreview3.png' | asset_url }}" 
+                        alt="CHUUG Vessel - Coin Engraving Preview 3" 
                         width="400" 
                         height="400"
                         data-selection-image
@@ -104,7 +130,9 @@
             
             <!-- Image Navigation Dots -->
             <nav class="mini-atc-modal__image-dots" aria-label="Product image navigation">
-              <button class="dot active" aria-label="View main product image" data-slide="0"></button>
+              <button class="dot active" aria-label="View product image 1" data-slide="0"></button>
+              <button class="dot" aria-label="View product image 2" data-slide="1"></button>
+              <button class="dot" aria-label="View product image 3" data-slide="2"></button>
             </nav>
           </div>
         </section>
@@ -471,7 +499,7 @@
 <script>
   console.log('Loading mini-atc-modal.js from:', '{{ 'mini-atc-modal.js' | asset_url }}');
 </script>
-<script src="{{ 'mini-atc-modal.js' | asset_url }}" defer onload="console.log('mini-atc-modal.js loaded successfully')" onerror="console.error('Failed to load mini-atc-modal.js from:', '{{ 'mini-atc-modal.js' | asset_url }}')"></script>
+<script src="{{ 'mini-atc-modal.js' | asset_url }}" fetchpriority="high" onload="console.log('mini-atc-modal.js loaded successfully')" onerror="console.error('Failed to load mini-atc-modal.js from:', '{{ 'mini-atc-modal.js' | asset_url }}')"></script>
 
 
 {% comment %} Modal configuration for JavaScript {% endcomment %}

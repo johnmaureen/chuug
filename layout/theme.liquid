@@ -422,7 +422,7 @@ head.appendChild(script);
     {% render 'mini-atc-modal-complete' %}
 
     {% comment %} Cart Icon to Mini ATC Modal Integration {% endcomment %}
-    <script src="{{ 'cart-icon-mini-atc-integration.js' | asset_url }}" defer></script>
+    <script src="{{ 'cart-icon-mini-atc-integration.js' | asset_url }}" fetchpriority="high"></script>
 
 
 <div style="position: sticky; top: 0px; z-index: 9999;"><div class="bss-pl-banner-wrapper" style="
