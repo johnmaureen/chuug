@@ -600,7 +600,6 @@
 				"review_KWgxeN",
 				"review_qkdrpj"
 			],
-			"disabled": true,
 			"settings": {}
 		},
 		"benefits_xeGgkP": {
@@ -923,32 +922,20 @@
 				"article_title": "Wood Becomes Art",
 				"article_content": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>"
 			}
-		},
-		"content_footer_section_MLUDPB": {
-			"type": "content-footer-section",
-			"name": "Content Footer Section",
-			"settings": {
-				"footer_links": "",
-				"email_title": "Join the Email Fellowship",
-				"country_text": "GBP £ | United Kingdom",
-				"social_url": "",
-				"footer_text": "© 2025, CHUUG® • Refund Policy • Privacy Policy • Terms of Service • Contact Information"
-			}
 		}
 	},
 	"order": [
 		"pdp_chuug_vessel_8y8pAk",
+		"reviews_carousel_QgJCgz",
 		"several_text_and_images_EHXQ8F",
 		"chuug_customiser_carousel_QHgy3x",
 		"content_with_grid_efaAzm",
 		"five_images_hjC3Jd",
-		"reviews_carousel_QgJCgz",
 		"benefits_xeGgkP",
 		"text_and_image_carousel_TjCMqW",
 		"three_image_reviews_carousel_KxatHt",
 		"fading_text_carousel_9VgpBp",
 		"accordions_M9ze79",
-		"content_video_section_DwemtG",
-		"content_footer_section_MLUDPB"
+		"content_video_section_DwemtG"
 	]
 }

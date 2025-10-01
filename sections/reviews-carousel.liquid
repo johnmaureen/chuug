@@ -1,4 +1,4 @@
-<section class="tw-w-full tw-bg-chuug-dark-navy tw-pl-[0.625rem] tw-pb-[13rem] md:tw-pl-[0.625rem] md:tw-pb-[17rem]">
+<section class="review-carousel-content tw-w-full tw-bg-chuug-dark-navy tw-pl-[0.625rem] tw-pb-4 md:tw-pl-[0.625rem]">
   <div id="review-swiper" class="swiper tw-h-fit tw-w-full">
     <div class="swiper-wrapper">
       {% for block in section.blocks %}
@@ -109,7 +109,11 @@
     </button>
   </div>
 </section>
-
+<style>
+  .review-carousel-content  {
+  padding-bottom:80px;
+}
+</style>
 <script>
   const reviewSwiper = new Swiper('#review-swiper', {
     slidesPerView: 'auto',
