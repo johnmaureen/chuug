@@ -5087,8 +5087,327 @@
 		}
 	};
 
+	// ============================================
+	// DESIGN PREVIEW MODAL
+	// ============================================
+
+	class DesignPreviewModal {
+		constructor(modal) {
+			this.modal = modal;
+			this.modalId = modal.id;
+			this.swiper = null;
+			this.isLoading = false;
+			this.init();
+		}
+
+		init() {
+			this.setupEventListeners();
+			this.initSwiper();
+		}
+
+	setupEventListeners() {
+		// Get only triggers that should open THIS specific modal
+		const triggers = document.querySelectorAll(`[data-open-design-modal="${this.modalId}"]`);
+		console.log(`[DesignPreviewModal] Found ${triggers.length} trigger(s) for modal: ${this.modalId}`);
+		
+		triggers.forEach(trigger => {
+			trigger.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				console.log(`[DesignPreviewModal] Trigger clicked for modal: ${this.modalId}`);
+				this.open();
+			});
+		});
+
+		// Close button
+		const closeButtons = this.modal.querySelectorAll('[data-design-modal-close]');
+		closeButtons.forEach(button => {
+			button.addEventListener('click', (e) => {
+				e.stopPropagation();
+				this.close();
+			});
+		});
+
+		// Close when clicking outside the modal container
+		const container = this.modal.querySelector('.design-preview-modal__container');
+		this.modal.addEventListener('click', (e) => {
+			// Only close if clicking directly on the modal wrapper or overlay
+			if (e.target === this.modal || e.target.classList.contains('design-preview-modal__overlay')) {
+				e.preventDefault();
+				e.stopPropagation();
+				this.close();
+			}
+		});
+
+		// Prevent clicks inside container from closing the modal
+		if (container) {
+			container.addEventListener('click', (e) => {
+				e.stopPropagation();
+			});
+		}
+
+		// ESC key to close
+		const handleEscape = (e) => {
+			if (e.key === 'Escape' && this.modal.classList.contains('design-preview-modal--active')) {
+				this.close();
+			}
+		};
+		document.addEventListener('keydown', handleEscape);
+		
+		// Store the handler for cleanup if needed
+		this.escapeHandler = handleEscape;
+	}
+
+		initSwiper() {
+			const swiperContainer = this.modal.querySelector('.design-preview-swiper');
+			if (!swiperContainer || typeof Swiper === 'undefined') {
+				this.setupFallbackScroll();
+				return;
+			}
+
+			// Initialize Swiper with freeMode for horizontal scrolling
+			this.swiper = new Swiper(swiperContainer, {
+				slidesPerView: 'auto',
+				spaceBetween: 30,
+				freeMode: {
+					enabled: true,
+					sticky: false,
+				},
+				grabCursor: true,
+				keyboard: {
+					enabled: true,
+					onlyInViewport: true,
+				},
+				mousewheel: {
+					forceToAxis: true,
+					sensitivity: 1,
+				},
+				a11y: {
+					prevSlideMessage: 'Previous design image',
+					nextSlideMessage: 'Next design image',
+				},
+			});
+		}
+
+		setupFallbackScroll() {
+			// Fallback for browsers without Swiper
+			const gallery = this.modal.querySelector('.design-preview-modal__gallery');
+			if (gallery) {
+				gallery.style.overflowX = 'auto';
+				gallery.style.scrollBehavior = 'smooth';
+			}
+		}
+
+	open() {
+		// Prevent opening if already active
+		if (this.modal.classList.contains('design-preview-modal--active')) {
+			console.log(`[DesignPreviewModal] Modal ${this.modalId} already open, ignoring open request`);
+			return;
+		}
+
+		console.log(`[DesignPreviewModal] Opening modal: ${this.modalId}`);
+		this.modal.classList.add('design-preview-modal--active');
+		this.modal.setAttribute('aria-hidden', 'false');
+		document.body.style.overflow = 'hidden';
+
+		// Fetch and display product images
+		this.fetchAndDisplayImages();
+
+		// Update swiper if it exists
+		if (this.swiper) {
+			setTimeout(() => {
+				this.swiper.update();
+			}, 100);
+		}
+
+		this.emit('opened');
+	}
+
+	async fetchAndDisplayImages() {
+		if (this.isLoading) return;
+		
+		try {
+			this.isLoading = true;
+			console.log(`[DesignPreviewModal] Fetching product images...`);
+
+			// Get vessel selections from POMC system
+			if (!window.pomcSystem) {
+				console.log(`[DesignPreviewModal] POMC system not found`);
+				this.showNoImagesMessage();
+				return;
+			}
+
+			const allVesselSelections = window.pomcSystem.getAllVesselSelections();
+			
+			// Extract product handles from vessel selections
+			const productHandles = [];
+			Object.values(allVesselSelections).forEach((selection) => {
+				if (selection.productHandle) {
+					productHandles.push(selection.productHandle);
+				}
+			});
+
+			console.log(`[DesignPreviewModal] Found ${productHandles.length} product handle(s):`, productHandles);
+
+			if (productHandles.length === 0) {
+				this.showNoImagesMessage();
+				return;
+			}
+
+			// Fetch product data for each product handle
+			const productPromises = productHandles.map((productHandle) =>
+				this.fetchProductDataByHandle(productHandle)
+			);
+
+			const products = await Promise.all(productPromises);
+			const validProducts = products.filter((product) => product !== null);
+
+			console.log(`[DesignPreviewModal] Fetched ${validProducts.length} valid product(s)`);
+
+			// Update the swiper with product images
+			this.updateSwiperImages(validProducts);
+
+		} catch (error) {
+			console.error(`[DesignPreviewModal] Error fetching images:`, error);
+			this.showErrorMessage();
+		} finally {
+			this.isLoading = false;
+		}
+	}
+
+	async fetchProductDataByHandle(productHandle) {
+		try {
+			const response = await fetch(`/products/${productHandle}.js`);
+			if (!response.ok) {
+				throw new Error(`Failed to fetch product ${productHandle}: ${response.status}`);
+			}
+			const productData = await response.json();
+			return productData;
+		} catch (error) {
+			console.error(`[DesignPreviewModal] Error fetching product ${productHandle}:`, error);
+			return null;
+		}
+	}
+
+	updateSwiperImages(products) {
+		const swiperContainer = this.modal.querySelector('.design-preview-swiper');
+		const swiperWrapper = swiperContainer?.querySelector('.swiper-wrapper');
+
+		if (!swiperWrapper) {
+			console.error(`[DesignPreviewModal] Swiper wrapper not found`);
+			return;
+		}
+
+		// Clear existing slides
+		swiperWrapper.innerHTML = '';
+
+		// Add slides for each product - only the featured (first) image
+		products.forEach((product, index) => {
+			if (product.images && product.images.length > 0) {
+				// Get the featured image (first image)
+				const featuredImage = product.images[0];
+				const imageUrl = featuredImage.src || featuredImage;
+				
+				const newSlide = document.createElement('div');
+				newSlide.className = 'swiper-slide';
+				
+				newSlide.innerHTML = `
+					<img 
+						src="${imageUrl}" 
+						alt="${product.title || `CHUUG Design Preview ${index + 1}`}" 
+						width="467"
+						height="467"
+						loading="lazy"
+					/>
+				`;
+				
+				swiperWrapper.appendChild(newSlide);
+			}
+		});
+
+		console.log(`[DesignPreviewModal] Added ${swiperWrapper.children.length} featured image slide(s)`);
+
+		// Update swiper if it exists
+		if (this.swiper) {
+			setTimeout(() => {
+				this.swiper.update();
+			}, 100);
+		}
+	}
+
+	showNoImagesMessage() {
+		const swiperWrapper = this.modal.querySelector('.swiper-wrapper');
+		if (swiperWrapper) {
+			swiperWrapper.innerHTML = `
+				<div class="swiper-slide">
+					<div class="design-preview-loader">
+						<p>No design images available</p>
+					</div>
+				</div>
+			`;
+		}
+	}
+
+	showErrorMessage() {
+		const swiperWrapper = this.modal.querySelector('.swiper-wrapper');
+		if (swiperWrapper) {
+			swiperWrapper.innerHTML = `
+				<div class="swiper-slide">
+					<div class="design-preview-loader">
+						<p>Error loading design images</p>
+					</div>
+				</div>
+			`;
+		}
+	}
+
+	close() {
+		// Prevent closing if already inactive
+		if (!this.modal.classList.contains('design-preview-modal--active')) {
+			return;
+		}
+
+		console.log(`[DesignPreviewModal] Closing modal: ${this.modalId}`);
+		this.modal.classList.remove('design-preview-modal--active');
+		this.modal.setAttribute('aria-hidden', 'true');
+		document.body.style.overflow = '';
+
+		this.emit('closed');
+	}
+
+		emit(eventName) {
+			const event = new CustomEvent(`designPreviewModal:${eventName}`, {
+				detail: { modal: this.modal },
+			});
+			this.modal.dispatchEvent(event);
+		}
+	}
+
+	// Initialize Design Preview Modals
+	function initializeDesignPreviewModals() {
+		const designModals = document.querySelectorAll('[data-design-modal]');
+		const instances = [];
+
+		designModals.forEach(modal => {
+			const instance = new DesignPreviewModal(modal);
+			instances.push(instance);
+			
+			// Log initialization for debugging
+			console.log(`[DesignPreviewModal] Initialized modal: ${modal.id}`);
+		});
+
+		return instances;
+	}
+
+	// Initialize design modals when DOM is ready
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initializeDesignPreviewModals);
+	} else {
+		initializeDesignPreviewModals();
+	}
+
 	// Export for module systems
 	if (typeof module !== "undefined" && module.exports) {
-		module.exports = { MiniATCModal, PersonalizationState, PricingCalculator };
+		module.exports = { MiniATCModal, PersonalizationState, PricingCalculator, DesignPreviewModal };
 	}
 })();

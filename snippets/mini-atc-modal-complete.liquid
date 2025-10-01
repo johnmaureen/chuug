@@ -118,7 +118,7 @@
                 </div>
                 
                 <div class="mini-atc-modal__personalization-header-content_right">
-                  <a href="#" class="mini-atc-modal__design-link" aria-describedby="{{ modal_id }}-design-tooltip">
+                  <a href="#" class="mini-atc-modal__design-link" data-open-design-modal="design-preview-modal-{{ parent_section.id }}" aria-describedby="{{ modal_id }}-design-tooltip">
                     Can I see the design?
                   </a>
                   {% render 'icon-question-mark-tooltip', 
@@ -392,6 +392,72 @@
     
   </aside>
 </section>
+
+<!-- Design Modal -->
+<div 
+  id="design-preview-modal-{{ parent_section.id }}" 
+  class="design-preview-modal" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-labelledby="design-preview-modal-title-{{ parent_section.id }}"
+  aria-hidden="true"
+  data-design-modal
+>
+  <!-- Modal Overlay -->
+  <div class="design-preview-modal__overlay" data-design-modal-close></div>
+
+  <!-- Modal Container -->
+  <div class="design-preview-modal__container">
+    <!-- Modal Header -->
+    <header class="design-preview-modal__header">
+      <h2 id="design-preview-modal-title-{{ parent_section.id }}" class="design-preview-modal__title">
+        Can I see the design?
+      </h2>
+      
+      <button 
+        type="button"
+        class="design-preview-modal__close" 
+        aria-label="Close design preview modal"
+        data-design-modal-close
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Modal Content -->
+    <div class="design-preview-modal__content">
+      <p class="design-preview-modal__description">
+        We carefully engrave each CHUUG coin by hand to best fit your chosen initials.
+        <br/><br/>
+        Inside the mug, you'll be able to preview how your engraving will appear on the coin modal. Keep in mind: what you see here is just a digital preview — the final engraving may have slight variations that make your CHUUG one-of-a-kind
+      </p>
+
+      <!-- Image Gallery with Swiper -->
+      <div class="design-preview-modal__gallery">
+        <div 
+          id="design-preview-swiper-{{ parent_section.id }}" 
+          class="swiper design-preview-swiper"
+          role="region"
+          aria-label="Design preview image gallery"
+        >
+          <div class="swiper-wrapper">
+            <!-- Images will be dynamically loaded from product data -->
+            <div class="swiper-slide">
+              <div class="design-preview-loader">
+                <svg class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="path" fill="none" stroke-width="4" cx="33" cy="33" r="30"></circle>
+                </svg>
+                <p>Loading design preview...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal JavaScript -->
 <script>
