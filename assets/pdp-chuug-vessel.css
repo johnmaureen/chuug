@@ -1,6 +1,6 @@
-* {
-	/* font-family: "Gabarito" !important; */
-}
+/* * {
+	font-family: "Gabarito" !important;
+} */
 
 .cta-button:not([disabled]) {
 	transition: transform 0.3s ease;

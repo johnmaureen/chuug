@@ -18,6 +18,9 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 {{ 'pdp-chuug-vessel.css' | asset_url | stylesheet_tag }}
+{{ 'flash.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'pdp-chuug-vessel.js' | asset_url }}" defer></script>
 
 {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
 {% assign dusk_natural = all_products[section.settings.dusk_natural] %}
@@ -148,6 +151,45 @@
       <div class="pomc-wrapper tw-bg-chuug-yankees-blue tw-flex tw-flex-col tw-gap-y-4 ">
         <!-- POMC System Integration -->
         {% render 'pomc-system', product: product, section: section %}
+      </div>
+
+      <div class="flash-section">
+        <!-- Flash Sale Section -->
+        {% if section.settings.enable_flash_sale %}
+        <div class="flash-sale-container">
+          <p class="flash-sale-text">{{ section.settings.flash_sale_text }}</p>
+          <div class="flash-sale-divider"></div>
+          <div class="flash-countdown-timer" 
+               data-flash-sale-end-date="{{ section.settings.flash_sale_end_date }}" 
+               data-flash-sale-end-time="{{ section.settings.flash_sale_end_time }}">
+            <div class="flash-timer-display">
+              <span id="flash-countdown-days">00</span>
+              <span class="flash-timer-separator">:</span>
+              <span id="flash-countdown-hours">00</span>
+              <span class="flash-timer-separator">:</span>
+              <span id="flash-countdown-minutes">00</span>
+            </div>
+            <div class="flash-timer-labels">
+              <span class="flash-timer-label flash-timer-label-days">DAYS</span>
+              <span class="flash-timer-label flash-timer-label-hours">HOURS</span>
+              <span class="flash-timer-label flash-timer-label-minutes">MINUTES</span>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- USP Grid Section -->
+        <div class="usp-grid">
+          {% for block in section.blocks %}
+            {%- case block.type -%}
+              {%- when 'usp_item' -%}
+                <div class="usp-item">
+                  <div class="usp-icon">{{ block.settings.usp_icon }}</div>
+                  <div class="usp-text">{{ block.settings.usp_text }}</div>
+                </div>
+            {%- endcase -%}
+          {% endfor %}
+        </div>
       </div>
 
       <!-- Mini ATC Modal Section -->
@@ -1266,6 +1308,32 @@
       "id": "third_product_label_text",
       "label": "Third product label text",
       "default": "Best value"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_flash_sale",
+      "label": "Enable Flash Sale",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "flash_sale_text",
+      "label": "Flash Sale Text",
+      "default": "Sale ends in"
+    },
+    {
+      "type": "text",
+      "id": "flash_sale_end_date",
+      "label": "Flash Sale End Date",
+      "info": "Format: YYYY-MM-DD (e.g., 2025-10-15)",
+      "default": "2025-12-31"
+    },
+    {
+      "type": "text",
+      "id": "flash_sale_end_time",
+      "label": "Flash Sale End Time",
+      "info": "Format: HH:MM (24-hour format, e.g., 23:59)",
+      "default": "23:59"
     }
   ],
   "blocks": [
@@ -1427,6 +1495,26 @@
           "type": "text",
           "id": "modal_title_six",
           "label": "Title"
+        }
+      ]
+    },
+    {
+      "type": "usp_item",
+      "name": "USP Item",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "usp_icon",
+          "label": "USP Icon",
+          "default": "🧊",
+          "info": "Use an emoji or icon character"
+        },
+        {
+          "type": "richtext",
+          "id": "usp_text",
+          "label": "USP Text",
+          "default": "<p>2 hours ice cold. Because warm beer is a crime.</p>"
         }
       ]
     }

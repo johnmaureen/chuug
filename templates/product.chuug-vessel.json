@@ -127,6 +127,34 @@
 						"benefit_text": "Anti-bacterial, water resistant SmartRope technology"
 					}
 				},
+				"usp_item_Wa3FDT": {
+					"type": "usp_item",
+					"settings": {
+						"usp_icon": "🧊",
+						"usp_text": "<p><strong>2 hours ice cold.</strong> <br/>Because warm beer is a crime.</p>"
+					}
+				},
+				"usp_item_rA6fEn": {
+					"type": "usp_item",
+					"settings": {
+						"usp_icon": "🇬🇧",
+						"usp_text": "<p><strong>Hand built in Britain. </strong><br/>Machines are for wimps.</p>"
+					}
+				},
+				"usp_item_h38DdQ": {
+					"type": "usp_item",
+					"settings": {
+						"usp_icon": "🛡️",
+						"usp_text": "<p><strong>Lifetime guarantee.</strong> <br/>Break it, we replace it.</p>"
+					}
+				},
+				"usp_item_Mm7it4": {
+					"type": "usp_item",
+					"settings": {
+						"usp_icon": "🍻",
+						"usp_text": "<p><strong>660ml capacity. </strong><br/>That's 2 beers, mate.</p>"
+					}
+				},
 				"accordion_pzWYme": {
 					"type": "accordion",
 					"settings": {
@@ -232,6 +260,10 @@
 				"benefits_R4YMcU",
 				"benefits_HnRg3Q",
 				"benefits_F8BYBe",
+				"usp_item_Wa3FDT",
+				"usp_item_rA6fEn",
+				"usp_item_h38DdQ",
+				"usp_item_Mm7it4",
 				"accordion_pzWYme",
 				"accordion_mCpagc",
 				"bottom_carousel_image_ckekXn",
@@ -276,8 +308,124 @@
 				"midnight_charcoal": "the-midnight-charcoal-chuug®-v2-660ml-with-gift-bag",
 				"midnight_natural": "the-midnight-natural-chuug®-v2-660ml-with-gift-bag",
 				"second_product_label_text": "Most Popular",
-				"third_product_label_text": "Best Value"
+				"third_product_label_text": "Best Value",
+				"enable_flash_sale": true,
+				"flash_sale_text": "Sale ends in",
+				"flash_sale_end_date": "2025-10-31",
+				"flash_sale_end_time": "23:59"
 			}
+		},
+		"reviews_carousel_QgJCgz": {
+			"type": "reviews-carousel",
+			"blocks": {
+				"review_iAWtRK": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-1.png",
+						"stars": "five",
+						"title": "“A little bit of special”",
+						"text": "“It’s bespoke and something that is mine to treasure for years to come, that is the key, it feels special and looks amazing and is comfortable to hold so what’s not like!”",
+						"name": "Jason Ellis",
+						"date": "August 20, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_yn48eD": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-2.png",
+						"stars": "five",
+						"title": "“Gift for 40 year old man”",
+						"text": "“Extremely easy & efficient process from start to finish. Excellent delivery time, presentation was brilliant, the product itself was superbly crafted.”",
+						"name": "Cath Myers",
+						"date": "August 14, 2024",
+						"image_position": "first"
+					}
+				},
+				"review_rzpHxA": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-3.png",
+						"stars": "five",
+						"title": "“Easy 5 star”",
+						"text": "“My husband is a viking type so a perfect gift for him. The craftsmanship is outstanding and the rope handle elevates the Chuug that little bit more.”",
+						"name": "Emma Ockwell",
+						"date": "August 17, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_Ta3Qy4": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-4.png",
+						"stars": "four",
+						"title": "“A nice solid mug”",
+						"text": "“Order arrived very quickly and was well presented. Really nice design and overall finish. Certainly good value for money as i have enjoyed it over the last month.”",
+						"name": "Jim w",
+						"date": "August 01, 2024",
+						"image_position": "first"
+					}
+				},
+				"review_UYLfke": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-5.png",
+						"stars": "five",
+						"title": "“Beautiful product”",
+						"text": "“Bought 2, one for my husband and one for my son ready for Xmas after them seeing them at a festival. Really well made and lovely looking.”",
+						"name": "Paula Charles",
+						"date": "August 21, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_NnaWhe": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-6.png",
+						"stars": "five",
+						"title": "“Excellent quality”",
+						"text": "“I bought it for my dad for Christmas (he’s really hard too buy for) I know he’ll love it. Very quick delivery even with personalising.”",
+						"name": "Susan Taylor",
+						"date": "August 22, 2024",
+						"image_position": "first"
+					}
+				},
+				"review_KWgxeN": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-7.png",
+						"stars": "five",
+						"title": "“I love my Chugg”",
+						"text": "“It is great quality and looks fantastic. It will be my go to vessel for both tea and beers. Ordered Wednesday evening and it arrived Friday morning.”",
+						"name": "Keith Welch",
+						"date": "August 30, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_qkdrpj": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-8.png",
+						"stars": "five",
+						"title": "“Quality is spot on”",
+						"text": "“Purchased for my Brother who loves things ‘Vikingish’. The rope handle detail works so well. I had his initials engraved which makes it a thoughtful gift.”",
+						"name": "Fallon Hanson, UK",
+						"date": "September 01, 2024",
+						"image_position": "first"
+					}
+				}
+			},
+			"block_order": [
+				"review_iAWtRK",
+				"review_yn48eD",
+				"review_rzpHxA",
+				"review_Ta3Qy4",
+				"review_UYLfke",
+				"review_NnaWhe",
+				"review_KWgxeN",
+				"review_qkdrpj"
+			],
+			"settings": {}
 		},
 		"several_text_and_images_EHXQ8F": {
 			"type": "several-text-and-images",
@@ -489,118 +637,6 @@
 				"discount_number": "56",
 				"button_text": "Customise Now"
 			}
-		},
-		"reviews_carousel_QgJCgz": {
-			"type": "reviews-carousel",
-			"blocks": {
-				"review_iAWtRK": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-1.png",
-						"stars": "five",
-						"title": "“A little bit of special”",
-						"text": "“It’s bespoke and something that is mine to treasure for years to come, that is the key, it feels special and looks amazing and is comfortable to hold so what’s not like!”",
-						"name": "Jason Ellis",
-						"date": "August 20, 2024",
-						"image_position": "last"
-					}
-				},
-				"review_yn48eD": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-2.png",
-						"stars": "five",
-						"title": "“Gift for 40 year old man”",
-						"text": "“Extremely easy & efficient process from start to finish. Excellent delivery time, presentation was brilliant, the product itself was superbly crafted.”",
-						"name": "Cath Myers",
-						"date": "August 14, 2024",
-						"image_position": "first"
-					}
-				},
-				"review_rzpHxA": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-3.png",
-						"stars": "five",
-						"title": "“Easy 5 star”",
-						"text": "“My husband is a viking type so a perfect gift for him. The craftsmanship is outstanding and the rope handle elevates the Chuug that little bit more.”",
-						"name": "Emma Ockwell",
-						"date": "August 17, 2024",
-						"image_position": "last"
-					}
-				},
-				"review_Ta3Qy4": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-4.png",
-						"stars": "four",
-						"title": "“A nice solid mug”",
-						"text": "“Order arrived very quickly and was well presented. Really nice design and overall finish. Certainly good value for money as i have enjoyed it over the last month.”",
-						"name": "Jim w",
-						"date": "August 01, 2024",
-						"image_position": "first"
-					}
-				},
-				"review_UYLfke": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-5.png",
-						"stars": "five",
-						"title": "“Beautiful product”",
-						"text": "“Bought 2, one for my husband and one for my son ready for Xmas after them seeing them at a festival. Really well made and lovely looking.”",
-						"name": "Paula Charles",
-						"date": "August 21, 2024",
-						"image_position": "last"
-					}
-				},
-				"review_NnaWhe": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-6.png",
-						"stars": "five",
-						"title": "“Excellent quality”",
-						"text": "“I bought it for my dad for Christmas (he’s really hard too buy for) I know he’ll love it. Very quick delivery even with personalising.”",
-						"name": "Susan Taylor",
-						"date": "August 22, 2024",
-						"image_position": "first"
-					}
-				},
-				"review_KWgxeN": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-7.png",
-						"stars": "five",
-						"title": "“I love my Chugg”",
-						"text": "“It is great quality and looks fantastic. It will be my go to vessel for both tea and beers. Ordered Wednesday evening and it arrived Friday morning.”",
-						"name": "Keith Welch",
-						"date": "August 30, 2024",
-						"image_position": "last"
-					}
-				},
-				"review_qkdrpj": {
-					"type": "review",
-					"settings": {
-						"review_image": "shopify://shop_images/reviews-carousel-8.png",
-						"stars": "five",
-						"title": "“Quality is spot on”",
-						"text": "“Purchased for my Brother who loves things ‘Vikingish’. The rope handle detail works so well. I had his initials engraved which makes it a thoughtful gift.”",
-						"name": "Fallon Hanson, UK",
-						"date": "September 01, 2024",
-						"image_position": "first"
-					}
-				}
-			},
-			"block_order": [
-				"review_iAWtRK",
-				"review_yn48eD",
-				"review_rzpHxA",
-				"review_Ta3Qy4",
-				"review_UYLfke",
-				"review_NnaWhe",
-				"review_KWgxeN",
-				"review_qkdrpj"
-			],
-			"settings": {}
 		},
 		"benefits_xeGgkP": {
 			"type": "benefits",
