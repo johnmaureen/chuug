@@ -2150,23 +2150,30 @@
 				}
 			}
 
-			// Update button label and action based on view
-			if (btnTextEl && addToCartBtn) {
-				switch (viewName) {
-					case "checkout":
-						btnTextEl.textContent = "PROCEED TO CHECKOUT";
-						addToCartBtn.setAttribute(
-							"data-modal-action",
-							"proceed-to-checkout"
-						);
-						break;
-					case "personalize":
-					default:
-						btnTextEl.textContent = "ADD TO CART";
-						addToCartBtn.setAttribute("data-modal-action", "add-to-cart");
-						break;
-				}
+	// Update button label and action based on view
+		if (btnTextEl && addToCartBtn) {
+			switch (viewName) {
+				case "checkout":
+					btnTextEl.textContent = "PROCEED TO CHECKOUT";
+					addToCartBtn.setAttribute(
+						"data-modal-action",
+						"proceed-to-checkout"
+					);
+					console.log("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
+					break;
+				case "personalize":
+				default:
+					btnTextEl.textContent = "ADD TO CART";
+					addToCartBtn.setAttribute("data-modal-action", "add-to-cart");
+					console.log("✅ Button updated for personalize view: ADD TO CART");
+					break;
 			}
+		} else {
+			console.warn("⚠️ Could not update button text:", {
+				btnTextEl: !!btnTextEl,
+				addToCartBtn: !!addToCartBtn
+			});
+		}
 
 			// Scroll to top
 			const content = this.modal.querySelector(".mini-atc-modal__content");
@@ -2802,22 +2809,34 @@
 			}
 		}
 
-		setLoadingState(loading) {
-			const addToCartBtn = this.modal.querySelector(
-				".mini-atc-modal__add-to-cart-btn"
-			);
-			const btnText = addToCartBtn?.querySelector(".mini-atc-modal__btn-text");
+	setLoadingState(loading) {
+		const addToCartBtn = this.modal.querySelector(
+			".mini-atc-modal__add-to-cart-btn"
+		);
+		const btnText = addToCartBtn?.querySelector(".mini-atc-modal__btn-text");
 
-			if (loading) {
-				addToCartBtn?.classList.add("loading");
-				addToCartBtn?.setAttribute("disabled", "true");
-				if (btnText) btnText.textContent = "ADDING TO CART...";
-			} else {
-				addToCartBtn?.classList.remove("loading");
-				addToCartBtn?.removeAttribute("disabled");
-				if (btnText) btnText.textContent = "ADD TO CART";
+		if (loading) {
+			addToCartBtn?.classList.add("loading");
+			addToCartBtn?.setAttribute("disabled", "true");
+			if (btnText) {
+				btnText.textContent = "ADDING TO CART...";
+				console.log("🔄 Button loading state: ADDING TO CART...");
+			}
+		} else {
+			addToCartBtn?.classList.remove("loading");
+			addToCartBtn?.removeAttribute("disabled");
+			// Set button text based on current view
+			if (btnText) {
+				if (this.currentView === "checkout") {
+					btnText.textContent = "PROCEED TO CHECKOUT";
+					console.log("✅ Button loading complete (checkout view): PROCEED TO CHECKOUT");
+				} else {
+					btnText.textContent = "ADD TO CART";
+					console.log("✅ Button loading complete (personalize view): ADD TO CART");
+				}
 			}
 		}
+	}
 
 		showAddToCartSuccess(itemCount) {
 			// Create or update success message
