@@ -23,6 +23,7 @@
 		STORAGE_KEY: "chuug_mini_atc_selections",
 		DEBOUNCE_DELAY: 300,
 		ANIMATION_DURATION: 500,
+		REVERSE_CART_ORDER: false, // Toggle to render cart items in reverse order (newest first)
 		SWIPER_CONFIG: {
 			loop: false,
 			speed: 300,
@@ -2458,7 +2459,7 @@
 				}
 
 				// Show success feedback
-				this.showAddToCartSuccess(cartData.items.length);
+				// this.showAddToCartSuccess(cartData.items.length);
 
 				// Reset personalization toggles and gift box toggle after successful add to cart
 				this.resetPersonalizationToggles();
@@ -2539,20 +2540,23 @@
 				}
 			});
 
-			// Add any remaining add-ons that don't have a specific vessel number
-			addonItems.forEach((addon) => {
-				if (!addon.properties["Vessel Number"]) {
-					items.push(addon);
-				}
-			});
+		// Add any remaining add-ons that don't have a specific vessel number
+		addonItems.forEach((addon) => {
+			if (!addon.properties["Vessel Number"]) {
+				items.push(addon);
+			}
+		});
 
-			const cartData = {
-				items,
-				note: this.collectOrderNote(state),
-				attributes: this.collectOrderAttributes(state),
-			};
+		// Reverse the order of items before adding to cart
+		items.reverse();
 
-			return cartData;
+		const cartData = {
+			items,
+			note: this.collectOrderNote(state),
+			attributes: this.collectOrderAttributes(state),
+		};
+
+		return cartData;
 		}
 
 		collectVesselProducts(state) {
@@ -3281,10 +3285,12 @@
 					"items"
 				);
 
-				// Create a temporary container to hold the rendered items
-				const tempContainer = document.createElement("div");
+			// Create a temporary container to hold the rendered items
+			const tempContainer = document.createElement("div");
 
-				// Render each cart item in reverse order (newest first, like Liquid template)
+			// Render each cart item (order controlled by CONFIG.REVERSE_CART_ORDER)
+			if (CONFIG.REVERSE_CART_ORDER) {
+				// Reverse order (newest first, like Liquid template)
 				for (let i = cartItems.length - 1; i >= 0; i--) {
 					const item = cartItems[i];
 					console.log("🛒 Rendering item:", item.id, item.product_title);
@@ -3296,6 +3302,20 @@
 						console.warn("🛒 Item element was null for:", item.id);
 					}
 				}
+			} else {
+				// Normal order (oldest first)
+				for (let i = 0; i < cartItems.length; i++) {
+					const item = cartItems[i];
+					console.log("🛒 Rendering item:", item.id, item.product_title);
+					const itemElement = await this.renderCartItem(item, cartItems);
+					if (itemElement) {
+						console.log("🛒 Item element created:", itemElement);
+						tempContainer.appendChild(itemElement);
+					} else {
+						console.warn("🛒 Item element was null for:", item.id);
+					}
+				}
+			}
 
 				// Append all items to the main container
 				while (tempContainer.firstChild) {
@@ -4312,7 +4332,7 @@
 			} catch (error) {
 				console.error("Failed to remove cart item:", error);
 				// Show error message to user
-				this.showRemoveItemError(error.message);
+				// this.showRemoveItemError(error.message);
 			} finally {
 				// Hide loading overlay
 				this.hideRemoveItemLoader();

@@ -70,7 +70,7 @@
   
   <div class="checkout-products-container" data-checkout-items>
     {% comment %} Dynamic cart items will be populated here {% endcomment %}
-    {% for item in cart.items reversed %}
+    {% for item in cart.items %}
       {% render 'checkout-products-wrap', item: item, modal_id: modal_id %}
     {% endfor %}
     
