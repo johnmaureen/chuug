@@ -26,7 +26,6 @@
 
 .checkout-products-wrap__container {
 	display: flex;
-	align-items: center;
 	gap: 24px;
 	width: 100%;
 }
@@ -75,6 +74,7 @@
 	flex-direction: column;
 	gap: 10px;
 	flex: 1;
+	justify-content: space-between;
 }
 
 /* Header Section (Title + Delete Button) */
@@ -324,7 +324,7 @@
 	font-family: Gabarito, sans-serif;
 	font-size: 13px;
 	font-weight: 600;
-	color: #0D2026;
+	color: #0d2026;
 }
 
 .checkout-products-wrap__addon-remove {
