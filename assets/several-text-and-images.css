@@ -158,3 +158,10 @@
 		line-height: 120%;
 	}
 }
+
+
+@media screen and (max-width:767px) {
+	.several-text-and-images-title, .several-text-and-images-title h1 {
+		font-size:31px;
+	}
+}

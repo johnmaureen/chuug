@@ -1020,10 +1020,19 @@
 	display: block !important;
 }
 
+/* Progress Fill State Classes */
+.step-process-indicator__progress-fill.progress-full {
+	width: calc(100% - 20px);
+}
+
+.step-process-indicator__progress-fill.progress-half {
+	width: calc(50% - 20px);
+}
+
 .step-process-indicator__steps {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	gap: 32px;
 	width: 472px;
 	list-style: none;
@@ -1294,7 +1303,7 @@
 	height: 81.78px;
 	max-width: 100%;
 	background-image: url("./cta-button-bg.png");
-	background-size: cover;
+	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
 	border: none;
@@ -1412,10 +1421,6 @@
 
 	.mini-atc-modal__content {
 		padding: 1.5rem;
-	}
-
-	.mini-atc-modal__title {
-		font-size: 1.25rem;
 	}
 
 	.mini-atc-modal__add-to-cart-btn {
@@ -1624,7 +1629,6 @@
 
 	.step-process-indicator__progress-fill {
 		height: 16px;
-		top: 9px;
 	}
 
 	.step-process-indicator__steps {
@@ -1708,7 +1712,9 @@
 		padding: 12px;
 		gap: 8px;
 	}
-
+	.step-process-indicator__step-text {
+		white-space: wrap;
+	}
 	/* Personalization Header - Stack Elements */
 	.mini-atc-modal__personalization-header {
 		flex-direction: column;
@@ -1750,7 +1756,8 @@
 	}
 
 	/* Group the design link and tooltip together */
-	.mini-atc-modal__personalization-header-content_right .icon-question-mark-tooltip {
+	.mini-atc-modal__personalization-header-content_right
+		.icon-question-mark-tooltip {
 		margin-right: auto;
 	}
 
@@ -1798,6 +1805,31 @@
 		white-space: normal;
 		text-align: center;
 	}
+
+	.mini-atc-modal__subtotal-row {
+		padding-top: 10px;
+		align-items: flex-start;
+	}
+	.mini-atc-modal__original-price {
+		flex-direction: column-reverse;
+	}
+	.mini-atc-modal__savings {
+		display: none;
+	}
+	.mini-atc-modal__savings-text {
+		font-size: 17px;
+		display: none;
+	}
+
+	.checkout-products-wrap__title {
+		font-size: 14px;
+	}
+	/* .mini-atc-modal__current-price {
+		font-size: 21px;
+	}
+	.mini-atc-modal__original-price {
+		font-size: 18px;
+	} */
 }
 
 @media (max-width: 375px) {
@@ -1846,7 +1878,8 @@
 	}
 
 	/* Group the design link and tooltip together */
-	.mini-atc-modal__personalization-header-content_right .icon-question-mark-tooltip {
+	.mini-atc-modal__personalization-header-content_right
+		.icon-question-mark-tooltip {
 		margin-right: auto;
 	}
 

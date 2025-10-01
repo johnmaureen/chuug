@@ -223,6 +223,7 @@
 		min-height: 71.38em;
 		font-size: 1.333vw;
 		width: 66.88em;
+		height: auto !important;
 	}
 
 	/* Pattern 1: Large (513.48 × 645.44) */

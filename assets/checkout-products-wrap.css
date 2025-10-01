@@ -202,30 +202,6 @@
 	}
 }
 
-@media (max-width: 480px) {
-	.checkout-products-wrap__container {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 12px;
-	}
-
-	.checkout-products-wrap__image {
-		align-self: center;
-	}
-
-	.checkout-products-wrap__header {
-		gap: 10px;
-	}
-
-	.checkout-products-wrap__options {
-		justify-content: center;
-	}
-
-	.checkout-products-wrap__pricing {
-		justify-content: center;
-	}
-}
-
 /* Animation for smooth interactions */
 .checkout-products-wrap {
 	transition: box-shadow 0.2s ease;

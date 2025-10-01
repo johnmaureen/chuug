@@ -389,6 +389,40 @@
 	visibility: hidden;
 }
 
+@media screen and (max-width: 767px) {
+	.pomc-wrapper {
+		padding: 30px 10px;
+	}
+	.vessel_number_item {
+		width: 100%;
+	}
+
+	.vessel-number-wrap {
+		gap: 35px;
+	}
+
+	.heading-wrap {
+		flex-direction: column;
+	}
+
+	.block-wrap .block-label {
+		min-width: calc(33.3% - 4px);
+	}
+
+	.selection-result-wrap.result-3 {
+		gap: 10px;
+	}
+
+	.selection-result-wrap .result-item .img-wrap {
+		width: 100%;
+		min-height: auto;
+	}
+
+	.selection-result-wrap .result-item {
+		width: 33.3%;
+	}
+}
+
 @keyframes spin {
 	0% {
 		transform: rotate(0deg);

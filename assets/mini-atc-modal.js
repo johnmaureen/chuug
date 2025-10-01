@@ -3170,22 +3170,23 @@
 					".step-process-indicator__progress-fill"
 				);
 
-				if (progressFill) {
-					// Set width based on non-gift-box item count
-					if (nonGiftBoxItemCount >= 2) {
-						progressFill.style.width = "96%";
-						console.log("📊 Progress Indicator: Set to 100% (2+ items)");
-					} else if (nonGiftBoxItemCount === 1) {
-						progressFill.style.width = "50%";
-						console.log("📊 Progress Indicator: Set to 50% (1 item)");
-					} else {
-						// Reset to default CSS width for 0 items
-						progressFill.style.width = "";
-						console.log(
-							"📊 Progress Indicator: Reset to default width (0 items)"
-						);
-					}
+			if (progressFill) {
+				// Remove all progress classes first
+				progressFill.classList.remove('progress-full', 'progress-half');
+				
+				// Add appropriate class based on non-gift-box item count
+				if (nonGiftBoxItemCount >= 2) {
+					progressFill.classList.add('progress-full');
+					console.log("📊 Progress Indicator: Added progress-full class (2+ items)");
+				} else if (nonGiftBoxItemCount === 1) {
+					progressFill.classList.add('progress-half');
+					console.log("📊 Progress Indicator: Added progress-half class (1 item)");
+				} else {
+					console.log(
+						"📊 Progress Indicator: No progress class (0 items)"
+					);
 				}
+			}
 
 				// Update the third step (£30 OFF step)
 				const allSteps = this.modal.querySelectorAll(
