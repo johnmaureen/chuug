@@ -23,9 +23,9 @@ function initCountdownTimer() {
 
 		if (distance < 0) {
 			// Timer expired
-			document.getElementById('flash-countdown-days').textContent = '00';
-			document.getElementById('flash-countdown-hours').textContent = '00';
-			document.getElementById('flash-countdown-minutes').textContent = '00';
+			document.querySelector('#flash-countdown-days .flash-timer-number').textContent = '00';
+			document.querySelector('#flash-countdown-hours .flash-timer-number').textContent = '00';
+			document.querySelector('#flash-countdown-minutes .flash-timer-number').textContent = '00';
 			return;
 		}
 
@@ -35,9 +35,9 @@ function initCountdownTimer() {
 		const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 
 		// Update the display with zero-padding
-		document.getElementById('flash-countdown-days').textContent = String(days).padStart(2, '0');
-		document.getElementById('flash-countdown-hours').textContent = String(hours).padStart(2, '0');
-		document.getElementById('flash-countdown-minutes').textContent = String(minutes).padStart(2, '0');
+		document.querySelector('#flash-countdown-days .flash-timer-number').textContent = String(days).padStart(2, '0');
+		document.querySelector('#flash-countdown-hours .flash-timer-number').textContent = String(hours).padStart(2, '0');
+		document.querySelector('#flash-countdown-minutes .flash-timer-number').textContent = String(minutes).padStart(2, '0');
 	}
 
 	// Update immediately

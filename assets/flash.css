@@ -41,36 +41,25 @@
 
 .flash-countdown-timer {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
+	justify-content: center;
 	gap: 0;
 }
 
-.flash-timer-display {
+.flash-timer-unit {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+}
+
+.flash-timer-number {
 	font-family: "Gabarito", sans-serif;
 	font-weight: 700;
 	font-size: 38px;
 	line-height: 1;
 	letter-spacing: -0.03em;
 	color: #ffffff;
-	display: flex;
-	align-items: center;
-	gap: 0;
-}
-
-.flash-timer-separator {
-	margin: 0 6px;
-}
-
-.flash-timer-labels {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0;
-	width: 160px;
-	height: 10px;
-	position: relative;
-	margin-top: 0;
 }
 
 .flash-timer-label {
@@ -79,19 +68,17 @@
 	font-size: 8px;
 	line-height: 1.2;
 	color: #ffffff;
-	position: absolute;
+	text-align: center;
 }
 
-.flash-timer-label-days {
-	left: 3px;
-}
-
-.flash-timer-label-hours {
-	left: 67px;
-}
-
-.flash-timer-label-minutes {
-	left: 131px;
+.flash-timer-separator {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 38px;
+	line-height: 1;
+	color: #ffffff;
+	margin: 0 6px;
+	padding-bottom: 12px;
 }
 
 /* USP Grid Styles */

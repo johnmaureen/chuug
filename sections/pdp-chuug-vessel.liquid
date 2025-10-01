@@ -162,17 +162,19 @@
           <div class="flash-countdown-timer" 
                data-flash-sale-end-date="{{ section.settings.flash_sale_end_date }}" 
                data-flash-sale-end-time="{{ section.settings.flash_sale_end_time }}">
-            <div class="flash-timer-display">
-              <span id="flash-countdown-days">00</span>
-              <span class="flash-timer-separator">:</span>
-              <span id="flash-countdown-hours">00</span>
-              <span class="flash-timer-separator">:</span>
-              <span id="flash-countdown-minutes">00</span>
+            <div class="flash-timer-unit" id="flash-countdown-days">
+              <span class="flash-timer-number">00</span>
+              <span class="flash-timer-label">DAYS</span>
             </div>
-            <div class="flash-timer-labels">
-              <span class="flash-timer-label flash-timer-label-days">DAYS</span>
-              <span class="flash-timer-label flash-timer-label-hours">HOURS</span>
-              <span class="flash-timer-label flash-timer-label-minutes">MINUTES</span>
+            <span class="flash-timer-separator">:</span>
+            <div class="flash-timer-unit" id="flash-countdown-hours">
+              <span class="flash-timer-number">00</span>
+              <span class="flash-timer-label">HOURS</span>
+            </div>
+            <span class="flash-timer-separator">:</span>
+            <div class="flash-timer-unit" id="flash-countdown-minutes">
+              <span class="flash-timer-number">00</span>
+              <span class="flash-timer-label">MINUTES</span>
             </div>
           </div>
         </div>
