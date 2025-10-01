@@ -7,12 +7,20 @@
 
 {%- liquid
   assign parent_section = section
-  assign modal_id = 'mini-atc-modal-' | append: parent_section.id
-  assign swiper_id = 'mini-atc-product-swiper-' | append: parent_section.id
+  if section.id
+    assign section_id = parent_section.id
+    assign modal_id = 'mini-atc-modal-' | append: section_id
+    assign swiper_id = 'mini-atc-product-swiper-' | append: section_id
+  else
+    assign section_id = 'global'
+    assign modal_id = 'mini-atc-modal-global'
+    assign swiper_id = 'mini-atc-product-swiper-global'
+  endif
 -%}
 
 <!-- Mini ATC Modal Snippet Styles -->
 {{ 'mini-atc-modal.css' | asset_url | stylesheet_tag }}
+{{ 'checkout-products-wrap.css' | asset_url | stylesheet_tag }}
 
 <section 
   id="{{ modal_id }}" 
@@ -118,7 +126,7 @@
                 </div>
                 
                 <div class="mini-atc-modal__personalization-header-content_right">
-                  <a href="#" class="mini-atc-modal__design-link" data-open-design-modal="design-preview-modal-{{ parent_section.id }}" aria-describedby="{{ modal_id }}-design-tooltip">
+                  <a href="#" class="mini-atc-modal__design-link" data-open-design-modal="design-preview-modal-{{ section_id }}" aria-describedby="{{ modal_id }}-design-tooltip">
                     Can I see the design?
                   </a>
                   {% render 'icon-question-mark-tooltip', 
@@ -395,11 +403,11 @@
 
 <!-- Design Modal -->
 <div 
-  id="design-preview-modal-{{ parent_section.id }}" 
+  id="design-preview-modal-{{ section_id }}" 
   class="design-preview-modal" 
   role="dialog" 
   aria-modal="true" 
-  aria-labelledby="design-preview-modal-title-{{ parent_section.id }}"
+  aria-labelledby="design-preview-modal-title-{{ section_id }}"
   aria-hidden="true"
   data-design-modal
 >
@@ -410,7 +418,7 @@
   <div class="design-preview-modal__container">
     <!-- Modal Header -->
     <header class="design-preview-modal__header">
-      <h2 id="design-preview-modal-title-{{ parent_section.id }}" class="design-preview-modal__title">
+      <h2 id="design-preview-modal-title-{{ section_id }}" class="design-preview-modal__title">
         Can I see the design?
       </h2>
       
@@ -437,7 +445,7 @@
       <!-- Image Gallery with Swiper -->
       <div class="design-preview-modal__gallery">
         <div 
-          id="design-preview-swiper-{{ parent_section.id }}" 
+          id="design-preview-swiper-{{ section_id }}" 
           class="swiper design-preview-swiper"
           role="region"
           aria-label="Design preview image gallery"
@@ -471,7 +479,7 @@
 {
   "modalId": "{{ modal_id }}",
   "swiperId": "{{ swiper_id }}",
-  "sectionId": "{{ parent_section.id }}",
+  "sectionId": "{{ section_id }}",
   "productContext": {
     "baseProductId": null,
     "variantIds": [],
