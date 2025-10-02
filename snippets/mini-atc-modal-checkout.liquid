@@ -53,16 +53,39 @@
 </section>
 
 <!-- Countdown Timer -->
-<section class="countdown-section" aria-labelledby="{{ modal_id }}-countdown-heading">
+<section class="countdown-section" aria-labelledby="{{ modal_id }}-countdown-heading" data-countdown-section style="display: none;">
   <h3 id="{{ modal_id }}-countdown-heading" class="visually-hidden">Limited Time Offer</h3>
   
   <div class="countdown-timer" role="timer" aria-live="polite" aria-atomic="true">
     <span class="countdown-timer__text">
-      ⏰ Extra £30 off ends in: 
-      <time class="countdown-timer__time" data-countdown-timer>XX:XX:XX</time>
+      <span data-countdown-text>⏰ Extra £30 off ends in:</span> 
+      <time class="countdown-timer__time" data-countdown-timer>00:00:00</time>
     </span>
   </div>
 </section>
+
+<script>
+  // Show countdown section and set dynamic text if flash sale is enabled and configured
+  (function() {
+    const countdownSection = document.querySelector('[data-countdown-section]');
+    const countdownTextElement = document.querySelector('[data-countdown-text]');
+    
+    if (countdownSection && window.chuugFlashSale && window.chuugFlashSale.enabled && window.chuugFlashSale.endDate && window.chuugFlashSale.endTime) {
+      // Show countdown section
+      countdownSection.style.display = '';
+      
+      // Set dynamic text - use mini-ATC specific text, fallback to default
+      if (countdownTextElement) {
+        const miniAtcText = window.chuugFlashSale.miniAtcText || 'Extra £30 off ends in';
+        countdownTextElement.textContent = '⏰ ' + miniAtcText + ':';
+      }
+      
+      console.log('✅ Mini-ATC countdown displayed with text:', window.chuugFlashSale.miniAtcText || 'Extra £30 off ends in');
+    } else {
+      console.log('ℹ️ Mini-ATC countdown hidden - flash sale not configured');
+    }
+  })();
+</script>
 
 <!-- Order Summary -->
 <section class="checkout-summary-section" aria-labelledby="{{ modal_id }}-summary-heading">

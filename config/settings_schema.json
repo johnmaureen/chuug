@@ -1459,5 +1459,53 @@
         "info": "t:settings_schema.cart.settings.cart_drawer.collection.info"
       }
     ]
+  },
+  {
+    "name": "Flash Sale",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Flash Sale Countdown Settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "Configure a global flash sale countdown timer that appears across your site (PDP, collections, mini-cart modal, etc.)"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_flash_sale",
+        "label": "Enable Flash Sale Countdown",
+        "default": false,
+        "info": "When enabled, all countdown timers will use the date/time configured below"
+      },
+      {
+        "type": "text",
+        "id": "flash_sale_text",
+        "label": "Flash Sale Text (PDP)",
+        "placeholder": "Sale ends in",
+        "info": "Text to display on the product page flash countdown timer"
+      },
+      {
+        "type": "text",
+        "id": "mini_atc_countdown_text",
+        "label": "Mini-ATC Countdown Text",
+        "placeholder": "Extra £30 off ends in",
+        "info": "Text to display on the mini-cart modal countdown timer"
+      },
+      {
+        "type": "text",
+        "id": "flash_sale_end_date",
+        "label": "Flash Sale End Date",
+        "placeholder": "2025-12-31",
+        "info": "Format: YYYY-MM-DD (e.g., 2025-10-15)"
+      },
+      {
+        "type": "text",
+        "id": "flash_sale_end_time",
+        "label": "Flash Sale End Time",
+        "placeholder": "23:59",
+        "info": "Format: HH:MM in 24-hour format (e.g., 23:59 for 11:59 PM)"
+      }
+    ]
   }
 ]

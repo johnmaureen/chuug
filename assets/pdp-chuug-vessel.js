@@ -17,6 +17,17 @@ function initCountdownTimer() {
 	// Combine date and time
 	const endDateTime = new Date(`${flashSaleEndDate}T${flashSaleEndTime}`);
 	
+	// Validate the date
+	if (isNaN(endDateTime.getTime())) {
+		console.error('❌ Invalid flash sale date/time format:', flashSaleEndDate, flashSaleEndTime);
+		document.querySelector('#flash-countdown-days .flash-timer-number').textContent = '00';
+		document.querySelector('#flash-countdown-hours .flash-timer-number').textContent = '00';
+		document.querySelector('#flash-countdown-minutes .flash-timer-number').textContent = '00';
+		return;
+	}
+	
+	console.log('✅ Flash countdown initialized, ends at:', endDateTime);
+	
 	function updateCountdown() {
 		const now = new Date().getTime();
 		const distance = endDateTime - now;

@@ -75,6 +75,19 @@ document.addEventListener('DOMContentLoaded', function() {
         name: "{{ template.name }}",
         suffix: "{{ template.suffix }}"
     };
+    
+    // Global Flash Sale Configuration
+    // Populated from Theme Settings > Flash Sale
+    window.chuugFlashSale = {
+        enabled: {% if settings.enable_flash_sale %}true{% else %}false{% endif %},
+        endDate: "{{ settings.flash_sale_end_date }}",
+        endTime: "{{ settings.flash_sale_end_time }}",
+        text: "{{ settings.flash_sale_text }}",
+        miniAtcText: "{{ settings.mini_atc_countdown_text }}"
+    };
+    
+    // Debug log to check values
+    console.log('🎯 Flash Sale Config:', window.chuugFlashSale);
 </script>
 
 

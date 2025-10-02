@@ -155,13 +155,13 @@
 
       <div class="flash-section">
         <!-- Flash Sale Section -->
-        {% if section.settings.enable_flash_sale %}
+        {% if settings.enable_flash_sale and settings.flash_sale_end_date != blank and settings.flash_sale_end_time != blank %}
         <div class="flash-sale-container">
-          <p class="flash-sale-text">{{ section.settings.flash_sale_text }}</p>
+          <p class="flash-sale-text">{% if settings.flash_sale_text != blank %}{{ settings.flash_sale_text }}{% else %}Sale ends in{% endif %}</p>
           <div class="flash-sale-divider"></div>
           <div class="flash-countdown-timer" 
-               data-flash-sale-end-date="{{ section.settings.flash_sale_end_date }}" 
-               data-flash-sale-end-time="{{ section.settings.flash_sale_end_time }}">
+               data-flash-sale-end-date="{{ settings.flash_sale_end_date }}" 
+               data-flash-sale-end-time="{{ settings.flash_sale_end_time }}">
             <div class="flash-timer-unit" id="flash-countdown-days">
               <span class="flash-timer-number">00</span>
               <span class="flash-timer-label">DAYS</span>

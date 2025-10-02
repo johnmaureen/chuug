@@ -433,7 +433,41 @@
 			// 24 hours default
 			this.element = element;
 			this.duration = duration;
-			this.startTime = this.getStartTime();
+			this.useFlashSaleTime = false;
+			this.flashSaleEndTime = null;
+			
+			// Priority 1: Check global flash sale configuration
+			let flashSaleEndDate = null;
+			let flashSaleEndTime = null;
+			
+			if (window.chuugFlashSale && window.chuugFlashSale.enabled) {
+				flashSaleEndDate = window.chuugFlashSale.endDate;
+				flashSaleEndTime = window.chuugFlashSale.endTime;
+			} else {
+				// Priority 2: Check element data attributes
+				flashSaleEndDate = element.getAttribute('data-flash-sale-end-date');
+				flashSaleEndTime = element.getAttribute('data-flash-sale-end-time');
+			}
+			
+			if (flashSaleEndDate && flashSaleEndTime) {
+				// Use flash sale countdown
+				this.useFlashSaleTime = true;
+				this.flashSaleEndTime = new Date(`${flashSaleEndDate}T${flashSaleEndTime}`);
+				
+				// Validate the date is valid
+				if (isNaN(this.flashSaleEndTime.getTime())) {
+					console.warn('⚠️ Invalid flash sale date/time, falling back to duration-based countdown');
+					this.useFlashSaleTime = false;
+					this.startTime = this.getStartTime();
+				} else {
+					console.log('✅ Using flash sale countdown:', this.flashSaleEndTime);
+				}
+			} else {
+				// Priority 3: Use duration-based countdown
+				this.startTime = this.getStartTime();
+				console.log('ℹ️ Using duration-based countdown (flash sale not configured)');
+			}
+			
 			this.timer = null;
 			this.init();
 		}
@@ -456,28 +490,58 @@
 		}
 
 		update() {
-			const currentTime = Math.floor(Date.now() / 1000);
-			const elapsed = currentTime - this.startTime;
-			const remaining = Math.max(0, this.duration - elapsed);
+			if (this.useFlashSaleTime) {
+				// Flash sale countdown logic
+				const now = new Date().getTime();
+				const distance = this.flashSaleEndTime - now;
 
-			if (remaining <= 0) {
-				this.reset();
-				return;
-			}
+				if (distance < 0) {
+					// Timer expired
+					if (this.element) {
+						this.element.textContent = "00:00:00";
+					}
+					return;
+				}
 
-			const hours = Math.floor(remaining / 3600);
-			const minutes = Math.floor((remaining % 3600) / 60);
-			const seconds = remaining % 60;
+				const hours = Math.floor(distance / (1000 * 60 * 60));
+				const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+				const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-			const formattedTime =
-				String(hours).padStart(2, "0") +
-				":" +
-				String(minutes).padStart(2, "0") +
-				":" +
-				String(seconds).padStart(2, "0");
+				const formattedTime =
+					String(hours).padStart(2, "0") +
+					":" +
+					String(minutes).padStart(2, "0") +
+					":" +
+					String(seconds).padStart(2, "0");
 
-			if (this.element) {
-				this.element.textContent = formattedTime;
+				if (this.element) {
+					this.element.textContent = formattedTime;
+				}
+			} else {
+				// Duration-based countdown logic (original)
+				const currentTime = Math.floor(Date.now() / 1000);
+				const elapsed = currentTime - this.startTime;
+				const remaining = Math.max(0, this.duration - elapsed);
+
+				if (remaining <= 0) {
+					this.reset();
+					return;
+				}
+
+				const hours = Math.floor(remaining / 3600);
+				const minutes = Math.floor((remaining % 3600) / 60);
+				const seconds = remaining % 60;
+
+				const formattedTime =
+					String(hours).padStart(2, "0") +
+					":" +
+					String(minutes).padStart(2, "0") +
+					":" +
+					String(seconds).padStart(2, "0");
+
+				if (this.element) {
+					this.element.textContent = formattedTime;
+				}
 			}
 		}
 
