@@ -1,5 +1,7 @@
 {{ 'section-content-with-grid.css' | asset_url | stylesheet_tag }}
 
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+
 {%- style -%}
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -12,6 +14,83 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  /* Scoped Swiper styles only for modal carousel */
+  .modal-carousel-swiper {
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    z-index: 1;
+    display: block;
+  }
+
+  .modal-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    transition-property: transform;
+    transition-timing-function: var(--swiper-wrapper-transition-timing-function,initial);
+    box-sizing: content-box;
+  }
+
+  .modal-carousel-swiper .swiper-slide {
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition-property: transform;
+    display: block;
+  }
+
+  .modal-nav-next,
+  .modal-nav-prev {
+    position: absolute;
+    top: 50%;
+    width: calc(var(--swiper-navigation-size)/ 44 * 27);
+    height: var(--swiper-navigation-size);
+    margin-top: calc(0px - (var(--swiper-navigation-size)/ 2));
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--swiper-navigation-color,var(--swiper-theme-color));
+  }
+
+  .modal-nav-next:after,
+  .modal-nav-prev:after {
+    font-family: swiper-icons;
+    font-size: var(--swiper-navigation-size);
+    text-transform: none!important;
+    letter-spacing: 0;
+    font-variant: normal;
+    line-height: 1;
+  }
+
+  .modal-nav-prev {
+    left: 10px;
+    right: auto;
+  }
+
+  .modal-nav-prev:after {
+    content: 'prev';
+  }
+
+  .modal-nav-next {
+    right: 10px;
+    left: auto;
+  }
+
+  .modal-nav-next:after {
+    content: 'next';
+  }
+
+  /* Pagination dots are styled in main CSS file */
 {%- endstyle -%}
 
 <div class="content-with-grid-section color-{{ section.settings.color_scheme }} gradient">
@@ -34,7 +113,7 @@
             {% endif %}
             data-item-index="{{ forloop.index }}"
           >
-            <div class="content-image-wrapper">
+            <div class="content-image-wrapper content-image-clickable" data-image-index="{{ forloop.index0 }}" onclick="openContentModal({{ forloop.index0 }})">
               {%- if block.settings.image != blank -%}
                 {%- liquid
                   assign image_widths = '200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600'
@@ -68,7 +147,48 @@
   </div>
 </div>
 
+<!-- Image Carousel Modal - Independent Structure -->
+<div id="contentImageModal" class="content-modal" style="display: none;">
+  <div class="content-modal-overlay" onclick="closeContentModal()"></div>
+  <div class="content-modal-container">
+    <button class="content-modal-close" onclick="closeContentModal()" aria-label="Close modal">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <div class="swiper modal-carousel-swiper">
+      <div class="swiper-wrapper modal-carousel-wrapper">
+        <!-- Slides will be dynamically populated -->
+      </div>
+      
+      <!-- Navigation -->
+      <div class="swiper-button-prev modal-nav-prev"></div>
+      <div class="swiper-button-next modal-nav-next"></div>
+      
+      <!-- Pagination Dots -->
+      <nav class="modal-carousel__image-dots" aria-label="Image navigation"></nav>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden data for modal images -->
+<div id="modalImagesData" style="display: none;">
+  {%- for block in section.blocks -%}
+    {%- if block.settings.image != blank -%}
+      <div 
+        class="modal-image-data" 
+        data-src="{{ block.settings.image | image_url: width: 2000 }}"
+        data-alt="Image {{ forloop.index }}"
+      ></div>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
 <script>
+  // Global variable for modal swiper
+  let contentModalSwiper;
+
   document.addEventListener('DOMContentLoaded', function() {
     const loadMoreButton = document.querySelector('.content-load-more-button');
     const gridContainer = document.querySelector('.content-with-grid');
@@ -187,6 +307,101 @@
       
       // Set initial container height
       updateContainerHeight(currentShown);
+    }
+
+    // Build modal carousel from image data
+    function buildModalCarousel() {
+      const modalImagesData = document.querySelectorAll('.modal-image-data');
+      const modalWrapper = document.querySelector('.modal-carousel-wrapper');
+      
+      if (!modalWrapper || modalImagesData.length === 0) return;
+      
+      // Clear existing slides
+      modalWrapper.innerHTML = '';
+      
+      // Build slides from data
+      modalImagesData.forEach((imageData) => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        
+        const imageWrapper = document.createElement('div');
+        imageWrapper.className = 'modal-image-container';
+        
+        const img = document.createElement('img');
+        img.src = imageData.getAttribute('data-src');
+        img.alt = imageData.getAttribute('data-alt');
+        img.className = 'modal-carousel-image';
+        img.loading = 'lazy';
+        
+        imageWrapper.appendChild(img);
+        slide.appendChild(imageWrapper);
+        modalWrapper.appendChild(slide);
+      });
+    }
+
+    // Initialize Swiper for modal carousel
+    function initContentModalSwiper() {
+      if (!contentModalSwiper) {
+        buildModalCarousel();
+        
+        contentModalSwiper = new Swiper('.modal-carousel-swiper', {
+          slidesPerView: 1,
+          spaceBetween: 30,
+          loop: false,
+          navigation: {
+            nextEl: '.modal-nav-next',
+            prevEl: '.modal-nav-prev',
+          },
+          pagination: {
+            el: '.modal-carousel__image-dots',
+            clickable: true,
+            bulletClass: 'dot',
+            bulletActiveClass: 'active',
+            renderBullet: function (index, className) {
+              return '<button class="' + className + '" aria-label="View image ' + (index + 1) + '" data-slide="' + index + '"></button>';
+            }
+          },
+          keyboard: {
+            enabled: true,
+          },
+          grabCursor: true,
+        });
+      }
+    }
+
+    // Initialize modal carousel on page load
+    initContentModalSwiper();
+  });
+
+  // Open modal function
+  function openContentModal(index) {
+    const modal = document.getElementById('contentImageModal');
+    const body = document.body;
+    
+    if (modal && contentModalSwiper) {
+      modal.style.display = 'flex';
+      body.style.overflow = 'hidden';
+      
+      // Navigate to the clicked image
+      contentModalSwiper.slideTo(index, 0);
+    }
+  }
+
+  // Close modal function
+  function closeContentModal() {
+    const modal = document.getElementById('contentImageModal');
+    const body = document.body;
+    
+    if (modal) {
+      modal.style.display = 'none';
+      body.style.overflow = '';
+    }
+  }
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      closeContentModal();
     }
   });
 </script>
