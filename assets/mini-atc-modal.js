@@ -2751,16 +2751,20 @@
 								variantData.compare_at_price / multiplier
 							);
 							properties["_Compare At Price"] = perItemCompareAtPrice;
-						}
-					}
+				}
+			}
 
-					const item = {
-						id: variantId,
-						quantity: 1,
-						properties,
-					};
+				// Add unique line identifier to prevent Shopify from consolidating items
+				const uniqueLineId = `${Date.now()}-V${vesselNumber}-${Math.random().toString(36).substr(2, 9)}`;
+				properties["_Unique Line ID"] = uniqueLineId;
 
-					items.push(item);
+				const item = {
+					id: variantId,
+					quantity: 1,
+					properties,
+				};
+
+				items.push(item);
 				}
 			);
 
@@ -2813,25 +2817,29 @@
 				const giftBoxVariantId = this.getGiftBoxVariantId();
 				console.log("🎁 Gift box variant ID:", giftBoxVariantId);
 
-			if (giftBoxVariantId) {
-				// Add one gift box per vessel
-				for (let i = 0; i < vesselCount; i++) {
-					const giftBoxItem = {
-						id: giftBoxVariantId,
-						quantity: 1,
-						properties: {
-							// VISIBLE PROPERTIES (for checkout display)
-							"Monogram Initials": "N/A",
-							
-							// HIDDEN PROPERTIES (for backend use only)
-							"_Add-on": "Premium Gift Box",
-							"_Product Handle": "premium-gift-box-tissue-wrap",
-							"_Vessel Number": i + 1,
-						},
-					};
-					console.log(`🎁 Gift box item ${i + 1} being added:`, giftBoxItem);
-					items.push(giftBoxItem);
-				}
+		if (giftBoxVariantId) {
+			// Add one gift box per vessel
+			for (let i = 0; i < vesselCount; i++) {
+				// Add unique line identifier to prevent Shopify from consolidating gift boxes
+				const uniqueLineId = `${Date.now()}-GB${i + 1}-${Math.random().toString(36).substr(2, 9)}`;
+				
+				const giftBoxItem = {
+					id: giftBoxVariantId,
+					quantity: 1,
+					properties: {
+						// VISIBLE PROPERTIES (for checkout display)
+						"Monogram Initials": "N/A",
+						
+						// HIDDEN PROPERTIES (for backend use only)
+						"_Add-on": "Premium Gift Box",
+						"_Product Handle": "premium-gift-box-tissue-wrap",
+						"_Vessel Number": i + 1,
+						"_Unique Line ID": uniqueLineId,
+					},
+				};
+				console.log(`🎁 Gift box item ${i + 1} being added:`, giftBoxItem);
+				items.push(giftBoxItem);
+			}
 				} else {
 					console.log("❌ No gift box variant ID found!");
 				}
