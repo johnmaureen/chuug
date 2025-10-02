@@ -336,6 +336,18 @@
 							index + 1
 						}" data-slide="${index}"></button>`,
 				},
+				on: {
+					slideChange: () => {
+						// Update dots manually to ensure they stay in sync
+						this.updateDots();
+					},
+					init: () => {
+						// Ensure dots are properly initialized
+						this.updateDots();
+						// Setup manual dot navigation
+						this.setupDotNavigation();
+					}
+				}
 			});
 		}
 
@@ -346,6 +358,23 @@
 			if (!dots.length || !slides.length) return;
 
 			dots.forEach((dot, index) => {
+				dot.addEventListener("click", () => {
+					this.goToSlide(index);
+				});
+			});
+		}
+
+		setupDotNavigation() {
+			// Add click handlers to dots for manual navigation
+			const dots = this.container.parentElement.querySelectorAll(".dot");
+			dots.forEach((dot, index) => {
+				// Remove existing event listeners to prevent duplicates
+				dot.replaceWith(dot.cloneNode(true));
+			});
+
+			// Re-select dots after cloning
+			const newDots = this.container.parentElement.querySelectorAll(".dot");
+			newDots.forEach((dot, index) => {
 				dot.addEventListener("click", () => {
 					this.goToSlide(index);
 				});
@@ -368,6 +397,15 @@
 					dot.classList.toggle("active", i === index);
 				});
 			}
+		}
+
+		updateDots() {
+			const dots = this.container.parentElement.querySelectorAll(".dot");
+			const activeIndex = this.swiper ? this.swiper.activeIndex : 0;
+
+			dots.forEach((dot, index) => {
+				dot.classList.toggle("active", index === activeIndex);
+			});
 		}
 
 		updateProductImage(imageSrc, altText = "CHUUG Vessel") {
@@ -1429,9 +1467,17 @@
 				}
 			});
 
-			// Update swiper if it exists
-			if (this.swiper && this.swiper.swiper) {
-				this.swiper.swiper.update();
+			// Re-initialize swiper if it exists, or create new one
+			if (this.swiper) {
+				// Destroy existing swiper
+				if (this.swiper.swiper) {
+					this.swiper.swiper.destroy(true, true);
+				}
+				// Re-initialize the ProductImageSwiper
+				this.swiper = new ProductImageSwiper(swiperContainer);
+			} else {
+				// Create new swiper if it doesn't exist
+				this.swiper = new ProductImageSwiper(swiperContainer);
 			}
 		}
 
