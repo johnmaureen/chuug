@@ -3959,8 +3959,9 @@
 					properties: vesselItem.properties,
 				});
 
-			// Extract vessel number from the vessel item's properties
+			// Extract vessel number AND unique line ID timestamp from the vessel item's properties
 			let vesselNumber = null;
+			let vesselUniqueLineId = null;
 			console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
 
 			// Properties are stored as an object, not an array
@@ -3977,8 +3978,12 @@
 					if (vesselPropertyParts.length >= 2) {
 						vesselNumber = vesselPropertyParts[1];
 						console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
-						break;
 					}
+				}
+				// Get the unique line ID to match the timestamp
+				if (key === "_Unique Line ID") {
+					vesselUniqueLineId = value;
+					console.log(`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`);
 				}
 			}
 
@@ -3990,11 +3995,21 @@
 				return [];
 			}
 
+			if (!vesselUniqueLineId) {
 				console.log(
-					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
+					`🔍 DEBUG: No unique line ID found for item with key ${vesselItemKey}`
 				);
+				console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+				return [];
+			}
 
-				// Find gift boxes with matching vessel number
+			// Extract the timestamp prefix from the unique line ID (e.g., "1759401169659" from "1759401169659-V1-26bfsczov")
+			const vesselTimestampPrefix = vesselUniqueLineId.split('-')[0];
+			console.log(
+				`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`
+			);
+
+				// Find gift boxes with matching vessel number AND timestamp prefix
 				const associatedGiftBoxKeys = [];
 				for (const item of cartData.items) {
 					if (item.key === vesselItemKey) {
@@ -4009,6 +4024,7 @@
 					// Check if this item is a gift box
 					let isGiftBox = false;
 					let hasMatchingVesselNumber = false;
+					let hasMatchingTimestamp = false;
 
 				// Properties are stored as an object, not an array
 				for (const [key, value] of Object.entries(item.properties || {})) {
@@ -4032,14 +4048,33 @@
 							`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`
 						);
 					}
+
+					// Check if it has the matching timestamp prefix in the unique line ID
+					if (key === "_Unique Line ID") {
+						const giftBoxTimestampPrefix = value.split('-')[0];
+						if (giftBoxTimestampPrefix === vesselTimestampPrefix) {
+							hasMatchingTimestamp = true;
+							console.log(
+								`🔍 DEBUG: Item ${item.key} has matching timestamp prefix ${giftBoxTimestampPrefix}`
+							);
+						} else {
+							console.log(
+								`🔍 DEBUG: Item ${item.key} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix})`
+							);
+						}
+					}
 				}
 
-					// If it's a gift box with matching vessel number, add to removal list
-					if (isGiftBox && hasMatchingVesselNumber) {
+					// If it's a gift box with matching vessel number AND matching timestamp, add to removal list
+					if (isGiftBox && hasMatchingVesselNumber && hasMatchingTimestamp) {
 						// Use the key for cart API
 						associatedGiftBoxKeys.push(item.key);
 						console.log(
-							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`
+							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`
+						);
+					} else if (isGiftBox && hasMatchingVesselNumber && !hasMatchingTimestamp) {
+						console.log(
+							`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`
 						);
 					}
 				}
@@ -4099,8 +4134,9 @@
 					properties: vesselItem.properties,
 				});
 
-			// Extract vessel number from the vessel item's properties
+			// Extract vessel number AND unique line ID timestamp from the vessel item's properties
 			let vesselNumber = null;
+			let vesselUniqueLineId = null;
 			console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
 
 			// Properties are stored as an object, not an array
@@ -4117,8 +4153,12 @@
 					if (vesselPropertyParts.length >= 2) {
 						vesselNumber = vesselPropertyParts[1];
 						console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
-						break;
 					}
+				}
+				// Get the unique line ID to match the timestamp
+				if (key === "_Unique Line ID") {
+					vesselUniqueLineId = value;
+					console.log(`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`);
 				}
 			}
 
@@ -4130,11 +4170,21 @@
 				return [];
 			}
 
+			if (!vesselUniqueLineId) {
 				console.log(
-					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
+					`🔍 DEBUG: No unique line ID found for item ${vesselItemId}`
 				);
+				console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+				return [];
+			}
 
-				// Find gift boxes with matching vessel number
+			// Extract the timestamp prefix from the unique line ID (e.g., "1759401169659" from "1759401169659-V1-26bfsczov")
+			const vesselTimestampPrefix = vesselUniqueLineId.split('-')[0];
+			console.log(
+				`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`
+			);
+
+				// Find gift boxes with matching vessel number AND timestamp prefix
 				const associatedGiftBoxIds = [];
 				for (const item of cartData.items) {
 					if (item.id.toString() === vesselItemId.toString()) {
@@ -4149,6 +4199,7 @@
 					// Check if this item is a gift box
 					let isGiftBox = false;
 					let hasMatchingVesselNumber = false;
+					let hasMatchingTimestamp = false;
 
 				// Properties are stored as an object, not an array
 				for (const [key, value] of Object.entries(item.properties || {})) {
@@ -4172,17 +4223,36 @@
 							`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
 						);
 					}
-				}
 
-				// If it's a gift box with matching vessel number, add to removal list
-				if (isGiftBox && hasMatchingVesselNumber) {
-					// Use the key instead of id for cart API
-					associatedGiftBoxIds.push(item.key);
-						console.log(
-							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`
-						);
+					// Check if it has the matching timestamp prefix in the unique line ID
+					if (key === "_Unique Line ID") {
+						const giftBoxTimestampPrefix = value.split('-')[0];
+						if (giftBoxTimestampPrefix === vesselTimestampPrefix) {
+							hasMatchingTimestamp = true;
+							console.log(
+								`🔍 DEBUG: Item ${item.id} has matching timestamp prefix ${giftBoxTimestampPrefix}`
+							);
+						} else {
+							console.log(
+								`🔍 DEBUG: Item ${item.id} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix})`
+							);
+						}
 					}
 				}
+
+				// If it's a gift box with matching vessel number AND matching timestamp, add to removal list
+				if (isGiftBox && hasMatchingVesselNumber && hasMatchingTimestamp) {
+					// Use the key instead of id for cart API
+					associatedGiftBoxIds.push(item.key);
+					console.log(
+						`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`
+					);
+				} else if (isGiftBox && hasMatchingVesselNumber && !hasMatchingTimestamp) {
+					console.log(
+						`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`
+					);
+				}
+			}
 
 				console.log(
 					`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`,
