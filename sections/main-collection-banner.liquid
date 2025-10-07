@@ -24,52 +24,60 @@
 <br>
         
 {% if collection.handle == 'choose-your-vessel' or collection.handle == 'promotions-and-discounts' or collection.handle == 'choose-your-chuugs' or collection.handle == 'choose-your-mugs' or collection.handle == 'choose-your-vessel-us' or collection.handle == 'aus-lightning-sale' or collection.handle == 'uk-test-collection'%}
-<div id="countdown-timer" style="display: none;">
+<div id="countdown-timer">
     <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const countdownTimer = document.getElementById('countdown-timer');
-    
-    // Check if global flash sale is enabled and configured
-    if (window.chuugFlashSale && window.chuugFlashSale.enabled && window.chuugFlashSale.endDate && window.chuugFlashSale.endTime) {
-        // Show the countdown timer
-        countdownTimer.style.display = 'inline-block';
-        // Use global flash sale countdown
-        const endDateTime = new Date(`${window.chuugFlashSale.endDate}T${window.chuugFlashSale.endTime}`);
-        
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = endDateTime - now;
+    // Set the countdown time (2 hours 7 minutes) in seconds
+    const initialTime = 2 * 60 * 60 + 7 * 60; // 2 hours and 7 minutes in seconds
 
-            if (distance < 0) {
-                // Timer expired
-                document.getElementById('hours').textContent = '00';
-                document.getElementById('minutes').textContent = '00';
-                document.getElementById('seconds').textContent = '00';
-                return;
-            }
+    // Function to calculate the time remaining based on previous session
+    function getTimeRemaining() {
+        const savedTime = localStorage.getItem('countdownTimer');
+        const currentTime = Math.floor(Date.now() / 1000); // current time in seconds
 
-            const hours = Math.floor(distance / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        if (savedTime) {
+            const remainingTime = initialTime - (currentTime - savedTime);
+            return remainingTime > 0 ? remainingTime : 0;
+        } else {
+            // Store the start time if not already set
+            localStorage.setItem('countdownTimer', currentTime);
+            return initialTime;
         }
-
-        // Update immediately
-        updateCountdown();
-        
-        // Update every second
-        setInterval(updateCountdown, 1000);
-    } else {
-        // Flash sale not configured - hide countdown timer
-        console.log('ℹ️ Flash sale not configured - countdown timer hidden');
-        countdownTimer.style.display = 'none';
     }
+
+    let timeRemaining = getTimeRemaining();
+
+    // Function to update the countdown timer display
+    function updateCountdownDisplay(hours, minutes, seconds) {
+        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    // Countdown logic
+    function startCountdown() {
+        let countdownInterval = setInterval(function() {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+
+                // Convert time to HH:MM:SS
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = timeRemaining % 60;
+
+                updateCountdownDisplay(hours, minutes, seconds);
+            } else {
+                // Restart the timer when it reaches zero
+                timeRemaining = initialTime;
+                localStorage.setItem('countdownTimer', Math.floor(Date.now() / 1000)); // Reset the start time
+            }
+        }, 1000);
+    }
+
+    startCountdown();
 });
 </script>
 
