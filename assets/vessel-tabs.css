@@ -113,6 +113,7 @@
 	align-items: center;
 	color: #fff !important;
 }
+.product_amount_price,
 .product_amount_price .dualPrice {
 	text-align: center;
 	font-family: Gabarito;
@@ -120,18 +121,25 @@
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+}
+.product_amount_price .dualPrice {
 	color: inherit !important;
 }
 .product_amount_original_price {
 	color: rgba(0, 0, 0, 0.4) !important;
 	margin-top: 3px;
 }
+.product_amount_original_price,
 .product_amount_original_price .dualPrice {
 	text-align: center;
+	font-family: Gabarito;
 	font-size: 20px;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+}
+
+.product_amount_original_price .dualPrice {
 	color: inherit !important;
 }
 

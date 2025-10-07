@@ -1040,14 +1040,23 @@
     ];
   
     function getTextContentFromHTML(htmlString) {
+      // If the string doesn't contain HTML tags, return it wrapped in dualPrice
+      if (!htmlString || htmlString.indexOf('<') === -1) {
+        // Plain text price - wrap it in dualPrice span
+        return '<span class="dualPrice">' + htmlString + '</span>';
+      }
+      
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = htmlString;
       
       const dualPriceElement = tempDiv.querySelector('.dualPrice');
-      if (dualPriceElement && dualPriceElement.textContent) {
-        return dualPriceElement.textContent;
+      if (dualPriceElement) {
+        // Return the full HTML to preserve the dualPrice wrapper
+        return dualPriceElement.outerHTML;
       } else {
-        return htmlString;
+        // If no dualPrice element found but has HTML, wrap the text content
+        const textContent = tempDiv.textContent || htmlString;
+        return '<span class="dualPrice">' + textContent + '</span>';
       }
     }
   
