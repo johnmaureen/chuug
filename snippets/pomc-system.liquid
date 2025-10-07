@@ -392,15 +392,16 @@
 <!-- Include Cart Manager JavaScript (defer for non-blocking) -->
 <script src="{{ 'cart-manager.js' | asset_url }}" defer></script>
 
-<!-- Include POMC System JavaScript (high priority for cart functionality) -->
+<!-- Include POMC System JavaScript (defer for non-blocking) -->
 <script>
   // Provide asset URL template for JavaScript
   window.SHOPIFY_ASSET_URL_TEMPLATE = "{{ 'dusk_natural.png' | asset_url }}";
 </script>
-<script src="{{ 'pomc-system.js' | asset_url }}" fetchpriority="high"></script>
+<script src="{{ 'pomc-system.js' | asset_url }}" defer></script>
 
-{% comment %} Performance optimization: Using fetchpriority="high" for critical cart functionality
-- Ensures script loads early to prevent cart icon redirection
-- Critical for mini-ATC modal to work properly
-- Prevents cart page redirect when clicking cart icon {% endcomment %}
+{% comment %} Performance optimization: Changed fetchpriority="high" to defer
+- Reduces blocking time during initial page load
+- Scripts load after HTML parsing
+- Non-critical for above-the-fold content
+- Results in faster Time to Interactive {% endcomment %}
 

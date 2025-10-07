@@ -502,7 +502,7 @@
 <script>
   console.log('Loading mini-atc-modal.js from:', '{{ 'mini-atc-modal.js' | asset_url }}');
 </script>
-<script src="{{ 'mini-atc-modal.js' | asset_url }}" fetchpriority="high" async onload="console.log('mini-atc-modal.js loaded successfully')" onerror="console.error('Failed to load mini-atc-modal.js from:', '{{ 'mini-atc-modal.js' | asset_url }}')"></script>
+<script src="{{ 'mini-atc-modal.js' | asset_url }}" defer fetchpriority="high" onload="console.log('mini-atc-modal.js loaded successfully')" onerror="console.error('Failed to load mini-atc-modal.js from:', '{{ 'mini-atc-modal.js' | asset_url }}')"></script>
 
 
 {% comment %} Modal configuration for JavaScript {% endcomment %}

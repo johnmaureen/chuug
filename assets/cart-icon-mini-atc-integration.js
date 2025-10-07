@@ -108,16 +108,16 @@
 	function waitForModalSystem() {
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", function () {
-				setTimeout(initCartIconIntegration, 100);
+				setTimeout(initCartIconIntegration, 500);
 			});
 		} else {
-			setTimeout(initCartIconIntegration, 100);
+			setTimeout(initCartIconIntegration, 500);
 		}
 	}
 
 	// Also listen for the custom modal ready event
 	document.addEventListener("miniATCModalReady", function () {
-		setTimeout(initCartIconIntegration, 50);
+		setTimeout(initCartIconIntegration, 100);
 	});
 
 	waitForModalSystem();

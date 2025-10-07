@@ -763,15 +763,25 @@
 			// Counter events
 			this.modal.addEventListener("click", this.handleCounterClick.bind(this));
 
-			// Remove item events (for dynamically added checkout items)
-			this.modal.addEventListener("click", (event) => {
-				const removeBtn = event.target.closest("[data-remove-item]");
-				if (removeBtn) {
-					const itemId = removeBtn.getAttribute("data-remove-item");
-					console.log(`🖱️ CLICK: Delete button clicked for item ${itemId}`);
-					this.removeCartItem(itemId);
+		// Remove item events (for dynamically added checkout items)
+		this.modal.addEventListener("click", (event) => {
+			const removeBtn = event.target.closest("[data-remove-item]");
+			if (removeBtn) {
+				// Prevent duplicate removal attempts
+				if (this.isRemovingItem) {
+					console.warn("⚠️ Item removal already in progress, ignoring click");
+					event.preventDefault();
+					event.stopPropagation();
+					return;
 				}
-			});
+				
+				const itemId = removeBtn.getAttribute("data-remove-item");
+				console.log(`🖱️ CLICK: Delete button clicked for item ${itemId}`);
+				event.preventDefault();
+				event.stopPropagation();
+				this.removeCartItem(itemId);
+			}
+		});
 
 			// Input events
 			this.modal.addEventListener("input", this.handleVesselInput.bind(this));
@@ -3321,14 +3331,15 @@
 					);
 					allExistingItems.forEach((item) => item.remove());
 
-					// Render new cart items
-					await this.renderCartItems(cartData.items, checkoutContainer);
+				// Render new cart items
+				await this.renderCartItems(cartData.items, checkoutContainer);
 
-					// Re-bind event handlers for the newly rendered items
-					this.bindCheckoutItemEvents();
+				// Re-bind event handlers for the newly rendered items
+				// REMOVED: bindCheckoutItemEvents() - using event delegation instead (line 767)
+				// this.bindCheckoutItemEvents();
 
-					// Refresh pricing to reflect the updated cart totals
-					this.updateCheckoutPricing();
+				// Refresh pricing to reflect the updated cart totals
+				this.updateCheckoutPricing();
 
 					// Update progress indicator based on non-gift-box item count
 					this.updateProgressIndicator(cartData);
@@ -4329,19 +4340,22 @@
 			}
 		}
 
-		bindCheckoutItemEvents() {
-			// Re-bind remove item events for dynamically loaded content
-			const removeButtons = this.modal.querySelectorAll("[data-remove-item]");
-			removeButtons.forEach((button) => {
-				button.addEventListener("click", (event) => {
-					event.preventDefault();
-					const itemId = button.getAttribute("data-remove-item");
-					if (itemId) {
-						this.removeCartItem(itemId);
-					}
-				});
-			});
-		}
+	// REMOVED: bindCheckoutItemEvents() - using event delegation instead (see line 767)
+	// This method was causing duplicate event listeners and multiple removal attempts
+	// The global event delegation listener on the modal handles all remove button clicks
+	// bindCheckoutItemEvents() {
+	// 	// Re-bind remove item events for dynamically loaded content
+	// 	const removeButtons = this.modal.querySelectorAll("[data-remove-item]");
+	// 	removeButtons.forEach((button) => {
+	// 		button.addEventListener("click", (event) => {
+	// 			event.preventDefault();
+	// 			const itemId = button.getAttribute("data-remove-item");
+	// 			if (itemId) {
+	// 				this.removeCartItem(itemId);
+	// 			}
+	// 		});
+	// 	});
+	// }
 
 		// REMOVED: renderCheckoutItemsWithBetterData and related functions - using Liquid templates instead
 
