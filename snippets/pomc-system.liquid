@@ -7,7 +7,7 @@
   assign midnight_charcoal = all_products[section.settings.midnight_charcoal]
   assign midnight_natural = all_products[section.settings.midnight_natural]
   
-  comment 'Convert discount amounts to cents for money filter (same as product prices)'
+  # Convert discount amounts to cents for money filter (same as product prices)
   assign discount_2x_amount_cents = section.settings.discount_label_2x_amount | times: 100
   assign discount_3x_amount_cents = section.settings.discount_label_3x_amount | times: 100
 -%}
