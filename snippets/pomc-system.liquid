@@ -275,7 +275,7 @@
                         <input type="radio" name="wood_material_{{ forloop.index }}" value="DUSK" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option">
                         {% if section.settings.wood_finish_dusk_wood != blank %}
                          <div class="img-wrap">
-                           <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48">
+                           <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48" loading="lazy">
                          </div>
                         {% endif %}
                         <span class="wood-type-name tw-uppercase type-name">DUSK</span>
@@ -285,7 +285,7 @@
                         <input type="radio" name="wood_material_{{ forloop.index }}" value="DAWN" data-variant-id="{{ dawn_charcoal.variants.first.id }}" class="tw-hidden js-option">
                         {% if section.settings.wood_finish_dawn_wood != blank %}
                          <div class="img-wrap">
-                            <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48">
+                            <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48" loading="lazy">
                          </div>
                         {% endif %}
                         <span class="wood-type-name tw-uppercase type-name">DAWN</span>
@@ -299,6 +299,7 @@
                             src="{{ section.settings.wood_finish_midnight_wood | image_url }}"
                             width="180"
                             height="48"
+                            loading="lazy"
                           >
                          </div>
                         {% endif %}
@@ -315,14 +316,14 @@
                         <input type="radio" name="rope_material_{{ forloop.index }}" value="NATURAL" data-variant-id="{{ dusk_natural.variants.first.id }}" class="tw-hidden js-option">
                         <span class="rope-type-name tw-uppercase type-name">NATURAL</span>
                         {% if section.settings.natural_rope != blank %}
-                          <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
+                          <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48" loading="lazy">
                         {% endif %}
                       </label>
                       <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
                         <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option">
                         <span class="rope-type-name tw-uppercase type-name">CHARCOAL</span>
                         {% if section.settings.charcoal_rope != blank %}
-                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
+                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48" loading="lazy">
                         {% endif %}
                       </label>
                     </div>
