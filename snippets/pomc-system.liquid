@@ -6,6 +6,10 @@
   assign dawn_natural = all_products[section.settings.dawn_natural]
   assign midnight_charcoal = all_products[section.settings.midnight_charcoal]
   assign midnight_natural = all_products[section.settings.midnight_natural]
+  
+  comment 'Convert discount amounts to cents for money filter (same as product prices)'
+  assign discount_2x_amount_cents = section.settings.discount_label_2x_amount | times: 100
+  assign discount_3x_amount_cents = section.settings.discount_label_3x_amount | times: 100
 -%}
 
 <script>
@@ -156,6 +160,7 @@
                   {{- section.settings.two_chuug_product.variants[0].price | money -}}
                 </span>
               </div>
+              {% if section.settings.discount_label_2x_amount and section.settings.discount_label_2x_amount > 0 %}
               <span class="discount-label">
                 <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
                   <g clip-path="url(#clip0_2058_1100)">
@@ -167,8 +172,9 @@
                   </clipPath>
                   </defs>
                 </svg>
-                ONLY £39 EACH!
+                ONLY {{ discount_2x_amount_cents | money }} EACH!
               </span>
+              {% endif %}
             </div>
             
 
@@ -203,6 +209,7 @@
                 </span>
               </div>
 
+              {% if section.settings.discount_label_3x_amount and section.settings.discount_label_3x_amount > 0 %}
               <span class="discount-label">
                 <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
                   <g clip-path="url(#clip0_2058_1100)">
@@ -214,8 +221,9 @@
                   </clipPath>
                   </defs>
                 </svg>
-                EXTRA £45 OFF!
+                EXTRA {{ discount_3x_amount_cents | money }} OFF!
               </span>
+              {% endif %}
 
             </div>
           </label>
