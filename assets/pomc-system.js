@@ -895,6 +895,24 @@
       updateSelectedProductAmountData(parseInt(amount, 10));
     };
     
+    // After setting up the override, sync with current UI state
+    // Check if there's already an active product amount selection
+    const activeLabel1 = document.querySelector('.product_amount_label_1.active');
+    const activeLabel2 = document.querySelector('.product_amount_label_2.active');
+    const activeLabel3 = document.querySelector('.product_amount_label_3.active');
+    
+    let currentActiveAmount = state.selectedProductAmount; // Default to state
+    if (activeLabel1) currentActiveAmount = 1;
+    else if (activeLabel2) currentActiveAmount = 2;
+    else if (activeLabel3) currentActiveAmount = 3;
+    
+    // If the active amount differs from state, sync it
+    if (currentActiveAmount !== state.selectedProductAmount || currentActiveAmount !== state.currentVesselCount) {
+      console.log(`POMC System: Syncing with UI active amount ${currentActiveAmount}`);
+      updateVesselTabVisibility(currentActiveAmount);
+      updateSelectedProductAmountData(currentActiveAmount);
+    }
+    
     return true;
   }
 
@@ -902,8 +920,8 @@
   // INITIALIZATION
   // ========================================
   function initialize() {
-    // Initialize state
-    state.currentVesselCount = DEFAULT_VESSEL_COUNT;
+    // Initialize state - sync with the selected product amount (default is 2)
+    state.currentVesselCount = state.selectedProductAmount;
     
     // Clear any pre-selected options
     clearAllPreselectedOptions();
@@ -922,6 +940,9 @@
     if (!state.selectedProductAmountData) {
       updateSelectedProductAmountData(state.selectedProductAmount);
     }
+    
+    // Sync vessel tab visibility with initial product amount
+    updateVesselTabVisibility(state.selectedProductAmount);
     
     updateSelectionDisplay(false);
     

@@ -1034,7 +1034,7 @@
 }
 
 .step-process-indicator__progress-fill.progress-half {
-	width: calc(50% - 20px);
+	width: calc(50% - 10px);
 }
 
 .step-process-indicator__steps {
