@@ -319,7 +319,7 @@
         {%- endcase -%}
       {%- endfor -%}
 
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
+      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble" title="Cart is loading..." aria-label="Cart is loading, please wait">
         {%- liquid
           if cart == empty
             render 'icon-cart-empty'

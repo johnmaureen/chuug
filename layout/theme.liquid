@@ -412,7 +412,13 @@ head.appendChild(script);
   {% render 'shogun-head' %}
     
   {{ 'application.css' | asset_url | stylesheet_tag }}
-  {{ 'vessel-tabs.css' | asset_url | stylesheet_tag }}    
+  {{ 'vessel-tabs.css' | asset_url | stylesheet_tag }}
+  
+  {% comment %} Preload critical cart/modal scripts for faster loading {% endcomment %}
+  <link rel="preload" href="{{ 'mini-atc-modal.js' | asset_url }}" as="script">
+  <link rel="preload" href="{{ 'pomc-system.js' | asset_url }}" as="script">
+  <link rel="preload" href="{{ 'cart-icon-mini-atc-integration.js' | asset_url }}" as="script">
+    
 {% include 'hulk_po_vd' %}</head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
@@ -430,6 +436,55 @@ head.appendChild(script);
     {%- if settings.cart_type == 'drawer' -%}
       {%- include 'cart-drawer' -%}
     {%- endif -%}
+
+    {% comment %} Cart Icon Loading Protection - Disable during load, enable when ready {% endcomment %}
+    <style>
+      /* Disable cart icon during page load */
+      #cart-icon-bubble {
+        pointer-events: none !important;
+        opacity: 0.5;
+        cursor: not-allowed !important;
+        transition: opacity 0.3s ease;
+      }
+      
+      /* Enable cart icon when page is ready */
+      #cart-icon-bubble.ready {
+        pointer-events: auto !important;
+        opacity: 1;
+        cursor: pointer !important;
+      }
+    </style>
+    
+    <script>
+      (function() {
+        // Enable cart icon once page and scripts are fully loaded
+        function enableCartIcon() {
+          const cartIcon = document.querySelector('#cart-icon-bubble');
+          if (cartIcon) {
+            cartIcon.classList.add('ready');
+            cartIcon.setAttribute('title', 'View cart');
+            cartIcon.setAttribute('aria-label', 'View cart');
+            console.log('✅ Cart icon enabled - page fully loaded');
+          }
+        }
+        
+        // Wait for complete page load (including all scripts and resources)
+        if (document.readyState === 'complete') {
+          // Page already loaded
+          setTimeout(enableCartIcon, 100);
+        } else {
+          // Wait for full load
+          window.addEventListener('load', function() {
+            setTimeout(enableCartIcon, 100);
+          });
+        }
+        
+        // Also enable when modal system is ready (fallback)
+        document.addEventListener('miniATCModalReady', function() {
+          setTimeout(enableCartIcon, 50);
+        });
+      })();
+    </script>
 
     {% comment %} Mini ATC Modal - Global inclusion for cart icon integration {% endcomment %}
     {% render 'mini-atc-modal-complete' %}

@@ -20,8 +20,20 @@
 			return;
 		}
 
+		// Ensure cart icon is enabled/ready
+		if (!cartIcon.classList.contains('ready')) {
+			cartIcon.classList.add('ready');
+			cartIcon.setAttribute('title', 'View cart');
+			cartIcon.setAttribute('aria-label', 'View cart');
+			console.log('✅ Cart icon enabled via integration script');
+		}
+
 		// Remove existing cart drawer event listeners by cloning the element
 		const newCartIcon = cartIcon.cloneNode(true);
+		// Ensure cloned icon maintains ready state and tooltip
+		newCartIcon.classList.add('ready');
+		newCartIcon.setAttribute('title', 'View cart');
+		newCartIcon.setAttribute('aria-label', 'View cart');
 		cartIcon.parentNode.replaceChild(newCartIcon, cartIcon);
 
 		// Add new event listener for mini ATC modal
@@ -96,16 +108,16 @@
 	function waitForModalSystem() {
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", function () {
-				setTimeout(initCartIconIntegration, 500);
+				setTimeout(initCartIconIntegration, 100);
 			});
 		} else {
-			setTimeout(initCartIconIntegration, 500);
+			setTimeout(initCartIconIntegration, 100);
 		}
 	}
 
 	// Also listen for the custom modal ready event
 	document.addEventListener("miniATCModalReady", function () {
-		setTimeout(initCartIconIntegration, 100);
+		setTimeout(initCartIconIntegration, 50);
 	});
 
 	waitForModalSystem();
