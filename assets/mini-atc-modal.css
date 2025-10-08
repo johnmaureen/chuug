@@ -581,6 +581,7 @@
 	box-sizing: border-box;
 	border: 2px solid #dbe188;
 	opacity: 0.4;
+	box-shadow: none !important;
 }
 
 .vessel-name-input::placeholder {
@@ -1059,7 +1060,7 @@
 	left: 10px;
 	top: 50%;
 	transform: translateY(-50%);
-	width: 320px;
+	width: 14%;
 	height: 18.64px;
 	background: #dbe188;
 	border-radius: 2px;
@@ -1126,6 +1127,11 @@
 	position: absolute;
 	left: 8.61px;
 	top: 11px;
+}
+
+.step-process-indicator__step--active svg {
+	width: auto;
+	height: 23px;
 }
 
 .step-process-indicator__step--active .step-process-indicator__step-circle {

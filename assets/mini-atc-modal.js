@@ -3365,124 +3365,196 @@
 			}
 		}
 
-		updateProgressIndicator(cartData) {
-			try {
-				// Count non-gift-box items in the cart
-				let nonGiftBoxItemCount = 0;
+	updateProgressIndicator(cartData) {
+		try {
+			console.log("🔄 updateProgressIndicator called with cartData:", cartData);
+			
+			// Count non-gift-box items in the cart
+			let nonGiftBoxItemCount = 0;
+			
+			// Get cart total (in pence/cents) - use total_price (discounted price) for progress calculation
+			const cartTotal = cartData && cartData.total_price ? cartData.total_price : 0;
+			const cartTotalInPounds = cartTotal / 100;
+			
+			// Debug: Check all possible total properties
+			console.log("💰 Cart total_price:", cartData?.total_price);
+			console.log("💰 Cart original_total_price:", cartData?.original_total_price);
+			console.log("💰 Cart calculated total:", cartTotalInPounds);
 
-				if (cartData && cartData.items) {
-					nonGiftBoxItemCount = cartData.items.filter((item) => {
-						// Check if this item is NOT a gift box
-						if (
-							item.properties &&
-							item.properties["_Add-on"] === "Premium Gift Box"
-						) {
-							return false; // Exclude gift boxes
-						}
-						return true; // Include all other items
-					}).length;
-				}
-
-				console.log(
-					`📊 Progress Indicator: ${nonGiftBoxItemCount} non-gift-box items in cart`
-				);
-
-				// Find the progress fill element
-				const progressFill = this.modal.querySelector(
-					".step-process-indicator__progress-fill"
-				);
-
-				if (progressFill) {
-					// Remove all progress classes first
-					progressFill.classList.remove("progress-full", "progress-half");
-
-					// Add appropriate class based on non-gift-box item count
-					if (nonGiftBoxItemCount >= 2) {
-						progressFill.classList.add("progress-full");
-						console.log(
-							"📊 Progress Indicator: Added progress-full class (2+ items)"
-						);
-					} else if (nonGiftBoxItemCount === 1) {
-						progressFill.classList.add("progress-half");
-						console.log(
-							"📊 Progress Indicator: Added progress-half class (1 item)"
-						);
-					} else {
-						console.log("📊 Progress Indicator: No progress class (0 items)");
+			if (cartData && cartData.items) {
+				nonGiftBoxItemCount = cartData.items.filter((item) => {
+					// Check if this item is NOT a gift box or gift item
+					if (
+						item.properties &&
+						(item.properties["_Add-on"] === "Premium Gift Box" ||
+						 item.properties["_Add-on"] === "Gift Box" ||
+						 item.properties["Gift"] === "true" ||
+						 item.properties["gift"] === "true" ||
+						 item.title && item.title.toLowerCase().includes("gift box") ||
+						 item.title && item.title.toLowerCase().includes("gift bag"))
+					) {
+						return false; // Exclude gift boxes and gift items
 					}
-				}
+					return true; // Include all other items
+				}).length;
+			}
 
-				// Update the third step (£30 OFF step)
-				const allSteps = this.modal.querySelectorAll(
-					".step-process-indicator__step"
-				);
-				const thirdStep = allSteps[2]; // Third step (index 2)
+			console.log(
+				`📊 Progress Indicator: ${nonGiftBoxItemCount} non-gift-box items in cart, Cart total: £${cartTotalInPounds}`
+			);
 
-				if (thirdStep) {
-					const thirdStepCircle = thirdStep.querySelector(
-						".step-process-indicator__step-circle"
+		// Determine progress based on conditions:
+		// Full progress: 2+ items AND cart total >= £80
+		// Half progress: cart total >= £80 ONLY (regardless of item count, but not full progress)
+		// Zero progress: cart total < £80 (shipping not met, regardless of item count)
+		const hasReachedFullProgress = nonGiftBoxItemCount >= 2 && cartTotalInPounds >= 80;
+		const hasReachedHalfProgress = cartTotalInPounds >= 80 && !hasReachedFullProgress;
+
+			// Find the progress fill element
+			const progressFill = this.modal.querySelector(
+				".step-process-indicator__progress-fill"
+			);
+
+			if (progressFill) {
+				// Remove all progress classes first
+				progressFill.classList.remove("progress-full", "progress-half");
+
+				// Add appropriate class based on conditions
+				if (hasReachedFullProgress) {
+					progressFill.classList.add("progress-full");
+					console.log(
+						"📊 Progress Indicator: Added progress-full class (2+ items AND cart >= £80)"
 					);
-
-					if (nonGiftBoxItemCount >= 2) {
-						// Mark step as completed
-						thirdStep.classList.remove("step-process-indicator__step--active");
-						thirdStep.classList.add("step-process-indicator__step--completed");
-
-						// Show checkmark SVG
-						if (thirdStepCircle) {
-							thirdStepCircle.innerHTML = `
-						<svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-						</svg>
-					`;
-						}
-						console.log(
-							"📊 Progress Indicator: Third step marked as completed with checkmark (2+ items)"
-						);
-					} else {
-						// Mark step as active
-						thirdStep.classList.remove(
-							"step-process-indicator__step--completed"
-						);
-						thirdStep.classList.add("step-process-indicator__step--active");
-
-						// Show pound symbol
-						if (thirdStepCircle) {
-							thirdStepCircle.innerHTML =
-								'<span class="step-process-indicator__pound-symbol">£</span>';
-						}
-						console.log(
-							"📊 Progress Indicator: Third step marked as active with pound symbol (<2 items)"
-						);
-					}
+				} else if (hasReachedHalfProgress) {
+					progressFill.classList.add("progress-half");
+					console.log(
+						"📊 Progress Indicator: Added progress-half class (cart >= £80 ONLY)"
+					);
+				} else {
+					// No progress - < 2 items AND cart total < £80
+					console.log("📊 Progress Indicator: Progress set to 0 (shipping not met - cart < £80)");
 				}
+			}
 
-				// Update the header text
-				const headerElement = this.modal.querySelector(
-					".step-process-indicator__header"
+		// Update the first step (Free Shipping step)
+		const allSteps = this.modal.querySelectorAll(
+			".step-process-indicator__step"
+		);
+		console.log("🔍 Found steps:", allSteps.length);
+		
+		const freeShippingStep = allSteps[1]; // Second step (index 1) - Free Shipping
+		console.log("🚚 Free Shipping Step:", freeShippingStep);
+
+		// Check if this is the free shipping step by looking for the step-free-shipping class in the circle
+		const freeShippingCircle = freeShippingStep ? freeShippingStep.querySelector('.step-free-shipping') : null;
+		console.log("🚚 Free Shipping Circle:", freeShippingCircle);
+
+		if (freeShippingStep && freeShippingCircle) {
+			console.log("✅ Processing Free Shipping step...");
+
+			if (cartTotalInPounds >= 80) {
+				// Mark step as completed (cart total >= £80)
+				freeShippingStep.classList.remove("step-process-indicator__step--active");
+				freeShippingStep.classList.add("step-process-indicator__step--completed");
+
+				// Show checkmark SVG
+				if (freeShippingCircle) {
+					freeShippingCircle.innerHTML = `
+				<svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+				</svg>
+			`;
+				}
+				console.log(
+					"📊 Progress Indicator: Free shipping step marked as completed with checkmark (cart total >= £80)"
 				);
+			} else {
+				// Mark step as active (cart total < £80)
+				freeShippingStep.classList.remove("step-process-indicator__step--completed");
+				freeShippingStep.classList.add("step-process-indicator__step--active");
 
-				if (headerElement) {
-					if (nonGiftBoxItemCount >= 2) {
-						// Show "You've unlock" text
-						headerElement.innerHTML =
-							"🔥 You've unlock <span>EXTRA £30 OFF</span>";
-						console.log(
-							'📊 Progress Indicator: Header text updated to "You\'ve unlock" (2+ items)'
-						);
-					} else {
-						// Show "You're only 1 CHUUG away" text
-						headerElement.innerHTML =
-							"🔥 You're only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>";
-						console.log(
-							'📊 Progress Indicator: Header text updated to "You\'re only 1 CHUUG away" (<2 items)'
-						);
-					}
+				// Show truck SVG when shipping not met
+				if (freeShippingCircle) {
+					freeShippingCircle.innerHTML = `
+				<svg fill="#fff" width="15" height="15" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+					<path d="M 0 6 L 0 8 L 19 8 L 19 23 L 12.84375 23 C 12.398438 21.28125 10.851563 20 9 20 C 7.148438 20 5.601563 21.28125 5.15625 23 L 4 23 L 4 18 L 2 18 L 2 25 L 5.15625 25 C 5.601563 26.71875 7.148438 28 9 28 C 10.851563 28 12.398438 26.71875 12.84375 25 L 21.15625 25 C 21.601563 26.71875 23.148438 28 25 28 C 26.851563 28 28.398438 26.71875 28.84375 25 L 32 25 L 32 16.84375 L 31.9375 16.6875 L 29.9375 10.6875 L 29.71875 10 L 21 10 L 21 6 Z M 1 10 L 1 12 L 10 12 L 10 10 Z M 21 12 L 28.28125 12 L 30 17.125 L 30 23 L 28.84375 23 C 28.398438 21.28125 26.851563 20 25 20 C 23.148438 20 21.601563 21.28125 21.15625 23 L 21 23 Z M 2 14 L 2 16 L 8 16 L 8 14 Z M 9 22 C 10.117188 22 11 22.882813 11 24 C 11 25.117188 10.117188 26 9 26 C 7.882813 26 7 25.117188 7 24 C 7 22.882813 7.882813 22 9 22 Z M 25 22 C 26.117188 22 27 22.882813 27 24 C 27 25.117188 26.117188 26 25 26 C 23.882813 26 23 25.117188 23 24 C 23 22.882813 23.882813 22 25 22 Z"/>
+				</svg>
+			`;
 				}
-			} catch (error) {
-				console.error("Failed to update progress indicator:", error);
+				console.log(
+					"📊 Progress Indicator: Free shipping step marked as active with truck icon (cart total < £80)"
+				);
 			}
 		}
+
+		// Update the third step (£30 OFF step)
+		const thirdStep = allSteps[2]; // Third step (index 2)
+
+		if (thirdStep) {
+			const thirdStepCircle = thirdStep.querySelector(
+				".step-process-indicator__step-circle"
+			);
+
+			if (hasReachedFullProgress) {
+				// Mark step as completed
+				thirdStep.classList.remove("step-process-indicator__step--active");
+				thirdStep.classList.add("step-process-indicator__step--completed");
+
+				// Show checkmark SVG
+				if (thirdStepCircle) {
+					thirdStepCircle.innerHTML = `
+				<svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+				</svg>
+			`;
+				}
+				console.log(
+					"📊 Progress Indicator: Third step marked as completed with checkmark (2+ items)"
+				);
+			} else {
+				// Mark step as active
+				thirdStep.classList.remove(
+					"step-process-indicator__step--completed"
+				);
+				thirdStep.classList.add("step-process-indicator__step--active");
+
+				// Show pound symbol
+				if (thirdStepCircle) {
+					thirdStepCircle.innerHTML =
+						'<span class="step-process-indicator__pound-symbol">£</span>';
+				}
+				console.log(
+					"📊 Progress Indicator: Third step marked as active with pound symbol (<2 items)"
+				);
+			}
+		}
+
+			// Update the header text
+			const headerElement = this.modal.querySelector(
+				".step-process-indicator__header"
+			);
+
+			if (headerElement) {
+				if (hasReachedFullProgress) {
+					// Show "You've unlock" text
+					headerElement.innerHTML =
+						"🔥 You've unlock <span>EXTRA £30 OFF</span>";
+					console.log(
+						'📊 Progress Indicator: Header text updated to "You\'ve unlock" (2+ items)'
+					);
+				} else {
+					// Show "You're only 1 CHUUG away" text
+					headerElement.innerHTML =
+						"🔥 You're only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>";
+					console.log(
+						'📊 Progress Indicator: Header text updated to "You\'re only 1 CHUUG away" (<2 items)'
+					);
+				}
+			}
+		} catch (error) {
+			console.error("Failed to update progress indicator:", error);
+		}
+	}
 
 		async fetchUpdatedCartData() {
 			try {

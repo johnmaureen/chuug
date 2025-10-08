@@ -159,14 +159,14 @@
 					"type": "accordion",
 					"settings": {
 						"accordion_title": "Specifications",
-						"accordion_text": "<ol><li><strong>Capacity:</strong> 660ml (enough for a pint or 2 of your favourite 330ml cans)</li><li><strong>Materials: </strong>Premium mango wood exterior with food grade stainless steel interior.  The handle is made from synthetic hemp meaning it’s water resistant and anti-bacterial.</li><li><strong>Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</li></ol>"
+						"accordion_text": "<p><strong>Capacity:</strong> 660ml (enough for a pint or 2 of your favourite 330ml cans)<br/><br/><strong>Materials:</strong> Premium mango wood exterior with food grade stainless steel interior. The handle is made from synthetic hemp meaning it's water resistant and anti-bacterial.<br/><br/><strong>Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</p>"
 					}
 				},
 				"accordion_mCpagc": {
 					"type": "accordion",
 					"settings": {
 						"accordion_title": "Shipping & returns",
-						"accordion_text": "<p>Free express shipping on orders over £75, otherwise just £3.49</p><ul><li>For all UK orders, shipping is 1-3 business days</li><li>Free replacements, no questions asked.</li></ul>"
+						"accordion_text": "<p>Free express shipping on orders over £80, otherwise just £3.49</p><ul><li>﻿For all UK orders, shipping is 1-3 business days.</li><li>Speedy delivery to anywhere in the world.</li><li>﻿﻿Free replacements, no questions asked.</li></ul>"
 					}
 				},
 				"bottom_carousel_image_ckekXn": {
@@ -289,7 +289,9 @@
 				"engraving_question_tooltip_text": "Select YES if you would like to personalise your Chuug with your initials.",
 				"one_chuug_product": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag",
 				"two_chuug_product": "set-of-2-chuug®-v2-660ml-with-gift-bags",
+				"discount_label_2x_amount": 39,
 				"three_chuug_product": "set-of-3-chuug®-v2-660ml-with-gift-bags",
+				"discount_label_3x_amount": 45,
 				"one_chuug_no_initials": "shopify://shop_images/CHUU5126-Chuug0333-1.jpg",
 				"one_chuug_initials": "shopify://shop_images/dad-pers-dusk-chuug.jpg",
 				"two_chuug_no_initials": "shopify://shop_images/two_chuugs_no_initials.jpg",
