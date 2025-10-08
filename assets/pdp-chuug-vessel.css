@@ -30,6 +30,14 @@
 	width: 100%;
 }
 
+.incompleted-inputs-text {
+	margin-top: 10px;
+}
+
+.refund-wrap {
+	margin-top: 30px;
+}
+
 .product_amount_label_1,
 .product_amount_label_2,
 .product_amount_label_3 {

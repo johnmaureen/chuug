@@ -1,0 +1,11 @@
+.number-vessel-wrap .icon-question-mark-tooltip-text {
+	width: 252px !important;
+}
+
+#openModal {
+	transition: 0.3s ease;
+}
+
+#openModal:hover {
+	color: #fff;
+}

@@ -483,16 +483,23 @@
       
       const vesselValidation = window.pomcSystem.validateAllVesselsForAddToCart();
       const cta_button = document.querySelector('.cta-button');
+      const incompletText = document.querySelector('.incompleted-inputs-text');
       
       if (!vesselValidation.isValid) {
         if (cta_button) {
           cta_button.setAttribute('disabled', true);
+        }
+        if (incompletText) {
+          incompletText.style.display = 'block';
         }
       } else {
         // Only enable if other validations also pass
         const originalValidation = thereAreNoIncompleteInputs(productAmount);
         if (originalValidation && cta_button) {
           cta_button.removeAttribute('disabled');
+          if (incompletText) {
+            incompletText.style.display = 'none';
+          }
         }
       }
     }
@@ -500,6 +507,7 @@
 
   function disableCTAbutton(productAmount) {
     const cta_button = document.querySelector('.cta-button');
+    const incompletText = document.querySelector('.incompleted-inputs-text');
 
     // Check both the original validation and POMC vessel validation
     const originalValidation = thereAreNoIncompleteInputs(productAmount);
@@ -507,8 +515,14 @@
     
     if (!originalValidation || !pomcValidation) {
       cta_button.setAttribute('disabled', true);
+      if (incompletText) {
+        incompletText.style.display = 'block';
+      }
     } else {
       cta_button.removeAttribute('disabled');
+      if (incompletText) {
+        incompletText.style.display = 'none';
+      }
     }
   }
 
@@ -561,11 +575,16 @@
   }
 
   function hideVesselValidationError() {
-    // Only enable the button, don't manage error message display
+    // Enable the button and hide the error message
     const addButton = document.getElementById('add-multiple-products');
+    const errorElement = document.querySelector('.incompleted-inputs-text');
     
     if (addButton) {
       addButton.removeAttribute('disabled');
+    }
+    
+    if (errorElement) {
+      errorElement.style.display = 'none';
     }
   }
 
@@ -904,6 +923,9 @@
     if (originalValidation && pomcValidation){
       if (cta_button?.hasAttribute('disabled')) {
         cta_button.removeAttribute('disabled');
+      }
+      if (incompleted_inputs_text) {
+        incompleted_inputs_text.style.display = 'none';
       }
     }
   }  

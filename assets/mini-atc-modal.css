@@ -364,15 +364,36 @@
 
 .mini-atc-modal__design-link:hover,
 .mini-atc-modal__design-link:focus {
-	color: #456b77;
-	outline: 2px solid rgba(86, 133, 148, 0.3);
-	outline-offset: 2px;
+	color: #0d2026;
+}
+
+.icon-question-mark-tooltip-text {
+	color: #fff;
+	font-family: Gabarito;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 120%; /* 21.6px */
+	border-radius: 10px !important;
+	background: #0d2026 !important;
+	top: calc(100% + 5px) !important;
+}
+.mini-vessel-names .icon-question-mark-tooltip-text {
+	width: 270px !important;
+	left: 0;
+	transform: translateX(-72%) !important;
 }
 
 /* ============================================
    Toggle Components
    ============================================ */
-
+.mini-atc-modal__toggle-slider {
+	border: 0 !important;
+	outline: 0 !important;
+}
+.mini-atc-modal__toggle-slider:hover {
+	background-color: #e0e2d3 !important;
+}
 .mini-atc-modal__toggle-container {
 	margin-bottom: 0;
 }
@@ -470,14 +491,15 @@
 	font-weight: 600;
 	line-height: 100%;
 	border: none;
+	pointer-events: none;
 }
-
+/* 
 .mini-atc-modal__complete-set-btn:hover,
 .mini-atc-modal__complete-set-btn:focus {
 	background: #c1965f;
 	outline: 2px solid rgba(193, 150, 95, 0.5);
 	outline-offset: 2px;
-}
+} */
 
 .mini-atc-modal__complete-set-btn.bg-green {
 	background: #7fa86f;
@@ -548,7 +570,6 @@
 	gap: 10px;
 	padding: 10px 20px;
 	border-radius: 5px;
-	border: 2px solid #dbe188;
 	background: #fff;
 	color: #0d2026;
 	font-family: Gabarito, sans-serif;
@@ -558,6 +579,8 @@
 	line-height: 100%;
 	transition: all 0.3s ease;
 	box-sizing: border-box;
+	border: 2px solid #dbe188;
+	opacity: 0.4;
 }
 
 .vessel-name-input::placeholder {
@@ -570,18 +593,28 @@
 }
 
 .vessel-name-input:disabled {
-	opacity: 0.4;
 	cursor: not-allowed;
+	border: 2px solid rgba(0, 0, 0, 0.5);
+	opacity: 0.4;
 }
 
+.vessel-name-input::placeholder {
+	color: rgba(0, 0, 0, 0.5);
+	font-family: Gabarito;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: 100%; /* 18px */
+}
 .vessel-name-input:focus {
 	outline: none;
-	border-color: #c5d05a;
-	box-shadow: 0 0 0 2px rgba(219, 225, 136, 0.2);
+	border: 2px solid #dbe188;
+	opacity: 0.4;
+	box-shadow: none !important;
 }
 
 .vessel-name-input:enabled {
-	opacity: 1;
+	/* opacity: 1; */
 }
 
 /* ============================================
@@ -908,6 +941,12 @@
 	transition: background-color 0.3s ease;
 	display: flex;
 	align-items: center;
+	outline: 0 !important;
+	border: 0 !important;
+}
+
+.premium-gift-box__toggle-slider:hover {
+	background-color: #e0e2d3 !important;
 }
 
 .premium-gift-box__toggle-slider:before {
@@ -1394,6 +1433,20 @@
 	color: #333;
 	outline: 2px solid rgba(102, 102, 102, 0.3);
 	outline-offset: 2px;
+}
+
+.mini-atc-modal__prices {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+
+.mini-atc-modal__current-price {
+	line-height: 1;
+}
+.mini-atc-modal__original-price {
+	line-height: 1.2;
 }
 
 /* ============================================

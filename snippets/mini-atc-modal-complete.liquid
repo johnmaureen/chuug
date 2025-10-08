@@ -161,7 +161,7 @@
                     Can I see the design?
                   </a>
                   {% render 'icon-question-mark-tooltip', 
-                    tooltip_text: 'Learn more about vessel personalization options',
+                    tooltip_text: 'Toggle ON if you would like to personalise your CHUUG with your initials.',
                     tooltip_id: modal_id | append: '-design-tooltip' 
                   %}
                   
@@ -225,10 +225,10 @@
                           type="text" 
                           id="{{ modal_id }}-vessel-{{ i }}-name" 
                           class="vessel-name-input" 
-                          placeholder="Maximum of 3 Letters"
+                          placeholder="Enter Initial"
                           maxlength="3"
                           pattern="[A-Za-z]{0,3}"
-                          title="Only letters are allowed (maximum 3)"
+                          
                           data-vessel-input="{{ i }}"
                           data-property="properties[Vessel {{ i }} Engraving]"
                           aria-describedby="{{ modal_id }}-vessel-{{ i }}-description"
@@ -259,7 +259,7 @@
                     See preview
                   </a>
                   {% render 'icon-question-mark-tooltip', 
-                    tooltip_text: 'Learn more about vessel personalization options',
+                    tooltip_text: 'Toggle ON if you would like to personalise your CHUUG with your initials.',
                     tooltip_id: modal_id | append: '-preview-tooltip' 
                   %}
                   
