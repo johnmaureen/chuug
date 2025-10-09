@@ -55,3 +55,111 @@ type = "boolean"
 name = "Dismissible"
 description = "Allow customers to dismiss the banner"
 default = false
+
+[[extensions]]
+name = "checkout-text"
+handle = "checkout-text"
+uid = "checkout-text-uid-002"
+type = "ui_extension"
+
+[[extensions.targeting]]
+target = "purchase.checkout.block.render"
+module = "./src/CheckoutText.jsx"
+
+[extensions.capabilities]
+network_access = false
+block_progress = false
+
+[extensions.settings]
+[[extensions.settings.fields]]
+key = "text_content"
+type = "multi_line_text_field"
+name = "Text Content"
+description = "The text content to display"
+default = "Enter your text here"
+
+[[extensions.settings.fields]]
+key = "text_alignment"
+type = "single_line_text_field"
+name = "Text Alignment"
+description = "Text alignment (left, center, right)"
+default = "left"
+
+[[extensions]]
+name = "review-block"
+handle = "review-block"
+uid = "review-block-uid-003"
+type = "ui_extension"
+
+[[extensions.targeting]]
+target = "purchase.checkout.block.render"
+module = "./src/ReviewBlock.jsx"
+
+[extensions.capabilities]
+network_access = false
+block_progress = false
+
+[extensions.settings]
+[[extensions.settings.fields]]
+key = "review_title"
+type = "single_line_text_field"
+name = "Review Title"
+description = "Title of the review"
+default = "Loving our CHUUG!"
+
+[[extensions.settings.fields]]
+key = "review_date"
+type = "single_line_text_field"
+name = "Review Date"
+description = "Date of the review"
+default = "September 18, 2025"
+
+[[extensions.settings.fields]]
+key = "review_content"
+type = "multi_line_text_field"
+name = "Review Content"
+description = "Main content of the review"
+default = "Loving our CHUUG!! These are beautiful. They came in a gorgeous box and the bag is really nice as well. I would order 2 more if they make them in a larger size as well."
+
+[[extensions.settings.fields]]
+key = "review_author"
+type = "single_line_text_field"
+name = "Review Author"
+description = "Author of the review"
+default = "Marcy H. from US"
+
+[[extensions]]
+name = "image-upload"
+handle = "image-upload"
+uid = "image-upload-uid-004"
+type = "ui_extension"
+
+[[extensions.targeting]]
+target = "purchase.checkout.block.render"
+module = "./src/ImageUpload.jsx"
+
+[extensions.capabilities]
+network_access = true
+block_progress = false
+
+[extensions.settings]
+[[extensions.settings.fields]]
+key = "image_url"
+type = "single_line_text_field"
+name = "Image URL"
+description = "Enter the URL of the image to display"
+default = ""
+
+[[extensions.settings.fields]]
+key = "image_title"
+type = "single_line_text_field"
+name = "Image Title"
+description = "Title for the image section"
+default = "Image Upload"
+
+[[extensions.settings.fields]]
+key = "image_description"
+type = "multi_line_text_field"
+name = "Image Description"
+description = "Description text for the image section"
+default = "Upload an image for your order"

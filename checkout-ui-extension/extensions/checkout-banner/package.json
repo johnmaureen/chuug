@@ -9,7 +9,7 @@
     "deploy": "shopify app deploy"
   },
   "dependencies": {
-    "@shopify/ui-extensions-react": "^2025.7.0"
+    "@shopify/ui-extensions-react": "^2025.7.1"
   },
   "devDependencies": {
     "@shopify/cli": "^3.0.0"
