@@ -22,6 +22,30 @@
 {{ 'mini-atc-modal.css' | asset_url | stylesheet_tag }}
 {{ 'checkout-products-wrap.css' | asset_url | stylesheet_tag }}
 
+{%- comment -%}
+  Charcoal Rope Upgrade Product Configuration
+  TODO: Replace with actual product handle and variant ID from Shopify
+{%- endcomment -%}
+{%- assign charcoal_upgrade_product = all_products['charcoal-rope-upgrade'] -%}
+{%- if charcoal_upgrade_product and charcoal_upgrade_product.variants.size > 0 -%}
+  <script>
+    window.CHARCOAL_UPGRADE_VARIANT_ID = '{{ charcoal_upgrade_product.variants.first.id }}';
+    console.log('✅ Charcoal Upgrade Variant ID set:', window.CHARCOAL_UPGRADE_VARIANT_ID);
+  </script>
+{%- else -%}
+  <script>
+    console.warn('⚠️ Charcoal Rope Upgrade product not found! Please create a product with handle "charcoal-rope-upgrade" in Shopify.');
+    window.CHARCOAL_UPGRADE_VARIANT_ID = null;
+  </script>
+{%- endif -%}
+
+<!-- Hidden element for charcoal upgrade variant ID (alternative method) -->
+<div 
+  data-charcoal-upgrade-variant-id="{{ charcoal_upgrade_product.variants.first.id | default: '' }}"
+  style="display: none;"
+  aria-hidden="true"
+></div>
+
 <section 
   id="{{ modal_id }}" 
   class="mini-atc-modal" 

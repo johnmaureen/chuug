@@ -3002,6 +3002,47 @@
 		collectAddonProducts(state) {
 			const items = [];
 
+			// 0. Charcoal Rope Upgrade - Add one per vessel with charcoal rope
+			if (window.pomcSystem) {
+				const vesselSelections = window.pomcSystem.getAllVesselSelections();
+				const charcoalUpgradeVariantId = this.getCharcoalUpgradeVariantId();
+				
+				if (charcoalUpgradeVariantId) {
+					let charcoalVesselNumber = 0;
+					Object.entries(vesselSelections).forEach(([vesselIndex, selection]) => {
+						if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+							charcoalVesselNumber++;
+							const uniqueLineId = `${Date.now()}-CHARCOAL${charcoalVesselNumber}-${Math.random()
+								.toString(36)
+								.substr(2, 9)}`;
+
+							const charcoalUpgradeItem = {
+								id: charcoalUpgradeVariantId,
+								quantity: 1,
+								properties: {
+									// VISIBLE PROPERTIES (for checkout display)
+									"Monogram Initials": "N/A",
+									
+									// HIDDEN PROPERTIES (for backend use only)
+									"_Add-on": "Charcoal Rope Upgrade",
+									"_Product Handle": "charcoal-rope-upgrade",
+									"_Vessel Number": vesselIndex,
+									"_Unique Line ID": uniqueLineId,
+								},
+							};
+							console.log(`🪢 Charcoal upgrade item for Vessel ${vesselIndex} being added:`, charcoalUpgradeItem);
+							items.push(charcoalUpgradeItem);
+						}
+					});
+					
+					if (charcoalVesselNumber > 0) {
+						console.log(`🪢 Added ${charcoalVesselNumber} charcoal rope upgrade(s) to cart`);
+					}
+				} else {
+					console.log("⚠️ No charcoal upgrade variant ID found! Charcoal upgrades will not be added to cart.");
+				}
+			}
+
 			// 1. Gift Box - Add one per vessel
 			if (state.giftBox?.enabled) {
 				console.log("🎁 Gift box is enabled in state:", state.giftBox);
@@ -3095,6 +3136,20 @@
 				const vesselCount = Object.keys(state.engraving.vessels || {}).length;
 				if (vesselCount > 0) {
 					notes.push(`Personalized ${vesselCount} vessel(s) with engraving`);
+				}
+			}
+
+			// Add charcoal rope selection summary
+			if (window.pomcSystem) {
+				const vesselSelections = window.pomcSystem.getAllVesselSelections();
+				let charcoalCount = 0;
+				Object.values(vesselSelections).forEach((selection) => {
+					if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+						charcoalCount++;
+					}
+				});
+				if (charcoalCount > 0) {
+					notes.push(`${charcoalCount} Charcoal Rope Upgrade(s)`);
 				}
 			}
 
@@ -3199,6 +3254,39 @@
 			// Fallback
 			console.log("⚠️ No gift box product title found, using fallback");
 			return "Premium Gift Box and Tissue Wrap";
+		}
+
+		getCharcoalUpgradeVariantId() {
+			console.log("🔍 Getting charcoal upgrade variant ID...");
+
+			// Try to get from modal config first
+			const config = this.config;
+			if (config.charcoalUpgrade?.variantId) {
+				console.log("✅ Found charcoal upgrade variant ID in config:", config.charcoalUpgrade.variantId);
+				return config.charcoalUpgrade.variantId;
+			}
+
+			// Try to get from DOM
+			const charcoalUpgradeElement = this.modal.querySelector(
+				"[data-charcoal-upgrade-variant-id]"
+			);
+			if (charcoalUpgradeElement) {
+				const variantId = charcoalUpgradeElement.getAttribute(
+					"data-charcoal-upgrade-variant-id"
+				);
+				console.log("✅ Found charcoal upgrade variant ID in DOM:", variantId);
+				return variantId;
+			}
+
+			// Try to get from global config
+			if (window.CHARCOAL_UPGRADE_VARIANT_ID) {
+				console.log("✅ Found charcoal upgrade variant ID in global config:", window.CHARCOAL_UPGRADE_VARIANT_ID);
+				return window.CHARCOAL_UPGRADE_VARIANT_ID;
+			}
+
+			// Fallback - needs to be set in Shopify theme settings
+			console.log("❌ No charcoal upgrade variant ID found in config or DOM");
+			return null;
 		}
 
 		async addItemsToShopifyCart(cartData) {

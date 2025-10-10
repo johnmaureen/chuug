@@ -872,6 +872,20 @@
         changeProductAmountInputValue('3');
         document.querySelector('.product_amount_label_3').classList.add('active');
     }
+    
+    // Trigger charcoal price recalculation after product amount changes
+    if (window.pomcSystem) {
+      setTimeout(() => {
+        const upgradePrice = window.pomcSystem.getCharcoalUpgradePrice();
+        document.dispatchEvent(new CustomEvent("pomcCharcoalUpgradePrice", {
+          detail: {
+            upgradePrice: upgradePrice,
+            upgradePriceFormatted: window.pomcSystem.getCharcoalUpgradePriceFormatted(),
+            charcoalCount: Math.floor(upgradePrice / window.pomcSystem.CHARCOAL_UPGRADE_PRICE),
+          }
+        }));
+      }, 50);
+    }
   }
   
   function removeActiveClass() {
@@ -1088,7 +1102,113 @@
   
     const selectedLabel = product_amount === 1 ? labels[0] : product_amount === 2 ? labels[1] : labels[2];
     cta_product_price.innerHTML = selectedLabel.price.innerHTML;
+    
+    // Trigger charcoal price recalculation after engraving changes
+    if (window.pomcSystem) {
+      setTimeout(() => {
+        const upgradePrice = window.pomcSystem.getCharcoalUpgradePrice();
+        document.dispatchEvent(new CustomEvent("pomcCharcoalUpgradePrice", {
+          detail: {
+            upgradePrice: upgradePrice,
+            upgradePriceFormatted: window.pomcSystem.getCharcoalUpgradePriceFormatted(),
+            charcoalCount: Math.floor(upgradePrice / window.pomcSystem.CHARCOAL_UPGRADE_PRICE),
+          }
+        }));
+      }, 50);
+    }
   }
+
+  // Store base prices (in cents) for charcoal upgrade calculations
+  const BASE_PRICES = {
+    one_no_engraving: {{ section.settings.one_chuug_product.price }},
+    one_engraving: {{ section.settings.one_chuug_product.variants[1].price }},
+    two_no_engraving: {{ section.settings.two_chuug_product.price }},
+    two_engraving: {{ section.settings.two_chuug_product.variants[1].price }},
+    three_no_engraving: {{ section.settings.three_chuug_product.price }},
+    three_engraving: {{ section.settings.three_chuug_product.variants[1].price }}
+  };
+
+  // Helper function to format money with fallback
+  function formatMoneyWithFallback(cents) {
+    // Try Shopify.formatMoney first
+    if (typeof Shopify !== 'undefined' && typeof Shopify.formatMoney === 'function') {
+      return Shopify.formatMoney(cents, "{{ shop.money_format }}");
+    }
+    
+    // Fallback: simple formatter
+    const dollars = (cents / 100).toFixed(2);
+    const moneyFormat = "{{ shop.money_format }}";
+    
+    // Replace {% raw %}{{amount}}{% endraw %} or {% raw %}{{ amount }}{% endraw %} with the dollar amount
+    if (moneyFormat.indexOf('{' + '{') !== -1) {
+      return moneyFormat.replace(/\{\{\s*amount\s*\}\}/g, dollars);
+    }
+    
+    // Default fallback
+    return '$' + dollars;
+  }
+
+  // Listen for charcoal upgrade price changes
+  document.addEventListener('pomcCharcoalUpgradePrice', function(e) {
+    console.log('POMC: Received charcoal upgrade price event in PDP, updating prices...', e.detail);
+    
+    const upgradePrice = e.detail.upgradePrice; // in cents
+    const inputs = document.querySelector('.inputs');
+    if (!inputs) return;
+    
+    const variant_index = parseInt(inputs.getAttribute('variant_index'), 10);
+    const product_amount = parseInt(inputs.getAttribute('product_amount'), 10);
+    
+    // Determine which base prices to use
+    const isEngraving = variant_index === 1;
+    
+    // Calculate new prices with upgrade
+    let newPriceForOne, newPriceForTwo, newPriceForThree;
+    
+    if (isEngraving) {
+      newPriceForOne = BASE_PRICES.one_engraving + upgradePrice;
+      newPriceForTwo = BASE_PRICES.two_engraving + upgradePrice;
+      newPriceForThree = BASE_PRICES.three_engraving + upgradePrice;
+    } else {
+      newPriceForOne = BASE_PRICES.one_no_engraving + upgradePrice;
+      newPriceForTwo = BASE_PRICES.two_no_engraving + upgradePrice;
+      newPriceForThree = BASE_PRICES.three_no_engraving + upgradePrice;
+    }
+    
+    // Update all label prices
+    const label1Price = document.querySelector('.product_amount_label_1_price .dualPrice');
+    const label2Price = document.querySelector('.product_amount_label_2_price .dualPrice');
+    const label3Price = document.querySelector('.product_amount_label_3_price .dualPrice');
+    
+    if (label1Price) label1Price.innerHTML = formatMoneyWithFallback(newPriceForOne);
+    if (label2Price) label2Price.innerHTML = formatMoneyWithFallback(newPriceForTwo);
+    if (label3Price) label3Price.innerHTML = formatMoneyWithFallback(newPriceForThree);
+    
+    // Update CTA price based on current product amount
+    const cta_product_price = document.querySelector('.cta-product-price .dualPrice');
+    if (cta_product_price) {
+      let currentPrice;
+      if (product_amount === 1) {
+        currentPrice = newPriceForOne;
+      } else if (product_amount === 2) {
+        currentPrice = newPriceForTwo;
+      } else {
+        currentPrice = newPriceForThree;
+      }
+      cta_product_price.innerHTML = formatMoneyWithFallback(currentPrice);
+    }
+    
+    console.log('POMC: Prices updated with charcoal upgrade:', {
+      upgradePrice: e.detail.upgradePriceFormatted,
+      productAmount: product_amount,
+      isEngraving: isEngraving,
+      newPrices: {
+        one: formatMoneyWithFallback(newPriceForOne),
+        two: formatMoneyWithFallback(newPriceForTwo),
+        three: formatMoneyWithFallback(newPriceForThree)
+      }
+    });
+  });
 </script>
 
 <script>

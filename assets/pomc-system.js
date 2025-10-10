@@ -8,6 +8,7 @@
 	const DEFAULT_VESSEL_COUNT = 3;
 	const DEBOUNCE_DELAY = 100;
 	const VALIDATION_DELAY = 200;
+	const CHARCOAL_UPGRADE_PRICE = 299; // Price in cents (299 = $2.99)
 
 	const DEFAULT_VESSEL_SELECTIONS = {
 		1: {
@@ -142,6 +143,51 @@
 		);
 	}
 
+	function calculateCharcoalUpgradePrice() {
+		let charcoalCount = 0;
+		
+		// Count how many vessels have charcoal rope selected (only for active vessels)
+		for (let vesselNum = 1; vesselNum <= state.currentVesselCount; vesselNum++) {
+			const selection = state.vesselSelections[vesselNum];
+			if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+				charcoalCount++;
+				console.log(`POMC: Vessel #${vesselNum} has charcoal rope`);
+			}
+		}
+		
+		const totalUpgradePrice = charcoalCount * CHARCOAL_UPGRADE_PRICE;
+		console.log(`POMC: Charcoal count: ${charcoalCount}, Total upgrade: ${formatMoney(totalUpgradePrice)}`);
+		
+		return totalUpgradePrice;
+	}
+
+	function dispatchCharcoalUpgradePriceEvent() {
+		const upgradePrice = calculateCharcoalUpgradePrice();
+		
+		const eventDetail = {
+			upgradePrice: upgradePrice,
+			upgradePriceFormatted: formatMoney(upgradePrice),
+			charcoalCount: Math.floor(upgradePrice / CHARCOAL_UPGRADE_PRICE),
+		};
+		
+		console.log('POMC: Dispatching charcoal upgrade price event:', eventDetail);
+		
+		// Dispatch event for price update
+		document.dispatchEvent(
+			new CustomEvent("pomcCharcoalUpgradePrice", {
+				detail: eventDetail,
+			})
+		);
+		
+		return upgradePrice;
+	}
+
+	function formatMoney(cents) {
+		// Format cents to money string (e.g., 299 -> "$2.99")
+		const dollars = (cents / 100).toFixed(2);
+		return `$${dollars}`;
+	}
+
 	function getFromCache(key, selector) {
 		if (!state.domCache.has(key)) {
 			const element = document.querySelector(selector);
@@ -268,6 +314,11 @@
 
 		// Maintain UI state for this vessel
 		maintainVesselUIState(vesselNumber);
+
+		// Dispatch charcoal upgrade price event if rope type changed
+		if (type === "ropeType") {
+			dispatchCharcoalUpgradePriceEvent();
+		}
 
 		// Clear timeouts and debounce updates
 		clearTimeout(state.updateTimeout);
@@ -569,6 +620,8 @@
 		const vesselNumber = parseInt(vesselPanel.id.replace("tab", ""));
 		const ropeType = input.value;
 		const ropeVariantId = input.dataset.variantId || null;
+
+		console.log(`POMC: Rope selection - Vessel #${vesselNumber}, Type: ${ropeType}`);
 
 		// Update active state for rope type labels
 		vesselPanel.querySelectorAll(".rope-type-label").forEach((label) => {
@@ -916,6 +969,9 @@
 
 		storage.save();
 
+		// Dispatch charcoal upgrade price event since vessel count changed
+		dispatchCharcoalUpgradePriceEvent();
+
 		// Clear pre-selected options only for vessels beyond the current count, then restore valid vessels
 		requestAnimationFrame(() => {
 			clearPreselectedOptionsForHiddenVessels(vesselCountNum);
@@ -1109,6 +1165,9 @@
 
 		updateSelectionDisplay(false);
 
+		// Dispatch initial charcoal upgrade price event
+		dispatchCharcoalUpgradePriceEvent();
+
 		// Ensure button starts disabled
 		const addButton = document.getElementById("add-multiple-products");
 		if (addButton) {
@@ -1235,6 +1294,9 @@
 				// Maintain UI state for this vessel
 				maintainVesselUIState(vesselNumber);
 
+				// Dispatch charcoal upgrade price event
+				dispatchCharcoalUpgradePriceEvent();
+
 				const validation = validateVesselSelections();
 				showValidationFeedback(validation);
 				updateSelectionDisplay(false);
@@ -1265,6 +1327,10 @@
 				}
 
 				storage.save();
+				
+				// Dispatch charcoal upgrade price event
+				dispatchCharcoalUpgradePriceEvent();
+				
 				updateSelectionDisplay(false);
 			}
 		},
@@ -1272,10 +1338,19 @@
 			storage.clear();
 			state.vesselUIState.clear();
 			clearAllPreselectedOptions();
+			
+			// Dispatch charcoal upgrade price event
+			dispatchCharcoalUpgradePriceEvent();
+			
 			updateSelectionDisplay(false);
 		},
 		switchToVessel: switchToVessel,
 		maintainVesselState: maintainVesselUIState,
 		restoreVesselState: restoreVesselUIState,
+		getCharcoalUpgradePrice: calculateCharcoalUpgradePrice,
+		getCharcoalUpgradePriceFormatted: function() {
+			return formatMoney(calculateCharcoalUpgradePrice());
+		},
+		CHARCOAL_UPGRADE_PRICE: CHARCOAL_UPGRADE_PRICE,
 	};
 })();
