@@ -9,3 +9,7 @@
 #openModal:hover {
 	color: #fff;
 }
+.no-selection-text {
+	opacity: 0.3;
+	font-weight: 400;
+}
