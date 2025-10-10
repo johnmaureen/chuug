@@ -326,13 +326,37 @@
                         {% if section.settings.natural_rope != blank %}
                           <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48" loading="lazy">
                         {% endif %}
+                         <div class="added-label">
+                          STANDARD
+                        </div>
                       </label>
                       <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
+
                         <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option">
-                        <span class="rope-type-name tw-uppercase type-name">CHARCOAL</span>
+                        <div class="charocal-upgrade">
+                          <span class="rope-type-name tw-uppercase type-name">CHARCOAL </span>
+                          <span class="text-upgrade">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="12" viewBox="0 0 11 12" fill="none">
+                              <path d="M7.70617 6.18489C7.69057 6.12458 7.6632 6.06846 7.62586 6.02021C7.58853 5.97196 7.54206 5.93266 7.4895 5.90489L6.077 5.15822L6.45617 2.36267C6.46864 2.26578 6.4508 2.16721 6.40542 2.08224C6.36004 1.99727 6.28965 1.93063 6.20516 1.89266C6.12067 1.85469 6.0268 1.8475 5.93809 1.87221C5.84939 1.89692 5.7708 1.95215 5.7145 2.02933L2.79784 6.02933C2.75825 6.08326 2.73088 6.14622 2.71787 6.21329C2.70486 6.28037 2.70656 6.34974 2.72284 6.416C2.74123 6.48229 2.7732 6.54339 2.81643 6.59489C2.85967 6.64638 2.91309 6.68699 2.97284 6.71378L4.752 7.47378L4.37284 10.2382C4.35995 10.3374 4.37886 10.4384 4.42651 10.5247C4.47415 10.611 4.54774 10.6777 4.63534 10.7138C4.68416 10.7354 4.73665 10.746 4.7895 10.7449C4.85813 10.7445 4.92561 10.7261 4.98594 10.6912C5.04627 10.6563 5.09759 10.606 5.13534 10.5449L7.63534 6.54489C7.67055 6.49375 7.69509 6.43517 7.70731 6.37307C7.71953 6.31098 7.71914 6.24681 7.70617 6.18489Z" fill="white"/>
+                            </svg>UPGRADE 
+                          </span>
+                        </div>
                         {% if section.settings.charcoal_rope != blank %}
                           <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48" loading="lazy">
                         {% endif %}
+                        <div class="upgarde-label">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
+                            <g clip-path="url(#clip0_2454_1210)">
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M0.206055 5.63379L5.20605 0.633789H10.2061V5.63379L5.20605 10.6338L0.206055 5.63379ZM7.39355 4.38379C6.87579 4.38379 6.45605 3.96406 6.45605 3.44629C6.45605 2.92852 6.87579 2.50879 7.39355 2.50879C7.91132 2.50879 8.33105 2.92852 8.33105 3.44629C8.33105 3.96406 7.91132 4.38379 7.39355 4.38379Z" fill="white"/>
+                            </g>
+                            <defs>
+                              <clipPath id="clip0_2454_1210">
+                                <rect width="10" height="10" fill="white" transform="matrix(-1 0 0 1 10.2061 0.633789)"/>
+                              </clipPath>
+                            </defs>
+                          </svg>
+                          + £2.99
+                        </div>
                       </label>
                     </div>
                   </div>

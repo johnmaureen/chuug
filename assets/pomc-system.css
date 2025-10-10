@@ -13,3 +13,63 @@
 	opacity: 0.3;
 	font-weight: 400;
 }
+
+.charocal-upgrade {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+}
+.text-upgrade {
+	display: flex;
+	padding: 5px 7px;
+	justify-content: center;
+	align-items: center;
+	border-radius: 3px;
+	background: #a43223;
+	color: #fff;
+	text-align: center;
+	font-family: Gabarito;
+	font-size: 10px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.text-upgrade svg {
+	position: relative;
+	top: -1px;
+}
+
+.added-label {
+	color: #dfdfd8;
+	text-align: center;
+	font-family: Gabarito;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	text-align: center;
+	height: 21.45px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.upgarde-label {
+	display: flex;
+	padding: 3px 10px;
+	justify-content: center;
+	align-items: center;
+	gap: 3px;
+	border-radius: 50px;
+	border: 1px solid #fff;
+	color: #fff;
+	text-align: center;
+	font-family: Gabarito;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+	height: 21.45px;
+}
