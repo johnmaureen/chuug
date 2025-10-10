@@ -9,7 +9,6 @@
   assign gift_box_handle = 'premium-gift-box-tissue-wrap'
   assign gift_box_product = all_products[gift_box_handle]
   assign gift_box_variant = gift_box_product.variants.first
-  assign gift_box_price = gift_box_variant.price | money_without_currency
   assign gift_box_image = gift_box_product.featured_image | default: gift_box_product.images.first
 -%}
 
@@ -56,11 +55,12 @@
           class="premium-gift-box__price" 
           aria-label="Gift box price"
           data-gift-box-price
+          data-price="{{ gift_box_variant.price | default: 200 }}"
         >
           {%- if gift_box_variant -%}
-            £{{ gift_box_price }}
+            {{ gift_box_variant.price | money }}
           {%- else -%}
-            £2.00
+            {{ 200 | money }}
           {%- endif -%}
         </div>
         <div class="premium-gift-box__error" data-gift-box-error style="display: none; color: red; font-size: 12px; margin-top: 5px;">

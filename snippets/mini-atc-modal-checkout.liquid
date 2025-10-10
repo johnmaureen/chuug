@@ -48,7 +48,7 @@
             <span class="step-process-indicator__pound-symbol">£</span>
           </div>
         </div>
-        <div class="step-process-indicator__step-text">Unlock Extra £30 OFF</div>
+        <div class="step-process-indicator__step-text" data-currency-text="Unlock Extra {amount} OFF" data-amount="3000">Unlock Extra {{ 3000 | money }} OFF</div>
       </li>
     </ol>
   </div>
@@ -60,7 +60,7 @@
   
   <div class="countdown-timer chuug-countdown" role="timer" aria-live="polite" aria-atomic="true">
     <span class="countdown-timer__text">
-      <span data-countdown-text>⏰ Extra £30 off ends in:</span> 
+      <span data-countdown-text data-currency-text="⏰ {{ settings.mini_atc_countdown_text | default: 'Extra {amount} off ends in' }}:" data-amount="3000">⏰ {{ settings.mini_atc_countdown_text | default: 'Extra £30 off ends in' | replace: '{amount}', 3000 | money }}:</span> 
       <time class="countdown-timer__time" id="mini-atc-countdown-timer">
         <span data-countdown-hours>00</span>:<span data-countdown-minutes>00</span>:<span data-countdown-seconds>00</span>
       </time>

@@ -130,7 +130,7 @@
     "cart_drawer_collection": "choose-your-vessel",
     "enable_flash_sale": true,
     "flash_sale_text": "Sale ends in",
-    "mini_atc_countdown_text": "Extra £30 off ends in",
+    "mini_atc_countdown_text": "Extra {amount} off ends in",
     "flash_sale_end_date": "2025-10-20",
     "flash_sale_end_time": "23:59",
     "checkout_logo_image": "shopify://shop_images/chuug-logo-rope-handle-beer-tankard-r.png",

@@ -59,7 +59,12 @@
 			return Math.random().toString(36).substr(2, 9);
 		},
 
-		formatPrice(cents) {
+		formatPrice(cents, currencyCode = null) {
+			// Use CurrencyManager if available, otherwise fallback to GBP
+			if (window.CurrencyManager) {
+				return window.CurrencyManager.formatPrice(cents, currencyCode);
+			}
+			// Fallback to hardcoded GBP if CurrencyManager not available
 			return `£${(cents / 100).toFixed(2)}`;
 		},
 
@@ -580,14 +585,27 @@
 			};
 		}
 
-		calculateTotal(state) {
+		async calculateTotal(state) {
 			let total = 0;
 			let originalTotal = 0;
 			let vesselOnlyTotal = 0;
 			let vesselOnlyOriginal = 0;
 
-			// Get pricing from POMC system - this is the source of truth
-			const vesselPricing = this.getVesselPricingForMultiplier();
+			// Try to get pricing via GraphQL first (currency-aware)
+			let vesselPricing = null;
+			if (window.CurrencyManager) {
+				try {
+					vesselPricing = await this.getVesselPricingViaGraphQL();
+				} catch (error) {
+					console.warn('GraphQL pricing failed, falling back to static pricing:', error);
+				}
+			}
+			
+			// Fallback to static pricing if GraphQL fails
+			if (!vesselPricing) {
+				vesselPricing = this.getVesselPricingForMultiplier();
+			}
+
 			if (vesselPricing) {
 				vesselOnlyTotal = vesselPricing.price;
 				vesselOnlyOriginal = vesselPricing.originalPrice;
@@ -692,6 +710,73 @@
 
 			// No pricing data available
 			return null;
+		}
+
+		/**
+		 * Fetch vessel pricing via GraphQL with current currency
+		 * This method provides currency-aware pricing
+		 */
+		async getVesselPricingViaGraphQL() {
+			try {
+				if (!window.CurrencyManager) {
+					console.warn('CurrencyManager not available, falling back to static pricing');
+					return this.getVesselPricingForMultiplier();
+				}
+
+				if (!window.pomcSystem) {
+					console.warn('POMC system not available');
+					return null;
+				}
+
+				const selectedProductAmountData = window.pomcSystem.getSelectedProductAmountData();
+				if (!selectedProductAmountData || !selectedProductAmountData.id) {
+					console.warn('No product amount data available');
+					return null;
+				}
+
+				// Fetch product data via GraphQL
+				const productData = await window.CurrencyManager.fetchProductData(selectedProductAmountData.id);
+				if (!productData || !productData.variants) {
+					console.warn('No product data received from GraphQL');
+					return this.getVesselPricingForMultiplier(); // Fallback
+				}
+
+				const engravingEnabled = this.getEngravingState();
+				const variantIndex = engravingEnabled ? 1 : 0;
+				
+				// Find the correct variant
+				const variants = productData.variants.edges.map(edge => edge.node);
+				const variant = variants[variantIndex];
+
+				if (variant && variant.price) {
+					// Convert GraphQL price to cents (Shopify returns as decimal string)
+					const priceInCents = Math.round(parseFloat(variant.price.amount) * 100);
+					const originalPriceInCents = variant.compareAtPrice ? 
+						Math.round(parseFloat(variant.compareAtPrice.amount) * 100) : null;
+
+					// Store the pricing for reference with currency info
+					this.dynamicPrices.vessel = {
+						price: priceInCents,
+						originalPrice: originalPriceInCents,
+						currency: variant.price.currencyCode
+					};
+
+					console.log(`💰 GraphQL pricing: ${variant.price.currencyCode} ${variant.price.amount} (${priceInCents} cents)`);
+
+					return {
+						price: priceInCents,
+						originalPrice: originalPriceInCents,
+						currency: variant.price.currencyCode
+					};
+				}
+
+				// Fallback to static pricing if GraphQL fails
+				return this.getVesselPricingForMultiplier();
+			} catch (error) {
+				console.error('Error fetching pricing via GraphQL:', error);
+				// Fallback to static pricing
+				return this.getVesselPricingForMultiplier();
+			}
 		}
 
 		updateGiftBoxPrice(priceInCents) {
@@ -838,7 +923,7 @@
 			this.initializeVesselInputs();
 
 			// Initial pricing calculation
-			this.calculatePricing();
+			this.calculatePricing().catch(console.error);
 		}
 
 		setupAccessibility() {
@@ -1023,7 +1108,7 @@
 			this.toggleOptionsVisibility(toggle);
 
 			// Recalculate pricing when any toggle changes
-			this.calculatePricing();
+			this.calculatePricing().catch(console.error);
 		}
 
 		handleCounterClick(event) {
@@ -1129,12 +1214,12 @@
 		}
 
 		handlePersonalizationChange(data) {
-			this.calculatePricing();
+			this.calculatePricing().catch(console.error);
 			this.emit("personalizationChanged", data);
 		}
 
 		handleVariantChange(data) {
-			this.calculatePricing();
+			this.calculatePricing().catch(console.error);
 			this.emit("variantChanged", data);
 		}
 
@@ -1639,9 +1724,9 @@
 			}
 		}
 
-		calculatePricing() {
+		async calculatePricing() {
 			const state = this.state.getState();
-			this.pricing.calculateTotal(state);
+			await this.pricing.calculateTotal(state);
 		}
 
 		setupPOMCIntegration() {
@@ -1649,7 +1734,19 @@
 			if (window.pomcSystem) {
 				// Create a custom event listener for POMC changes
 				const updatePricingFromPOMC = (event) => {
-					this.calculatePricing();
+					this.calculatePricing().catch(console.error);
+				};
+
+				// Listen for currency changes
+				const updatePricingFromCurrencyChange = (event) => {
+					console.log('💰 Currency changed in mini ATC modal:', event.detail);
+					this.calculatePricing().catch(console.error);
+					
+					// Update checkout view prices if checkout view is active
+					const checkoutView = this.modal.querySelector('.mini-atc-modal__checkout');
+					if (checkoutView && window.getComputedStyle(checkoutView).display !== 'none') {
+						this.updateCheckoutItemPrices();
+					}
 				};
 
 				// Listen for vessel selection changes
@@ -1660,6 +1757,12 @@
 				document.addEventListener(
 					"pomcMultiplierChanged",
 					updatePricingFromPOMC
+				);
+				
+				// Listen for currency changes
+				document.addEventListener(
+					"currencyUpdated",
+					updatePricingFromCurrencyChange
 				);
 				document.addEventListener(
 					"pomcProductAmountChanged",
@@ -1701,7 +1804,7 @@
 
 				// Add the new listener
 				this.handleEngravingToggleChange = async (event) => {
-					this.calculatePricing();
+					await this.calculatePricing();
 					// Only update cart item compare-at prices if we're in checkout view
 					// In personalize view, we don't need to update existing cart items
 					const checkoutView = this.modal.querySelector(
@@ -1954,29 +2057,25 @@
 					});
 
 					if (currentPriceEl) {
-						const totalPrice = (cartData.total_price / 100).toFixed(2);
 						// Update only the text content, preserve structure
 						const placeholder = currentPriceEl.querySelector(
 							".pricing-placeholder"
 						);
 						if (placeholder) {
-							placeholder.textContent = `£${totalPrice}`;
+							placeholder.textContent = this.formatMoney(cartData.total_price);
 						} else {
-							currentPriceEl.textContent = `£${totalPrice}`;
+							currentPriceEl.textContent = this.formatMoney(cartData.total_price);
 						}
 					}
 
 					if (originalPriceEl) {
-						const formattedOriginalPrice = (totalCompareAtPrice / 100).toFixed(
-							2
-						);
 						// Update only the text content, preserve structure
 						const placeholder =
 							originalPriceEl.querySelector(".pricing-dynamic");
 						if (placeholder) {
-							placeholder.textContent = `£${formattedOriginalPrice}`;
+							placeholder.textContent = this.formatMoney(totalCompareAtPrice);
 						} else {
-							originalPriceEl.textContent = `£${formattedOriginalPrice}`;
+							originalPriceEl.textContent = this.formatMoney(totalCompareAtPrice);
 						}
 					}
 
@@ -1984,13 +2083,12 @@
 						const savings = totalCompareAtPrice - currentTotal;
 
 						if (savings > 0) {
-							const formattedSavings = (savings / 100).toFixed(2);
 							// Update only the text content, preserve structure
 							const placeholder = savingsEl.querySelector(".pricing-dynamic");
 							if (placeholder) {
-								placeholder.textContent = `You Saved £${formattedSavings}`;
+								placeholder.textContent = `You Saved ${this.formatMoney(savings)}`;
 							} else {
-								savingsEl.textContent = `You Saved £${formattedSavings}`;
+								savingsEl.textContent = `You Saved ${this.formatMoney(savings)}`;
 							}
 						}
 					}
@@ -1998,6 +2096,22 @@
 				.catch((error) => {
 					console.error("Failed to fetch cart data for pricing:", error);
 				});
+		}
+
+		updateCheckoutItemPrices() {
+			// Update all checkout item prices to use current currency
+			const checkoutItems = this.modal.querySelectorAll('.checkout-products-wrap__current-price, .checkout-products-wrap__original-price, .checkout-products-wrap__addon-price, .premium-gift-box__price');
+			
+			checkoutItems.forEach(item => {
+				const currentText = item.textContent;
+				// Extract numeric value from price text
+				const priceMatch = currentText.match(/[\d,]+\.?\d*/);
+				if (priceMatch) {
+					const numericValue = parseFloat(priceMatch[0].replace(/,/g, ''));
+					const priceInCents = Math.round(numericValue * 100);
+					item.textContent = this.formatMoney(priceInCents);
+				}
+			});
 		}
 
 		async updatePersonalizePricing(pricing) {
@@ -2451,14 +2565,14 @@
 			// this.fetchVesselSelectionsAndUpdateImages();
 
 			// Calculate initial pricing
-			this.calculatePricing();
+			this.calculatePricing().catch(console.error);
 
 			// Setup engraving toggle listener now that modal is visible
 			this.setupEngravingToggleListener();
 
 			// Force pricing refresh to ensure it's up to date with any changes made while modal was closed
 			setTimeout(() => {
-				this.calculatePricing();
+				this.calculatePricing().catch(console.error);
 			}, 200);
 
 			// Initialize components that need the modal to be visible
@@ -2603,7 +2717,7 @@
 				);
 
 				// Update pricing after reset
-				this.calculatePricing();
+				this.calculatePricing().catch(console.error);
 
 				// Update checkout pricing to reflect cart totals
 				this.updateCheckoutPricing();
@@ -4005,7 +4119,11 @@
 		}
 
 		formatMoney(cents) {
-			// Simple money formatting - you may want to use Shopify's money formatting
+			// Use CurrencyManager if available, otherwise fallback to GBP
+			if (window.CurrencyManager) {
+				return window.CurrencyManager.formatPrice(cents);
+			}
+			// Fallback to hardcoded GBP if CurrencyManager not available
 			const amount = (cents / 100).toFixed(2);
 			return `£${amount}`;
 		}
@@ -5383,7 +5501,7 @@
 
 		reset() {
 			this.state.reset();
-			this.calculatePricing();
+			this.calculatePricing().catch(console.error);
 			this.switchView("personalize");
 		}
 

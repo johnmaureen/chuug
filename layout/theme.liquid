@@ -411,6 +411,9 @@ head.appendChild(script);
       {{ 'component-localization-form.css' | asset_url | stylesheet_tag: preload: true }}
       <script src="{{ 'localization-form.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
+    
+    <!-- Currency Manager for Dynamic Pricing -->
+    <script src="{{ 'currency-manager.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.predictive_search_enabled -%}
       <link

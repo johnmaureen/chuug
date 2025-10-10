@@ -232,11 +232,11 @@
                 {% endif %}
               </h4>
             </div>
-            <div class="premium-gift-box__price">
+            <div class="premium-gift-box__price" data-price="200">
               {% if gift_box_item %}
                 {{ gift_box_item.final_price | money }}
               {% else %}
-                £2.00
+                {{ 200 | money }}
               {% endif %}
             </div>
           </div>
