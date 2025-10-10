@@ -826,13 +826,13 @@
 				this.swiper = new ProductImageSwiper(swiperContainer);
 			}
 
-			// Initialize countdown timer
-			const countdownElement = this.modal.querySelector(
-				".countdown-timer__time"
-			);
-			if (countdownElement) {
-				this.countdown = new CountdownTimer(countdownElement);
-			}
+			// Initialize countdown timer - DISABLED to prevent conflict with Liquid countdown script
+			// const countdownElement = this.modal.querySelector(
+			// 	".countdown-timer__time"
+			// );
+			// if (countdownElement) {
+			// 	this.countdown = new CountdownTimer(countdownElement);
+			// }
 
 			// Initialize vessel inputs based on toggle states
 			this.initializeVesselInputs();
@@ -5393,9 +5393,9 @@
 				this.swiper.destroy();
 			}
 
-			if (this.countdown) {
-				this.countdown.destroy();
-			}
+			// if (this.countdown) {
+			// 	this.countdown.destroy();
+			// }
 
 			// Remove event listeners
 			document.removeEventListener("keydown", this.handleKeydown.bind(this));

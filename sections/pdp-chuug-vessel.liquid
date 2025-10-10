@@ -158,31 +158,27 @@
       </div>
 
       <div class="flash-section">
-        <!-- Flash Sale Section -->
-        {% if settings.enable_flash_sale and settings.flash_sale_end_date != blank and settings.flash_sale_end_time != blank %}
+        <!-- Flash Sale Section - Using Global Countdown Timer -->
         <div class="flash-sale-container">
-          <p class="flash-sale-text">{% if settings.flash_sale_text != blank %}{{ settings.flash_sale_text }}{% else %}Sale ends in{% endif %}</p>
+          <p class="flash-sale-text">Sale ends in</p>
           <div class="flash-sale-divider"></div>
-          <div class="flash-countdown-timer" 
-               data-flash-sale-end-date="{{ settings.flash_sale_end_date }}" 
-               data-flash-sale-end-time="{{ settings.flash_sale_end_time }}">
-            <div class="flash-timer-unit" id="flash-countdown-hours">
-              <span class="flash-timer-number">00</span>
+          <div class="flash-countdown-timer chuug-countdown">
+            <div class="flash-timer-unit">
+              <span class="flash-timer-number" data-countdown-hours>00</span>
               <span class="flash-timer-label">HOURS</span>
             </div>
             <span class="flash-timer-separator">:</span>
-            <div class="flash-timer-unit" id="flash-countdown-minutes">
-              <span class="flash-timer-number">00</span>
+            <div class="flash-timer-unit">
+              <span class="flash-timer-number" data-countdown-minutes>00</span>
               <span class="flash-timer-label">MINUTES</span>
             </div>
             <span class="flash-timer-separator">:</span>
-            <div class="flash-timer-unit" id="flash-countdown-seconds">
-              <span class="flash-timer-number">00</span>
+            <div class="flash-timer-unit">
+              <span class="flash-timer-number" data-countdown-seconds>00</span>
               <span class="flash-timer-label">SECONDS</span>
             </div>
           </div>
         </div>
-        {% endif %}
 
         <!-- USP Grid Section -->
         <div class="usp-grid">
@@ -1350,32 +1346,6 @@
       "id": "third_product_label_text",
       "label": "Third product label text",
       "default": "Best value"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_flash_sale",
-      "label": "Enable Flash Sale",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "flash_sale_text",
-      "label": "Flash Sale Text",
-      "default": "Sale ends in"
-    },
-    {
-      "type": "text",
-      "id": "flash_sale_end_date",
-      "label": "Flash Sale End Date",
-      "info": "Format: YYYY-MM-DD (e.g., 2025-10-15)",
-      "default": "2025-12-31"
-    },
-    {
-      "type": "text",
-      "id": "flash_sale_end_time",
-      "label": "Flash Sale End Time",
-      "info": "Format: HH:MM (24-hour format, e.g., 23:59)",
-      "default": "23:59"
     }
   ],
   "blocks": [
