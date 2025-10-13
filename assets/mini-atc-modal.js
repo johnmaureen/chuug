@@ -1192,6 +1192,9 @@
 				case "proceed-to-checkout":
 					this.proceedToCheckout();
 					break;
+				case "close-modal":
+					this.close();
+					break;
 				default:
 			}
 		}
@@ -2496,14 +2499,21 @@
 			if (btnTextEl && addToCartBtn) {
 				switch (viewName) {
 					case "checkout":
-						btnTextEl.textContent = "PROCEED TO CHECKOUT";
-						addToCartBtn.setAttribute(
-							"data-modal-action",
-							"proceed-to-checkout"
-						);
-						console.log(
-							"✅ Button updated for checkout view: PROCEED TO CHECKOUT"
-						);
+						// Check if cart is empty to show appropriate button
+						// For now, we'll check if we're in an empty state by looking for the empty message
+						const emptyMessage = this.modal.querySelector(".empty-cart-message");
+						if (emptyMessage && emptyMessage.style.display !== "none") {
+							btnTextEl.textContent = "CONTINUE SHOPPING";
+							addToCartBtn.setAttribute("data-modal-action", "close-modal");
+							console.log("✅ Button updated for empty checkout view: CONTINUE SHOPPING");
+						} else {
+							btnTextEl.textContent = "PROCEED TO CHECKOUT";
+							addToCartBtn.setAttribute(
+								"data-modal-action",
+								"proceed-to-checkout"
+							);
+							console.log("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
+						}
 						break;
 					case "personalize":
 					default:
@@ -3649,6 +3659,13 @@
 
 					// Refresh pricing to show empty cart (£0.00)
 					this.updateCheckoutPricing();
+
+					// Reset personalization state when cart becomes empty
+					this.state.reset();
+					this.calculatePricing().catch(console.error);
+
+					// Stay in checkout view to show empty state - don't switch back to personalize
+					console.log("🔄 Cart is empty, staying in checkout view to show empty state");
 				} else {
 					// Hide empty state
 					if (emptyState) {
@@ -4387,12 +4404,20 @@
 			if (item.properties) {
 				for (const [key, value] of Object.entries(item.properties)) {
 					console.log(`🔍 DEBUG: Checking property: ${key} = ${value}`);
-					if (key.includes("Vessel") && key.includes("Product")) {
+					
+					// First, check for direct "_Vessel Number" property (used by gift boxes and some items)
+					if (key === "_Vessel Number") {
+						const vesselNum = value.toString();
+						console.log(`🔍 DEBUG: Found direct vessel number: ${vesselNum}`);
+						return vesselNum;
+					}
+					// Then look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc. (used by main products)
+					else if (key.includes("Vessel") && key.includes("Product")) {
 						const parts = key.split(" ");
 						console.log(`🔍 DEBUG: Found vessel property, parts:`, parts);
 						if (parts.length >= 2) {
 							const vesselNum = parts[1];
-							console.log(`🔍 DEBUG: Extracted vessel number: ${vesselNum}`);
+							console.log(`🔍 DEBUG: Extracted vessel number from product property: ${vesselNum}`);
 							return vesselNum; // Return the vessel number
 						}
 					}
@@ -4458,13 +4483,19 @@
 					console.log(
 						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
 					);
-					// Look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc.
-					if (key.includes("Vessel") && key.includes("Product")) {
+					
+					// First, check for direct "_Vessel Number" property (used by gift boxes and some items)
+					if (key === "_Vessel Number") {
+						vesselNumber = value.toString();
+						console.log(`🔍 DEBUG: Found direct vessel number: ${vesselNumber}`);
+					}
+					// Then look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc. (used by main products)
+					else if (key.includes("Vessel") && key.includes("Product")) {
 						// Extract number from property name like "_Vessel 2 Product"
 						const vesselPropertyParts = key.split(" ");
 						if (vesselPropertyParts.length >= 2) {
 							vesselNumber = vesselPropertyParts[1];
-							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
+							console.log(`🔍 DEBUG: Found vessel number from product property: ${vesselNumber}`);
 						}
 					}
 					// Get the unique line ID to match the timestamp
@@ -4492,8 +4523,17 @@
 					return [];
 				}
 
-				// Extract the timestamp prefix from the unique line ID (e.g., "1759401169659" from "1759401169659-V1-26bfsczov")
-				const vesselTimestampPrefix = vesselUniqueLineId.split("-")[0];
+				// Extract the timestamp prefix from the unique line ID
+				// Handle different formats: "BUNDLE-1-charcoal-engraved-1760363090569" or "1760363090570-GB1-9wv1allbt"
+				let vesselTimestampPrefix = null;
+				if (vesselUniqueLineId.startsWith("BUNDLE-")) {
+					// For BUNDLE format: "BUNDLE-1-charcoal-engraved-1760363090569"
+					const parts = vesselUniqueLineId.split("-");
+					vesselTimestampPrefix = parts[parts.length - 1]; // Get the last part (timestamp)
+				} else {
+					// For regular format: "1760363090570-GB1-9wv1allbt"
+					vesselTimestampPrefix = vesselUniqueLineId.split("-")[0];
+				}
 				console.log(
 					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`
 				);
@@ -4540,15 +4580,29 @@
 
 						// Check if it has the matching timestamp prefix in the unique line ID
 						if (key === "_Unique Line ID") {
-							const giftBoxTimestampPrefix = value.split("-")[0];
-							if (giftBoxTimestampPrefix === vesselTimestampPrefix) {
+							let giftBoxTimestampPrefix = null;
+							if (value.startsWith("BUNDLE-")) {
+								// For BUNDLE format: "BUNDLE-1-charcoal-engraved-1760363090569"
+								const parts = value.split("-");
+								giftBoxTimestampPrefix = parts[parts.length - 1]; // Get the last part (timestamp)
+							} else {
+								// For regular format: "1760363090570-GB1-9wv1allbt"
+								giftBoxTimestampPrefix = value.split("-")[0];
+							}
+							
+							// Allow for small timestamp differences (within 10 seconds) to handle timing issues
+							const vesselTimestamp = parseInt(vesselTimestampPrefix);
+							const giftBoxTimestamp = parseInt(giftBoxTimestampPrefix);
+							const timeDifference = Math.abs(vesselTimestamp - giftBoxTimestamp);
+							
+							if (giftBoxTimestampPrefix === vesselTimestampPrefix || timeDifference <= 10000) {
 								hasMatchingTimestamp = true;
 								console.log(
-									`🔍 DEBUG: Item ${item.key} has matching timestamp prefix ${giftBoxTimestampPrefix}`
+									`🔍 DEBUG: Item ${item.key} has matching timestamp prefix ${giftBoxTimestampPrefix} (difference: ${timeDifference}ms)`
 								);
 							} else {
 								console.log(
-									`🔍 DEBUG: Item ${item.key} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix})`
+									`🔍 DEBUG: Item ${item.key} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix}, difference: ${timeDifference}ms)`
 								);
 							}
 						}
