@@ -1278,34 +1278,97 @@
 			}
 		}
 
-		updateVesselPersonalizationRows() {
-			// Get vessel count from POMC system
-			if (!window.pomcSystem) {
-				return;
+	updateVesselPersonalizationRows() {
+		// Get vessel count from POMC system
+		if (!window.pomcSystem) {
+			return;
+		}
+
+		const vesselCount = window.pomcSystem.getMultiplier() || 2;
+
+		// Find the vessel personalization container
+		const vesselContainer = this.modal.querySelector(
+			".modal__personalization-vessel-name-wrap"
+		);
+		if (!vesselContainer) {
+			return;
+		}
+
+		// Store existing vessel values before removing rows
+		const existingRows = vesselContainer.querySelectorAll(
+			".vessel-personalization-row"
+		);
+		const existingValues = {};
+		existingRows.forEach((row) => {
+			const vesselId = row.getAttribute("data-vessel");
+			const input = row.querySelector("[data-vessel-input]");
+			if (input && input.value) {
+				existingValues[vesselId] = input.value;
 			}
+		});
 
-			const vesselCount = window.pomcSystem.getMultiplier() || 2;
+		// Remove existing vessel rows
+		existingRows.forEach((row) => row.remove());
 
-			// Find the vessel personalization container
-			const vesselContainer = this.modal.querySelector(
-				".modal__personalization-vessel-name-wrap"
-			);
-			if (!vesselContainer) {
-				return;
-			}
+		// Create new vessel rows based on vessel count
+		for (let i = 1; i <= vesselCount; i++) {
+			const vesselRow = this.createVesselPersonalizationRow(i);
+			vesselContainer.appendChild(vesselRow);
 
-			// Remove existing vessel rows
-			const existingRows = vesselContainer.querySelectorAll(
-				".vessel-personalization-row"
-			);
-			existingRows.forEach((row) => row.remove());
-
-			// Create new vessel rows based on vessel count
-			for (let i = 1; i <= vesselCount; i++) {
-				const vesselRow = this.createVesselPersonalizationRow(i);
-				vesselContainer.appendChild(vesselRow);
+			// Restore previous value if it existed
+			if (existingValues[i]) {
+				const input = vesselRow.querySelector("[data-vessel-input]");
+				if (input) {
+					input.value = existingValues[i];
+				}
 			}
 		}
+
+		// CRITICAL FIX: After recreating rows, sync the engraving content visibility with toggle state
+		this.syncEngravingContentVisibility();
+	}
+
+	syncEngravingContentVisibility() {
+		// Get the engraving toggle element
+		const engravingToggle = this.modal.querySelector(
+			'[data-personalization-toggle="engraving"]'
+		);
+		
+		if (!engravingToggle) {
+			return;
+		}
+
+		// If not in "add-multiple-products" context, restore toggle state from personalization state
+		if (this.openingContext !== "add-multiple-products" && this.state) {
+			const state = this.state.getState();
+			if (state.engraving && typeof state.engraving.enabled === "boolean") {
+				engravingToggle.checked = state.engraving.enabled;
+			}
+		}
+
+		// Find the engraving content container
+		const engravingPersonalization = engravingToggle.closest(
+			".mini-atc-modal__personalization"
+		);
+		const engravingContent = engravingPersonalization?.querySelector(
+			"[data-personalization-content='engraving'], .mini-atc-modal__complete-options"
+		);
+
+		if (!engravingContent) {
+			return;
+		}
+
+		// Sync the content visibility with the toggle state
+		if (engravingToggle.checked) {
+			engravingContent.classList.remove(
+				"mini-atc-modal__complete-options--hidden"
+			);
+		} else {
+			engravingContent.classList.add(
+				"mini-atc-modal__complete-options--hidden"
+			);
+		}
+	}
 
 		createVesselPersonalizationRow(vesselNumber) {
 			const modalId = this.modal.id;
@@ -2472,21 +2535,24 @@
 			if (context === "add-multiple-products") {
 				this.switchView("personalize");
 
-				// Reset engraving state when opening from add-multiple-products
-				console.log(
-					"🔄 Resetting engraving state for add-multiple-products..."
-				);
-				this.state.resetEngraving();
+			// Reset engraving state when opening from add-multiple-products
+			console.log(
+				"🔄 Resetting engraving state for add-multiple-products..."
+			);
+			this.state.resetEngraving();
 
-				// Reset engraving toggle to checked (default state)
-				const engravingToggle = this.modal.querySelector(
-					'[data-personalization-toggle="engraving"]'
-				);
-				if (engravingToggle) {
-					engravingToggle.checked = true;
-				}
+			// Reset engraving toggle to checked (default state)
+			const engravingToggle = this.modal.querySelector(
+				'[data-personalization-toggle="engraving"]'
+			);
+			if (engravingToggle) {
+				engravingToggle.checked = true;
+				
+				// CRITICAL FIX: Sync content visibility immediately after resetting toggle
+				this.syncEngravingContentVisibility();
+			}
 
-				// Ensure footer is visible for add-multiple-products context
+			// Ensure footer is visible for add-multiple-products context
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
 					footer.style.display = "";
@@ -2535,14 +2601,20 @@
 				this.hideCheckoutSections();
 			}
 
-			// Dispatch modal opened event for POMC integration
-			this.modal.dispatchEvent(new CustomEvent("modalOpened"));
+		// Dispatch modal opened event for POMC integration
+		this.modal.dispatchEvent(new CustomEvent("modalOpened"));
 
-			// Update vessel personalization rows based on current vessel count
-			this.updateVesselPersonalizationRows();
+		// Update vessel personalization rows based on current vessel count
+		this.updateVesselPersonalizationRows();
 
-			// If opening from add-multiple-products, ensure all vessel inputs are cleared
-			if (context === "add-multiple-products") {
+		// CRITICAL FIX: Ensure engraving content visibility is synced after rows are updated
+		// This handles cases where the toggle state doesn't match the content visibility
+		setTimeout(() => {
+			this.syncEngravingContentVisibility();
+		}, 10);
+
+		// If opening from add-multiple-products, ensure all vessel inputs are cleared
+		if (context === "add-multiple-products") {
 				// Use setTimeout to ensure inputs are cleared after DOM updates
 				setTimeout(() => {
 					const vesselInputs = this.modal.querySelectorAll(
