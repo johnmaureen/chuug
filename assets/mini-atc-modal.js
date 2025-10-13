@@ -5739,12 +5739,28 @@
 
 	// Auto-initialize modals when DOM is ready
 	function initializeModals() {
+		// Prevent duplicate initialization
+		if (window.MiniATCModal && window.MiniATCModal._initialized) {
+			console.warn("⚠️ Mini ATC Modal already initialized, skipping duplicate initialization");
+			return window.MiniATCModal.getAllInstances();
+		}
+
 		const modals = document.querySelectorAll(".mini-atc-modal");
 		const instances = new Map();
 
 		modals.forEach((modal, index) => {
+			// Check if modal already has an instance
+			if (modal._miniATCInstance) {
+				console.warn(`⚠️ Modal ${modal.id} already has an instance, skipping`);
+				instances.set(modal.id, modal._miniATCInstance);
+				return;
+			}
+
 			const instance = new MiniATCModal(modal);
 			instances.set(modal.id, instance);
+			
+			// Store reference on the modal element to prevent duplicate initialization
+			modal._miniATCInstance = instance;
 
 			// Make instance globally accessible
 			const globalName = `miniATCModal_${modal.dataset.modalId || modal.id}`;
@@ -5753,6 +5769,8 @@
 
 		// Global API
 		window.MiniATCModal = {
+			_initialized: true,
+			
 			getInstance(modalId) {
 				return instances.get(modalId);
 			},
@@ -5776,24 +5794,21 @@
 			},
 		};
 
+		// Dispatch custom event when modal system is ready
+		setTimeout(() => {
+			document.dispatchEvent(new CustomEvent("miniATCModalReady"));
+		}, 100);
+
 		return instances;
 	}
 
-	// Initialize when DOM is ready
+	// Initialize when DOM is ready - use a single approach
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initializeModals);
+		document.addEventListener("DOMContentLoaded", initializeModals, { once: true });
 	} else {
+		// DOM already loaded, initialize immediately
 		initializeModals();
 	}
-
-	// Dispatch custom event when modal system is ready
-	document.addEventListener("DOMContentLoaded", function () {
-		setTimeout(() => {
-			if (window.MiniATCModal) {
-				document.dispatchEvent(new CustomEvent("miniATCModalReady"));
-			}
-		}, 100);
-	});
 
 	// Global functions for backward compatibility and external triggers
 	window.openMiniATCModal = function (modalId, context = null) {
