@@ -591,20 +591,8 @@
 			let vesselOnlyTotal = 0;
 			let vesselOnlyOriginal = 0;
 
-			// Try to get pricing via GraphQL first (currency-aware)
-			let vesselPricing = null;
-			if (window.CurrencyManager) {
-				try {
-					vesselPricing = await this.getVesselPricingViaGraphQL();
-				} catch (error) {
-					console.warn('GraphQL pricing failed, falling back to static pricing:', error);
-				}
-			}
-			
-			// Fallback to static pricing if GraphQL fails
-			if (!vesselPricing) {
-				vesselPricing = this.getVesselPricingForMultiplier();
-			}
+		// Use static pricing (GraphQL disabled to prevent 403 errors)
+		const vesselPricing = this.getVesselPricingForMultiplier();
 
 			if (vesselPricing) {
 				vesselOnlyTotal = vesselPricing.price;
@@ -720,25 +708,21 @@
 		async getVesselPricingViaGraphQL() {
 			try {
 				if (!window.CurrencyManager) {
-					console.warn('CurrencyManager not available, falling back to static pricing');
 					return this.getVesselPricingForMultiplier();
 				}
 
 				if (!window.pomcSystem) {
-					console.warn('POMC system not available');
 					return null;
 				}
 
 				const selectedProductAmountData = window.pomcSystem.getSelectedProductAmountData();
 				if (!selectedProductAmountData || !selectedProductAmountData.id) {
-					console.warn('No product amount data available');
 					return null;
 				}
 
 				// Fetch product data via GraphQL
 			const productData = await window.CurrencyManager.fetchProductData(selectedProductAmountData.id);
 			if (!productData || !productData.variants) {
-				console.warn('No product data received from GraphQL');
 				return this.getVesselPricingForMultiplier(); // Fallback
 			}
 
@@ -763,8 +747,6 @@
 						currency: variant.price.currencyCode
 					};
 
-					console.log(`💰 GraphQL pricing: ${variant.price.currencyCode} ${variant.price.amount} (${priceInCents} cents)`);
-
 					return {
 						price: priceInCents,
 						originalPrice: originalPriceInCents,
@@ -775,7 +757,6 @@
 				// Fallback to static pricing if GraphQL fails
 				return this.getVesselPricingForMultiplier();
 			} catch (error) {
-				console.error('Error fetching pricing via GraphQL:', error);
 				// Fallback to static pricing
 				return this.getVesselPricingForMultiplier();
 			}
