@@ -14,6 +14,9 @@
 
 <script>
   // Make product IDs available to JavaScript
+
+  console.log("ASDAS")
+  console.log( {{ dusk_charcoal | json }})
   window.PRODUCT_IDS = {
     dusk_charcoal: {{ dusk_charcoal.id | json }},
     dusk_natural: {{ dusk_natural.id | json }},
@@ -50,6 +53,16 @@
           id: {{ section.settings.one_chuug_product.variants[1].id | json }},
           price: {{ section.settings.one_chuug_product.variants[1].price | json }},
           compare_at_price: {{ section.settings.one_chuug_product.variants[1].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.one_chuug_product.variants[2].id | json }},
+          price: {{ section.settings.one_chuug_product.variants[2].price | json }},
+          compare_at_price: {{ section.settings.one_chuug_product.variants[2].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.one_chuug_product.variants[3].id | json }},
+          price: {{ section.settings.one_chuug_product.variants[3].price | json }},
+          compare_at_price: {{ section.settings.one_chuug_product.variants[3].compare_at_price | json }}
         }
       ]
     },
@@ -68,6 +81,16 @@
           id: {{ section.settings.two_chuug_product.variants[1].id | json }},
           price: {{ section.settings.two_chuug_product.variants[1].price | json }},
           compare_at_price: {{ section.settings.two_chuug_product.variants[1].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.two_chuug_product.variants[2].id | json }},
+          price: {{ section.settings.two_chuug_product.variants[2].price | json }},
+          compare_at_price: {{ section.settings.two_chuug_product.variants[2].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.two_chuug_product.variants[3].id | json }},
+          price: {{ section.settings.two_chuug_product.variants[3].price | json }},
+          compare_at_price: {{ section.settings.two_chuug_product.variants[3].compare_at_price | json }}
         }
       ]
     },
@@ -86,6 +109,16 @@
           id: {{ section.settings.three_chuug_product.variants[1].id | json }},
           price: {{ section.settings.three_chuug_product.variants[1].price | json }},
           compare_at_price: {{ section.settings.three_chuug_product.variants[1].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.three_chuug_product.variants[2].id | json }},
+          price: {{ section.settings.three_chuug_product.variants[2].price | json }},
+          compare_at_price: {{ section.settings.three_chuug_product.variants[2].compare_at_price | json }}
+        },
+        {
+          id: {{ section.settings.three_chuug_product.variants[3].id | json }},
+          price: {{ section.settings.three_chuug_product.variants[3].price | json }},
+          compare_at_price: {{ section.settings.three_chuug_product.variants[3].compare_at_price | json }}
         }
       ]
     }
@@ -336,7 +369,7 @@
                       </label>
                       <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
 
-                        <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option">
+                        <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" data-variant-id="{{ dusk_charcoal.variants[2].id }}" class="tw-hidden js-option">
                         <div class="charocal-upgrade">
                           <span class="rope-type-name tw-uppercase type-name">CHARCOAL </span>
                           <span class="text-upgrade">
@@ -359,7 +392,9 @@
                               </clipPath>
                             </defs>
                           </svg>
-                          + {{ 299 | money }}
+                          
+                          {% assign price_difference = dusk_charcoal.variants[2].price | minus: dusk_charcoal.variants[0].price %}
+                          + {{ price_difference | money }}
                         </div>
                       </label>
                     </div>

@@ -627,7 +627,8 @@
         currentProductId: window.pomcSystem.getCurrentProductId(),
         currentProductHandle: window.pomcSystem.getCurrentProductHandle(),
         multiplier: window.pomcSystem.getMultiplier(),
-        currentVesselSelection: window.pomcSystem.getCurrentVesselSelection()
+        currentVesselSelection: window.pomcSystem.getCurrentVesselSelection(),
+        charcoalUpgradeData: window.pomcSystem.getCharcoalUpgradeData()
       });
       
       // Validate all vessels before proceeding
@@ -1175,14 +1176,8 @@
       newPriceForThree = BASE_PRICES.three_no_engraving + upgradePrice;
     }
     
-    // Update all label prices
-    const label1Price = document.querySelector('.product_amount_label_1_price .dualPrice');
-    const label2Price = document.querySelector('.product_amount_label_2_price .dualPrice');
-    const label3Price = document.querySelector('.product_amount_label_3_price .dualPrice');
-    
-    if (label1Price) label1Price.innerHTML = formatMoneyWithFallback(newPriceForOne);
-    if (label2Price) label2Price.innerHTML = formatMoneyWithFallback(newPriceForTwo);
-    if (label3Price) label3Price.innerHTML = formatMoneyWithFallback(newPriceForThree);
+    // DO NOT update vessel number label prices (1x, 2x, 3x) - they should show base prices only
+    // Only update the CTA button price to include charcoal upgrade
     
     // Update CTA price based on current product amount
     const cta_product_price = document.querySelector('.cta-product-price .dualPrice');
@@ -1198,15 +1193,11 @@
       cta_product_price.innerHTML = formatMoneyWithFallback(currentPrice);
     }
     
-    console.log('POMC: Prices updated with charcoal upgrade:', {
+    console.log('POMC: CTA price updated with charcoal upgrade:', {
       upgradePrice: e.detail.upgradePriceFormatted,
       productAmount: product_amount,
       isEngraving: isEngraving,
-      newPrices: {
-        one: formatMoneyWithFallback(newPriceForOne),
-        two: formatMoneyWithFallback(newPriceForTwo),
-        three: formatMoneyWithFallback(newPriceForThree)
-      }
+      ctaPrice: formatMoneyWithFallback(product_amount === 1 ? newPriceForOne : product_amount === 2 ? newPriceForTwo : newPriceForThree)
     });
   });
 </script>

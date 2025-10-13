@@ -686,13 +686,14 @@
 		getVesselPricingForMultiplier() {
 			// Get pricing from POMC system - this is the source of truth
 			if (window.pomcSystem) {
-				const selectedProductAmountData =
-					window.pomcSystem.getSelectedProductAmountData();
-				if (selectedProductAmountData && selectedProductAmountData.variants) {
-					const engravingEnabled = this.getEngravingState();
-					const variantIndex = engravingEnabled ? 1 : 0;
+		const selectedProductAmountData =
+			window.pomcSystem.getSelectedProductAmountData();
+		if (selectedProductAmountData && selectedProductAmountData.variants) {
+			const engravingEnabled = this.getEngravingState();
+			const hasCharcoalRope = this.modalInstance.hasAnyCharcoalRopeSelected();
+			const variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
 
-					const variant = selectedProductAmountData.variants[variantIndex];
+			const variant = selectedProductAmountData.variants[variantIndex];
 					if (variant) {
 						// Store the pricing for reference
 						this.dynamicPrices.vessel = {
@@ -735,18 +736,19 @@
 				}
 
 				// Fetch product data via GraphQL
-				const productData = await window.CurrencyManager.fetchProductData(selectedProductAmountData.id);
-				if (!productData || !productData.variants) {
-					console.warn('No product data received from GraphQL');
-					return this.getVesselPricingForMultiplier(); // Fallback
-				}
+			const productData = await window.CurrencyManager.fetchProductData(selectedProductAmountData.id);
+			if (!productData || !productData.variants) {
+				console.warn('No product data received from GraphQL');
+				return this.getVesselPricingForMultiplier(); // Fallback
+			}
 
-				const engravingEnabled = this.getEngravingState();
-				const variantIndex = engravingEnabled ? 1 : 0;
-				
-				// Find the correct variant
-				const variants = productData.variants.edges.map(edge => edge.node);
-				const variant = variants[variantIndex];
+			const engravingEnabled = this.getEngravingState();
+			const hasCharcoalRope = this.modalInstance.hasAnyCharcoalRopeSelected();
+			const variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
+			
+			// Find the correct variant
+			const variants = productData.variants.edges.map(edge => edge.node);
+			const variant = variants[variantIndex];
 
 				if (variant && variant.price) {
 					// Convert GraphQL price to cents (Shopify returns as decimal string)
@@ -1899,13 +1901,14 @@
 				const selectedProductAmountData =
 					window.pomcSystem?.getSelectedProductAmountData();
 
-				if (!selectedProductAmountData?.variants) {
-					return;
-				}
+			if (!selectedProductAmountData?.variants) {
+				return;
+			}
 
-				// Calculate the new per-item compare-at price
-				const variantIndex = engravingEnabled ? 1 : 0;
-				const variantData = selectedProductAmountData.variants[variantIndex];
+			// Calculate the new per-item compare-at price
+			const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+			const variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+			const variantData = selectedProductAmountData.variants[variantIndex];
 
 				if (!variantData?.compare_at_price) {
 					return;
@@ -2010,10 +2013,43 @@
 				return mainPageEngravingEnabled;
 			}
 
-			return engravingEnabled;
-		}
+		return engravingEnabled;
+	}
 
-		async initializeGiftBoxPricing() {
+	hasAnyCharcoalRopeSelected() {
+		if (!window.pomcSystem) {
+			return false;
+		}
+		
+		const vesselSelections = window.pomcSystem.getAllVesselSelections();
+		const multiplier = window.pomcSystem.getMultiplier() || 1;
+		
+		// Check only active vessels (based on multiplier)
+		for (let i = 1; i <= multiplier; i++) {
+			const selection = vesselSelections[i];
+			if (selection?.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	getVariantIndex(hasCharcoalRope, engravingEnabled) {
+		// Variant mapping:
+		// 0: Natural, No Engraving
+		// 1: Natural, With Engraving
+		// 2: Charcoal, No Engraving
+		// 3: Charcoal, With Engraving
+		
+		const variantIndex = hasCharcoalRope 
+			? (engravingEnabled ? 3 : 2)
+			: (engravingEnabled ? 1 : 0);
+		
+		return variantIndex;
+	}
+
+	async initializeGiftBoxPricing() {
 			try {
 				const response = await fetch(
 					"/products/premium-gift-box-tissue-wrap.js"
@@ -2216,11 +2252,12 @@
 				const selectedData =
 					window.chuug_vessel_selections.selectedProductAmountData;
 				console.log("🎁 selectedData:", selectedData);
-				if (selectedData.variants) {
-					console.log("🎁 Found variants in selectedData");
-					const engravingEnabled = this.getEngravingState();
-					const variantIndex = engravingEnabled ? 1 : 0;
-					const variant = selectedData.variants[variantIndex];
+			if (selectedData.variants) {
+				console.log("🎁 Found variants in selectedData");
+				const engravingEnabled = this.getEngravingState();
+				const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+				const variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+				const variant = selectedData.variants[variantIndex];
 					console.log("🎁 Selected variant:", variant);
 
 					if (variant) {
@@ -2695,6 +2732,13 @@
 		}
 
 		async addToCart() {
+			// Prevent duplicate calls
+			if (this.isAddingToCart) {
+				return;
+			}
+			
+			this.isAddingToCart = true;
+			
 			try {
 				// Show loading state
 				this.setLoadingState(true);
@@ -2805,6 +2849,8 @@
 				this.hideCartLoadingSpinner();
 			} finally {
 				this.setLoadingState(false);
+				// Reset the flag
+				this.isAddingToCart = false;
 			}
 		}
 
@@ -2906,145 +2952,122 @@
 			console.log("🔍 Input field values:", inputValues);
 			console.log("🔍 Engraving enabled:", engravingEnabled);
 
-			// Process each vessel
-			Object.entries(vesselSelections).forEach(
-				([vesselIndex, selection], index) => {
-					// Check for variant ID - POMC system uses woodVariantId/ropeVariantId
-					let variantId =
-						selection.variantId ||
-						selection.woodVariantId ||
-						selection.ropeVariantId;
-
-					if (!variantId) {
-						return;
-					}
-
-					const vesselNumber = parseInt(vesselIndex);
-					const vesselEngraving =
-						state.engraving?.vessels?.[vesselNumber] || "";
-
-					// Debug log for engraving values
-					console.log(`📝 Building cart item for Vessel ${vesselNumber}:`, {
-						vesselEngraving,
-						engravingEnabled,
-						allEngravingVessels: state.engraving?.vessels,
-					});
-
-					// For POMC system, we might need to determine variant based on engraving differently
-					// Check if there's an engraving variant available
-					if (engravingEnabled && selection.engravingVariantId) {
-						variantId = selection.engravingVariantId;
-					}
-
-					// Create properties object
-					const properties = {};
-
-					// VISIBLE PROPERTIES (for checkout display)
-
-					// Add Monogram Initials (visible on checkout)
-					if (
-						engravingEnabled &&
-						vesselEngraving &&
-						vesselEngraving.trim() !== ""
-					) {
-						properties["Monogram Initials"] = vesselEngraving
-							.trim()
-							.toUpperCase();
-					} else {
-						properties["Monogram Initials"] = "N/A";
-					}
-
-					// Add Choose Your Coins info (visible on checkout)
-					if (selectedProductAmountData?.variants) {
-						const variantIndex = engravingEnabled ? 1 : 0;
-						const variantData =
-							selectedProductAmountData.variants[variantIndex];
-						if (variantData?.title) {
-							properties["Choose Your Coins"] = variantData.title;
-						}
-					}
-
-					// Check if this vessel has a gift box associated with it
-					const hasGiftBox = state.giftBox?.enabled;
-					properties["Gift Box"] = hasGiftBox ? "yes" : "no";
-
-					if (hasGiftBox) {
-						// Get the actual gift box product title dynamically
-						const giftBoxTitle = this.getGiftBoxProductTitle();
-						properties["Gift Option"] = giftBoxTitle;
-					}
-
-					// HIDDEN PROPERTIES (with underscore - for backend use only)
-
-					// Add vessel engraving (hidden)
-					if (
-						engravingEnabled &&
-						vesselEngraving &&
-						vesselEngraving.trim() !== ""
-					) {
-						properties[`_Vessel ${vesselNumber} Engraving`] = vesselEngraving
-							.trim()
-							.toUpperCase();
-						console.log(
-							`✅ Added engraving to cart item for Vessel ${vesselNumber}:`,
-							vesselEngraving
-						);
-					} else {
-						console.log(
-							`ℹ️ No engraving for Vessel ${vesselNumber} (empty or disabled)`
-						);
-					}
-
-					// Add vessel selection details (hidden)
-					if (selection.productHandle) {
-						properties[`_Vessel ${vesselNumber} Product`] =
-							selection.productHandle;
-					}
-					if (selection.woodType) {
-						properties[`_Vessel ${vesselNumber} Wood Type`] =
-							selection.woodType;
-					}
-					if (selection.ropeType) {
-						properties[`_Vessel ${vesselNumber} Rope Type`] =
-							selection.ropeType;
-					}
-
-					// Add compare-at price (hidden)
-					if (selectedProductAmountData?.variants) {
-						const variantIndex = engravingEnabled ? 1 : 0;
-						const variantData =
-							selectedProductAmountData.variants[variantIndex];
-						if (variantData?.compare_at_price && multiplier > 0) {
-							// Divide bundle compare-at price by multiplier to get per-item price
-							const perItemCompareAtPrice = Math.round(
-								variantData.compare_at_price / multiplier
-							);
-							properties["_Compare At Price"] = perItemCompareAtPrice;
-						}
-					}
-
-					// Add unique line identifier to prevent Shopify from consolidating items
-					const uniqueLineId = `${Date.now()}-V${vesselNumber}-${Math.random()
-						.toString(36)
-						.substr(2, 9)}`;
-					properties["_Unique Line ID"] = uniqueLineId;
-
-					const item = {
-						id: variantId,
-						quantity: 1,
-						properties,
-					};
-
-					items.push(item);
+		// CRITICAL FIX: Create ONE bundle item instead of multiple vessel items
+		const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+		const variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+		
+		let variantId = null;
+				if (selectedProductAmountData?.variants?.[variantIndex]) {
+					variantId = selectedProductAmountData.variants[variantIndex].id;
+				} else {
+					return items;
 				}
-			);
 
-			// Fallback: If no vessel items were collected, try to get from selectedProductAmountData
-			if (items.length === 0 && selectedProductAmountData) {
-				// Use the selected product amount data as fallback
-				const fallbackVariantIndex = engravingEnabled ? 1 : 0;
-				const fallbackVariant =
-					selectedProductAmountData.variants?.[fallbackVariantIndex];
+		if (!variantId) {
+			return items;
+		}
+
+
+		// Create properties object for the bundle
+		const properties = {};
+
+		// VISIBLE PROPERTIES (for checkout display)
+
+		// Add Monogram Initials (visible on checkout) - collect all vessel engravings
+		const allEngravings = [];
+		for (let i = 1; i <= multiplier; i++) {
+			const vesselEngraving = state.engraving?.vessels?.[i] || "";
+			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
+				allEngravings.push(vesselEngraving.trim().toUpperCase());
+			}
+		}
+		
+		if (allEngravings.length > 0) {
+			properties["Monogram Initials"] = allEngravings.join(", ");
+		} else {
+			properties["Monogram Initials"] = "N/A";
+		}
+
+		// Add Choose Your Coins info (visible on checkout)
+		if (selectedProductAmountData?.variants) {
+			const variantData = selectedProductAmountData.variants[variantIndex];
+			if (variantData?.title) {
+				properties["Choose Your Coins"] = variantData.title;
+			}
+		}
+
+		// Check if gift box is enabled
+		const hasGiftBox = state.giftBox?.enabled;
+		properties["Gift Box"] = hasGiftBox ? "yes" : "no";
+
+		if (hasGiftBox) {
+			// Get the actual gift box product title dynamically
+			const giftBoxTitle = this.getGiftBoxProductTitle();
+			properties["Gift Option"] = giftBoxTitle;
+		}
+
+		// HIDDEN PROPERTIES (with underscore - for backend use only)
+
+		// Add vessel engravings (hidden) - one per vessel
+		for (let i = 1; i <= multiplier; i++) {
+			const vesselEngraving = state.engraving?.vessels?.[i] || "";
+			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
+				properties[`_Vessel ${i} Engraving`] = vesselEngraving.trim().toUpperCase();
+			}
+		}
+
+		// Add vessel selection details (hidden) - collect all vessel selections
+		for (let i = 1; i <= multiplier; i++) {
+			const selection = vesselSelections[i];
+			if (selection) {
+				if (selection.productHandle) {
+					properties[`_Vessel ${i} Product`] = selection.productHandle;
+				}
+				if (selection.woodType) {
+					properties[`_Vessel ${i} Wood Type`] = selection.woodType;
+				}
+				if (selection.ropeType) {
+					properties[`_Vessel ${i} Rope Type`] = selection.ropeType;
+				}
+			}
+		}
+
+		// Add compare-at price (hidden)
+		if (selectedProductAmountData?.variants) {
+			const variantData = selectedProductAmountData.variants[variantIndex];
+			if (variantData?.compare_at_price && multiplier > 0) {
+				// Divide bundle compare-at price by multiplier to get per-item price
+				const perItemCompareAtPrice = Math.round(
+					variantData.compare_at_price / multiplier
+				);
+				properties["_Compare At Price"] = perItemCompareAtPrice;
+			}
+		}
+
+		// Add unique line identifier to prevent Shopify from consolidating items
+		// Use a consistent ID based on the bundle configuration to prevent duplicates
+		const bundleConfig = `${multiplier}-${hasCharcoalRope ? 'charcoal' : 'natural'}-${engravingEnabled ? 'engraved' : 'plain'}`;
+		const uniqueLineId = `BUNDLE-${bundleConfig}-${Date.now()}`;
+		properties["_Unique Line ID"] = uniqueLineId;
+		
+
+		// Create ONE bundle item with quantity = multiplier
+		const bundleItem = {
+			id: variantId,
+			quantity: multiplier, // This is the key fix - quantity should be the number of vessels
+			properties,
+		};
+
+		items.push(bundleItem);
+
+		// Fallback: If no vessel items were collected, try to get from selectedProductAmountData
+		if (items.length === 0 && selectedProductAmountData) {
+			// Use the selected product amount data as fallback
+			const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+			const fallbackVariantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+			const fallbackVariant =
+				selectedProductAmountData.variants?.[fallbackVariantIndex];
+			
 
 				if (fallbackVariant?.id) {
 					const fallbackProperties = {
@@ -3362,6 +3385,12 @@
 		}
 
 		async addItemsToShopifyCart(cartData) {
+			// CRITICAL FIX: Clear cart first to prevent duplicate items
+			await this.clearCart();
+			
+			// Small delay to ensure cart is fully cleared
+			await new Promise(resolve => setTimeout(resolve, 100));
+			
 			const config = {
 				method: "POST",
 				headers: {
@@ -3382,6 +3411,42 @@
 
 			const response = await fetch("/cart/add.js", config);
 			return await response.json();
+		}
+
+		async clearCart() {
+			try {
+				// Get current cart to see what items exist
+				const cartResponse = await fetch("/cart.js");
+				const cartData = await cartResponse.json();
+				
+				if (cartData.items && cartData.items.length > 0) {
+					// Clear each item by setting quantity to 0
+					const clearPromises = cartData.items.map(item => 
+						fetch("/cart/change.js", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+								Accept: "application/json",
+							},
+							body: JSON.stringify({
+								id: item.key,
+								quantity: 0,
+								sections: "cart-icon-bubble",
+								sections_url: window.location.pathname,
+							}),
+						})
+					);
+					
+					// Wait for all clear operations to complete
+					await Promise.all(clearPromises);
+					
+					// Verify cart is empty
+					const verifyResponse = await fetch("/cart.js");
+					const verifyData = await verifyResponse.json();
+				}
+			} catch (error) {
+				// Don't throw - continue with adding items even if clearing failed
+			}
 		}
 
 		updateCartIconBubble(response) {

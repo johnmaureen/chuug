@@ -1351,6 +1351,31 @@
 		getCharcoalUpgradePriceFormatted: function() {
 			return formatMoney(calculateCharcoalUpgradePrice());
 		},
+		getCharcoalUpgradeData: function() {
+			const charcoalVessels = [];
+			
+			// Get all vessels with charcoal rope selected (only for active vessels)
+			for (let vesselNum = 1; vesselNum <= state.currentVesselCount; vesselNum++) {
+				const selection = state.vesselSelections[vesselNum];
+				if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+					charcoalVessels.push({
+						vesselNumber: vesselNum,
+						woodType: selection.woodType,
+						ropeType: selection.ropeType,
+						ropeVariantId: selection.ropeVariantId,
+						productId: selection.productId,
+						productHandle: selection.productHandle
+					});
+				}
+			}
+			
+			return {
+				charcoalVessels: charcoalVessels,
+				charcoalCount: charcoalVessels.length,
+				upgradePrice: calculateCharcoalUpgradePrice(),
+				upgradePriceFormatted: formatMoney(calculateCharcoalUpgradePrice())
+			};
+		},
 		CHARCOAL_UPGRADE_PRICE: CHARCOAL_UPGRADE_PRICE,
 	};
 })();

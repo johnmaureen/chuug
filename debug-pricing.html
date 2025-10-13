@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Pricing Data</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        pre { background: #f4f4f4; padding: 10px; overflow: auto; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>PRODUCT_AMOUNT_PRODUCTS Debug</h1>
+    <div id="output"></div>
+    
+    <script>
+        const output = document.getElementById('output');
+        
+        if (window.PRODUCT_AMOUNT_PRODUCTS) {
+            let html = '<h2 class="success">✓ PRODUCT_AMOUNT_PRODUCTS exists</h2>';
+            
+            [1, 2, 3].forEach(amount => {
+                const product = window.PRODUCT_AMOUNT_PRODUCTS[amount];
+                html += `<h3>${amount}x Bundle</h3>`;
+                
+                if (product) {
+                    html += `<pre>ID: ${product.id}\nHandle: ${product.handle}\nBase Price: ${product.price}\nCompare At: ${product.compare_at_price}</pre>`;
+                    
+                    html += '<h4>Variants:</h4>';
+                    if (product.variants) {
+                        product.variants.forEach((variant, idx) => {
+                            html += `<pre>[${idx}] ID: ${variant.id || 'MISSING'}\nPrice: ${variant.price || 'MISSING'} (£${(variant.price/100).toFixed(2)})\nCompare At: ${variant.compare_at_price || 'MISSING'} (£${(variant.compare_at_price/100).toFixed(2)})</pre>`;
+                        });
+                    } else {
+                        html += '<p class="error">No variants array!</p>';
+                    }
+                } else {
+                    html += '<p class="error">Product data missing!</p>';
+                }
+            });
+            
+            output.innerHTML = html;
+        } else {
+            output.innerHTML = '<h2 class="error">✗ PRODUCT_AMOUNT_PRODUCTS not found!</h2>';
+        }
+    </script>
+</body>
+</html>
