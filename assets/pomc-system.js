@@ -1192,6 +1192,23 @@
 	// INITIALIZATION
 	// ========================================
 	function initialize() {
+		// Clear localStorage if page was refreshed (not back/forward navigation)
+		// This ensures users start fresh on each page load
+		const isPageRefresh = (function() {
+			// Try modern Navigation Timing API first
+			const navEntries = performance.getEntriesByType('navigation');
+			if (navEntries && navEntries.length > 0) {
+				return navEntries[0].type === 'reload';
+			}
+			// Fallback to deprecated but widely supported API
+			return performance.navigation && performance.navigation.type === 1;
+		})();
+		
+		if (isPageRefresh) {
+			storage.clear();
+			console.log('🔄 Page refreshed - localStorage cleared for fresh start');
+		}
+
 		// Initialize state - sync with the selected product amount (default is 2)
 		state.currentVesselCount = state.selectedProductAmount;
 
