@@ -211,7 +211,7 @@
 					this.state.mixMatch = { ...this.state.mixMatch, ...saved.mixMatch };
 				}
 				// Explicitly keep giftBox and extraCups at their defaults (don't load from storage)
-				console.log("💾 Loaded state (selective):", {
+("💾 Loaded state (selective):", {
 					restored: {
 						engraving: saved.engraving || null,
 						mixMatch: saved.mixMatch || null,
@@ -281,14 +281,14 @@
 
 			// Force verification that localStorage was updated
 			const verification = StorageManager.load(CONFIG.STORAGE_KEY);
-			console.log("🔄 Engraving state reset - verification:", {
+("🔄 Engraving state reset - verification:", {
 				engravingVessels: verification?.engraving?.vessels,
 				shouldBeEmpty:
 					Object.keys(verification?.engraving?.vessels || {}).length === 0,
 			});
 
 			this.emit("engravingReset");
-			console.log("🔄 Engraving state reset - all vessel engravings cleared");
+("🔄 Engraving state reset - all vessel engravings cleared");
 		}
 
 		reset() {
@@ -469,12 +469,12 @@
 					this.useFlashSaleTime = false;
 					this.startTime = this.getStartTime();
 				} else {
-					console.log("✅ Using flash sale countdown:", this.flashSaleEndTime);
+("✅ Using flash sale countdown:", this.flashSaleEndTime);
 				}
 			} else {
 				// Priority 3: Use duration-based countdown
 				this.startTime = this.getStartTime();
-				console.log(
+(
 					"ℹ️ Using duration-based countdown (flash sale not configured)"
 				);
 			}
@@ -607,11 +607,11 @@
 
 			// FORCE GIFT BOX PRICING - This is a direct fix to ensure gift box pricing is always applied
 			if (state.giftBox?.enabled) {
-				console.log("🎁 FORCE: Gift box enabled, adding pricing");
+("🎁 FORCE: Gift box enabled, adding pricing");
 				const giftBoxPrice = this.dynamicPrices.giftBox || 200; // Default to £2.00 if not loaded
 				const multiplier = window.pomcSystem?.getMultiplier() || 2; // Default to 2 vessels
 				const giftBoxTotal = giftBoxPrice * multiplier;
-				console.log(
+(
 					"🎁 FORCE: Adding gift box pricing:",
 					giftBoxTotal,
 					"cents (",
@@ -622,7 +622,7 @@
 				);
 				total += giftBoxTotal;
 				originalTotal += giftBoxTotal;
-				console.log("🎁 FORCE: New totals:", { total, originalTotal });
+("🎁 FORCE: New totals:", { total, originalTotal });
 			}
 
 			// Gift box pricing is now handled by the FORCE section above
@@ -681,10 +681,10 @@
 		
 		// Check if we have a mixed vessel configuration
 		const hasMixedConfig = this.modalInstance.hasMixedVesselConfiguration();
-		console.log(`🔍 Pricing calculation: hasMixedConfig=${hasMixedConfig}`);
+(`🔍 Pricing calculation: hasMixedConfig=${hasMixedConfig}`);
 		
 		if (hasMixedConfig) {
-			console.log("🪢 Mixed vessel configuration detected - calculating pricing");
+("🪢 Mixed vessel configuration detected - calculating pricing");
 			return this.getMixedVesselPricing(selectedProductAmountData, engravingEnabled);
 		}
 		
@@ -718,7 +718,7 @@
 	 * since it represents the higher-value configuration
 	 */
 	getMixedVesselPricing(selectedProductAmountData, engravingEnabled) {
-		console.log("🪢 Calculating mixed vessel pricing");
+("🪢 Calculating mixed vessel pricing");
 		
 		const vesselSelections = window.pomcSystem.getAllVesselSelections();
 		const multiplier = window.pomcSystem.getMultiplier() || 1;
@@ -738,7 +738,7 @@
 			}
 		}
 		
-		console.log(`🪢 Vessel breakdown: ${charcoalCount} charcoal, ${naturalCount} natural`);
+(`🪢 Vessel breakdown: ${charcoalCount} charcoal, ${naturalCount} natural`);
 		
 		// For mixed configurations, use the charcoal rope variant pricing as the base
 		// This ensures we get the higher pricing that includes charcoal upgrade costs
@@ -756,12 +756,12 @@
 			const totalPrice = variant.price + totalCharcoalUpgradePrice;
 			const totalOriginalPrice = variant.compare_at_price + totalCharcoalUpgradePrice;
 			
-			console.log(`🪢 Using charcoal rope variant ${charcoalVariantIndex} for mixed bundle pricing`);
-			console.log(`🪢 Bundle base price: ${variant.price}`);
-			console.log(`🪢 Charcoal upgrade price per vessel: ${charcoalUpgradePrice}`);
-			console.log(`🪢 Total charcoal upgrade cost (${charcoalCount} vessels): ${totalCharcoalUpgradePrice}`);
-			console.log(`🪢 Final total price: ${totalPrice} (${variant.price} + ${totalCharcoalUpgradePrice})`);
-			console.log(`🪢 Final original price: ${totalOriginalPrice}`);
+(`🪢 Using charcoal rope variant ${charcoalVariantIndex} for mixed bundle pricing`);
+(`🪢 Bundle base price: ${variant.price}`);
+(`🪢 Charcoal upgrade price per vessel: ${charcoalUpgradePrice}`);
+(`🪢 Total charcoal upgrade cost (${charcoalCount} vessels): ${totalCharcoalUpgradePrice}`);
+(`🪢 Final total price: ${totalPrice} (${variant.price} + ${totalCharcoalUpgradePrice})`);
+(`🪢 Final original price: ${totalOriginalPrice}`);
 			
 			// Store the pricing for reference
 			this.dynamicPrices.vessel = {
@@ -811,7 +811,7 @@
 		let variantIndex;
 		
 		if (hasMixedConfig) {
-			console.log("🪢 Mixed vessel configuration detected in GraphQL pricing");
+("🪢 Mixed vessel configuration detected in GraphQL pricing");
 			// For mixed configurations, use charcoal rope variant pricing
 			variantIndex = engravingEnabled ? 3 : 2;
 		} else {
@@ -940,7 +940,7 @@
 					}
 
 					const itemId = removeBtn.getAttribute("data-remove-item");
-					console.log(`🖱️ CLICK: Delete button clicked for item ${itemId}`);
+(`🖱️ CLICK: Delete button clicked for item ${itemId}`);
 					event.preventDefault();
 					event.stopPropagation();
 					this.removeCartItem(itemId);
@@ -1128,7 +1128,7 @@
 			);
 			if (!toggle) return;
 
-			console.log("🔄 Toggle changed:", {
+("🔄 Toggle changed:", {
 				element: toggle,
 				checked: toggle.checked,
 				hasPersonalizationToggle: toggle.hasAttribute(
@@ -1141,7 +1141,7 @@
 
 			if (toggle.hasAttribute("data-personalization-toggle")) {
 				const type = toggle.getAttribute("data-personalization-toggle");
-				console.log(
+(
 					"🔄 Updating personalization:",
 					type,
 					"enabled:",
@@ -1150,14 +1150,14 @@
 				this.state.updatePersonalization(type, { enabled: toggle.checked });
 			} else if (toggle.hasAttribute("data-addon-toggle")) {
 				const type = toggle.getAttribute("data-addon-toggle");
-				console.log("🔄 Addon toggle:", type, "enabled:", toggle.checked);
+("🔄 Addon toggle:", type, "enabled:", toggle.checked);
 				// Handle gift box toggle specifically with correct key
 				if (type === "gift-box") {
-					console.log("🎁 Gift box toggle changed to:", toggle.checked);
+("🎁 Gift box toggle changed to:", toggle.checked);
 					this.state.updatePersonalization("giftBox", {
 						enabled: toggle.checked,
 					});
-					console.log(
+(
 						"🎁 Gift box state after update:",
 						this.state.state.giftBox
 					);
@@ -1479,8 +1479,8 @@
             id="${modalId}-vessel-${vesselNumber}-name" 
             class="vessel-name-input" 
             placeholder="Enter Initial"
-          maxlength="3"
-          pattern="[A-Za-z]{0,3}"
+          maxlength="1"
+          pattern="[A-Za-z]{0,1}"
           
           data-vessel-input="${vesselNumber}"
           data-property="properties[_Vessel ${vesselNumber} Engraving]"
@@ -1489,7 +1489,7 @@
         </div>
         
         <div id="${modalId}-vessel-${vesselNumber}-description" class="visually-hidden">
-          Enter up to 3 letters for vessel ${vesselNumber} engraving
+          Enter 1 letter for vessel ${vesselNumber} engraving
         </div>
       `;
 
@@ -1864,14 +1864,14 @@
 		}
 
 		async calculatePricing() {
-			console.log("🔍 calculatePricing called");
+("🔍 calculatePricing called");
 			const state = this.state.getState();
 			await this.pricing.calculateTotal(state);
 		}
 
 		setupPOMCIntegration() {
 			// Listen for POMC system changes and update pricing
-			console.log("🔍 Setting up POMC integration, pomcSystem exists:", !!window.pomcSystem);
+("🔍 Setting up POMC integration, pomcSystem exists:", !!window.pomcSystem);
 			
 			if (window.pomcSystem) {
 				// Create a custom event listener for POMC changes
@@ -1881,7 +1881,7 @@
 
 				// Listen for currency changes
 				const updatePricingFromCurrencyChange = (event) => {
-					console.log('💰 Currency changed in mini ATC modal:', event.detail);
+('💰 Currency changed in mini ATC modal:', event.detail);
 					this.calculatePricing().catch(console.error);
 					
 					// Update checkout view prices if checkout view is active
@@ -1915,7 +1915,7 @@
 				document.addEventListener(
 					"pomcCharcoalUpgradePrice",
 					(event) => {
-						console.log("🪢 Charcoal upgrade price changed, updating pricing:", event.detail);
+("🪢 Charcoal upgrade price changed, updating pricing:", event.detail);
 						// Small delay to ensure POMC system has fully updated
 						setTimeout(() => {
 							this.calculatePricing().catch(console.error);
@@ -1929,14 +1929,14 @@
 				});
 			} else {
 				// POMC system not ready yet, set up event listener anyway for when it becomes available
-				console.log("🔍 POMC system not ready, setting up delayed event listener");
+("🔍 POMC system not ready, setting up delayed event listener");
 				const setupDelayedListener = () => {
 					if (window.pomcSystem) {
-						console.log("🔍 POMC system now available, setting up charcoal upgrade listener");
+("🔍 POMC system now available, setting up charcoal upgrade listener");
 						document.addEventListener(
 							"pomcCharcoalUpgradePrice",
 							(event) => {
-								console.log("🪢 Charcoal upgrade price changed (delayed setup), updating pricing:", event.detail);
+("🪢 Charcoal upgrade price changed (delayed setup), updating pricing:", event.detail);
 								setTimeout(() => {
 									this.calculatePricing().catch(console.error);
 								}, 50);
@@ -2020,7 +2020,7 @@
 			let variantIndex;
 			
 			if (hasMixedConfig) {
-				console.log("🛒🪢 Mixed configuration detected for cart update");
+("🛒🪢 Mixed configuration detected for cart update");
 				variantIndex = engravingEnabled ? 3 : 2;
 			} else {
 				const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
@@ -2065,7 +2065,7 @@
 
 				// Perform the updates
 				if (updates.length > 0) {
-					console.log(
+(
 						`📝 Updating compare-at prices for ${updates.length} items to £${(
 							perItemCompareAtPrice / 100
 						).toFixed(2)}`
@@ -2198,7 +2198,7 @@
 		}
 		
 		const isMixed = hasCharcoal && hasNatural;
-		console.log(`🔍 Mixed vessel config check: multiplier=${multiplier}, hasCharcoal=${hasCharcoal}, hasNatural=${hasNatural}, isMixed=${isMixed}`);
+(`🔍 Mixed vessel config check: multiplier=${multiplier}, hasCharcoal=${hasCharcoal}, hasNatural=${hasNatural}, isMixed=${isMixed}`);
 		
 		// Mixed if we have both charcoal and natural
 		return isMixed;
@@ -2230,8 +2230,8 @@
 		}
 
 		async updatePricingDisplay(pricing) {
-			console.log("🚀🚀🚀 UPDATEPRICINGDISPLAY METHOD CALLED 🚀🚀🚀");
-			console.log("🚀 updatePricingDisplay called with pricing:", pricing);
+("🚀🚀🚀 UPDATEPRICINGDISPLAY METHOD CALLED 🚀🚀🚀");
+("🚀 updatePricingDisplay called with pricing:", pricing);
 			// Check which view is currently active
 			const checkoutView = this.modal.querySelector(
 				".mini-atc-modal__view.mini-atc-modal__checkout-view"
@@ -2240,19 +2240,19 @@
 				".mini-atc-modal__view.mini-atc-modal__personalise-view"
 			);
 
-			console.log(
+(
 				"Pricing update - checkoutView display:",
 				checkoutView?.style.display
 			);
-			console.log(
+(
 				"Pricing update - personalizeView display:",
 				personalizeView?.style.display
 			);
-			console.log(
+(
 				"Pricing update - checkoutView computed display:",
 				window.getComputedStyle(checkoutView)?.display
 			);
-			console.log(
+(
 				"Pricing update - personalizeView computed display:",
 				window.getComputedStyle(personalizeView)?.display
 			);
@@ -2262,7 +2262,7 @@
 				checkoutView &&
 				window.getComputedStyle(checkoutView).display !== "none"
 			) {
-				console.log("Using checkout pricing");
+("Using checkout pricing");
 				this.updateCheckoutPricing();
 				return;
 			}
@@ -2272,7 +2272,7 @@
 				personalizeView &&
 				window.getComputedStyle(personalizeView).display !== "none"
 			) {
-				console.log("Using personalize pricing");
+("Using personalize pricing");
 				try {
 					await this.updatePersonalizePricing(pricing);
 				} catch (error) {
@@ -2282,7 +2282,7 @@
 			}
 
 			// Fallback to personalize pricing if no view is clearly active
-			console.log("Fallback to personalize pricing");
+("Fallback to personalize pricing");
 			try {
 				await this.updatePersonalizePricing(pricing);
 			} catch (error) {
@@ -2379,29 +2379,29 @@
 		}
 
 		async updatePersonalizePricing(pricing) {
-			console.log("🎁🎁🎁 UPDATEPERSONALIZEPRICING METHOD CALLED 🎁🎁🎁");
-			console.log("🎁 updatePersonalizePricing START - METHOD CALLED");
-			console.log("🎁 updatePersonalizePricing START");
-			console.log("🎁 METHOD IS DEFINITELY BEING CALLED NOW");
-			console.log("🎁 Received pricing parameter:", pricing);
-			console.log("🎁 this.state exists:", !!this.state);
-			console.log(
+("🎁🎁🎁 UPDATEPERSONALIZEPRICING METHOD CALLED 🎁🎁🎁");
+("🎁 updatePersonalizePricing START - METHOD CALLED");
+("🎁 updatePersonalizePricing START");
+("🎁 METHOD IS DEFINITELY BEING CALLED NOW");
+("🎁 Received pricing parameter:", pricing);
+("🎁 this.state exists:", !!this.state);
+(
 				"🎁 window.chuug_vessel_selections exists:",
 				!!window.chuug_vessel_selections
 			);
-			console.log(
+(
 				"🎁 window.chuug_vessel_selections.selectedProductAmountData exists:",
 				!!(
 					window.chuug_vessel_selections &&
 					window.chuug_vessel_selections.selectedProductAmountData
 				)
 			);
-			console.log(
+(
 				"🎁 Full window.chuug_vessel_selections:",
 				window.chuug_vessel_selections
 			);
-			console.log("🎁 window.pomcSystem exists:", !!window.pomcSystem);
-			console.log(
+("🎁 window.pomcSystem exists:", !!window.pomcSystem);
+(
 				"🎁 window.pomcSystem.getMultiplier():",
 				window.pomcSystem?.getMultiplier()
 			);
@@ -2411,14 +2411,14 @@
 				window.chuug_vessel_selections &&
 				window.chuug_vessel_selections.selectedProductAmountData
 			) {
-				console.log(
+(
 					"🎁 Found chuug_vessel_selections.selectedProductAmountData"
 				);
 				const selectedData =
 					window.chuug_vessel_selections.selectedProductAmountData;
-				console.log("🎁 selectedData:", selectedData);
+("🎁 selectedData:", selectedData);
 			if (selectedData.variants) {
-				console.log("🎁 Found variants in selectedData");
+("🎁 Found variants in selectedData");
 				const engravingEnabled = this.getEngravingState();
 				
 				// Check for mixed vessel configuration
@@ -2426,7 +2426,7 @@
 				let variantIndex;
 				
 				if (hasMixedConfig) {
-					console.log("🎁🪢 Mixed vessel configuration detected in personalize pricing");
+("🎁🪢 Mixed vessel configuration detected in personalize pricing");
 					// For mixed configurations, use charcoal rope variant pricing
 					// This ensures we get the higher pricing that includes charcoal upgrade costs
 					variantIndex = engravingEnabled ? 3 : 2;
@@ -2437,8 +2437,8 @@
 				}
 				
 				const variant = selectedData.variants[variantIndex];
-					console.log("🎁 Selected variant index:", variantIndex);
-					console.log("🎁 Selected variant:", variant);
+("🎁 Selected variant index:", variantIndex);
+("🎁 Selected variant:", variant);
 
 					if (variant) {
 						// Use pricing from selectedProductAmountData as base, but add gift box pricing
@@ -2457,14 +2457,14 @@
 						}
 
 						if (!this.dynamicPrices) {
-							console.log(
+(
 								"🎁 this.dynamicPrices is undefined, using fallback approach"
 							);
 							// Use a fallback approach - get gift box price from global modal instance
 							const modalInstance = window.MiniATCModal?.getInstance?.();
 							if (modalInstance && modalInstance.pricing) {
 								giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
-								console.log(
+(
 									"🎁 Got gift box price from modal instance:",
 									giftBoxPrice
 								);
@@ -2473,17 +2473,17 @@
 							// If still no gift box price, use default
 							if (!giftBoxPrice && state.giftBox?.enabled) {
 								giftBoxPrice = 200; // Default £2.00 in cents
-								console.log("🎁 Using default gift box price:", giftBoxPrice);
+("🎁 Using default gift box price:", giftBoxPrice);
 							}
 						} else {
 							// If gift box price isn't loaded yet, try to initialize it
 							if (!giftBoxPrice && state.giftBox?.enabled) {
-								console.log(
+(
 									"🎁 Gift box price not loaded yet, initializing..."
 								);
 								await this.initializeGiftBoxPricing();
 								giftBoxPrice = this.dynamicPrices.giftBox;
-								console.log(
+(
 									"🎁 Gift box price after initialization:",
 									giftBoxPrice
 								);
@@ -2491,7 +2491,7 @@
 						}
 
 						const multiplier = window.pomcSystem?.getMultiplier() || 1;
-						console.log("🎁 Personalize pricing debug:", {
+("🎁 Personalize pricing debug:", {
 							giftBoxEnabled: state.giftBox?.enabled,
 							giftBoxPrice: giftBoxPrice,
 							multiplier: multiplier,
@@ -2502,12 +2502,12 @@
 							giftBoxPriceIsValid: giftBoxPrice && giftBoxPrice > 0,
 						});
 						// Skip gift box pricing in main path since it's already applied by FORCE pricing
-						console.log(
+(
 							"🎁 Main path: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting"
 						);
 
 						// Validate values before formatting
-						console.log("🎁 Validating pricing values:", {
+("🎁 Validating pricing values:", {
 							total,
 							originalTotal,
 							savings: originalTotal - total,
@@ -2529,11 +2529,11 @@
 							formattedSavings: Utils.formatPrice(validSavings),
 						};
 
-						console.log("🎁 Final pricing object:", pricing);
+("🎁 Final pricing object:", pricing);
 					}
 				}
 			} else {
-				console.log(
+(
 					"🎁 No chuug_vessel_selections.selectedProductAmountData found, using fallback pricing"
 				);
 				// Fallback: Add gift box pricing to the existing pricing parameter
@@ -2548,14 +2548,14 @@
 				}
 
 				if (!this.dynamicPrices) {
-					console.log(
+(
 						"🎁 FALLBACK: this.dynamicPrices is undefined, using fallback approach"
 					);
 					// Use a fallback approach - get gift box price from global modal instance
 					const modalInstance = window.MiniATCModal?.getInstance?.();
 					if (modalInstance && modalInstance.pricing) {
 						giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
-						console.log(
+(
 							"🎁 FALLBACK: Got gift box price from modal instance:",
 							giftBoxPrice
 						);
@@ -2564,19 +2564,19 @@
 					// If still no gift box price, use default
 					if (!giftBoxPrice && state.giftBox?.enabled) {
 						giftBoxPrice = 200; // Default £2.00 in cents
-						console.log(
+(
 							"🎁 FALLBACK: Using default gift box price:",
 							giftBoxPrice
 						);
 					}
 				} else {
 					if (!giftBoxPrice && state.giftBox?.enabled) {
-						console.log(
+(
 							"🎁 Fallback: Gift box price not loaded yet, initializing..."
 						);
 						await this.initializeGiftBoxPricing();
 						giftBoxPrice = this.dynamicPrices.giftBox;
-						console.log(
+(
 							"🎁 Fallback: Gift box price after initialization:",
 							giftBoxPrice
 						);
@@ -2584,7 +2584,7 @@
 				}
 
 				// Skip gift box pricing in fallback since it's already applied by FORCE pricing
-				console.log(
+(
 					"🎁 Fallback: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting"
 				);
 			}
@@ -2650,11 +2650,11 @@
 					savingsEl.textContent = `You Saved ${pricing.formattedSavings}`;
 				}
 			}
-			console.log("🎁 updatePersonalizePricing END");
+("🎁 updatePersonalizePricing END");
 		}
 
 		switchView(viewName) {
-			console.log("Switching to view:", viewName);
+("Switching to view:", viewName);
 			const views = this.modal.querySelectorAll(".mini-atc-modal__view");
 			const targetView = this.modal.querySelector(`[data-view="${viewName}"]`);
 			const titleEl = this.modal.querySelector(".mini-atc-modal__title");
@@ -2701,21 +2701,21 @@
 						if (emptyMessage && emptyMessage.style.display !== "none") {
 							btnTextEl.textContent = "CONTINUE SHOPPING";
 							addToCartBtn.setAttribute("data-modal-action", "close-modal");
-							console.log("✅ Button updated for empty checkout view: CONTINUE SHOPPING");
+("✅ Button updated for empty checkout view: CONTINUE SHOPPING");
 						} else {
 							btnTextEl.textContent = "PROCEED TO CHECKOUT";
 							addToCartBtn.setAttribute(
 								"data-modal-action",
 								"proceed-to-checkout"
 							);
-							console.log("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
+("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
 						}
 						break;
 					case "personalize":
 					default:
 						btnTextEl.textContent = "ADD TO CART";
 						addToCartBtn.setAttribute("data-modal-action", "add-to-cart");
-						console.log("✅ Button updated for personalize view: ADD TO CART");
+("✅ Button updated for personalize view: ADD TO CART");
 						break;
 				}
 			} else {
@@ -2760,7 +2760,7 @@
 				this.switchView("personalize");
 
 			// Reset engraving state when opening from add-multiple-products
-			console.log(
+(
 				"🔄 Resetting engraving state for add-multiple-products..."
 			);
 			this.state.resetEngraving();
@@ -2784,7 +2784,7 @@
 				}
 
 				// Console log state after clicking add-multiple-products
-				console.log("🛒 State after clicking add-multiple-products:", {
+("🛒 State after clicking add-multiple-products:", {
 					context: this.openingContext,
 					currentView: this.currentView,
 					isActive: this.isActive,
@@ -2850,7 +2850,7 @@
 						// CRITICAL: Also update state since programmatic changes don't trigger 'input' event
 						this.state.updateVesselEngraving(vesselId, "");
 					});
-					console.log(
+(
 						"🔄 Cleared all vessel input fields AND state:",
 						vesselInputs.length
 					);
@@ -2931,7 +2931,7 @@
 				this.setLoadingState(true);
 
 				// CRITICAL: Sync input field values with state before collecting cart data
-				console.log(
+(
 					"🔄 Syncing input field values with state before adding to cart..."
 				);
 				const vesselInputs = this.modal.querySelectorAll("[data-vessel-input]");
@@ -2941,13 +2941,13 @@
 					const stateValue =
 						this.state.getState().engraving?.vessels?.[vesselId] || "";
 
-					console.log(
+(
 						`🔄 Vessel ${vesselId}: Input="${currentValue}", State="${stateValue}"`
 					);
 
 					// If values don't match, update state to match input
 					if (currentValue !== stateValue) {
-						console.log(
+(
 							`⚠️ MISMATCH! Updating state to match input for Vessel ${vesselId}`
 						);
 						this.state.updateVesselEngraving(vesselId, currentValue);
@@ -3014,7 +3014,7 @@
 				// Reset extra cups state as well
 				this.state.updatePersonalization("extraCups", { enabled: false });
 
-				console.log(
+(
 					"🔄 Reset add-on states after cart addition:",
 					this.state.getState()
 				);
@@ -3104,7 +3104,7 @@
 				attributes: this.collectOrderAttributes(state),
 			};
 
-			console.log("🛒 CART DATA TO BE SENT:", JSON.stringify(cartData, null, 2));
+("🛒 CART DATA TO BE SENT:", JSON.stringify(cartData, null, 2));
 
 			return cartData;
 		}
@@ -3225,7 +3225,7 @@
 			
 			const variant = productData.variants[variantIndex] || productData.variants[0];
 			
-			console.log(`🔍 Individual vessel variant: ${woodType} ${ropeType}, engraving=${hasEngraving}, index=${variantIndex}, variantId=${variant.id}`);
+(`🔍 Individual vessel variant: ${woodType} ${ropeType}, engraving=${hasEngraving}, index=${variantIndex}, variantId=${variant.id}`);
 			
 			return variant.id;
 		} catch (error) {
@@ -3275,7 +3275,7 @@
 		const hasMixedConfig = this.hasMixedVesselConfiguration();
 		
 		if (hasMixedConfig) {
-			console.log("🛒 Mixed config: Creating separate items");
+("🛒 Mixed config: Creating separate items");
 			
 			// For mixed configurations, create separate items for each vessel using individual vessel variant IDs
 			for (let i = 1; i <= multiplier; i++) {
@@ -3624,13 +3624,13 @@
 		}
 
 		getGiftBoxVariantId() {
-			console.log("🔍 Getting gift box variant ID...");
+("🔍 Getting gift box variant ID...");
 
 			// Try to get from modal config first
 			const config = this.config;
-			console.log("🔍 Modal config:", config);
+("🔍 Modal config:", config);
 			if (config.giftBox?.variantId) {
-				console.log("✅ Found variant ID in config:", config.giftBox.variantId);
+("✅ Found variant ID in config:", config.giftBox.variantId);
 				return config.giftBox.variantId;
 			}
 
@@ -3638,27 +3638,27 @@
 			const giftBoxToggle = this.modal.querySelector(
 				"[data-gift-box-variant-id]"
 			);
-			console.log("🔍 Gift box toggle element:", giftBoxToggle);
+("🔍 Gift box toggle element:", giftBoxToggle);
 			if (giftBoxToggle) {
 				const variantId = giftBoxToggle.getAttribute(
 					"data-gift-box-variant-id"
 				);
-				console.log("✅ Found variant ID in DOM:", variantId);
+("✅ Found variant ID in DOM:", variantId);
 				return variantId;
 			}
 
 			// Fallback - you may need to set this based on your actual gift box product
-			console.log("❌ No gift box variant ID found in config or DOM");
+("❌ No gift box variant ID found in config or DOM");
 			return null;
 		}
 
 		getGiftBoxProductTitle() {
-			console.log("🔍 Getting gift box product title...");
+("🔍 Getting gift box product title...");
 
 			// Try to get from modal config first
 			const config = this.config;
 			if (config.giftBox?.productTitle) {
-				console.log(
+(
 					"✅ Found product title in config:",
 					config.giftBox.productTitle
 				);
@@ -3673,22 +3673,22 @@
 				const productTitle = giftBoxToggle.getAttribute(
 					"data-gift-box-product-title"
 				);
-				console.log("✅ Found product title in DOM:", productTitle);
+("✅ Found product title in DOM:", productTitle);
 				return productTitle;
 			}
 
 			// Fallback
-			console.log("⚠️ No gift box product title found, using fallback");
+("⚠️ No gift box product title found, using fallback");
 			return "Premium Gift Box and Tissue Wrap";
 		}
 
 		getCharcoalUpgradeVariantId() {
-			console.log("🔍 Getting charcoal upgrade variant ID...");
+("🔍 Getting charcoal upgrade variant ID...");
 
 			// Try to get from modal config first
 			const config = this.config;
 			if (config.charcoalUpgrade?.variantId) {
-				console.log("✅ Found charcoal upgrade variant ID in config:", config.charcoalUpgrade.variantId);
+("✅ Found charcoal upgrade variant ID in config:", config.charcoalUpgrade.variantId);
 				return config.charcoalUpgrade.variantId;
 			}
 
@@ -3700,18 +3700,18 @@
 				const variantId = charcoalUpgradeElement.getAttribute(
 					"data-charcoal-upgrade-variant-id"
 				);
-				console.log("✅ Found charcoal upgrade variant ID in DOM:", variantId);
+("✅ Found charcoal upgrade variant ID in DOM:", variantId);
 				return variantId;
 			}
 
 			// Try to get from global config
 			if (window.CHARCOAL_UPGRADE_VARIANT_ID) {
-				console.log("✅ Found charcoal upgrade variant ID in global config:", window.CHARCOAL_UPGRADE_VARIANT_ID);
+("✅ Found charcoal upgrade variant ID in global config:", window.CHARCOAL_UPGRADE_VARIANT_ID);
 				return window.CHARCOAL_UPGRADE_VARIANT_ID;
 			}
 
 			// Fallback - needs to be set in Shopify theme settings
-			console.log("❌ No charcoal upgrade variant ID found in config or DOM");
+("❌ No charcoal upgrade variant ID found in config or DOM");
 			return null;
 		}
 
@@ -3737,7 +3737,7 @@
 				}),
 			};
 
-		console.log("🛒 SENDING TO SHOPIFY:", config.body);
+("🛒 SENDING TO SHOPIFY:", config.body);
 		const response = await fetch("/cart/add.js", config);
 		const result = await response.json();
 		
@@ -3752,18 +3752,18 @@
 			});
 			
 			// Try to get more details by testing each item individually
-			console.log("🔍 Testing individual items to find the problematic one...");
+("🔍 Testing individual items to find the problematic one...");
 			const cartData = JSON.parse(config.body);
 			for (let i = 0; i < cartData.items.length; i++) {
 				const item = cartData.items[i];
-				console.log(`🔍 Testing item ${i + 1}/${cartData.items.length}:`, {
+(`🔍 Testing item ${i + 1}/${cartData.items.length}:`, {
 					id: item.id,
 					quantity: item.quantity,
 					properties: item.properties
 				});
 			}
 		} else {
-			console.log("✅ SHOPIFY RESPONSE:", result);
+("✅ SHOPIFY RESPONSE:", result);
 		}
 		
 		return result;
@@ -3810,7 +3810,7 @@
 				addToCartBtn?.setAttribute("disabled", "true");
 				if (btnText) {
 					btnText.textContent = "ADDING TO CART...";
-					console.log("🔄 Button loading state: ADDING TO CART...");
+("🔄 Button loading state: ADDING TO CART...");
 				}
 			} else {
 				addToCartBtn?.classList.remove("loading");
@@ -3819,12 +3819,12 @@
 				if (btnText) {
 					if (this.currentView === "checkout") {
 						btnText.textContent = "PROCEED TO CHECKOUT";
-						console.log(
+(
 							"✅ Button loading complete (checkout view): PROCEED TO CHECKOUT"
 						);
 					} else {
 						btnText.textContent = "ADD TO CART";
-						console.log(
+(
 							"✅ Button loading complete (personalize view): ADD TO CART"
 						);
 					}
@@ -3970,7 +3970,7 @@
 					const allExistingItems = checkoutContainer.querySelectorAll(
 						".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]"
 					);
-					console.log(
+(
 						`🧹 Empty cart: Clearing ${allExistingItems.length} existing items to show clean empty state`
 					);
 					allExistingItems.forEach((item) => item.remove());
@@ -3994,7 +3994,7 @@
 					this.calculatePricing().catch(console.error);
 
 					// Stay in checkout view to show empty state - don't switch back to personalize
-					console.log("🔄 Cart is empty, staying in checkout view to show empty state");
+("🔄 Cart is empty, staying in checkout view to show empty state");
 				} else {
 					// Hide empty state
 					if (emptyState) {
@@ -4033,7 +4033,7 @@
 
 	updateProgressIndicator(cartData) {
 		try {
-			console.log("🔄 updateProgressIndicator called with cartData:", cartData);
+("🔄 updateProgressIndicator called with cartData:", cartData);
 			
 			// Count non-gift-box items in the cart
 			let nonGiftBoxItemCount = 0;
@@ -4043,9 +4043,9 @@
 			const cartTotalInPounds = cartTotal / 100;
 			
 			// Debug: Check all possible total properties
-			console.log("💰 Cart total_price:", cartData?.total_price);
-			console.log("💰 Cart original_total_price:", cartData?.original_total_price);
-			console.log("💰 Cart calculated total:", cartTotalInPounds);
+("💰 Cart total_price:", cartData?.total_price);
+("💰 Cart original_total_price:", cartData?.original_total_price);
+("💰 Cart calculated total:", cartTotalInPounds);
 
 			if (cartData && cartData.items) {
 				nonGiftBoxItemCount = cartData.items.filter((item) => {
@@ -4065,7 +4065,7 @@
 				}).length;
 			}
 
-			console.log(
+(
 				`📊 Progress Indicator: ${nonGiftBoxItemCount} non-gift-box items in cart, Cart total: £${cartTotalInPounds}`
 			);
 
@@ -4088,17 +4088,17 @@
 				// Add appropriate class based on conditions
 				if (hasReachedFullProgress) {
 					progressFill.classList.add("progress-full");
-					console.log(
+(
 						"📊 Progress Indicator: Added progress-full class (2+ items AND cart >= £80)"
 					);
 				} else if (hasReachedHalfProgress) {
 					progressFill.classList.add("progress-half");
-					console.log(
+(
 						"📊 Progress Indicator: Added progress-half class (cart >= £80 ONLY)"
 					);
 				} else {
 					// No progress - < 2 items AND cart total < £80
-					console.log("📊 Progress Indicator: Progress set to 0 (shipping not met - cart < £80)");
+("📊 Progress Indicator: Progress set to 0 (shipping not met - cart < £80)");
 				}
 			}
 
@@ -4106,17 +4106,17 @@
 		const allSteps = this.modal.querySelectorAll(
 			".step-process-indicator__step"
 		);
-		console.log("🔍 Found steps:", allSteps.length);
+("🔍 Found steps:", allSteps.length);
 		
 		const freeShippingStep = allSteps[1]; // Second step (index 1) - Free Shipping
-		console.log("🚚 Free Shipping Step:", freeShippingStep);
+("🚚 Free Shipping Step:", freeShippingStep);
 
 		// Check if this is the free shipping step by looking for the step-free-shipping class in the circle
 		const freeShippingCircle = freeShippingStep ? freeShippingStep.querySelector('.step-free-shipping') : null;
-		console.log("🚚 Free Shipping Circle:", freeShippingCircle);
+("🚚 Free Shipping Circle:", freeShippingCircle);
 
 		if (freeShippingStep && freeShippingCircle) {
-			console.log("✅ Processing Free Shipping step...");
+("✅ Processing Free Shipping step...");
 
 			if (cartTotalInPounds >= 80) {
 				// Mark step as completed (cart total >= £80)
@@ -4131,7 +4131,7 @@
 				</svg>
 			`;
 				}
-				console.log(
+(
 					"📊 Progress Indicator: Free shipping step marked as completed with checkmark (cart total >= £80)"
 				);
 			} else {
@@ -4147,7 +4147,7 @@
 				</svg>
 			`;
 				}
-				console.log(
+(
 					"📊 Progress Indicator: Free shipping step marked as active with truck icon (cart total < £80)"
 				);
 			}
@@ -4174,7 +4174,7 @@
 				</svg>
 			`;
 				}
-				console.log(
+(
 					"📊 Progress Indicator: Third step marked as completed with checkmark (2+ items)"
 				);
 			} else {
@@ -4189,7 +4189,7 @@
 					thirdStepCircle.innerHTML =
 						'<span class="step-process-indicator__pound-symbol">£</span>';
 				}
-				console.log(
+(
 					"📊 Progress Indicator: Third step marked as active with pound symbol (<2 items)"
 				);
 			}
@@ -4205,14 +4205,14 @@
 					// Show "You've unlock" text
 					headerElement.innerHTML =
 						"🔥 You've unlock <span>EXTRA £30 OFF</span>";
-					console.log(
+(
 						'📊 Progress Indicator: Header text updated to "You\'ve unlock" (2+ items)'
 					);
 				} else {
 					// Show "You're only 1 CHUUG away" text
 					headerElement.innerHTML =
 						"🔥 You're only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>";
-					console.log(
+(
 						'📊 Progress Indicator: Header text updated to "You\'re only 1 CHUUG away" (<2 items)'
 					);
 				}
@@ -4237,14 +4237,14 @@
 
 		async renderCartItems(cartItems, container) {
 			try {
-				console.log(
+(
 					"🛒 renderCartItems called with:",
 					cartItems.length,
 					"items"
 				);
 
-				console.log("ASDSADSADDS");
-				console.log(cartItems);
+("ASDSADSADDS");
+(cartItems);
 
 				// Create a temporary container to hold the rendered items
 				const tempContainer = document.createElement("div");
@@ -4254,10 +4254,10 @@
 					// Reverse order (newest first, like Liquid template)
 					for (let i = cartItems.length - 1; i >= 0; i--) {
 						const item = cartItems[i];
-						console.log("🛒 Rendering item:", item.id, item.product_title);
+("🛒 Rendering item:", item.id, item.product_title);
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
-							console.log("🛒 Item element created:", itemElement);
+("🛒 Item element created:", itemElement);
 							tempContainer.appendChild(itemElement);
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
@@ -4267,10 +4267,10 @@
 					// Normal order (oldest first)
 					for (let i = 0; i < cartItems.length; i++) {
 						const item = cartItems[i];
-						console.log("🛒 Rendering item:", item.id, item.product_title);
+("🛒 Rendering item:", item.id, item.product_title);
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
-							console.log("🛒 Item element created:", itemElement);
+("🛒 Item element created:", itemElement);
 							tempContainer.appendChild(itemElement);
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
@@ -4289,7 +4289,7 @@
 
 		async renderCartItem(item, allCartItems) {
 			try {
-				console.log(
+(
 					"🛒 renderCartItem called for:",
 					item.id,
 					item.product_title
@@ -4301,11 +4301,11 @@
 					Object.entries(item.properties).some(
 						([key, value]) => key === "_Add-on"
 					);
-				console.log("🛒 Is addon:", isAddon);
+("🛒 Is addon:", isAddon);
 
 				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
 				if (isAddon) {
-					console.log("🛒 Skipping addon item:", item.id);
+("🛒 Skipping addon item:", item.id);
 					return null;
 				}
 
@@ -4539,7 +4539,7 @@
 				// Premium Gift Box section (matching Liquid logic)
 				// Look for gift box add-ons that belong to this specific vessel
 				const vesselNumber = this.extractVesselNumber(item);
-				console.log(
+(
 					`🎁 DEBUG: Item ${item.id} (${item.product_title}) has vessel number:`,
 					vesselNumber
 				);
@@ -4551,7 +4551,7 @@
 							giftItem.properties &&
 							giftItem.properties["_Add-on"] === "Premium Gift Box"
 					);
-					console.log(
+(
 						`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`,
 						allGiftBoxes.map((gb) => ({
 							id: gb.id,
@@ -4568,7 +4568,7 @@
 								String(vesselNumber)
 					);
 
-					console.log(
+(
 						`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`,
 						giftBoxForThisVessel
 							? {
@@ -4725,50 +4725,50 @@
 		extractVesselNumber(item) {
 			// Extract vessel number from item properties
 			// Look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc.
-			console.log(
+(
 				`🔍 DEBUG: Extracting vessel number for item ${item.id}:`,
 				item.properties
 			);
 
 			if (item.properties) {
 				for (const [key, value] of Object.entries(item.properties)) {
-					console.log(`🔍 DEBUG: Checking property: ${key} = ${value}`);
+(`🔍 DEBUG: Checking property: ${key} = ${value}`);
 					
 					// First, check for direct "_Vessel Number" property (used by gift boxes and some items)
 					if (key === "_Vessel Number") {
 						const vesselNum = value.toString();
-						console.log(`🔍 DEBUG: Found direct vessel number: ${vesselNum}`);
+(`🔍 DEBUG: Found direct vessel number: ${vesselNum}`);
 						return vesselNum;
 					}
 					// Then look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc. (used by main products)
 					else if (key.includes("Vessel") && key.includes("Product")) {
 						const parts = key.split(" ");
-						console.log(`🔍 DEBUG: Found vessel property, parts:`, parts);
+(`🔍 DEBUG: Found vessel property, parts:`, parts);
 						if (parts.length >= 2) {
 							const vesselNum = parts[1];
-							console.log(`🔍 DEBUG: Extracted vessel number from product property: ${vesselNum}`);
+(`🔍 DEBUG: Extracted vessel number from product property: ${vesselNum}`);
 							return vesselNum; // Return the vessel number
 						}
 					}
 				}
 			}
-			console.log(`🔍 DEBUG: No vessel number found for item ${item.id}`);
+(`🔍 DEBUG: No vessel number found for item ${item.id}`);
 			return null;
 		}
 
 		async findAssociatedGiftBoxesFromCartData(vesselItemKey, cartData) {
 			try {
-				console.log(
+(
 					`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`
 				);
 
 				if (!cartData || !cartData.items) {
-					console.log(`🔍 DEBUG: No cart data or items found`);
+(`🔍 DEBUG: No cart data or items found`);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-				console.log(
+(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
+(
 					`🔍 DEBUG: All cart items:`,
 					cartData.items.map((item) => ({
 						key: item.key,
@@ -4783,17 +4783,17 @@
 					(item) => item.key === vesselItemKey
 				);
 				if (!vesselItem) {
-					console.log(
+(
 						`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`
 					);
-					console.log(
+(
 						`🔍 DEBUG: Available item keys:`,
 						cartData.items.map((item) => item.key)
 					);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Found vessel item:`, {
+(`🔍 DEBUG: Found vessel item:`, {
 					key: vesselItem.key,
 					id: vesselItem.id,
 					title: vesselItem.product_title,
@@ -4803,20 +4803,20 @@
 				// Extract vessel number AND unique line ID timestamp from the vessel item's properties
 				let vesselNumber = null;
 				let vesselUniqueLineId = null;
-				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
 
 				// Properties are stored as an object, not an array
 				for (const [key, value] of Object.entries(
 					vesselItem.properties || {}
 				)) {
-					console.log(
+(
 						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
 					);
 					
 					// First, check for direct "_Vessel Number" property (used by gift boxes and some items)
 					if (key === "_Vessel Number") {
 						vesselNumber = value.toString();
-						console.log(`🔍 DEBUG: Found direct vessel number: ${vesselNumber}`);
+(`🔍 DEBUG: Found direct vessel number: ${vesselNumber}`);
 					}
 					// Then look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc. (used by main products)
 					else if (key.includes("Vessel") && key.includes("Product")) {
@@ -4824,31 +4824,31 @@
 						const vesselPropertyParts = key.split(" ");
 						if (vesselPropertyParts.length >= 2) {
 							vesselNumber = vesselPropertyParts[1];
-							console.log(`🔍 DEBUG: Found vessel number from product property: ${vesselNumber}`);
+(`🔍 DEBUG: Found vessel number from product property: ${vesselNumber}`);
 						}
 					}
 					// Get the unique line ID to match the timestamp
 					if (key === "_Unique Line ID") {
 						vesselUniqueLineId = value;
-						console.log(
+(
 							`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`
 						);
 					}
 				}
 
 				if (!vesselNumber) {
-					console.log(
+(
 						`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`
 					);
-					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
 				if (!vesselUniqueLineId) {
-					console.log(
+(
 						`🔍 DEBUG: No unique line ID found for item with key ${vesselItemKey}`
 					);
-					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
@@ -4863,7 +4863,7 @@
 					// For regular format: "1760363090570-GB1-9wv1allbt"
 					vesselTimestampPrefix = vesselUniqueLineId.split("-")[0];
 				}
-				console.log(
+(
 					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`
 				);
 
@@ -4874,7 +4874,7 @@
 						continue; // Skip the vessel item itself
 					}
 
-					console.log(`🔍 DEBUG: Checking item ${item.key}:`, {
+(`🔍 DEBUG: Checking item ${item.key}:`, {
 						title: item.product_title,
 						properties: item.properties,
 					});
@@ -4886,14 +4886,14 @@
 
 					// Properties are stored as an object, not an array
 					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(
+(
 							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
 						);
 
 						// Check if it's a gift box
 						if (key === "_Add-on" && value === "Premium Gift Box") {
 							isGiftBox = true;
-							console.log(`🔍 DEBUG: Item ${item.key} is a gift box`);
+(`🔍 DEBUG: Item ${item.key} is a gift box`);
 						}
 
 						// Check if it has the matching vessel number
@@ -4902,7 +4902,7 @@
 							value.toString() === vesselNumber.toString()
 						) {
 							hasMatchingVesselNumber = true;
-							console.log(
+(
 								`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`
 							);
 						}
@@ -4926,11 +4926,11 @@
 							
 							if (giftBoxTimestampPrefix === vesselTimestampPrefix || timeDifference <= 10000) {
 								hasMatchingTimestamp = true;
-								console.log(
+(
 									`🔍 DEBUG: Item ${item.key} has matching timestamp prefix ${giftBoxTimestampPrefix} (difference: ${timeDifference}ms)`
 								);
 							} else {
-								console.log(
+(
 									`🔍 DEBUG: Item ${item.key} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix}, difference: ${timeDifference}ms)`
 								);
 							}
@@ -4941,7 +4941,7 @@
 					if (isGiftBox && hasMatchingVesselNumber && hasMatchingTimestamp) {
 						// Use the key for cart API
 						associatedGiftBoxKeys.push(item.key);
-						console.log(
+(
 							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`
 						);
 					} else if (
@@ -4949,13 +4949,13 @@
 						hasMatchingVesselNumber &&
 						!hasMatchingTimestamp
 					) {
-						console.log(
+(
 							`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`
 						);
 					}
 				}
 
-				console.log(
+(
 					`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`,
 					associatedGiftBoxKeys
 				);
@@ -4968,19 +4968,19 @@
 
 		async findAssociatedGiftBoxes(vesselItemId) {
 			try {
-				console.log(
+(
 					`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`
 				);
 
 				// Fetch current cart data
 				const cartData = await this.fetchUpdatedCartData();
 				if (!cartData || !cartData.items) {
-					console.log(`🔍 DEBUG: No cart data or items found`);
+(`🔍 DEBUG: No cart data or items found`);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-				console.log(
+(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
+(
 					`🔍 DEBUG: All cart items:`,
 					cartData.items.map((item) => ({
 						id: item.id,
@@ -4994,17 +4994,17 @@
 					(item) => item.id.toString() === vesselItemId.toString()
 				);
 				if (!vesselItem) {
-					console.log(
+(
 						`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`
 					);
-					console.log(
+(
 						`🔍 DEBUG: Available item IDs:`,
 						cartData.items.map((item) => item.id)
 					);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Found vessel item:`, {
+(`🔍 DEBUG: Found vessel item:`, {
 					id: vesselItem.id,
 					title: vesselItem.product_title,
 					properties: vesselItem.properties,
@@ -5013,13 +5013,13 @@
 				// Extract vessel number AND unique line ID timestamp from the vessel item's properties
 				let vesselNumber = null;
 				let vesselUniqueLineId = null;
-				console.log(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
 
 				// Properties are stored as an object, not an array
 				for (const [key, value] of Object.entries(
 					vesselItem.properties || {}
 				)) {
-					console.log(
+(
 						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
 					);
 					// Look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc.
@@ -5028,37 +5028,37 @@
 						const vesselPropertyParts = key.split(" ");
 						if (vesselPropertyParts.length >= 2) {
 							vesselNumber = vesselPropertyParts[1];
-							console.log(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
+(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
 						}
 					}
 					// Get the unique line ID to match the timestamp
 					if (key === "_Unique Line ID") {
 						vesselUniqueLineId = value;
-						console.log(
+(
 							`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`
 						);
 					}
 				}
 
 				if (!vesselNumber) {
-					console.log(
+(
 						`🔍 DEBUG: No vessel number found for item ${vesselItemId}`
 					);
-					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
 				if (!vesselUniqueLineId) {
-					console.log(
+(
 						`🔍 DEBUG: No unique line ID found for item ${vesselItemId}`
 					);
-					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
 				// Extract the timestamp prefix from the unique line ID (e.g., "1759401169659" from "1759401169659-V1-26bfsczov")
 				const vesselTimestampPrefix = vesselUniqueLineId.split("-")[0];
-				console.log(
+(
 					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`
 				);
 
@@ -5069,7 +5069,7 @@
 						continue; // Skip the vessel item itself
 					}
 
-					console.log(`🔍 DEBUG: Checking item ${item.id}:`, {
+(`🔍 DEBUG: Checking item ${item.id}:`, {
 						title: item.product_title,
 						properties: item.properties,
 					});
@@ -5081,14 +5081,14 @@
 
 					// Properties are stored as an object, not an array
 					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(
+(
 							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
 						);
 
 						// Check if it's a gift box
 						if (key === "_Add-on" && value === "Premium Gift Box") {
 							isGiftBox = true;
-							console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
+(`🔍 DEBUG: Item ${item.id} is a gift box`);
 						}
 
 						// Check if it has the matching vessel number
@@ -5097,7 +5097,7 @@
 							value.toString() === vesselNumber.toString()
 						) {
 							hasMatchingVesselNumber = true;
-							console.log(
+(
 								`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
 							);
 						}
@@ -5107,11 +5107,11 @@
 							const giftBoxTimestampPrefix = value.split("-")[0];
 							if (giftBoxTimestampPrefix === vesselTimestampPrefix) {
 								hasMatchingTimestamp = true;
-								console.log(
+(
 									`🔍 DEBUG: Item ${item.id} has matching timestamp prefix ${giftBoxTimestampPrefix}`
 								);
 							} else {
-								console.log(
+(
 									`🔍 DEBUG: Item ${item.id} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix})`
 								);
 							}
@@ -5122,7 +5122,7 @@
 					if (isGiftBox && hasMatchingVesselNumber && hasMatchingTimestamp) {
 						// Use the key instead of id for cart API
 						associatedGiftBoxIds.push(item.key);
-						console.log(
+(
 							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`
 						);
 					} else if (
@@ -5130,13 +5130,13 @@
 						hasMatchingVesselNumber &&
 						!hasMatchingTimestamp
 					) {
-						console.log(
+(
 							`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`
 						);
 					}
 				}
 
-				console.log(
+(
 					`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`,
 					associatedGiftBoxIds
 				);
@@ -5169,7 +5169,7 @@
 		// REMOVED: isGiftBoxItem, renderCheckoutItem, renderItemProperties, renderGiftBoxItem - using Liquid templates instead
 
 		async removeCartItem(itemKey) {
-			console.log(
+(
 				`🗑️ REMOVE ITEM: Starting removal of item with key ${itemKey}`
 			);
 
@@ -5223,7 +5223,7 @@
 						return;
 					}
 				} else {
-					console.log(
+(
 						`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`
 					);
 
@@ -5243,7 +5243,7 @@
 						);
 
 					if (isGiftBoxItem) {
-						console.log(
+(
 							`🎁 Removing gift box item with key ${itemKey} directly`
 						);
 						// For gift box items, remove only this specific item using the key as id
@@ -5276,7 +5276,7 @@
 						await this.updateCheckoutViewWithCartData(cartData);
 						cartData.checkoutViewAlreadyUpdated = true;
 					} else {
-						console.log(
+(
 							`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`
 						);
 
@@ -5287,7 +5287,7 @@
 								currentCartData
 							);
 
-						console.log(
+(
 							`🗑️ REMOVE ITEM: Found ${associatedGiftBoxKeys.length} associated gift boxes to remove:`,
 							associatedGiftBoxKeys
 						);
@@ -5318,16 +5318,16 @@
 
 						// Remove associated gift boxes
 						if (associatedGiftBoxKeys.length > 0) {
-							console.log(
+(
 								`🎁 Removing ${associatedGiftBoxKeys.length} associated gift boxes`
 							);
-							console.log(`🎁 Gift box keys to remove:`, associatedGiftBoxKeys);
+(`🎁 Gift box keys to remove:`, associatedGiftBoxKeys);
 
 							for (const giftBoxKey of associatedGiftBoxKeys) {
-								console.log(
+(
 									`🎁 Attempting to remove gift box with key: ${giftBoxKey}`
 								);
-								console.log(
+(
 									`🎁 Request body:`,
 									JSON.stringify({
 										id: giftBoxKey,
@@ -5351,14 +5351,14 @@
 										}),
 									});
 
-									console.log(
+(
 										`🎁 Gift box removal response status:`,
 										giftBoxResponse.status
 									);
 
 									if (giftBoxResponse.ok) {
 										const responseData = await giftBoxResponse.json();
-										console.log(
+(
 											`✅ Removed gift box ${giftBoxKey}`,
 											responseData
 										);
@@ -5383,12 +5383,12 @@
 								}
 							}
 
-							console.log(
+(
 								`🎁 Finished removing gift boxes, fetching updated cart data...`
 							);
 							// Fetch updated cart data after removing gift boxes (for checkout view update)
 							const updatedCartData = await this.fetchUpdatedCartData();
-							console.log(`🎁 Updated cart data:`, updatedCartData);
+(`🎁 Updated cart data:`, updatedCartData);
 
 							// Use updated cart data for checkout view and replace cartData
 							if (updatedCartData) {
@@ -5399,7 +5399,7 @@
 								cartData.checkoutViewAlreadyUpdated = true;
 							}
 						} else {
-							console.log(`🎁 No gift boxes to remove`);
+(`🎁 No gift boxes to remove`);
 							// Update checkout view for single item removal (no gift boxes)
 							await this.updateCheckoutViewWithCartData(cartData);
 							cartData.checkoutViewAlreadyUpdated = true;
@@ -6234,7 +6234,7 @@
 			const triggers = document.querySelectorAll(
 				`[data-open-design-modal="${this.modalId}"]`
 			);
-			console.log(
+(
 				`[DesignPreviewModal] Found ${triggers.length} trigger(s) for modal: ${this.modalId}`
 			);
 
@@ -6242,7 +6242,7 @@
 				trigger.addEventListener("click", (e) => {
 					e.preventDefault();
 					e.stopPropagation();
-					console.log(
+(
 						`[DesignPreviewModal] Trigger clicked for modal: ${this.modalId}`
 					);
 					this.open();
@@ -6345,13 +6345,13 @@
 		open() {
 			// Prevent opening if already active
 			if (this.modal.classList.contains("design-preview-modal--active")) {
-				console.log(
+(
 					`[DesignPreviewModal] Modal ${this.modalId} already open, ignoring open request`
 				);
 				return;
 			}
 
-			console.log(`[DesignPreviewModal] Opening modal: ${this.modalId}`);
+(`[DesignPreviewModal] Opening modal: ${this.modalId}`);
 			this.modal.classList.add("design-preview-modal--active");
 			this.modal.setAttribute("aria-hidden", "false");
 			document.body.style.overflow = "hidden";
@@ -6374,11 +6374,11 @@
 
 			try {
 				this.isLoading = true;
-				console.log(`[DesignPreviewModal] Fetching product images...`);
+(`[DesignPreviewModal] Fetching product images...`);
 
 				// Get vessel selections from POMC system
 				if (!window.pomcSystem) {
-					console.log(`[DesignPreviewModal] POMC system not found`);
+(`[DesignPreviewModal] POMC system not found`);
 					this.showNoImagesMessage();
 					return;
 				}
@@ -6393,7 +6393,7 @@
 					}
 				});
 
-				console.log(
+(
 					`[DesignPreviewModal] Found ${productHandles.length} product handle(s):`,
 					productHandles
 				);
@@ -6411,7 +6411,7 @@
 				const products = await Promise.all(productPromises);
 				const validProducts = products.filter((product) => product !== null);
 
-				console.log(
+(
 					`[DesignPreviewModal] Fetched ${validProducts.length} valid product(s)`
 				);
 
@@ -6482,7 +6482,7 @@
 				}
 			});
 
-			console.log(
+(
 				`[DesignPreviewModal] Added ${swiperWrapper.children.length} featured image slide(s)`
 			);
 
@@ -6526,7 +6526,7 @@
 				return;
 			}
 
-			console.log(`[DesignPreviewModal] Closing modal: ${this.modalId}`);
+(`[DesignPreviewModal] Closing modal: ${this.modalId}`);
 			this.modal.classList.remove("design-preview-modal--active");
 			this.modal.setAttribute("aria-hidden", "true");
 			document.body.style.overflow = "";
@@ -6552,7 +6552,7 @@
 			instances.push(instance);
 
 			// Log initialization for debugging
-			console.log(`[DesignPreviewModal] Initialized modal: ${modal.id}`);
+(`[DesignPreviewModal] Initialized modal: ${modal.id}`);
 		});
 
 		return instances;

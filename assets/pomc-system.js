@@ -151,12 +151,10 @@
 			const selection = state.vesselSelections[vesselNum];
 			if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
 				charcoalCount++;
-				console.log(`POMC: Vessel #${vesselNum} has charcoal rope`);
 			}
 		}
 		
 		const totalUpgradePrice = charcoalCount * CHARCOAL_UPGRADE_PRICE;
-		console.log(`POMC: Charcoal count: ${charcoalCount}, Total upgrade: ${formatMoney(totalUpgradePrice)}`);
 		
 		return totalUpgradePrice;
 	}
@@ -169,8 +167,6 @@
 			upgradePriceFormatted: formatMoney(upgradePrice),
 			charcoalCount: Math.floor(upgradePrice / CHARCOAL_UPGRADE_PRICE),
 		};
-		
-		console.log('POMC: Dispatching charcoal upgrade price event:', eventDetail);
 		
 		// Dispatch event for price update
 		document.dispatchEvent(
@@ -620,8 +616,6 @@
 		const vesselNumber = parseInt(vesselPanel.id.replace("tab", ""));
 		const ropeType = input.value;
 		const ropeVariantId = input.dataset.variantId || null;
-
-		console.log(`POMC: Rope selection - Vessel #${vesselNumber}, Type: ${ropeType}`);
 
 		// Update active state for rope type labels
 		vesselPanel.querySelectorAll(".rope-type-label").forEach((label) => {
@@ -1125,9 +1119,6 @@
 			currentActiveAmount !== state.selectedProductAmount ||
 			currentActiveAmount !== state.currentVesselCount
 		) {
-			console.log(
-				`POMC System: Syncing with UI active amount ${currentActiveAmount}`
-			);
 			updateVesselTabVisibility(currentActiveAmount);
 			updateSelectedProductAmountData(currentActiveAmount);
 		}
@@ -1178,12 +1169,30 @@
 			incompletText.style.display = "block";
 		}
 
-		// Setup cleanup on page unload
-		const cleanup = debounce(storage.clear, 100);
-		window.addEventListener("beforeunload", cleanup);
-		document.addEventListener("visibilitychange", function () {
-			if (document.hidden) cleanup();
-		});
+	// Setup cleanup on page unload (but NOT when navigating)
+	// Only clear when actually leaving the site, not when going to checkout
+	const cleanup = debounce(storage.clear, 100);
+	
+	// Only clear on beforeunload if we're actually leaving the domain
+	// Don't clear when just navigating within the site (like to checkout)
+	window.addEventListener("beforeunload", function(event) {
+		// Check if we're navigating to another page on the same domain
+		// If so, preserve the state for when user comes back
+		const isInternalNavigation = event.currentTarget.performance && 
+			event.currentTarget.performance.navigation && 
+			event.currentTarget.performance.navigation.type === 0; // TYPE_NAVIGATE
+		
+		// Only clear if user is truly leaving (closing tab, going to external site, etc)
+		if (!isInternalNavigation) {
+			cleanup();
+		}
+	});
+	
+	// Remove visibilitychange cleanup - this was causing state to be lost
+	// when navigating to checkout and coming back
+	// document.addEventListener("visibilitychange", function () {
+	// 	if (document.hidden) cleanup();
+	// });
 	}
 
 	// ========================================
@@ -1194,6 +1203,30 @@
 	} else {
 		initialize();
 	}
+	
+	// Handle browser back/forward navigation (bfcache)
+	// When user navigates back from checkout, restore the UI state
+	window.addEventListener("pageshow", function(event) {
+		// event.persisted is true when page is loaded from bfcache (back/forward cache)
+		if (event.persisted) {
+			// Reload state from localStorage
+			const hasLoadedSelections = storage.load();
+			if (hasLoadedSelections) {
+				// Restore UI elements to match saved state
+				restoreUIFromSelections();
+				
+				// Update displays
+				updateSelectionDisplay(false);
+				
+				// Re-validate and show feedback
+				const validation = validateVesselSelections();
+				showValidationFeedback(validation);
+				
+				// Dispatch charcoal upgrade price event
+				dispatchCharcoalUpgradePriceEvent();
+			}
+		}
+	});
 
 	// Setup product amount override with fallback attempts
 	if (!setupSetProductAmountOverride()) {
