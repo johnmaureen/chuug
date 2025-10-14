@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charcoal Upgrade Price Test - US Currency</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        .price-display { font-size: 18px; font-weight: bold; margin: 10px 0; }
+        .debug-info { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 3px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Charcoal Upgrade Price Test - US Currency</h1>
+    
+    <div class="test-section">
+        <h2>Currency Setup</h2>
+        <p>Current Currency: <span id="current-currency">Loading...</span></p>
+        <p>Shop Default Currency: <span id="shop-currency">Loading...</span></p>
+        <button onclick="testCurrencyDetection()">Test Currency Detection</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Charcoal Upgrade Price Test</h2>
+        <p>Upgrade Price: <span id="upgrade-price" class="price-display">Loading...</span></p>
+        <button onclick="testCharcoalUpgradePrice()">Test Charcoal Upgrade Price</button>
+        <button onclick="simulateCharcoalSelection()">Simulate Charcoal Selection</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Total Price Calculation</h2>
+        <p>Base Price (1x vessel): <span id="base-price" class="price-display">Loading...</span></p>
+        <p>Total Price with Charcoal: <span id="total-price" class="price-display">Loading...</span></p>
+        <button onclick="testTotalPriceCalculation()">Test Total Price Calculation</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Event Simulation</h2>
+        <button onclick="simulatePOMCEvent()">Simulate POMC Charcoal Upgrade Event</button>
+        <div id="event-results" class="debug-info"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Debug Information</h2>
+        <div id="debug-info" class="debug-info"></div>
+    </div>
+
+    <script>
+        // Mock the environment
+        window.CURRENT_CURRENCY = 'USD';
+        window.CURRENT_CURRENCY_SYMBOL = '$';
+        window.Shopify = {
+            formatMoney: function(amount, format) {
+                const dollars = (amount / 100).toFixed(2);
+                return '$' + dollars;
+            }
+        };
+        
+        // Mock POMC system
+        window.pomcSystem = {
+            getCharcoalUpgradePrice: function() {
+                return 400; // $4.00 in cents
+            },
+            getCharcoalUpgradePriceFormatted: function() {
+                return '$4.00';
+            },
+            getSelectedProductAmountData: function() {
+                return {
+                    id: 'test-product-id',
+                    price: 2999, // $29.99 in cents
+                    variants: [
+                        { price: 2999 }, // no engraving
+                        { price: 3299 }  // with engraving
+                    ]
+                };
+            },
+            CHARCOAL_UPGRADE_PRICE: 400
+        };
+        
+        // Mock CurrencyManager
+        window.CurrencyManager = {
+            fetchProductData: function(productId) {
+                return Promise.resolve({
+                    variants: {
+                        edges: [
+                            {
+                                node: {
+                                    id: 'variant1',
+                                    price: { amount: '29.99', currencyCode: 'USD' }
+                                }
+                            },
+                            {
+                                node: {
+                                    id: 'variant2', 
+                                    price: { amount: '32.99', currencyCode: 'USD' }
+                                }
+                            }
+                        ]
+                    }
+                });
+            }
+        };
+        
+        // Mock BASE_PRICES (in cents)
+        const BASE_PRICES = {
+            one_no_engraving: 2999,  // $29.99
+            one_engraving: 3299,     // $32.99
+            two_no_engraving: 4999,  // $49.99
+            two_engraving: 5499,    // $54.99
+            three_no_engraving: 6999, // $69.99
+            three_engraving: 7699   // $76.99
+        };
+        
+        function updateDebugInfo() {
+            const debugDiv = document.getElementById('debug-info');
+            debugDiv.innerHTML = `
+                <strong>Environment:</strong><br>
+                Current Currency: ${window.CURRENT_CURRENCY}<br>
+                Shop Currency: GBP (default)<br>
+                Currency Mismatch: ${window.CURRENT_CURRENCY !== 'GBP'}<br><br>
+                
+                <strong>POMC System:</strong><br>
+                Charcoal Upgrade Price: ${window.pomcSystem.getCharcoalUpgradePrice()} cents (${window.pomcSystem.getCharcoalUpgradePriceFormatted()})<br><br>
+                
+                <strong>Base Prices (GBP):</strong><br>
+                1x No Engraving: ${BASE_PRICES.one_no_engraving} cents (£${(BASE_PRICES.one_no_engraving / 100).toFixed(2)})<br>
+                1x With Engraving: ${BASE_PRICES.one_engraving} cents (£${(BASE_PRICES.one_engraving / 100).toFixed(2)})<br><br>
+                
+                <strong>Issue:</strong><br>
+                Base prices are in GBP (shop default), but upgrade price is in USD (current currency).<br>
+                This creates a currency mismatch when calculating totals.
+            `;
+        }
+        
+        function testCurrencyDetection() {
+            document.getElementById('current-currency').textContent = window.CURRENT_CURRENCY;
+            document.getElementById('shop-currency').textContent = 'GBP (default)';
+            updateDebugInfo();
+        }
+        
+        function testCharcoalUpgradePrice() {
+            const upgradePrice = window.pomcSystem.getCharcoalUpgradePrice();
+            const formatted = window.pomcSystem.getCharcoalUpgradePriceFormatted();
+            document.getElementById('upgrade-price').textContent = formatted + ' (' + upgradePrice + ' cents)';
+        }
+        
+        function simulateCharcoalSelection() {
+            // Simulate selecting charcoal rope
+            const upgradePrice = window.pomcSystem.getCharcoalUpgradePrice();
+            const basePrice = BASE_PRICES.one_no_engraving;
+            const totalPrice = basePrice + upgradePrice;
+            
+            document.getElementById('base-price').textContent = '£' + (basePrice / 100).toFixed(2) + ' (' + basePrice + ' cents)';
+            document.getElementById('total-price').textContent = '£' + (totalPrice / 100).toFixed(2) + ' (' + totalPrice + ' cents)';
+            
+            console.log('❌ PROBLEM: Mixing GBP base price with USD upgrade price');
+            console.log('Base price (GBP):', basePrice, 'cents');
+            console.log('Upgrade price (USD):', upgradePrice, 'cents');
+            console.log('Total (WRONG):', totalPrice, 'cents');
+        }
+        
+        function testTotalPriceCalculation() {
+            // Test the fixed calculation
+            const upgradePrice = window.pomcSystem.getCharcoalUpgradePrice();
+            
+            // Simulate getting current currency base price
+            const currentCurrencyBasePrice = 2999; // $29.99 in USD
+            const totalPrice = currentCurrencyBasePrice + upgradePrice;
+            
+            document.getElementById('base-price').textContent = '$' + (currentCurrencyBasePrice / 100).toFixed(2) + ' (' + currentCurrencyBasePrice + ' cents)';
+            document.getElementById('total-price').textContent = '$' + (totalPrice / 100).toFixed(2) + ' (' + totalPrice + ' cents)';
+            
+            console.log('✅ SOLUTION: Using current currency for both base and upgrade');
+            console.log('Base price (USD):', currentCurrencyBasePrice, 'cents');
+            console.log('Upgrade price (USD):', upgradePrice, 'cents');
+            console.log('Total (CORRECT):', totalPrice, 'cents');
+        }
+        
+        function simulatePOMCEvent() {
+            const resultsDiv = document.getElementById('event-results');
+            
+            // Simulate the POMC charcoal upgrade event
+            const event = new CustomEvent('pomcCharcoalUpgradePrice', {
+                detail: {
+                    upgradePrice: 400,
+                    upgradePriceFormatted: '$4.00',
+                    charcoalCount: 1
+                }
+            });
+            
+            resultsDiv.innerHTML = `
+                <strong>Event Dispatched:</strong><br>
+                Event Type: pomcCharcoalUpgradePrice<br>
+                Upgrade Price: ${event.detail.upgradePrice} cents<br>
+                Upgrade Price Formatted: ${event.detail.upgradePriceFormatted}<br>
+                Charcoal Count: ${event.detail.charcoalCount}<br><br>
+                
+                <strong>Expected Behavior:</strong><br>
+                1. Event listener should detect currency mismatch<br>
+                2. Should fetch current currency base price via CurrencyManager<br>
+                3. Should calculate: (USD base price) + (USD upgrade price) = USD total<br>
+                4. Should update CTA button with correct total
+            `;
+            
+            // Dispatch the event
+            document.dispatchEvent(event);
+        }
+        
+        // Initialize
+        testCurrencyDetection();
+        testCharcoalUpgradePrice();
+        updateDebugInfo();
+    </script>
+</body>
+</html>

@@ -1120,6 +1120,7 @@
   }
 
   // Store base prices (in cents) for charcoal upgrade calculations
+  // These prices are in the shop's default currency, but we need to handle currency conversion
   const BASE_PRICES = {
     one_no_engraving: {{ section.settings.one_chuug_product.price }},
     one_engraving: {{ section.settings.one_chuug_product.variants[1].price }},
@@ -1128,6 +1129,10 @@
     three_no_engraving: {{ section.settings.three_chuug_product.price }},
     three_engraving: {{ section.settings.three_chuug_product.variants[1].price }}
   };
+  
+  // Get the shop's default currency (these prices are in this currency)
+  const SHOP_DEFAULT_CURRENCY = {{ shop.currency | json }};
+  const CURRENT_CURRENCY = window.CURRENT_CURRENCY || SHOP_DEFAULT_CURRENCY;
 
   console.log('💵 PDP BASE PRICES LOADED:', {
     '1x_no_engraving': BASE_PRICES.one_no_engraving + ' cents ($' + (BASE_PRICES.one_no_engraving / 100).toFixed(2) + ')',
@@ -1172,6 +1177,9 @@
     // Determine which base prices to use
     const isEngraving = variant_index === 1;
     
+    // Check if we need currency conversion
+    const needsCurrencyConversion = CURRENT_CURRENCY !== SHOP_DEFAULT_CURRENCY;
+    
     // Calculate new prices with upgrade
     let newPriceForOne, newPriceForTwo, newPriceForThree;
     
@@ -1185,11 +1193,190 @@
       newPriceForThree = BASE_PRICES.three_no_engraving + upgradePrice;
     }
     
-    // DO NOT update vessel number label prices (1x, 2x, 3x) - they should show base prices only
-    // Only update the CTA button price to include charcoal upgrade
+    // If currency conversion is needed, we need to get the correct prices for the current currency
+    if (needsCurrencyConversion) {
+      console.log('💱 Currency conversion needed:', {
+        shopCurrency: SHOP_DEFAULT_CURRENCY,
+        currentCurrency: CURRENT_CURRENCY,
+        upgradePrice: upgradePrice + ' cents',
+        note: 'Base prices are in shop currency, upgrade price is in current currency'
+      });
+      
+      // Try to get current currency prices using CurrencyManager
+      console.log('🔍 CurrencyManager check:', {
+        exists: !!window.CurrencyManager,
+        hasFetchMethod: !!(window.CurrencyManager && window.CurrencyManager.fetchProductData),
+        CurrencyManager: window.CurrencyManager
+      });
+      
+      if (window.CurrencyManager && window.CurrencyManager.fetchProductData) {
+        console.log('🔄 Attempting to fetch current currency prices...');
+        
+        // Get the product IDs for the current amount
+        const productAmountData = window.pomcSystem?.getSelectedProductAmountData();
+        console.log('📦 Product amount data:', productAmountData);
+        
+        if (productAmountData && productAmountData.id) {
+          console.log('🔄 Fetching product data for ID:', productAmountData.id);
+          
+          // Add timeout to prevent hanging
+          const fetchPromise = window.CurrencyManager.fetchProductData(productAmountData.id);
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Currency fetch timeout')), 3000)
+          );
+          
+          Promise.race([fetchPromise, timeoutPromise])
+            .then(productData => {
+              console.log('📊 Product data received:', productData);
+              
+              if (productData && productData.variants) {
+                const variants = productData.variants.edges.map(edge => edge.node);
+                const variantIndex = isEngraving ? 1 : 0;
+                const variant = variants[variantIndex];
+                
+                console.log('🎯 Selected variant:', variant);
+                
+                if (variant && variant.price) {
+                  const currentCurrencyBasePrice = Math.round(parseFloat(variant.price.amount) * 100); // Convert to cents
+                  
+                  // Update prices with current currency base price + upgrade price
+                  newPriceForOne = currentCurrencyBasePrice + upgradePrice;
+                  newPriceForTwo = currentCurrencyBasePrice + upgradePrice;
+                  newPriceForThree = currentCurrencyBasePrice + upgradePrice;
+                  
+                  console.log('✅ Currency conversion successful:', {
+                    basePriceInCurrentCurrency: currentCurrencyBasePrice + ' cents',
+                    upgradePrice: upgradePrice + ' cents',
+                    totalPrice: newPriceForOne + ' cents'
+                  });
+                  
+                  // Update the CTA price with the converted price
+                  updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, e.detail);
+                } else {
+                  console.log('⚠️ No price data in variant');
+                  fallbackToSimpleCalculation();
+                }
+              } else {
+                console.log('⚠️ No variants data received');
+                fallbackToSimpleCalculation();
+              }
+            })
+            .catch(error => {
+              console.error('❌ Currency conversion failed:', error);
+              fallbackToSimpleCalculation();
+            });
+        } else {
+          console.log('⚠️ No product amount data available for currency conversion');
+          fallbackToSimpleCalculation();
+        }
+      } else {
+        console.log('⚠️ CurrencyManager not available, using fallback calculation');
+        fallbackToSimpleCalculation();
+      }
+      
+      // Fallback function for when currency conversion fails
+      function fallbackToSimpleCalculation() {
+        console.log('🔧 Using fallback calculation - extracting current currency prices from page');
+        
+        // Try to extract current currency prices from existing price elements
+        const currentPrices = extractCurrentCurrencyPrices();
+        
+        if (currentPrices) {
+          console.log('💰 Extracted current currency prices:', currentPrices);
+          
+          // Use the extracted prices + upgrade price
+          newPriceForOne = currentPrices.one + upgradePrice;
+          newPriceForTwo = currentPrices.two + upgradePrice;
+          newPriceForThree = currentPrices.three + upgradePrice;
+          
+          console.log('✅ Fallback calculation successful:', {
+            basePrice: currentPrices.one + ' cents',
+            upgradePrice: upgradePrice + ' cents',
+            totalPrice: newPriceForOne + ' cents'
+          });
+        } else {
+          console.log('⚠️ Could not extract current currency prices, using upgrade price only');
+          
+          // Last resort: just use the upgrade price
+          newPriceForOne = upgradePrice;
+          newPriceForTwo = upgradePrice;
+          newPriceForThree = upgradePrice;
+        }
+        
+        updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, e.detail);
+      }
+      
+      // Helper function to extract current currency prices from page elements
+      function extractCurrentCurrencyPrices() {
+        try {
+          // Try to get prices from the vessel number labels (1x, 2x, 3x)
+          const onePriceEl = document.querySelector('.product_amount_label_1_price');
+          const twoPriceEl = document.querySelector('.product_amount_label_2_price');
+          const threePriceEl = document.querySelector('.product_amount_label_3_price');
+          
+          if (onePriceEl && twoPriceEl && threePriceEl) {
+            // Extract price text and convert to cents
+            const onePriceText = onePriceEl.textContent || onePriceEl.innerText;
+            const twoPriceText = twoPriceEl.textContent || twoPriceEl.innerText;
+            const threePriceText = threePriceEl.textContent || threePriceEl.innerText;
+            
+            console.log('📊 Price elements found:', {
+              one: onePriceText,
+              two: twoPriceText,
+              three: threePriceText
+            });
+            
+            // Parse prices (remove currency symbols and convert to cents)
+            const parsePrice = (priceText) => {
+              if (!priceText) return null;
+              
+              // Remove currency symbols and extract number
+              const cleanPrice = priceText.replace(/[^\d.,]/g, '');
+              const price = parseFloat(cleanPrice.replace(',', '.'));
+              
+              if (isNaN(price)) return null;
+              
+              // Convert to cents
+              return Math.round(price * 100);
+            };
+            
+            const onePrice = parsePrice(onePriceText);
+            const twoPrice = parsePrice(twoPriceText);
+            const threePrice = parsePrice(threePriceText);
+            
+            if (onePrice && twoPrice && threePrice) {
+              return {
+                one: onePrice,
+                two: twoPrice,
+                three: threePrice
+              };
+            }
+          }
+          
+          console.log('⚠️ Could not extract prices from page elements');
+          return null;
+        } catch (error) {
+          console.error('❌ Error extracting current currency prices:', error);
+          return null;
+        }
+      }
+      
+      return; // Exit early as we're handling the update asynchronously
+    }
+    
+    // For same currency, update normally
+    updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, e.detail);
+  });
+  
+  // Helper function to update CTA price with charcoal upgrade
+  function updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, eventDetail) {
+    // Determine engraving state from the inputs
+    const inputs = document.querySelector('.inputs');
+    const variant_index = inputs ? parseInt(inputs.getAttribute('variant_index'), 10) : 0;
+    const isEngraving = variant_index === 1;
     
     // Update CTA price based on current product amount
-    const cta_product_price = document.querySelector('.cta-product-price .dualPrice');
+    const cta_product_price = document.querySelector('.cta-product-price');
     if (cta_product_price) {
       let currentPrice;
       if (product_amount === 1) {
@@ -1200,6 +1387,14 @@
         currentPrice = newPriceForThree;
       }
       cta_product_price.innerHTML = formatMoneyWithFallback(currentPrice);
+      
+      console.log('🎯 CTA PRICE ELEMENT UPDATED:', {
+        element: cta_product_price,
+        newPrice: formatMoneyWithFallback(currentPrice),
+        productAmount: product_amount
+      });
+    } else {
+      console.log('⚠️ CTA price element not found:', '.cta-product-price');
     }
     
     const finalPrice = product_amount === 1 ? newPriceForOne : product_amount === 2 ? newPriceForTwo : newPriceForThree;
@@ -1208,14 +1403,14 @@
       (product_amount === 1 ? BASE_PRICES.one_no_engraving : product_amount === 2 ? BASE_PRICES.two_no_engraving : BASE_PRICES.three_no_engraving);
     
     console.log('💳 POMC: CTA PRICE UPDATED WITH CHARCOAL UPGRADE:', {
-      upgradePrice: e.detail.upgradePriceFormatted + ' (' + e.detail.upgradePrice + ' cents)',
+      upgradePrice: eventDetail.upgradePriceFormatted + ' (' + eventDetail.upgradePrice + ' cents)',
       productAmount: product_amount + 'x vessels',
       isEngraving: isEngraving,
       basePrice: formatMoneyWithFallback(basePrice) + ' (' + basePrice + ' cents)',
-      calculation: formatMoneyWithFallback(basePrice) + ' + ' + e.detail.upgradePriceFormatted + ' = ' + formatMoneyWithFallback(finalPrice),
+      calculation: formatMoneyWithFallback(basePrice) + ' + ' + eventDetail.upgradePriceFormatted + ' = ' + formatMoneyWithFallback(finalPrice),
       finalCTAPrice: formatMoneyWithFallback(finalPrice) + ' (' + finalPrice + ' cents)'
     });
-  });
+  }
 </script>
 
 <script>
