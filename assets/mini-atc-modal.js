@@ -671,35 +671,113 @@
 			return this.getVesselPricingForMultiplier();
 		}
 
-		getVesselPricingForMultiplier() {
-			// Get pricing from POMC system - this is the source of truth
-			if (window.pomcSystem) {
-		const selectedProductAmountData =
-			window.pomcSystem.getSelectedProductAmountData();
-		if (selectedProductAmountData && selectedProductAmountData.variants) {
-			const engravingEnabled = this.getEngravingState();
-			const hasCharcoalRope = this.modalInstance.hasAnyCharcoalRopeSelected();
-			const variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
+	getVesselPricingForMultiplier() {
+		// Get pricing from POMC system - this is the source of truth
+		if (window.pomcSystem) {
+	const selectedProductAmountData =
+		window.pomcSystem.getSelectedProductAmountData();
+	if (selectedProductAmountData && selectedProductAmountData.variants) {
+		const engravingEnabled = this.getEngravingState();
+		
+		// Check if we have a mixed vessel configuration
+		const hasMixedConfig = this.modalInstance.hasMixedVesselConfiguration();
+		console.log(`🔍 Pricing calculation: hasMixedConfig=${hasMixedConfig}`);
+		
+		if (hasMixedConfig) {
+			console.log("🪢 Mixed vessel configuration detected - calculating pricing");
+			return this.getMixedVesselPricing(selectedProductAmountData, engravingEnabled);
+		}
+		
+		// Standard logic for uniform configuration (all charcoal or all natural)
+		const hasCharcoalRope = this.modalInstance.hasAnyCharcoalRopeSelected();
+		const variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
 
-			const variant = selectedProductAmountData.variants[variantIndex];
-					if (variant) {
-						// Store the pricing for reference
-						this.dynamicPrices.vessel = {
-							price: variant.price,
-							originalPrice: variant.compare_at_price,
-						};
+		const variant = selectedProductAmountData.variants[variantIndex];
+				if (variant) {
+					// Store the pricing for reference
+					this.dynamicPrices.vessel = {
+						price: variant.price,
+						originalPrice: variant.compare_at_price,
+					};
 
-						return {
-							price: variant.price,
-							originalPrice: variant.compare_at_price,
-						};
-					}
+					return {
+						price: variant.price,
+						originalPrice: variant.compare_at_price,
+					};
 				}
 			}
-
-			// No pricing data available
-			return null;
 		}
+
+		// No pricing data available
+		return null;
+	}
+
+	/**
+	 * Calculate pricing for mixed vessel configurations (some charcoal, some natural)
+	 * For mixed configs, we use the charcoal rope variant pricing as the base,
+	 * since it represents the higher-value configuration
+	 */
+	getMixedVesselPricing(selectedProductAmountData, engravingEnabled) {
+		console.log("🪢 Calculating mixed vessel pricing");
+		
+		const vesselSelections = window.pomcSystem.getAllVesselSelections();
+		const multiplier = window.pomcSystem.getMultiplier() || 1;
+		
+		// Count charcoal vs natural vessels
+		let charcoalCount = 0;
+		let naturalCount = 0;
+		
+		for (let i = 1; i <= multiplier; i++) {
+			const selection = vesselSelections[i];
+			if (selection?.ropeType) {
+				if (selection.ropeType.toLowerCase() === 'charcoal') {
+					charcoalCount++;
+				} else {
+					naturalCount++;
+				}
+			}
+		}
+		
+		console.log(`🪢 Vessel breakdown: ${charcoalCount} charcoal, ${naturalCount} natural`);
+		
+		// For mixed configurations, use the charcoal rope variant pricing as the base
+		// This ensures we get the higher pricing that includes charcoal upgrade costs
+		const charcoalVariantIndex = engravingEnabled ? 3 : 2;
+		const variant = selectedProductAmountData.variants[charcoalVariantIndex];
+		
+		if (variant) {
+			// Get charcoal upgrade price from POMC system or use default (299 cents = £2.99)
+			const charcoalUpgradePrice = window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 299;
+			
+			// Add charcoal upgrade price for each charcoal vessel
+			const totalCharcoalUpgradePrice = charcoalUpgradePrice * charcoalCount;
+			
+			// Calculate total price: bundle base price + charcoal upgrade costs
+			const totalPrice = variant.price + totalCharcoalUpgradePrice;
+			const totalOriginalPrice = variant.compare_at_price + totalCharcoalUpgradePrice;
+			
+			console.log(`🪢 Using charcoal rope variant ${charcoalVariantIndex} for mixed bundle pricing`);
+			console.log(`🪢 Bundle base price: ${variant.price}`);
+			console.log(`🪢 Charcoal upgrade price per vessel: ${charcoalUpgradePrice}`);
+			console.log(`🪢 Total charcoal upgrade cost (${charcoalCount} vessels): ${totalCharcoalUpgradePrice}`);
+			console.log(`🪢 Final total price: ${totalPrice} (${variant.price} + ${totalCharcoalUpgradePrice})`);
+			console.log(`🪢 Final original price: ${totalOriginalPrice}`);
+			
+			// Store the pricing for reference
+			this.dynamicPrices.vessel = {
+				price: totalPrice,
+				originalPrice: totalOriginalPrice,
+			};
+
+			return {
+				price: totalPrice,
+				originalPrice: totalOriginalPrice,
+			};
+		}
+		
+		console.warn("🪢 No pricing found for mixed vessel configuration");
+		return null;
+	}
 
 		/**
 		 * Fetch vessel pricing via GraphQL with current currency
@@ -720,19 +798,31 @@
 					return null;
 				}
 
-				// Fetch product data via GraphQL
-			const productData = await window.CurrencyManager.fetchProductData(selectedProductAmountData.id);
-			if (!productData || !productData.variants) {
-				return this.getVesselPricingForMultiplier(); // Fallback
-			}
+		// Fetch product data via GraphQL
+		const productData = await window.CurrencyManager.fetchProductData(selectedProductAmountData.id);
+		if (!productData || !productData.variants) {
+			return this.getVesselPricingForMultiplier(); // Fallback
+		}
 
-			const engravingEnabled = this.getEngravingState();
+		const engravingEnabled = this.getEngravingState();
+		
+		// Check for mixed vessel configuration
+		const hasMixedConfig = this.modalInstance.hasMixedVesselConfiguration();
+		let variantIndex;
+		
+		if (hasMixedConfig) {
+			console.log("🪢 Mixed vessel configuration detected in GraphQL pricing");
+			// For mixed configurations, use charcoal rope variant pricing
+			variantIndex = engravingEnabled ? 3 : 2;
+		} else {
+			// Standard logic for uniform configuration
 			const hasCharcoalRope = this.modalInstance.hasAnyCharcoalRopeSelected();
-			const variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
-			
-			// Find the correct variant
-			const variants = productData.variants.edges.map(edge => edge.node);
-			const variant = variants[variantIndex];
+			variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
+		}
+		
+		// Find the correct variant
+		const variants = productData.variants.edges.map(edge => edge.node);
+		const variant = variants[variantIndex];
 
 				if (variant && variant.price) {
 					// Convert GraphQL price to cents (Shopify returns as decimal string)
@@ -1774,12 +1864,15 @@
 		}
 
 		async calculatePricing() {
+			console.log("🔍 calculatePricing called");
 			const state = this.state.getState();
 			await this.pricing.calculateTotal(state);
 		}
 
 		setupPOMCIntegration() {
 			// Listen for POMC system changes and update pricing
+			console.log("🔍 Setting up POMC integration, pomcSystem exists:", !!window.pomcSystem);
+			
 			if (window.pomcSystem) {
 				// Create a custom event listener for POMC changes
 				const updatePricingFromPOMC = (event) => {
@@ -1817,26 +1910,58 @@
 					"pomcProductAmountChanged",
 					updatePricingFromPOMC
 				);
+				
+				// Listen for charcoal upgrade price changes
+				document.addEventListener(
+					"pomcCharcoalUpgradePrice",
+					(event) => {
+						console.log("🪢 Charcoal upgrade price changed, updating pricing:", event.detail);
+						// Small delay to ensure POMC system has fully updated
+						setTimeout(() => {
+							this.calculatePricing().catch(console.error);
+						}, 50);
+					}
+				);
 
 				// Also listen for the modal opening to ensure pricing is current
 				this.modal.addEventListener("modalOpened", () => {
 					setTimeout(updatePricingFromPOMC, 100); // Small delay to ensure POMC is ready
 				});
-
-				// Listen for vessel count changes to update personalization rows
-				document.addEventListener("pomcMultiplierChanged", (event) => {
-					if (this.isActive) {
-						this.updateVesselPersonalizationRows();
+			} else {
+				// POMC system not ready yet, set up event listener anyway for when it becomes available
+				console.log("🔍 POMC system not ready, setting up delayed event listener");
+				const setupDelayedListener = () => {
+					if (window.pomcSystem) {
+						console.log("🔍 POMC system now available, setting up charcoal upgrade listener");
+						document.addEventListener(
+							"pomcCharcoalUpgradePrice",
+							(event) => {
+								console.log("🪢 Charcoal upgrade price changed (delayed setup), updating pricing:", event.detail);
+								setTimeout(() => {
+									this.calculatePricing().catch(console.error);
+								}, 50);
+							}
+						);
+					} else {
+						setTimeout(setupDelayedListener, 100);
 					}
-				});
-
-				// Listen for storage changes (when POMC data is updated)
-				window.addEventListener("storage", (event) => {
-					if (event.key === "chuug_vessel_selections") {
-						updatePricingFromPOMC();
-					}
-				});
+				};
+				setupDelayedListener();
 			}
+
+			// Listen for vessel count changes to update personalization rows
+			document.addEventListener("pomcMultiplierChanged", (event) => {
+				if (this.isActive) {
+					this.updateVesselPersonalizationRows();
+				}
+			});
+
+			// Listen for storage changes (when POMC data is updated)
+			window.addEventListener("storage", (event) => {
+				if (event.key === "chuug_vessel_selections") {
+					updatePricingFromPOMC();
+				}
+			});
 		}
 
 		setupEngravingToggleListener() {
@@ -1890,8 +2015,18 @@
 			}
 
 			// Calculate the new per-item compare-at price
-			const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
-			const variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+			// Check for mixed vessel configuration
+			const hasMixedConfig = this.hasMixedVesselConfiguration();
+			let variantIndex;
+			
+			if (hasMixedConfig) {
+				console.log("🛒🪢 Mixed configuration detected for cart update");
+				variantIndex = engravingEnabled ? 3 : 2;
+			} else {
+				const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+				variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+			}
+			
 			const variantData = selectedProductAmountData.variants[variantIndex];
 
 				if (!variantData?.compare_at_price) {
@@ -2031,6 +2166,52 @@
 			: (engravingEnabled ? 1 : 0);
 		
 		return variantIndex;
+	}
+
+	/**
+	 * Check if the current vessel configuration is mixed (some charcoal, some natural)
+	 */
+	hasMixedVesselConfiguration() {
+		if (!window.pomcSystem) {
+			return false;
+		}
+		
+		const vesselSelections = window.pomcSystem.getAllVesselSelections();
+		const multiplier = window.pomcSystem.getMultiplier() || 1;
+		
+		if (multiplier <= 1) {
+			return false; // Can't have mixed with only 1 vessel
+		}
+		
+		let hasCharcoal = false;
+		let hasNatural = false;
+		
+		for (let i = 1; i <= multiplier; i++) {
+			const selection = vesselSelections[i];
+			if (selection?.ropeType) {
+				if (selection.ropeType.toLowerCase() === 'charcoal') {
+					hasCharcoal = true;
+				} else {
+					hasNatural = true;
+				}
+			}
+		}
+		
+		const isMixed = hasCharcoal && hasNatural;
+		console.log(`🔍 Mixed vessel config check: multiplier=${multiplier}, hasCharcoal=${hasCharcoal}, hasNatural=${hasNatural}, isMixed=${isMixed}`);
+		
+		// Mixed if we have both charcoal and natural
+		return isMixed;
+	}
+
+	/**
+	 * Get variant index for a specific vessel based on its rope type
+	 */
+	getVariantIndexForVessel(vesselSelection, engravingEnabled) {
+		const hasCharcoal = vesselSelection?.ropeType && 
+			vesselSelection.ropeType.toLowerCase() === 'charcoal';
+		
+		return this.getVariantIndex(hasCharcoal, engravingEnabled);
 	}
 
 	async initializeGiftBoxPricing() {
@@ -2239,9 +2420,24 @@
 			if (selectedData.variants) {
 				console.log("🎁 Found variants in selectedData");
 				const engravingEnabled = this.getEngravingState();
-				const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
-				const variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+				
+				// Check for mixed vessel configuration
+				const hasMixedConfig = this.hasMixedVesselConfiguration();
+				let variantIndex;
+				
+				if (hasMixedConfig) {
+					console.log("🎁🪢 Mixed vessel configuration detected in personalize pricing");
+					// For mixed configurations, use charcoal rope variant pricing
+					// This ensures we get the higher pricing that includes charcoal upgrade costs
+					variantIndex = engravingEnabled ? 3 : 2;
+				} else {
+					// Standard logic for uniform configuration
+					const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+					variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+				}
+				
 				const variant = selectedData.variants[variantIndex];
+					console.log("🎁 Selected variant index:", variantIndex);
 					console.log("🎁 Selected variant:", variant);
 
 					if (variant) {
@@ -2758,10 +2954,10 @@
 					}
 				});
 
-				// Collect all data for cart
-				const cartData = this.collectCartData();
+			// Collect all data for cart
+			const cartData = await this.collectCartData();
 
-				if (!cartData || cartData.items.length === 0) {
+			if (!cartData || cartData.items.length === 0) {
 					throw new Error("No items to add to cart");
 				}
 
@@ -2845,14 +3041,14 @@
 			}
 		}
 
-		collectCartData() {
-			const state = this.state.getState();
+	async collectCartData() {
+		const state = this.state.getState();
 
-			const items = [];
+		const items = [];
 
-			// Collect vessel products and their associated add-ons in interleaved order
-			const vesselItems = this.collectVesselProducts(state);
-			const addonItems = this.collectAddonProducts(state);
+		// Collect vessel products and their associated add-ons in interleaved order
+		const vesselItems = await this.collectVesselProducts(state);
+		const addonItems = this.collectAddonProducts(state);
 
 			// Group add-ons by vessel number for easier lookup
 			const addonsByVessel = {};
@@ -2908,13 +3104,141 @@
 				attributes: this.collectOrderAttributes(state),
 			};
 
-			console.log("cartData");
-			console.log(cartData);
+			console.log("🛒 CART DATA TO BE SENT:", JSON.stringify(cartData, null, 2));
 
 			return cartData;
 		}
 
-		collectVesselProducts(state) {
+		/**
+		 * Create properties for a single vessel item
+		 */
+		createVesselProperties(selection, vesselNumber, state, engravingEnabled, selectedProductAmountData, variantIndex) {
+			const properties = {};
+			
+			// VISIBLE PROPERTIES (for checkout display)
+			
+			// Add Monogram Initials for this specific vessel
+			const vesselEngraving = state.engraving?.vessels?.[vesselNumber] || "";
+			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
+				properties["Monogram Initials"] = vesselEngraving.trim().toUpperCase();
+			} else {
+				properties["Monogram Initials"] = "N/A";
+			}
+			
+		// For individual vessel products (mixed config), don't add bundle-specific properties
+		// Only add essential properties to avoid conflicts with Shopify's product structure
+		
+		// Check if gift box is enabled (only if this is a bundle product)
+		if (selectedProductAmountData?.variants && variantIndex !== null) {
+			// This is a bundle product, add bundle properties
+			const variantData = selectedProductAmountData.variants[variantIndex];
+			if (variantData?.title) {
+				properties["Choose Your Coins"] = variantData.title;
+			}
+			
+			const hasGiftBox = state.giftBox?.enabled;
+			properties["Gift Box"] = hasGiftBox ? "yes" : "no";
+			
+			if (hasGiftBox) {
+				const giftBoxTitle = this.getGiftBoxProductTitle();
+				properties["Gift Option"] = giftBoxTitle;
+			}
+		}
+			
+			// HIDDEN PROPERTIES (with underscore - for backend use only)
+			
+			// Add vessel engraving (hidden) - for this specific vessel
+			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
+				properties[`_Vessel ${vesselNumber} Engraving`] = vesselEngraving.trim().toUpperCase();
+			}
+			
+			// Add vessel selection details (hidden) - for this specific vessel
+			if (selection) {
+				if (selection.productHandle) {
+					properties[`_Vessel ${vesselNumber} Product`] = selection.productHandle;
+				}
+				if (selection.woodType) {
+					properties[`_Vessel ${vesselNumber} Wood Type`] = selection.woodType;
+				}
+				if (selection.ropeType) {
+					properties[`_Vessel ${vesselNumber} Rope Type`] = selection.ropeType;
+				}
+			}
+			
+			// Add compare-at price (hidden) - per item price for this vessel
+			if (selectedProductAmountData?.variants && variantIndex !== null) {
+				const variantData = selectedProductAmountData.variants[variantIndex];
+				if (variantData?.compare_at_price) {
+					properties["_Compare At Price"] = variantData.compare_at_price;
+				}
+			}
+			// For individual vessel products, we don't have compare-at price from bundle data
+			
+			// Add unique line identifier to prevent Shopify from consolidating items
+			const uniqueLineId = `${Date.now()}-V${vesselNumber}-${Math.random().toString(36).substring(2, 11)}`;
+			properties["_Unique Line ID"] = uniqueLineId;
+			
+		return properties;
+	}
+
+	/**
+	 * Get individual vessel variant ID based on wood type and rope type
+	 * For individual products, we need variant IDs, not product IDs
+	 */
+	async getIndividualVesselVariantId(woodType, ropeType, hasEngraving) {
+		const key = `${woodType?.toLowerCase()}_${ropeType?.toLowerCase()}`;
+		
+		// Check if we have product handles
+		if (!window.PRODUCT_HANDLES || !window.PRODUCT_HANDLES[key]) {
+			console.error(`❌ No product handle found for: ${key}`);
+			return null;
+		}
+		
+		const productHandle = window.PRODUCT_HANDLES[key];
+		
+		// Fetch product data to get variant IDs
+		try {
+			const response = await fetch(`/products/${productHandle}.js`);
+			const productData = await response.json();
+			
+			if (!productData || !productData.variants || productData.variants.length === 0) {
+				console.error(`❌ No variants found for product: ${productHandle}`);
+				return null;
+			}
+			
+			// For individual vessel products, we need to find the variant that matches the engraving option
+			// Assuming variants are ordered: [0] = No engraving, [1] = With engraving
+			const variantIndex = hasEngraving ? 1 : 0;
+			const variant = productData.variants[variantIndex] || productData.variants[0];
+			
+			return variant.id;
+		} catch (error) {
+			console.error(`❌ Error fetching product data for ${productHandle}:`, error);
+			return null;
+		}
+	}
+	
+	/**
+	 * Get individual vessel product ID based on wood type and rope type (synchronous fallback)
+	 */
+	getIndividualVesselProductId(woodType, ropeType) {
+		// Use POMC system's product ID mapping
+		if (!window.PRODUCT_IDS) {
+			console.error("❌ PRODUCT_IDS not available on window object");
+			return null;
+		}
+		
+		const key = `${woodType?.toLowerCase()}_${ropeType?.toLowerCase()}`;
+		const productId = window.PRODUCT_IDS[key];
+		
+		if (!productId) {
+			console.error(`❌ No product ID found for key: ${key}`, Object.keys(window.PRODUCT_IDS));
+		}
+		
+		return productId || null;
+	}
+
+	async collectVesselProducts(state) {
 			const items = [];
 
 			// Get vessel selections from POMC system
@@ -2930,29 +3254,60 @@
 			// Determine if engraving is enabled
 			const engravingEnabled = this.isEngravingEnabled();
 
-			// DEBUG: Check actual input field values vs state
-			console.log("🔍 ENGRAVING STATE CHECK AT CART ADD TIME:");
-			console.log("🔍 State engraving vessels:", state.engraving?.vessels);
-			const vesselInputs = this.modal.querySelectorAll("[data-vessel-input]");
-			const inputValues = {};
-			vesselInputs.forEach((input) => {
-				const vesselId = input.getAttribute("data-vessel-input");
-				inputValues[vesselId] = input.value;
-				console.log(`🔍 Input field Vessel ${vesselId}: "${input.value}"`);
-			});
-			console.log("🔍 Input field values:", inputValues);
-			console.log("🔍 Engraving enabled:", engravingEnabled);
 
-		// CRITICAL FIX: Create ONE bundle item instead of multiple vessel items
+		// Check for mixed vessel configuration
+		const hasMixedConfig = this.hasMixedVesselConfiguration();
+		
+		if (hasMixedConfig) {
+			console.log("🛒 Mixed config: Creating separate items");
+			
+			// For mixed configurations, create separate items for each vessel using individual vessel variant IDs
+			for (let i = 1; i <= multiplier; i++) {
+				const selection = vesselSelections[i];
+				if (!selection) continue;
+				
+				// Check if this specific vessel has engraving
+				const vesselEngraving = state.engraving?.vessels?.[i] || "";
+				const vesselHasEngraving = engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "";
+				
+				// Get individual vessel variant ID (async)
+				const individualVariantId = await this.getIndividualVesselVariantId(
+					selection.woodType, 
+					selection.ropeType,
+					vesselHasEngraving
+				);
+				
+				if (!individualVariantId) {
+					console.error(`❌ No variant ID for Vessel ${i}: ${selection.woodType} ${selection.ropeType}`);
+					continue;
+				}
+				
+				// Create properties for this specific vessel
+				const vesselProperties = this.createVesselProperties(selection, i, state, engravingEnabled, null, null);
+				
+				// Create individual vessel item using individual variant ID
+				const vesselItem = {
+					id: individualVariantId,
+					quantity: 1,
+					properties: vesselProperties,
+				};
+				
+				items.push(vesselItem);
+			}
+			
+			return items; // Return early for mixed configurations
+		}
+		
+		// Standard logic for uniform configuration (all vessels have same rope type)
 		const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
 		const variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
 		
 		let variantId = null;
-				if (selectedProductAmountData?.variants?.[variantIndex]) {
-					variantId = selectedProductAmountData.variants[variantIndex].id;
-				} else {
-					return items;
-				}
+		if (selectedProductAmountData?.variants?.[variantIndex]) {
+			variantId = selectedProductAmountData.variants[variantIndex].id;
+		} else {
+			return items;
+		}
 
 		if (!variantId) {
 			return items;
@@ -3037,7 +3392,8 @@
 
 		// Add unique line identifier to prevent Shopify from consolidating items
 		// Use a consistent ID based on the bundle configuration to prevent duplicates
-		const bundleConfig = `${multiplier}-${hasCharcoalRope ? 'charcoal' : 'natural'}-${engravingEnabled ? 'engraved' : 'plain'}`;
+		const ropeConfig = hasMixedConfig ? 'mixed' : (this.hasAnyCharcoalRopeSelected() ? 'charcoal' : 'natural');
+		const bundleConfig = `${multiplier}-${ropeConfig}-${engravingEnabled ? 'engraved' : 'plain'}`;
 		const uniqueLineId = `BUNDLE-${bundleConfig}-${Date.now()}`;
 		properties["_Unique Line ID"] = uniqueLineId;
 		
@@ -3054,8 +3410,15 @@
 		// Fallback: If no vessel items were collected, try to get from selectedProductAmountData
 		if (items.length === 0 && selectedProductAmountData) {
 			// Use the selected product amount data as fallback
-			const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
-			const fallbackVariantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+			// Check for mixed vessel configuration
+			let fallbackVariantIndex;
+			if (hasMixedConfig) {
+				console.log("🛒🪢 Using mixed config fallback variant");
+				fallbackVariantIndex = engravingEnabled ? 3 : 2;
+			} else {
+				const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+				fallbackVariantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
+			}
 			const fallbackVariant =
 				selectedProductAmountData.variants?.[fallbackVariantIndex];
 			
@@ -3093,6 +3456,8 @@
 				const vesselSelections = window.pomcSystem.getAllVesselSelections();
 				const charcoalUpgradeVariantId = this.getCharcoalUpgradeVariantId();
 				
+				// Only add charcoal upgrades if the variant ID is available
+				// If not available, skip charcoal upgrades (they might be included in the vessel price)
 				if (charcoalUpgradeVariantId) {
 					let charcoalVesselNumber = 0;
 					Object.entries(vesselSelections).forEach(([vesselIndex, selection]) => {
@@ -3116,32 +3481,21 @@
 									"_Unique Line ID": uniqueLineId,
 								},
 							};
-							console.log(`🪢 Charcoal upgrade item for Vessel ${vesselIndex} being added:`, charcoalUpgradeItem);
-							items.push(charcoalUpgradeItem);
-						}
-					});
-					
-					if (charcoalVesselNumber > 0) {
-						console.log(`🪢 Added ${charcoalVesselNumber} charcoal rope upgrade(s) to cart`);
+						items.push(charcoalUpgradeItem);
 					}
-				} else {
-					console.log("⚠️ No charcoal upgrade variant ID found! Charcoal upgrades will not be added to cart.");
-				}
+				});
 			}
+		}
 
-			// 1. Gift Box - Add one per vessel
+		// 1. Gift Box - Add one per vessel
 			if (state.giftBox?.enabled) {
-				console.log("🎁 Gift box is enabled in state:", state.giftBox);
-
 				// Get vessel count from POMC system
 				const vesselCount = window.pomcSystem
 					? window.pomcSystem.getMultiplier() || 1
 					: 1;
-				console.log("🎁 Vessel count for gift boxes:", vesselCount);
 
 				// Get gift box variant ID from modal config or default
 				const giftBoxVariantId = this.getGiftBoxVariantId();
-				console.log("🎁 Gift box variant ID:", giftBoxVariantId);
 
 				if (giftBoxVariantId) {
 					// Add one gift box per vessel
@@ -3165,15 +3519,10 @@
 								"_Unique Line ID": uniqueLineId,
 							},
 						};
-						console.log(`🎁 Gift box item ${i + 1} being added:`, giftBoxItem);
-						items.push(giftBoxItem);
-					}
-				} else {
-					console.log("❌ No gift box variant ID found!");
+					items.push(giftBoxItem);
 				}
-			} else {
-				console.log("❌ Gift box is NOT enabled in state:", state.giftBox);
 			}
+		}
 
 			// 2. Mix & Match variants
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
@@ -3400,8 +3749,36 @@
 				}),
 			};
 
-			const response = await fetch("/cart/add.js", config);
-			return await response.json();
+		console.log("🛒 SENDING TO SHOPIFY:", config.body);
+		const response = await fetch("/cart/add.js", config);
+		const result = await response.json();
+		
+		// Check for errors
+		if (result.status || result.errors || result.message) {
+			console.error("❌ SHOPIFY CART ERROR:", {
+				status: result.status,
+				errors: result.errors,
+				message: result.message,
+				description: result.description,
+				full_response: result
+			});
+			
+			// Try to get more details by testing each item individually
+			console.log("🔍 Testing individual items to find the problematic one...");
+			const cartData = JSON.parse(config.body);
+			for (let i = 0; i < cartData.items.length; i++) {
+				const item = cartData.items[i];
+				console.log(`🔍 Testing item ${i + 1}/${cartData.items.length}:`, {
+					id: item.id,
+					quantity: item.quantity,
+					properties: item.properties
+				});
+			}
+		} else {
+			console.log("✅ SHOPIFY RESPONSE:", result);
+		}
+		
+		return result;
 		}
 
 		async clearCart() {
