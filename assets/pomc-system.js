@@ -8,7 +8,43 @@
 	const DEFAULT_VESSEL_COUNT = 3;
 	const DEBOUNCE_DELAY = 100;
 	const VALIDATION_DELAY = 200;
-	const CHARCOAL_UPGRADE_PRICE = 299; // Price in cents (299 = $2.99)
+	
+	// Currency-specific charcoal upgrade pricing (in cents)
+	const CHARCOAL_UPGRADE_PRICES = {
+		'USD': 400,  // $4.00
+		'AUD': 615,  // $6.15
+		'DEFAULT': 299  // $2.99
+	};
+	
+	/**
+	 * Get the charcoal upgrade price for the current currency
+	 * @returns {number} Price in cents
+	 */
+	function getCharcoalUpgradePriceForCurrency() {
+		// Try multiple sources for currency detection
+		let currency = window.CURRENT_CURRENCY;
+		if (!currency && window.Shopify?.currency?.active) {
+			currency = window.Shopify.currency.active;
+		}
+		if (!currency && window.Shopify?.shop?.currency) {
+			currency = window.Shopify.shop.currency;
+		}
+		if (!currency) {
+			currency = 'GBP'; // Default fallback
+		}
+		
+		const price = CHARCOAL_UPGRADE_PRICES[currency] || CHARCOAL_UPGRADE_PRICES.DEFAULT;
+		console.log('🌍 Currency-based charcoal pricing:', {
+			detectedCurrency: currency,
+			priceInCents: price,
+			priceFormatted: '$' + (price / 100).toFixed(2),
+			availableCurrencies: Object.keys(CHARCOAL_UPGRADE_PRICES)
+		});
+		return price;
+	}
+	
+	// Get the price dynamically based on currency
+	const CHARCOAL_UPGRADE_PRICE = getCharcoalUpgradePriceForCurrency();
 
 	const DEFAULT_VESSEL_SELECTIONS = {
 		1: {
@@ -154,19 +190,32 @@
 			}
 		}
 		
-		const totalUpgradePrice = charcoalCount * CHARCOAL_UPGRADE_PRICE;
+		// Get the current currency-specific upgrade price
+		const currentUpgradePrice = getCharcoalUpgradePriceForCurrency();
+		const totalUpgradePrice = charcoalCount * currentUpgradePrice;
+		
+		console.log('🔍 CHARCOAL UPGRADE CALCULATION:', {
+			charcoalCount: charcoalCount,
+			pricePerUpgrade: currentUpgradePrice + ' cents ($' + (currentUpgradePrice / 100).toFixed(2) + ')',
+			totalUpgradePrice: totalUpgradePrice + ' cents ($' + (totalUpgradePrice / 100).toFixed(2) + ')',
+			currency: window.CURRENT_CURRENCY || 'GBP',
+			vesselSelections: state.vesselSelections
+		});
 		
 		return totalUpgradePrice;
 	}
 
 	function dispatchCharcoalUpgradePriceEvent() {
 		const upgradePrice = calculateCharcoalUpgradePrice();
+		const currentUpgradePrice = getCharcoalUpgradePriceForCurrency();
 		
 		const eventDetail = {
 			upgradePrice: upgradePrice,
 			upgradePriceFormatted: formatMoney(upgradePrice),
-			charcoalCount: Math.floor(upgradePrice / CHARCOAL_UPGRADE_PRICE),
+			charcoalCount: Math.floor(upgradePrice / currentUpgradePrice),
 		};
+		
+		console.log('📢 DISPATCHING pomcCharcoalUpgradePrice EVENT:', eventDetail);
 		
 		// Dispatch event for price update
 		document.dispatchEvent(
@@ -179,9 +228,22 @@
 	}
 
 	function formatMoney(cents) {
-		// Format cents to money string (e.g., 299 -> "$2.99")
-		const dollars = (cents / 100).toFixed(2);
-		return `$${dollars}`;
+		// Format cents to money string with proper currency symbol
+		const amount = (cents / 100).toFixed(2);
+		const currency = window.CURRENT_CURRENCY || 'GBP';
+		
+		// Currency symbol mapping
+		const currencySymbols = {
+			'USD': '$',
+			'AUD': '$',
+			'GBP': '£',
+			'EUR': '€',
+			'CAD': '$',
+			'DEFAULT': '£'  // Default to £ for other currencies
+		};
+		
+		const symbol = currencySymbols[currency] || currencySymbols.DEFAULT;
+		return `${symbol}${amount}`;
 	}
 
 	function getFromCache(key, selector) {
@@ -1159,6 +1221,22 @@
 		// Dispatch initial charcoal upgrade price event
 		dispatchCharcoalUpgradePriceEvent();
 
+		// Update upgrade labels with currency-based pricing
+		setTimeout(() => {
+			if (window.pomcSystem && window.pomcSystem.updateUpgradeLabels) {
+				window.pomcSystem.updateUpgradeLabels();
+			}
+		}, 100);
+		
+		// Also update on page load (independent of POMC system)
+		document.addEventListener('DOMContentLoaded', function() {
+			setTimeout(() => {
+				if (window.pomcSystem && window.pomcSystem.updateUpgradeLabels) {
+					window.pomcSystem.updateUpgradeLabels();
+				}
+			}, 200);
+		});
+
 		// Ensure button starts disabled
 		const addButton = document.getElementById("add-multiple-products");
 		if (addButton) {
@@ -1403,12 +1481,61 @@
 			}
 			
 			return {
-				charcoalVessels: charcoalVessels,
-				charcoalCount: charcoalVessels.length,
-				upgradePrice: calculateCharcoalUpgradePrice(),
-				upgradePriceFormatted: formatMoney(calculateCharcoalUpgradePrice())
-			};
+			charcoalVessels: charcoalVessels,
+			charcoalCount: charcoalVessels.length,
+			upgradePrice: calculateCharcoalUpgradePrice(),
+			upgradePriceFormatted: formatMoney(calculateCharcoalUpgradePrice())
+		};
+	},
+	get CHARCOAL_UPGRADE_PRICE() {
+		// Dynamic getter - recalculates based on current currency
+		return getCharcoalUpgradePriceForCurrency();
+	},
+	CHARCOAL_UPGRADE_PRICES: CHARCOAL_UPGRADE_PRICES,
+		getCurrentCurrency: function() {
+			return window.CURRENT_CURRENCY || 'GBP';
 		},
-		CHARCOAL_UPGRADE_PRICE: CHARCOAL_UPGRADE_PRICE,
+		updateUpgradeLabels: function() {
+			const upgradeLabels = document.querySelectorAll('[data-charcoal-upgrade-price] .upgrade-price-text');
+			console.log('🔍 DEBUGGING UPGRADE LABELS:', {
+				labelsFound: upgradeLabels.length,
+				windowCurrency: window.CURRENT_CURRENCY,
+				shopifyCurrency: window.Shopify?.currency?.active,
+				shopCurrency: window.Shopify?.shop?.currency
+			});
+			
+			if (upgradeLabels.length > 0) {
+				const currentCurrency = this.getCurrentCurrency();
+				const upgradePrice = this.CHARCOAL_UPGRADE_PRICE;
+				// Use the per-unit price, not the total price
+				const formattedPrice = formatMoney(upgradePrice);
+				
+				console.log('🔍 PRICE CALCULATION DEBUG:', {
+					currentCurrency: currentCurrency,
+					upgradePrice: upgradePrice,
+					formattedPrice: formattedPrice,
+					priceTable: CHARCOAL_UPGRADE_PRICES,
+					selectedPrice: CHARCOAL_UPGRADE_PRICES[currentCurrency] || CHARCOAL_UPGRADE_PRICES.DEFAULT
+				});
+				
+				upgradeLabels.forEach(label => {
+					label.textContent = '+ ' + formattedPrice;
+				});
+				
+				console.log('🏷️ UPGRADE LABELS UPDATED:', {
+					currency: currentCurrency,
+					priceInCents: upgradePrice,
+					formattedPrice: formattedPrice,
+					labelsFound: upgradeLabels.length
+				});
+			} else {
+				console.log('⚠️ No upgrade labels found to update');
+			}
+		},
+		// Manual trigger for testing
+		testUpgradeLabels: function() {
+			console.log('🧪 MANUAL TEST - Update upgrade labels');
+			this.updateUpgradeLabels();
+		}
 	};
 })();

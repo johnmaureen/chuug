@@ -1129,6 +1129,15 @@
     three_engraving: {{ section.settings.three_chuug_product.variants[1].price }}
   };
 
+  console.log('💵 PDP BASE PRICES LOADED:', {
+    '1x_no_engraving': BASE_PRICES.one_no_engraving + ' cents ($' + (BASE_PRICES.one_no_engraving / 100).toFixed(2) + ')',
+    '1x_engraving': BASE_PRICES.one_engraving + ' cents ($' + (BASE_PRICES.one_engraving / 100).toFixed(2) + ')',
+    '2x_no_engraving': BASE_PRICES.two_no_engraving + ' cents ($' + (BASE_PRICES.two_no_engraving / 100).toFixed(2) + ')',
+    '2x_engraving': BASE_PRICES.two_engraving + ' cents ($' + (BASE_PRICES.two_engraving / 100).toFixed(2) + ')',
+    '3x_no_engraving': BASE_PRICES.three_no_engraving + ' cents ($' + (BASE_PRICES.three_no_engraving / 100).toFixed(2) + ')',
+    '3x_engraving': BASE_PRICES.three_engraving + ' cents ($' + (BASE_PRICES.three_engraving / 100).toFixed(2) + ')',
+  });
+
   // Helper function to format money with fallback
   function formatMoneyWithFallback(cents) {
     // Try Shopify.formatMoney first
@@ -1193,11 +1202,18 @@
       cta_product_price.innerHTML = formatMoneyWithFallback(currentPrice);
     }
     
-    console.log('POMC: CTA price updated with charcoal upgrade:', {
-      upgradePrice: e.detail.upgradePriceFormatted,
-      productAmount: product_amount,
+    const finalPrice = product_amount === 1 ? newPriceForOne : product_amount === 2 ? newPriceForTwo : newPriceForThree;
+    const basePrice = isEngraving ? 
+      (product_amount === 1 ? BASE_PRICES.one_engraving : product_amount === 2 ? BASE_PRICES.two_engraving : BASE_PRICES.three_engraving) :
+      (product_amount === 1 ? BASE_PRICES.one_no_engraving : product_amount === 2 ? BASE_PRICES.two_no_engraving : BASE_PRICES.three_no_engraving);
+    
+    console.log('💳 POMC: CTA PRICE UPDATED WITH CHARCOAL UPGRADE:', {
+      upgradePrice: e.detail.upgradePriceFormatted + ' (' + e.detail.upgradePrice + ' cents)',
+      productAmount: product_amount + 'x vessels',
       isEngraving: isEngraving,
-      ctaPrice: formatMoneyWithFallback(product_amount === 1 ? newPriceForOne : product_amount === 2 ? newPriceForTwo : newPriceForThree)
+      basePrice: formatMoneyWithFallback(basePrice) + ' (' + basePrice + ' cents)',
+      calculation: formatMoneyWithFallback(basePrice) + ' + ' + e.detail.upgradePriceFormatted + ' = ' + formatMoneyWithFallback(finalPrice),
+      finalCTAPrice: formatMoneyWithFallback(finalPrice) + ' (' + finalPrice + ' cents)'
     });
   });
 </script>
