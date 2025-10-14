@@ -3407,45 +3407,20 @@
 
 		items.push(bundleItem);
 
-		// Fallback: If no vessel items were collected, try to get from selectedProductAmountData
-		if (items.length === 0 && selectedProductAmountData) {
-			// Use the selected product amount data as fallback
-			// Check for mixed vessel configuration
-			let fallbackVariantIndex;
-			if (hasMixedConfig) {
-				console.log("🛒🪢 Using mixed config fallback variant");
-				fallbackVariantIndex = engravingEnabled ? 3 : 2;
-			} else {
-				const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
-				fallbackVariantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
-			}
-			const fallbackVariant =
-				selectedProductAmountData.variants?.[fallbackVariantIndex];
-			
+		// Check if no vessel items were collected
+		if (items.length === 0) {
+			console.error("❌ CRITICAL: No vessel items were collected for cart!");
+			console.error("❌ This means vessel item creation failed completely");
+			console.error("❌ Debug info:", {
+				hasMixedConfig,
+				multiplier,
+				engravingEnabled,
+				hasSelectedProductAmountData: !!selectedProductAmountData,
+				vesselSelections: window.pomcSystem?.getAllVesselSelections()
+			});
+		}
 
-				if (fallbackVariant?.id) {
-					const fallbackProperties = {
-						"Product Source": "Selected Product Amount Data",
-						...(engravingEnabled && { Engraving: "Enabled" }),
-					};
-
-					// Add compare-at price if available
-					if (fallbackVariant.compare_at_price) {
-						fallbackProperties["_Compare At Price"] =
-							fallbackVariant.compare_at_price;
-					}
-
-					const fallbackItem = {
-						id: fallbackVariant.id,
-						quantity: multiplier || 1,
-						properties: fallbackProperties,
-					};
-
-					items.push(fallbackItem);
-				}
-			}
-
-			return items;
+		return items;
 		}
 
 		collectAddonProducts(state) {
@@ -3724,14 +3699,11 @@
 			return null;
 		}
 
-		async addItemsToShopifyCart(cartData) {
-			// CRITICAL FIX: Clear cart first to prevent duplicate items
-			await this.clearCart();
-			
-			// Small delay to ensure cart is fully cleared
-			await new Promise(resolve => setTimeout(resolve, 100));
-			
-			const config = {
+	async addItemsToShopifyCart(cartData) {
+		// Add items to cart without clearing existing items
+		// Each item has a unique _Unique Line ID property to prevent Shopify from consolidating
+		
+		const config = {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -3779,45 +3751,9 @@
 		}
 		
 		return result;
-		}
+	}
 
-		async clearCart() {
-			try {
-				// Get current cart to see what items exist
-				const cartResponse = await fetch("/cart.js");
-				const cartData = await cartResponse.json();
-				
-				if (cartData.items && cartData.items.length > 0) {
-					// Clear each item by setting quantity to 0
-					const clearPromises = cartData.items.map(item => 
-						fetch("/cart/change.js", {
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
-								Accept: "application/json",
-							},
-							body: JSON.stringify({
-								id: item.key,
-								quantity: 0,
-								sections: "cart-icon-bubble",
-								sections_url: window.location.pathname,
-							}),
-						})
-					);
-					
-					// Wait for all clear operations to complete
-					await Promise.all(clearPromises);
-					
-					// Verify cart is empty
-					const verifyResponse = await fetch("/cart.js");
-					const verifyData = await verifyResponse.json();
-				}
-			} catch (error) {
-				// Don't throw - continue with adding items even if clearing failed
-			}
-		}
-
-		updateCartIconBubble(response) {
+	updateCartIconBubble(response) {
 			// Update cart icon bubble with the returned section HTML
 			if (response.sections && response.sections["cart-icon-bubble"]) {
 				const cartIconBubble = document.getElementById("cart-icon-bubble");
