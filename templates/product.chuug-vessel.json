@@ -309,12 +309,20 @@
 				"dawn_natural": "the-dawn-natural-chuug®-v2-660ml-with-gift-bag",
 				"midnight_charcoal": "the-midnight-charcoal-chuug®-v2-660ml-with-gift-bag",
 				"midnight_natural": "the-midnight-natural-chuug®-v2-660ml-with-gift-bag",
+				"dusk_charcoal_us": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag-2",
+				"dusk_natural_us": "the-dusk-natural-chuug®-v2-660ml-with-gift-bag-1",
+				"dawn_charcoal_us": "the-dawn-charcoal-chuug®-v2-660ml-with-gift-bag-2",
+				"dawn_natural_us": "the-dawn-natural-chuug®-v2-660ml-with-gift-bag-2",
+				"midnight_charcoal_us": "the-midnight-charcoal-chuug®-v2-660ml-with-gift-bag-2",
+				"midnight_natural_us": "the-midnight-natural-chuug®-v2-660ml-with-gift-bag-2",
+				"dusk_charcoal_aus": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag-3",
+				"dusk_natural_aus": "the-dusk-natural-chuug®-v2-660ml-with-gift-bag-2",
+				"dawn_charcoal_aus": "the-dawn-charcoal-chuug®-v2-660ml-with-gift-bag-3",
+				"dawn_natural_aus": "the-dawn-natural-chuug®-v2-660ml-with-gift-bag-3",
+				"midnight_charcoal_aus": "the-midnight-charcoal-chuug®-v2-660ml-with-gift-bag-3",
+				"midnight_natural_aus": "the-midnight-natural-chuug®-v2-660ml-with-gift-bag-3",
 				"second_product_label_text": "Most Popular",
-				"third_product_label_text": "Best Value",
-				"enable_flash_sale": true,
-				"flash_sale_text": "Sale ends in",
-				"flash_sale_end_date": "2025-10-31",
-				"flash_sale_end_time": "23:59"
+				"third_product_label_text": "Best Value"
 			}
 		},
 		"reviews_carousel_QgJCgz": {

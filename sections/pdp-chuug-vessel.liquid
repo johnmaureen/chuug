@@ -22,12 +22,32 @@
 
 <script src="{{ 'pdp-chuug-vessel.js' | asset_url }}" defer></script>
 
-{% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
-{% assign dusk_natural = all_products[section.settings.dusk_natural] %}
-{% assign dawn_charcoal = all_products[section.settings.dawn_charcoal] %}
-{% assign dawn_natural = all_products[section.settings.dawn_natural] %}
-{% assign midnight_charcoal = all_products[section.settings.midnight_charcoal] %}
-{% assign midnight_natural = all_products[section.settings.midnight_natural] %}
+{% comment %} Detect market based on currency {% endcomment %}
+{% assign current_currency = cart.currency.iso_code | default: 'GBP' %}
+
+{% comment %} Assign products based on market {% endcomment %}
+{% if current_currency == 'USD' %}
+  {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal_us] %}
+  {% assign dusk_natural = all_products[section.settings.dusk_natural_us] %}
+  {% assign dawn_charcoal = all_products[section.settings.dawn_charcoal_us] %}
+  {% assign dawn_natural = all_products[section.settings.dawn_natural_us] %}
+  {% assign midnight_charcoal = all_products[section.settings.midnight_charcoal_us] %}
+  {% assign midnight_natural = all_products[section.settings.midnight_natural_us] %}
+{% elsif current_currency == 'AUD' %}
+  {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal_aus] %}
+  {% assign dusk_natural = all_products[section.settings.dusk_natural_aus] %}
+  {% assign dawn_charcoal = all_products[section.settings.dawn_charcoal_aus] %}
+  {% assign dawn_natural = all_products[section.settings.dawn_natural_aus] %}
+  {% assign midnight_charcoal = all_products[section.settings.midnight_charcoal_aus] %}
+  {% assign midnight_natural = all_products[section.settings.midnight_natural_aus] %}
+{% else %}
+  {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
+  {% assign dusk_natural = all_products[section.settings.dusk_natural] %}
+  {% assign dawn_charcoal = all_products[section.settings.dawn_charcoal] %}
+  {% assign dawn_natural = all_products[section.settings.dawn_natural] %}
+  {% assign midnight_charcoal = all_products[section.settings.midnight_charcoal] %}
+  {% assign midnight_natural = all_products[section.settings.midnight_natural] %}
+{% endif %}
 
 <script>
   window.pdp_chuug_vessel = {
@@ -1622,40 +1642,124 @@
       "label": "Natural rope image"
     },
     {
+      "type": "header",
+      "content": "Product Settings - Default Market (GBP, EUR, etc.)"
+    },
+    {
       "type": "product",
       "id": "dusk_charcoal",
-      "label": "Dusk Charcoal",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dusk Charcoal (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "dusk_natural",
-      "label": "Dusk Natural",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dusk Natural (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "dawn_charcoal",
-      "label": "Dawn Charcoal",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dawn Charcoal (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "dawn_natural",
-      "label": "Dawn Natural",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dawn Natural (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "midnight_charcoal",
-      "label": "Midnight Charcoal",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Midnight Charcoal (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "midnight_natural",
-      "label": "Midnight Natural",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Midnight Natural (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
+    },
+    {
+      "type": "header",
+      "content": "Product Settings - US Market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_charcoal_us",
+      "label": "Dusk Charcoal (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_natural_us",
+      "label": "Dusk Natural (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_charcoal_us",
+      "label": "Dawn Charcoal (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_natural_us",
+      "label": "Dawn Natural (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_charcoal_us",
+      "label": "Midnight Charcoal (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_natural_us",
+      "label": "Midnight Natural (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "header",
+      "content": "Product Settings - Australia Market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_charcoal_aus",
+      "label": "Dusk Charcoal (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_natural_aus",
+      "label": "Dusk Natural (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_charcoal_aus",
+      "label": "Dawn Charcoal (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_natural_aus",
+      "label": "Dawn Natural (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_charcoal_aus",
+      "label": "Midnight Charcoal (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_natural_aus",
+      "label": "Midnight Natural (AUS)",
+      "info": "Product for Australia market (AUD)"
     },
       {
       "type": "text",
