@@ -3206,10 +3206,26 @@
 				return null;
 			}
 			
-			// For individual vessel products, we need to find the variant that matches the engraving option
-			// Assuming variants are ordered: [0] = No engraving, [1] = With engraving
-			const variantIndex = hasEngraving ? 1 : 0;
+			// Determine variant index based on rope type and engraving
+			// Individual vessel products have the same variant structure as bundles:
+			// 0: Natural, No Engraving
+			// 1: Natural, With Engraving
+			// 2: Charcoal, No Engraving
+			// 3: Charcoal, With Engraving
+			const isCharcoal = ropeType && ropeType.toLowerCase() === 'charcoal';
+			let variantIndex;
+			
+			if (isCharcoal) {
+				// Charcoal products: index 2 (no engraving) or 3 (with engraving)
+				variantIndex = hasEngraving ? 3 : 2;
+			} else {
+				// Natural products: index 0 (no engraving) or 1 (with engraving)
+				variantIndex = hasEngraving ? 1 : 0;
+			}
+			
 			const variant = productData.variants[variantIndex] || productData.variants[0];
+			
+			console.log(`🔍 Individual vessel variant: ${woodType} ${ropeType}, engraving=${hasEngraving}, index=${variantIndex}, variantId=${variant.id}`);
 			
 			return variant.id;
 		} catch (error) {
