@@ -342,6 +342,12 @@
     // Initialize Swiper for modal carousel
     function initContentModalSwiper() {
       if (!contentModalSwiper) {
+        // Check if Swiper is loaded
+        if (typeof Swiper === 'undefined') {
+          setTimeout(initContentModalSwiper, 50);
+          return;
+        }
+        
         buildModalCarousel();
         
         contentModalSwiper = new Swiper('.modal-carousel-swiper', {

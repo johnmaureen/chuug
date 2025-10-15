@@ -750,7 +750,13 @@
       </div>
 
       <script>
-        const reviewSwiper = new Swiper('#review-swiper', {
+        function initReviewSwiper() {
+          if (typeof Swiper === 'undefined') {
+            setTimeout(initReviewSwiper, 50);
+            return;
+          }
+          
+          window.reviewSwiper = new Swiper('#review-swiper', {
           slidesPerView: 'auto',
           spaceBetween: 16,
           loop: true,
@@ -761,17 +767,25 @@
             disableOnInteraction: false,
           },
         });
-
+        }
+        
         function handleToggleReviewSwiperState(elm) {
-          if (reviewSwiper.autoplay.running) {
-            reviewSwiper.autoplay.stop();
+          if (window.reviewSwiper && window.reviewSwiper.autoplay.running) {
+            window.reviewSwiper.autoplay.stop();
             elm.title = 'play';
             elm.dataset.play = 'false';
-          } else {
-            reviewSwiper.autoplay.start();
+          } else if (window.reviewSwiper) {
+            window.reviewSwiper.autoplay.start();
             elm.title = 'pause';
             elm.dataset.play = 'true';
           }
+        }
+        
+        // Initialize when ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initReviewSwiper);
+        } else {
+          initReviewSwiper();
         }
       </script>
     </div>
@@ -1248,7 +1262,13 @@
       </div>
 
       <script>
-        const reviewVesselSwiper = new Swiper('#review-vessel-swiper', {
+        function initReviewVesselSwiper() {
+          if (typeof Swiper === 'undefined') {
+            setTimeout(initReviewVesselSwiper, 50);
+            return;
+          }
+          
+          const reviewVesselSwiper = new Swiper('#review-vessel-swiper', {
           slidesPerView: 1,
           spaceBetween: '16',
           initialSlide: 1,
@@ -1263,6 +1283,14 @@
             },
           },
         });
+        }
+        
+        // Initialize when ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initReviewVesselSwiper);
+        } else {
+          initReviewVesselSwiper();
+        }
       </script>
     </div>
   </div>

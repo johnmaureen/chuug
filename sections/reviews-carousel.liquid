@@ -115,7 +115,13 @@
 }
 </style>
 <script>
-  const reviewSwiper = new Swiper('#review-swiper', {
+  function initReviewSwiper() {
+    if (typeof Swiper === 'undefined') {
+      setTimeout(initReviewSwiper, 50);
+      return;
+    }
+    
+    window.reviewSwiper = new Swiper('#review-swiper', {
     slidesPerView: 'auto',
     spaceBetween: 16,
     loop: true,
@@ -126,19 +132,27 @@
       disableOnInteraction: false,
     },
   });
+  }
 
   function handleToggleReviewSwiperState(elm) {
-    if (reviewSwiper.autoplay.running) {
-      reviewSwiper.autoplay.stop();
+    if (window.reviewSwiper && window.reviewSwiper.autoplay.running) {
+      window.reviewSwiper.autoplay.stop();
       elm.title = 'play';
       elm.dataset.play = 'false';
       elm.querySelector('.play-icon').style.display = 'block';
-    } else {
-      reviewSwiper.autoplay.start();
+    } else if (window.reviewSwiper) {
+      window.reviewSwiper.autoplay.start();
       elm.title = 'pause';
       elm.dataset.play = 'true';
       elm.querySelector('.play-icon').style.display = 'none';
     }
+  }
+  
+  // Initialize when ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReviewSwiper);
+  } else {
+    initReviewSwiper();
   }
 </script>
 

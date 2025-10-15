@@ -1445,7 +1445,14 @@
 <script>
   var bottom_autoplay_carousel;
 
-  document.addEventListener('DOMContentLoaded', (event) => {
+  // Function to initialize Swiper when library is ready
+  function initializeSwipers() {
+    if (typeof Swiper === 'undefined') {
+      // Swiper not loaded yet, wait and try again
+      setTimeout(initializeSwipers, 50);
+      return;
+    }
+
     const thumbs_swiper = new Swiper('.thumbsSlider', {
       slidesPerView: 5.5,
       freeMode: true,
@@ -1491,7 +1498,15 @@
         },
       },
     });
-  });
+  }
+
+  // Start initialization when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSwipers);
+  } else {
+    // DOM already loaded
+    initializeSwipers();
+  }
 </script>
 
 {% schema %}

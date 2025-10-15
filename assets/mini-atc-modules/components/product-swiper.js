@@ -24,8 +24,20 @@ export class ProductImageSwiper {
 		if (typeof Swiper !== "undefined") {
 			this.createSwiper();
 		} else {
-			// Fallback for manual dot navigation
-			this.setupFallbackNavigation();
+			// Wait for Swiper to load (deferred loading)
+			this.waitForSwiper();
+		}
+	}
+
+	/**
+	 * Wait for Swiper library to load
+	 */
+	waitForSwiper() {
+		if (typeof Swiper !== "undefined") {
+			this.createSwiper();
+		} else {
+			// Check again after a short delay
+			setTimeout(() => this.waitForSwiper(), 50);
 		}
 	}
 
