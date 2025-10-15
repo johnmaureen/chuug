@@ -154,11 +154,18 @@ head.appendChild(script);
   })(window,document,'script','dataLayer','GTM-KZ8X9GJC');</script>
   <!-- End Google Tag Manager -->  
 
-<!-- TrustBox script -->
-<script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+<!-- TrustBox script - Deferred for better performance -->
+<script type="text/javascript">
+  window.addEventListener('load', function() {
+    var script = document.createElement('script');
+    script.src = "//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js";
+    script.async = true;
+    document.head.appendChild(script);
+  });
+</script>
 <!-- End TrustBox script -->
     
-{{ 'tiny.content.min.css' | asset_url | stylesheet_tag }}
+{% comment %} tiny.content.min.css removed - file doesn't exist, causes MIME type error {% endcomment %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -433,12 +440,16 @@ head.appendChild(script);
   
   {% include "trackify_x" %}
 
+{% comment %} Microsoft Clarity - Only one instance needed (l4pnvju86i). 
+Duplicate instance (ncxwve3mkx) removed to prevent double-loading {% endcomment %}
 <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "l4pnvju86i");
+    window.addEventListener('load', function() {
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "l4pnvju86i");
+    });
 </script>
   
 
@@ -815,13 +826,18 @@ head.appendChild(script);
     {% endif %}
   {% endif %}
 </script>
-    <script type="text/javascript">!function(e,t,n){function a(){var e=t.getElementsByTagName("script")[0],n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://beacon-v2.helpscout.net",e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],"complete"===t.readyState)return a();e.attachEvent?e.attachEvent("onload",a):e.addEventListener("load",a,!1)}(window,document,window.Beacon||function(){});</script>
-<script type="text/javascript">window.Beacon('init', 'c44bd933-c0ae-4b32-8219-89fde7a94978')</script>
+    {% comment %} HelpScout Beacon - Deferred to load after page interactive {% endcomment %}
+    <script type="text/javascript">
+      window.addEventListener('load', function() {
+        !function(e,t,n){function a(){var e=t.getElementsByTagName("script")[0],n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://beacon-v2.helpscout.net",e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],"complete"===t.readyState)return a();e.attachEvent?e.attachEvent("onload",a):e.addEventListener("load",a,!1)}(window,document,window.Beacon||function(){});
+        window.Beacon('init', 'c44bd933-c0ae-4b32-8219-89fde7a94978');
+      });
+    </script>
 
     <script type="text/javascript">
   var _learnq = _learnq || [];
 
-  _learnq.push(['account', TujLdz]);
+  _learnq.push(['account', 'TujLdz']);
 
   (function () {
   var b = document.createElement('script'); b.type = 'text/javascript'; b.async = true;
