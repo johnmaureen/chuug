@@ -8,14 +8,14 @@
 	const DEFAULT_VESSEL_COUNT = 3;
 	const DEBOUNCE_DELAY = 100;
 	const VALIDATION_DELAY = 200;
-	
+
 	// Currency-specific charcoal upgrade pricing (in cents)
 	const CHARCOAL_UPGRADE_PRICES = {
-		'USD': 400,  // $4.00
-		'AUD': 615,  // $6.15
-		'DEFAULT': 299  // $2.99
+		USD: 400, // $4.00
+		AUD: 600, // $6.00
+		DEFAULT: 299, // $2.99
 	};
-	
+
 	/**
 	 * Get the charcoal upgrade price for the current currency
 	 * @returns {number} Price in cents
@@ -30,19 +30,20 @@
 			currency = window.Shopify.shop.currency;
 		}
 		if (!currency) {
-			currency = 'GBP'; // Default fallback
+			currency = "GBP"; // Default fallback
 		}
-		
-		const price = CHARCOAL_UPGRADE_PRICES[currency] || CHARCOAL_UPGRADE_PRICES.DEFAULT;
-		console.log('🌍 Currency-based charcoal pricing:', {
+
+		const price =
+			CHARCOAL_UPGRADE_PRICES[currency] || CHARCOAL_UPGRADE_PRICES.DEFAULT;
+		console.log("🌍 Currency-based charcoal pricing:", {
 			detectedCurrency: currency,
 			priceInCents: price,
-			priceFormatted: '$' + (price / 100).toFixed(2),
-			availableCurrencies: Object.keys(CHARCOAL_UPGRADE_PRICES)
+			priceFormatted: "$" + (price / 100).toFixed(2),
+			availableCurrencies: Object.keys(CHARCOAL_UPGRADE_PRICES),
 		});
 		return price;
 	}
-	
+
 	// Get the price dynamically based on currency
 	const CHARCOAL_UPGRADE_PRICE = getCharcoalUpgradePriceForCurrency();
 
@@ -181,67 +182,82 @@
 
 	function calculateCharcoalUpgradePrice() {
 		let charcoalCount = 0;
-		
+
 		// Count how many vessels have charcoal rope selected (only for active vessels)
-		for (let vesselNum = 1; vesselNum <= state.currentVesselCount; vesselNum++) {
+		for (
+			let vesselNum = 1;
+			vesselNum <= state.currentVesselCount;
+			vesselNum++
+		) {
 			const selection = state.vesselSelections[vesselNum];
-			if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+			if (
+				selection.ropeType &&
+				selection.ropeType.toLowerCase() === "charcoal"
+			) {
 				charcoalCount++;
 			}
 		}
-		
+
 		// Get the current currency-specific upgrade price
 		const currentUpgradePrice = getCharcoalUpgradePriceForCurrency();
 		const totalUpgradePrice = charcoalCount * currentUpgradePrice;
-		
-		console.log('🔍 CHARCOAL UPGRADE CALCULATION:', {
+
+		console.log("🔍 CHARCOAL UPGRADE CALCULATION:", {
 			charcoalCount: charcoalCount,
-			pricePerUpgrade: currentUpgradePrice + ' cents ($' + (currentUpgradePrice / 100).toFixed(2) + ')',
-			totalUpgradePrice: totalUpgradePrice + ' cents ($' + (totalUpgradePrice / 100).toFixed(2) + ')',
-			currency: window.CURRENT_CURRENCY || 'GBP',
-			vesselSelections: state.vesselSelections
+			pricePerUpgrade:
+				currentUpgradePrice +
+				" cents ($" +
+				(currentUpgradePrice / 100).toFixed(2) +
+				")",
+			totalUpgradePrice:
+				totalUpgradePrice +
+				" cents ($" +
+				(totalUpgradePrice / 100).toFixed(2) +
+				")",
+			currency: window.CURRENT_CURRENCY || "GBP",
+			vesselSelections: state.vesselSelections,
 		});
-		
+
 		return totalUpgradePrice;
 	}
 
 	function dispatchCharcoalUpgradePriceEvent() {
 		const upgradePrice = calculateCharcoalUpgradePrice();
 		const currentUpgradePrice = getCharcoalUpgradePriceForCurrency();
-		
+
 		const eventDetail = {
 			upgradePrice: upgradePrice,
 			upgradePriceFormatted: formatMoney(upgradePrice),
 			charcoalCount: Math.floor(upgradePrice / currentUpgradePrice),
 		};
-		
-		console.log('📢 DISPATCHING pomcCharcoalUpgradePrice EVENT:', eventDetail);
-		
+
+		console.log("📢 DISPATCHING pomcCharcoalUpgradePrice EVENT:", eventDetail);
+
 		// Dispatch event for price update
 		document.dispatchEvent(
 			new CustomEvent("pomcCharcoalUpgradePrice", {
 				detail: eventDetail,
 			})
 		);
-		
+
 		return upgradePrice;
 	}
 
 	function formatMoney(cents) {
 		// Format cents to money string with proper currency symbol
 		const amount = (cents / 100).toFixed(2);
-		const currency = window.CURRENT_CURRENCY || 'GBP';
-		
+		const currency = window.CURRENT_CURRENCY || "GBP";
+
 		// Currency symbol mapping
 		const currencySymbols = {
-			'USD': '$',
-			'AUD': '$',
-			'GBP': '£',
-			'EUR': '€',
-			'CAD': '$',
-			'DEFAULT': '£'  // Default to £ for other currencies
+			USD: "$",
+			AUD: "$",
+			GBP: "£",
+			EUR: "€",
+			CAD: "$",
+			DEFAULT: "£", // Default to £ for other currencies
 		};
-		
+
 		const symbol = currencySymbols[currency] || currencySymbols.DEFAULT;
 		return `${symbol}${amount}`;
 	}
@@ -481,17 +497,19 @@
 		);
 		allInputs.forEach((input) => {
 			input.checked = false;
-			input.removeAttribute('checked'); // Remove any default checked attribute
+			input.removeAttribute("checked"); // Remove any default checked attribute
 			const label = input.closest("label");
 			if (label) {
 				label.classList.remove("active");
 			}
 		});
-		
+
 		// Also remove any active classes from wood-type-label and rope-type-label
-		document.querySelectorAll('.wood-type-label, .rope-type-label').forEach(label => {
-			label.classList.remove('active');
-		});
+		document
+			.querySelectorAll(".wood-type-label, .rope-type-label")
+			.forEach((label) => {
+				label.classList.remove("active");
+			});
 	}
 
 	function clearPreselectedOptionsForHiddenVessels(maxVesselCount) {
@@ -1048,31 +1066,31 @@
 
 			updateSelectionDisplay(false);
 
-		// Validate button state after vessel count change
-		const vesselValidation = validateAllVesselsForAddToCart();
-		const cta_button = document.querySelector(".cta-button");
-		const incompletText = document.querySelector(".incompleted-inputs-text");
+			// Validate button state after vessel count change
+			const vesselValidation = validateAllVesselsForAddToCart();
+			const cta_button = document.querySelector(".cta-button");
+			const incompletText = document.querySelector(".incompleted-inputs-text");
 
-		if (!vesselValidation.isValid) {
-			if (cta_button) {
-				cta_button.setAttribute("disabled", true);
-			}
-			if (incompletText) {
-				incompletText.style.display = "block";
-			}
-		} else {
-			// Only enable if other validations also pass
-			if (window.thereAreNoIncompleteInputs && cta_button) {
-				const originalValidation =
-					window.thereAreNoIncompleteInputs(vesselCountNum);
-				if (originalValidation) {
-					cta_button.removeAttribute("disabled");
-					if (incompletText) {
-						incompletText.style.display = "none";
+			if (!vesselValidation.isValid) {
+				if (cta_button) {
+					cta_button.setAttribute("disabled", true);
+				}
+				if (incompletText) {
+					incompletText.style.display = "block";
+				}
+			} else {
+				// Only enable if other validations also pass
+				if (window.thereAreNoIncompleteInputs && cta_button) {
+					const originalValidation =
+						window.thereAreNoIncompleteInputs(vesselCountNum);
+					if (originalValidation) {
+						cta_button.removeAttribute("disabled");
+						if (incompletText) {
+							incompletText.style.display = "none";
+						}
 					}
 				}
 			}
-		}
 		});
 	}
 
@@ -1202,28 +1220,30 @@
 	function initialize() {
 		// Clear localStorage if page was refreshed (not back/forward navigation)
 		// This ensures users start fresh on each page load
-		const isPageRefresh = (function() {
+		const isPageRefresh = (function () {
 			// Try modern Navigation Timing API first
-			const navEntries = performance.getEntriesByType('navigation');
+			const navEntries = performance.getEntriesByType("navigation");
 			if (navEntries && navEntries.length > 0) {
-				return navEntries[0].type === 'reload';
+				return navEntries[0].type === "reload";
 			}
 			// Fallback to deprecated but widely supported API
 			return performance.navigation && performance.navigation.type === 1;
 		})();
-		
+
 		if (isPageRefresh) {
 			storage.clear();
-			console.log('🔄 Page refreshed - localStorage cleared for fresh start');
+			console.log("🔄 Page refreshed - localStorage cleared for fresh start");
 		}
 
 		// Initialize state - sync with the selected product amount (default is 2)
 		state.currentVesselCount = state.selectedProductAmount;
 
 		// Disable browser autocomplete on all option inputs to prevent auto-restoration
-		const allInputs = document.querySelectorAll('input[name^="wood_material_"], input[name^="rope_material_"]');
-		allInputs.forEach(input => {
-			input.setAttribute('autocomplete', 'off');
+		const allInputs = document.querySelectorAll(
+			'input[name^="wood_material_"], input[name^="rope_material_"]'
+		);
+		allInputs.forEach((input) => {
+			input.setAttribute("autocomplete", "off");
 		});
 
 		// Clear any pre-selected options (do this twice to ensure it takes effect)
@@ -1262,9 +1282,9 @@
 				window.pomcSystem.updateUpgradeLabels();
 			}
 		}, 100);
-		
+
 		// Also update on page load (independent of POMC system)
-		document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener("DOMContentLoaded", function () {
 			setTimeout(() => {
 				if (window.pomcSystem && window.pomcSystem.updateUpgradeLabels) {
 					window.pomcSystem.updateUpgradeLabels();
@@ -1282,30 +1302,31 @@
 			incompletText.style.display = "block";
 		}
 
-	// Setup cleanup on page unload (but NOT when navigating)
-	// Only clear when actually leaving the site, not when going to checkout
-	const cleanup = debounce(storage.clear, 100);
-	
-	// Only clear on beforeunload if we're actually leaving the domain
-	// Don't clear when just navigating within the site (like to checkout)
-	window.addEventListener("beforeunload", function(event) {
-		// Check if we're navigating to another page on the same domain
-		// If so, preserve the state for when user comes back
-		const isInternalNavigation = event.currentTarget.performance && 
-			event.currentTarget.performance.navigation && 
-			event.currentTarget.performance.navigation.type === 0; // TYPE_NAVIGATE
-		
-		// Only clear if user is truly leaving (closing tab, going to external site, etc)
-		if (!isInternalNavigation) {
-			cleanup();
-		}
-	});
-	
-	// Remove visibilitychange cleanup - this was causing state to be lost
-	// when navigating to checkout and coming back
-	// document.addEventListener("visibilitychange", function () {
-	// 	if (document.hidden) cleanup();
-	// });
+		// Setup cleanup on page unload (but NOT when navigating)
+		// Only clear when actually leaving the site, not when going to checkout
+		const cleanup = debounce(storage.clear, 100);
+
+		// Only clear on beforeunload if we're actually leaving the domain
+		// Don't clear when just navigating within the site (like to checkout)
+		window.addEventListener("beforeunload", function (event) {
+			// Check if we're navigating to another page on the same domain
+			// If so, preserve the state for when user comes back
+			const isInternalNavigation =
+				event.currentTarget.performance &&
+				event.currentTarget.performance.navigation &&
+				event.currentTarget.performance.navigation.type === 0; // TYPE_NAVIGATE
+
+			// Only clear if user is truly leaving (closing tab, going to external site, etc)
+			if (!isInternalNavigation) {
+				cleanup();
+			}
+		});
+
+		// Remove visibilitychange cleanup - this was causing state to be lost
+		// when navigating to checkout and coming back
+		// document.addEventListener("visibilitychange", function () {
+		// 	if (document.hidden) cleanup();
+		// });
 	}
 
 	// ========================================
@@ -1316,10 +1337,10 @@
 	} else {
 		initialize();
 	}
-	
+
 	// Handle browser back/forward navigation (bfcache)
 	// When user navigates back from checkout, restore the UI state
-	window.addEventListener("pageshow", function(event) {
+	window.addEventListener("pageshow", function (event) {
 		// event.persisted is true when page is loaded from bfcache (back/forward cache)
 		if (event.persisted) {
 			// Reload state from localStorage
@@ -1327,14 +1348,14 @@
 			if (hasLoadedSelections) {
 				// Restore UI elements to match saved state
 				restoreUIFromSelections();
-				
+
 				// Update displays
 				updateSelectionDisplay(false);
-				
+
 				// Re-validate and show feedback
 				const validation = validateVesselSelections();
 				showValidationFeedback(validation);
-				
+
 				// Dispatch charcoal upgrade price event
 				dispatchCharcoalUpgradePriceEvent();
 			}
@@ -1473,10 +1494,10 @@
 				}
 
 				storage.save();
-				
+
 				// Dispatch charcoal upgrade price event
 				dispatchCharcoalUpgradePriceEvent();
-				
+
 				updateSelectionDisplay(false);
 			}
 		},
@@ -1484,93 +1505,104 @@
 			storage.clear();
 			state.vesselUIState.clear();
 			clearAllPreselectedOptions();
-			
+
 			// Dispatch charcoal upgrade price event
 			dispatchCharcoalUpgradePriceEvent();
-			
+
 			updateSelectionDisplay(false);
 		},
 		switchToVessel: switchToVessel,
 		maintainVesselState: maintainVesselUIState,
 		restoreVesselState: restoreVesselUIState,
 		getCharcoalUpgradePrice: calculateCharcoalUpgradePrice,
-		getCharcoalUpgradePriceFormatted: function() {
+		getCharcoalUpgradePriceFormatted: function () {
 			return formatMoney(calculateCharcoalUpgradePrice());
 		},
-		getCharcoalUpgradeData: function() {
+		getCharcoalUpgradeData: function () {
 			const charcoalVessels = [];
-			
+
 			// Get all vessels with charcoal rope selected (only for active vessels)
-			for (let vesselNum = 1; vesselNum <= state.currentVesselCount; vesselNum++) {
+			for (
+				let vesselNum = 1;
+				vesselNum <= state.currentVesselCount;
+				vesselNum++
+			) {
 				const selection = state.vesselSelections[vesselNum];
-				if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+				if (
+					selection.ropeType &&
+					selection.ropeType.toLowerCase() === "charcoal"
+				) {
 					charcoalVessels.push({
 						vesselNumber: vesselNum,
 						woodType: selection.woodType,
 						ropeType: selection.ropeType,
 						ropeVariantId: selection.ropeVariantId,
 						productId: selection.productId,
-						productHandle: selection.productHandle
+						productHandle: selection.productHandle,
 					});
 				}
 			}
-			
+
 			return {
-			charcoalVessels: charcoalVessels,
-			charcoalCount: charcoalVessels.length,
-			upgradePrice: calculateCharcoalUpgradePrice(),
-			upgradePriceFormatted: formatMoney(calculateCharcoalUpgradePrice())
-		};
-	},
-	get CHARCOAL_UPGRADE_PRICE() {
-		// Dynamic getter - recalculates based on current currency
-		return getCharcoalUpgradePriceForCurrency();
-	},
-	CHARCOAL_UPGRADE_PRICES: CHARCOAL_UPGRADE_PRICES,
-		getCurrentCurrency: function() {
-			return window.CURRENT_CURRENCY || 'GBP';
+				charcoalVessels: charcoalVessels,
+				charcoalCount: charcoalVessels.length,
+				upgradePrice: calculateCharcoalUpgradePrice(),
+				upgradePriceFormatted: formatMoney(calculateCharcoalUpgradePrice()),
+			};
 		},
-		updateUpgradeLabels: function() {
-			const upgradeLabels = document.querySelectorAll('[data-charcoal-upgrade-price] .upgrade-price-text');
-			console.log('🔍 DEBUGGING UPGRADE LABELS:', {
+		get CHARCOAL_UPGRADE_PRICE() {
+			// Dynamic getter - recalculates based on current currency
+			return getCharcoalUpgradePriceForCurrency();
+		},
+		CHARCOAL_UPGRADE_PRICES: CHARCOAL_UPGRADE_PRICES,
+		getCurrentCurrency: function () {
+			return window.CURRENT_CURRENCY || "GBP";
+		},
+		updateUpgradeLabels: function () {
+			const upgradeLabels = document.querySelectorAll(
+				"[data-charcoal-upgrade-price] .upgrade-price-text"
+			);
+			console.log("🔍 DEBUGGING UPGRADE LABELS:", {
 				labelsFound: upgradeLabels.length,
 				windowCurrency: window.CURRENT_CURRENCY,
 				shopifyCurrency: window.Shopify?.currency?.active,
-				shopCurrency: window.Shopify?.shop?.currency
+				shopCurrency: window.Shopify?.shop?.currency,
 			});
-			
+
 			if (upgradeLabels.length > 0) {
 				const currentCurrency = this.getCurrentCurrency();
 				const upgradePrice = this.CHARCOAL_UPGRADE_PRICE;
 				// Use the per-unit price, not the total price
 				const formattedPrice = formatMoney(upgradePrice);
-				
-				console.log('🔍 PRICE CALCULATION DEBUG:', {
+
+				console.log("🔍 PRICE CALCULATION DEBUG:", {
 					currentCurrency: currentCurrency,
 					upgradePrice: upgradePrice,
 					formattedPrice: formattedPrice,
 					priceTable: CHARCOAL_UPGRADE_PRICES,
-					selectedPrice: CHARCOAL_UPGRADE_PRICES[currentCurrency] || CHARCOAL_UPGRADE_PRICES.DEFAULT
+					selectedPrice:
+						CHARCOAL_UPGRADE_PRICES[currentCurrency] ||
+						CHARCOAL_UPGRADE_PRICES.DEFAULT,
 				});
-				
-				upgradeLabels.forEach(label => {
-					label.textContent = '+ ' + formattedPrice;
+
+				upgradeLabels.forEach((label) => {
+					label.textContent = "+ " + formattedPrice;
 				});
-				
-				console.log('🏷️ UPGRADE LABELS UPDATED:', {
+
+				console.log("🏷️ UPGRADE LABELS UPDATED:", {
 					currency: currentCurrency,
 					priceInCents: upgradePrice,
 					formattedPrice: formattedPrice,
-					labelsFound: upgradeLabels.length
+					labelsFound: upgradeLabels.length,
 				});
 			} else {
-				console.log('⚠️ No upgrade labels found to update');
+				console.log("⚠️ No upgrade labels found to update");
 			}
 		},
 		// Manual trigger for testing
-		testUpgradeLabels: function() {
-			console.log('🧪 MANUAL TEST - Update upgrade labels');
+		testUpgradeLabels: function () {
+			console.log("🧪 MANUAL TEST - Update upgrade labels");
 			this.updateUpgradeLabels();
-		}
+		},
 	};
 })();
