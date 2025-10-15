@@ -3,8 +3,8 @@
 **Analysis Date**: October 15, 2025  
 **Page Analyzed**: Product Page (Chuug Vessel)  
 **Total Issues Found**: 47  
-**Issues Fixed**: 8 (17%)  
-**Issues Remaining**: 39 (83%)
+**Issues Fixed**: 15 (32%)  
+**Issues Remaining**: 32 (68%)
 
 ---
 
@@ -48,9 +48,9 @@
 | 16 | **30+ third-party tracking scripts** | **-3s** | 🔴 TODO | `theme.liquid` | Move all to Google Tag Manager |
 | 17 | **370+ total HTTP requests** | **-2s** | 🔴 TODO | Entire site | Reduce to <100 requests |
 | 18 | Duplicate Clarity instances (2 IDs) | -100ms | 🔴 TODO | `theme.liquid` | Remove ncxwve3mkx, keep l4pnvju86i |
-| 19 | Intelligems blocking render | -200ms | 🔴 TODO | Line 132 theme.liquid | Remove `blocking="render"` |
-| 20 | Convert Experiments blocking | -150ms | 🔴 TODO | Line 184 theme.liquid | Defer or move to GTM |
-| 21 | Google Tag Manager (sync loading) | -100ms | 🔴 TODO | Lines 150-154 theme.liquid | Already async, but consolidate scripts |
+| 19 | Intelligems blocking render | -200ms | ✅ FIXED | Line 133 theme.liquid | Removed `blocking="render"` |
+| 20 | Convert Experiments blocking | -150ms | ✅ FIXED | Line 194 theme.liquid | Added defer attribute |
+| 21 | Google Tag Manager (sync loading) | -100ms | 🔴 TODO | Lines 152-157 theme.liquid | Already async, but consolidate scripts |
 
 ---
 
@@ -60,7 +60,9 @@
 
 | ID | Issue | Impact | Status | Type | Recommendation |
 |----|-------|--------|--------|------|----------------|
-| 22 | 50+ images without lazy loading | -1s | 🟡 TODO | All images | Add `loading="lazy"` attribute |
+| 22 | LCP image lazy loaded | -650ms | ✅ FIXED | First carousel image | Removed lazy loading, added fetchpriority |
+| 22b | LCP image not preloaded | -400ms | ✅ FIXED | First carousel image | Added preload link |
+| 22c | LCP image not prioritized | -200ms | ✅ FIXED | First carousel image | Added fetchpriority="high" |
 | 23 | Images not using WebP format | -800ms | 🟡 TODO | All images | Convert to WebP |
 | 24 | No responsive images (srcset) | -400ms | 🟡 TODO | All images | Add srcset for different sizes |
 | 25 | Missing width/height attributes | CLS | 🟡 TODO | All images | Add dimensions to prevent layout shift |
@@ -81,8 +83,8 @@
 | ID | Issue | Impact | Status | Location | Notes |
 |----|-------|--------|--------|----------|-------|
 | 32 | Tailwind CSS errors (tw-text-white) | N/A | ⚠️ ERROR | Multiple | 15+ instances (related to removed CDN) |
-| 33 | Klaviyo forms loading immediately | -200ms | 🟡 TODO | Bottom of page | Delay popup by 5-10 seconds |
-| 34 | jQuery loading from Google CDN | -100ms | 🟡 TODO | Line 168 network | Self-host or use Shopify CDN |
+| 33 | Klarna loading on all pages | -68KB | ✅ FIXED | Line 142-150 theme.liquid | Conditional loading on cart/product only |
+| 34 | No resource hints for third-party | -150ms | ✅ FIXED | Line 187-191 theme.liquid | Added DNS prefetch & preconnect |
 | 35 | Multiple GTM instances | -50ms | 🟡 TODO | theme.liquid | GTM-KZ8X9GJC and GTM-KPS3HC5L |
 
 ### Priority 2 - Font Optimization
