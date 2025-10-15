@@ -317,7 +317,7 @@
 
                     <div class="block-wrap">
                       <label class="wood-type-label block-label tw-cursor-pointer  ">
-                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DUSK" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option">
+                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DUSK" data-variant-id="{{ dusk_charcoal.variants.first.id }}" class="tw-hidden js-option" autocomplete="off">
                         {% if section.settings.wood_finish_dusk_wood != blank %}
                          <div class="img-wrap">
                            <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48" loading="lazy">
@@ -327,7 +327,7 @@
                       </label>
 
                       <label class="wood-type-label block-label tw-cursor-pointer">
-                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DAWN" data-variant-id="{{ dawn_charcoal.variants.first.id }}" class="tw-hidden js-option">
+                        <input type="radio" name="wood_material_{{ forloop.index }}" value="DAWN" data-variant-id="{{ dawn_charcoal.variants.first.id }}" class="tw-hidden js-option" autocomplete="off">
                         {% if section.settings.wood_finish_dawn_wood != blank %}
                          <div class="img-wrap">
                             <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48" loading="lazy">
@@ -337,7 +337,7 @@
                       </label>
 
                       <label class="wood-type-label block-label tw-cursor-pointer">
-                        <input type="radio" name="wood_material_{{ forloop.index }}" value="MIDNIGHT" data-variant-id="{{ midnight_charcoal.variants.first.id }}" class="tw-hidden js-option">
+                        <input type="radio" name="wood_material_{{ forloop.index }}" value="MIDNIGHT" data-variant-id="{{ midnight_charcoal.variants.first.id }}" class="tw-hidden js-option" autocomplete="off">
                         {% if section.settings.wood_finish_midnight_wood != blank %}
                          <div class="img-wrap">
                           <img
@@ -358,7 +358,7 @@
 
                     <div class="block-wrap">
                       <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow tw-cursor-pointer">
-                        <input type="radio" name="rope_material_{{ forloop.index }}" value="NATURAL" data-variant-id="{{ dusk_natural.variants.first.id }}" class="tw-hidden js-option">
+                        <input type="radio" name="rope_material_{{ forloop.index }}" value="NATURAL" data-variant-id="{{ dusk_natural.variants.first.id }}" class="tw-hidden js-option" autocomplete="off">
                         <span class="rope-type-name tw-uppercase type-name">NATURAL</span>
                         {% if section.settings.natural_rope != blank %}
                           <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48" loading="lazy">
@@ -369,7 +369,7 @@
                       </label>
                       <label class="block-label rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
 
-                        <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" data-variant-id="{{ dusk_charcoal.variants[2].id }}" class="tw-hidden js-option">
+                        <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" data-variant-id="{{ dusk_charcoal.variants[2].id }}" class="tw-hidden js-option" autocomplete="off">
                         <div class="charocal-upgrade">
                           <span class="rope-type-name tw-uppercase type-name">CHARCOAL </span>
                           <span class="text-upgrade">

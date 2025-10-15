@@ -481,8 +481,16 @@
 		);
 		allInputs.forEach((input) => {
 			input.checked = false;
+			input.removeAttribute('checked'); // Remove any default checked attribute
 			const label = input.closest("label");
-			if (label) label.classList.remove("active");
+			if (label) {
+				label.classList.remove("active");
+			}
+		});
+		
+		// Also remove any active classes from wood-type-label and rope-type-label
+		document.querySelectorAll('.wood-type-label, .rope-type-label').forEach(label => {
+			label.classList.remove('active');
 		});
 	}
 
@@ -1212,8 +1220,18 @@
 		// Initialize state - sync with the selected product amount (default is 2)
 		state.currentVesselCount = state.selectedProductAmount;
 
-		// Clear any pre-selected options
+		// Disable browser autocomplete on all option inputs to prevent auto-restoration
+		const allInputs = document.querySelectorAll('input[name^="wood_material_"], input[name^="rope_material_"]');
+		allInputs.forEach(input => {
+			input.setAttribute('autocomplete', 'off');
+		});
+
+		// Clear any pre-selected options (do this twice to ensure it takes effect)
 		clearAllPreselectedOptions();
+		// Use requestAnimationFrame to ensure DOM is ready
+		requestAnimationFrame(() => {
+			clearAllPreselectedOptions();
+		});
 
 		// Initialize components
 		initializeTabs();
