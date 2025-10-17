@@ -4248,17 +4248,30 @@
 					// REMOVED: bindCheckoutItemEvents() - using event delegation instead (line 767)
 					// this.bindCheckoutItemEvents();
 
-					// Refresh pricing to reflect the updated cart totals
-					this.updateCheckoutPricing();
+				// Refresh pricing to reflect the updated cart totals
+				this.updateCheckoutPricing();
 
-					// Update progress indicator based on non-gift-box item count
-					this.updateProgressIndicator(cartData);
-				}
+				// Update progress indicator based on non-gift-box item count
+				// DISABLED: Conflicts with multi-currency progress indicator in mini-atc-modal-checkout.liquid
+				// The Liquid script has more comprehensive currency support (GBP, AUD, USD)
+				// this.updateProgressIndicator(cartData);
+			}
 			} catch (error) {
 				console.error("Failed to update checkout view with cart data:", error);
 			}
 		}
 
+	/* DISABLED: This method conflicts with the multi-currency progress indicator in mini-atc-modal-checkout.liquid
+	 * The Liquid script has more comprehensive features:
+	 * - Multi-currency support (GBP £75, AUD $200, USD $14.95)
+	 * - Non-destructive DOM updates (toggles visibility instead of innerHTML replacement)
+	 * - MutationObserver for real-time updates
+	 * - Global cart event listeners
+	 * 
+	 * This old method only supports hardcoded £80 GBP and uses destructive innerHTML replacement.
+	 * Keeping both causes race conditions and inconsistent UI states.
+	 */
+	/*
 	updateProgressIndicator(cartData) {
 		try {
 ("🔄 updateProgressIndicator called with cartData:", cartData);
@@ -4449,8 +4462,9 @@
 			console.error("Failed to update progress indicator:", error);
 		}
 	}
+	*/
 
-		async fetchUpdatedCartData() {
+	async fetchUpdatedCartData() {
 			try {
 				const response = await fetch("/cart.js");
 				if (!response.ok) {
