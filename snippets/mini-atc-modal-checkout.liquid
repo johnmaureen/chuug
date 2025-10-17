@@ -61,7 +61,7 @@
   <div class="countdown-timer chuug-countdown" role="timer" aria-live="polite" aria-atomic="true">
     <span class="countdown-timer__text">
       {%- liquid
-        assign countdown_default_text = 'Extra {amount} off ends in'
+        assign countdown_default_text = 'Extra £30 off ends in'
         assign countdown_text = settings.mini_atc_countdown_text | default: countdown_default_text
       -%}
       <span data-countdown-text data-currency-text="⏰ {{ countdown_text }}:" data-amount="3000">⏰ {{ settings.mini_atc_countdown_text | default: 'Extra £30 off ends in' }}:</span> 
