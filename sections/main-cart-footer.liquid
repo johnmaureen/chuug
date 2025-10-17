@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(res => res.json())
     .then(cart => {
       const needsFix = cart.items.some(item =>
-        !item.properties || !item.properties["Monogram Initials"]
+        !item.properties || !item.properties["PERSONALISED INITIAL"]
       );
 
       if (!needsFix) {
@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function () {
         quantity: item.quantity,
         properties: {
           ...(item.properties || {}),
-          "Monogram Initials": item.properties && item.properties["Monogram Initials"] ? item.properties["Monogram Initials"] : "N/A"
+          "PERSONALISED INITIAL": item.properties && item.properties["PERSONALISED INITIAL"] ? item.properties["PERSONALISED INITIAL"] : "N/A"
         }
       }));
 
@@ -327,11 +327,11 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener('custom:upsell:chuug', function (event) {
     console.log("📦 Upsell callback event received:", event);
 
-    // Attach Monogram Initials = N/A to the upsell product
+    // PERSONALISED INITIAL = N/A to the upsell product
     if (event.detail && typeof event.detail === 'object') {
       event.detail.properties = {
         ...(event.detail.properties || {}),
-        "Monogram Initials": "N/A"
+        "PERSONALISED INITIAL": "N/A"
       };
     }
   });

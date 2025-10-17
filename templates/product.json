@@ -175,10 +175,6 @@
             "template": "shopify",
             "margin": 0
           }
-        },
-        "infinite_options_app_block_z3XUPL": {
-          "type": "shopify://apps/infinite-options/blocks/app-block/7e73b6f9-82b0-45f5-9b9b-04f446ba1a9b",
-          "settings": {}
         }
       },
       "block_order": [
@@ -200,8 +196,7 @@
         "a431a9c9-a782-43f1-b51e-d5dbd4f17dfa",
         "391a0e8f-fcf4-4694-9fbe-23146594ce03",
         "description",
-        "mimeeq_3d_configurator_3d_ar_product_configurator_block_hDMbm4",
-        "infinite_options_app_block_z3XUPL"
+        "mimeeq_3d_configurator_3d_ar_product_configurator_block_hDMbm4"
       ],
       "settings": {
         "enable_sticky_info": true,
