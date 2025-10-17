@@ -2049,6 +2049,7 @@
 	background: rgba(0, 0, 0, 0.65);
 	backdrop-filter: blur(4px);
 	cursor: pointer;
+	display: block !important;
 }
 
 .design-preview-modal__container {
@@ -2154,6 +2155,8 @@
 	flex-shrink: 0;
 	width: 466.65px !important;
 	height: 466.65px;
+	max-width: 466.65px;
+	max-height: 466.65px;
 	border-radius: 27.375px;
 	overflow: hidden;
 }
@@ -2444,5 +2447,12 @@
 	.mini-atc-modal,
 	.design-preview-modal {
 		display: none !important;
+	}
+}
+
+@media screen and (max-height: 850px) {
+	.design-preview-swiper .swiper-slide {
+		width: 43vh !important;
+		height: 43vh !important;
 	}
 }

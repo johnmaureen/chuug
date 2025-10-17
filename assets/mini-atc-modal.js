@@ -255,17 +255,71 @@
 			this.emit("variantChanged", { type, variantId, quantity });
 		}
 
-		updateVesselEngraving(vesselId, text) {
-			if (!this.state.engraving.vessels) {
-				this.state.engraving.vessels = {};
-			}
-			this.state.engraving.vessels[vesselId] = Utils.sanitizeInput(text);
-			this.saveState();
-			this.emit("vesselChanged", {
-				vesselId,
-				text: this.state.engraving.vessels[vesselId],
-			});
+	updateVesselEngraving(vesselId, text) {
+		if (!this.state.engraving.vessels) {
+			this.state.engraving.vessels = {};
 		}
+		// Support both old format (string) and new format (object with text and enabled)
+		if (typeof this.state.engraving.vessels[vesselId] === 'string') {
+			// Convert old format to new format
+			this.state.engraving.vessels[vesselId] = {
+				text: Utils.sanitizeInput(text),
+				enabled: true
+			};
+		} else if (typeof this.state.engraving.vessels[vesselId] === 'object') {
+			// Update text, keep enabled state
+			this.state.engraving.vessels[vesselId].text = Utils.sanitizeInput(text);
+		} else {
+			// Initialize new vessel
+			this.state.engraving.vessels[vesselId] = {
+				text: Utils.sanitizeInput(text),
+				enabled: true
+			};
+		}
+		this.saveState();
+		this.emit("vesselChanged", {
+			vesselId,
+			text: this.state.engraving.vessels[vesselId].text,
+			enabled: this.state.engraving.vessels[vesselId].enabled
+		});
+	}
+
+	updateVesselEngravingEnabled(vesselId, enabled) {
+		if (!this.state.engraving.vessels) {
+			this.state.engraving.vessels = {};
+		}
+		// Support both old format (string) and new format (object)
+		if (typeof this.state.engraving.vessels[vesselId] === 'string') {
+			// Convert old format to new format
+			const text = this.state.engraving.vessels[vesselId];
+			this.state.engraving.vessels[vesselId] = {
+				text: text,
+				enabled: enabled
+			};
+		} else if (typeof this.state.engraving.vessels[vesselId] === 'object') {
+			// Update enabled state
+			this.state.engraving.vessels[vesselId].enabled = enabled;
+		} else {
+			// Initialize new vessel
+			this.state.engraving.vessels[vesselId] = {
+				text: "",
+				enabled: enabled
+			};
+		}
+		this.saveState();
+		this.emit("vesselEngravingEnabledChanged", { vesselId, enabled });
+	}
+
+	getVesselEngravingEnabled(vesselId) {
+		if (!this.state.engraving.vessels || !this.state.engraving.vessels[vesselId]) {
+			return true; // Default to enabled
+		}
+		const vessel = this.state.engraving.vessels[vesselId];
+		if (typeof vessel === 'string') {
+			return true; // Old format, assume enabled
+		}
+		return vessel.enabled !== false; // Default to true if not set
+	}
 
 		getState() {
 			return { ...this.state };
@@ -686,39 +740,179 @@
 	const selectedProductAmountData =
 		window.pomcSystem.getSelectedProductAmountData();
 	if (selectedProductAmountData && selectedProductAmountData.variants) {
-		const engravingEnabled = this.getEngravingState();
-		
-		// Check if we have a mixed vessel configuration
-		const hasMixedConfig = this.modalInstance.hasMixedVesselConfiguration();
-(`🔍 Pricing calculation: hasMixedConfig=${hasMixedConfig}`);
-		
-		if (hasMixedConfig) {
-("🪢 Mixed vessel configuration detected - calculating pricing");
-			return this.getMixedVesselPricing(selectedProductAmountData, engravingEnabled);
+		// Use per-vessel pricing calculation
+		return this.getPerVesselPricing(selectedProductAmountData);
 		}
+	}
+
+	// No pricing data available
+	return null;
+}
+
+	/**
+	 * Calculate pricing for each vessel individually based on its configuration
+	 * @param {Object} selectedProductAmountData - Product data with variants
+	 * @returns {Object|null} Pricing breakdown with total
+	 */
+	getPerVesselPricing(selectedProductAmountData) {
+		if (!window.pomcSystem) return null;
 		
-		// Standard logic for uniform configuration (all charcoal or all natural)
-		const hasCharcoalRope = this.modalInstance.hasAnyCharcoalRopeSelected();
-		const variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
-
-		const variant = selectedProductAmountData.variants[variantIndex];
-				if (variant) {
-					// Store the pricing for reference
-					this.dynamicPrices.vessel = {
-						price: variant.price,
-						originalPrice: variant.compare_at_price,
-					};
-
-					return {
-						price: variant.price,
-						originalPrice: variant.compare_at_price,
-					};
+		const vesselSelections = window.pomcSystem.getAllVesselSelections();
+		const multiplier = window.pomcSystem.getMultiplier() || 1;
+		
+		console.log("🔧 Per-vessel pricing calculation started");
+		
+		// Check if master engraving toggle is on
+		const masterEngravingEnabled = this.modalInstance.isEngravingEnabled();
+		
+		// Count vessel types
+		let charcoalCount = 0;
+		let naturalCount = 0;
+		let engravingCount = 0;
+		
+		for (let i = 1; i <= multiplier; i++) {
+			const selection = vesselSelections[i];
+			if (selection?.ropeType) {
+				if (selection.ropeType.toLowerCase() === 'charcoal') {
+					charcoalCount++;
+				} else {
+					naturalCount++;
 				}
 			}
+			
+			// Count vessels with engraving enabled
+			if (masterEngravingEnabled && this.getVesselEngravingEnabled(i)) {
+				engravingCount++;
+			}
 		}
+		
+		console.log("🔍 Configuration:", {
+			masterEngravingEnabled,
+			charcoalCount,
+			naturalCount,
+			engravingCount
+		});
+		
+		// Determine base variant index based on configuration
+		// If all vessels are charcoal, use charcoal base (2), otherwise natural base (0)
+		const allCharcoal = charcoalCount === multiplier;
+		const baseVariantIndex = allCharcoal ? 2 : 0;
+		const baseVariant = selectedProductAmountData.variants[baseVariantIndex];
+		
+		if (!baseVariant) {
+			console.warn("⚠️ Base variant not found");
+			return null;
+		}
+		
+		// Start with appropriate base bundle price
+		let totalPrice = baseVariant.price;
+		let totalOriginalPrice = baseVariant.compare_at_price || baseVariant.price;
+		
+		console.log("💰 Base bundle price:", {
+			variantIndex: baseVariantIndex,
+			ropeType: allCharcoal ? "all charcoal" : "all/some natural",
+			price: baseVariant.price,
+			priceFormatted: Utils.formatPrice(baseVariant.price)
+		});
+		
+	// Add charcoal upgrade charges (only if not all charcoal)
+	let charcoalCharges = 0;
+	if (charcoalCount > 0 && !allCharcoal) {
+		// Get charcoal upgrade price from POMC system (e.g., $4.00 = 400 cents)
+		const charcoalUpgradePrice = window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 400;
+		charcoalCharges = charcoalUpgradePrice * charcoalCount;
+		
+		console.log("🪢 Charcoal upgrade charges:", {
+			charcoalCount: charcoalCount,
+			pricePerVessel: charcoalUpgradePrice,
+			totalCharcoalCharges: charcoalCharges,
+			chargesFormatted: Utils.formatPrice(charcoalCharges)
+		});
+	}
+		
+		// Calculate engraving charges
+		let engravingCharges = 0;
+		if (masterEngravingEnabled && engravingCount > 0) {
+			// Get engraving cost per vessel based on the base variant we're using
+			const withEngravingIndex = allCharcoal ? 3 : 1;
+			const withoutEngravingIndex = allCharcoal ? 2 : 0;
+			
+			const withEngraving = selectedProductAmountData.variants[withEngravingIndex];
+			const withoutEngraving = selectedProductAmountData.variants[withoutEngravingIndex];
+			
+			if (withEngraving && withoutEngraving) {
+				const bundleEngravingDiff = withEngraving.price - withoutEngraving.price;
+				const perVesselEngravingCost = bundleEngravingDiff / multiplier;
+				engravingCharges = perVesselEngravingCost * engravingCount;
+				
+				console.log("✏️ Engraving charges:", {
+					engravingCount: engravingCount,
+					bundleDifference: bundleEngravingDiff,
+					perVesselCost: perVesselEngravingCost,
+					totalEngravingCharges: engravingCharges,
+					chargesFormatted: Utils.formatPrice(engravingCharges)
+				});
+			}
+		}
+		
+		// Log per-vessel breakdown
+		for (let i = 1; i <= multiplier; i++) {
+			const vesselSelection = vesselSelections[i];
+			if (vesselSelection?.ropeType) {
+				const vesselEngravingEnabled = masterEngravingEnabled && this.getVesselEngravingEnabled(i);
+				console.log(`📊 Vessel ${i}:`, {
+					ropeType: vesselSelection.ropeType,
+					engravingEnabled: vesselEngravingEnabled
+				});
+			}
+		}
+		
+		// Calculate final total
+		totalPrice += charcoalCharges + engravingCharges;
+		totalOriginalPrice += charcoalCharges + engravingCharges;
+		
+		console.log("💰 Final Calculation:", {
+			basePrice: baseVariant.price,
+			charcoalCharges: charcoalCharges,
+			engravingCharges: engravingCharges,
+			totalPrice: totalPrice,
+			totalFormatted: Utils.formatPrice(totalPrice)
+		});
+		
+		// Store the pricing for reference
+		this.dynamicPrices.vessel = {
+			price: totalPrice,
+			originalPrice: totalOriginalPrice,
+		};
+		
+		return {
+			price: totalPrice,
+			originalPrice: totalOriginalPrice
+		};
+	}
 
-		// No pricing data available
-		return null;
+	/**
+	 * Get vessel-specific engraving enabled state
+	 * @param {number} vesselId - Vessel ID (1, 2, or 3)
+	 * @returns {boolean} Whether engraving is enabled for this vessel
+	 */
+	getVesselEngravingEnabled(vesselId) {
+		// First check if master engraving toggle is disabled
+		if (!this.modalInstance) {
+			return true; // Default to enabled if no modal instance
+		}
+		
+		const masterEngravingEnabled = this.modalInstance.isEngravingEnabled();
+		if (!masterEngravingEnabled) {
+			return false; // Master toggle overrides all vessel toggles
+		}
+		
+		// Check vessel-specific toggle state from PersonalizationState
+		if (this.modalInstance.state) {
+			return this.modalInstance.state.getVesselEngravingEnabled(vesselId);
+		}
+		
+		return true; // Default to enabled
 	}
 
 	/**
@@ -1077,27 +1271,33 @@
 			}
 		}
 
-		initializeVesselInputs() {
-			// Find all vessel toggles and sync their corresponding inputs
-			const vesselToggles = this.modal.querySelectorAll("[data-vessel-toggle]");
+	initializeVesselInputs() {
+		// Find all vessel toggles and sync their corresponding inputs
+		const vesselToggles = this.modal.querySelectorAll("[data-vessel-toggle]");
 
-			vesselToggles.forEach((toggle) => {
-				const vesselId = toggle.getAttribute("data-vessel-toggle");
-				const input = toggle
-					.closest(".vessel-personalization-row")
-					?.querySelector(".vessel-name-input");
+		vesselToggles.forEach((toggle) => {
+			const vesselId = toggle.getAttribute("data-vessel-toggle");
+			const input = toggle
+				.closest(".vessel-personalization-row")
+				?.querySelector(".vessel-name-input");
 
-				if (input) {
-					// Enable/disable input based on toggle state
-					input.disabled = !toggle.checked;
+			// Restore vessel toggle state from saved state
+			if (this.state) {
+				const vesselEngravingEnabled = this.state.getVesselEngravingEnabled(vesselId);
+				toggle.checked = vesselEngravingEnabled;
+			}
 
-					// If toggle is checked, ensure input is enabled
-					if (toggle.checked) {
-						input.removeAttribute("disabled");
-					}
+			if (input) {
+				// Enable/disable input based on toggle state
+				input.disabled = !toggle.checked;
+
+				// If toggle is checked, ensure input is enabled
+				if (toggle.checked) {
+					input.removeAttribute("disabled");
 				}
-			});
-		}
+			}
+		});
+	}
 
 		handleModalClick(event) {
 			// Handle overlay clicks
@@ -1173,19 +1373,21 @@
 				} else {
 					this.state.updatePersonalization(type, { enabled: toggle.checked });
 				}
-			} else if (toggle.hasAttribute("data-vessel-toggle")) {
-				const vesselId = toggle.getAttribute("data-vessel-toggle");
-				const input = toggle
-					.closest(".vessel-personalization-row")
-					.querySelector(".vessel-name-input");
-				if (input) {
-					input.disabled = !toggle.checked;
-					if (!toggle.checked) {
-						input.value = "";
-						this.state.updateVesselEngraving(vesselId, "");
-					}
+		} else if (toggle.hasAttribute("data-vessel-toggle")) {
+			const vesselId = toggle.getAttribute("data-vessel-toggle");
+			const input = toggle
+				.closest(".vessel-personalization-row")
+				.querySelector(".vessel-name-input");
+			if (input) {
+				input.disabled = !toggle.checked;
+				if (!toggle.checked) {
+					input.value = "";
+					this.state.updateVesselEngraving(vesselId, "");
 				}
 			}
+			// Update the vessel-specific engraving enabled state
+			this.state.updateVesselEngravingEnabled(vesselId, toggle.checked);
+		}
 
 			this.toggleOptionsVisibility(toggle);
 
@@ -2180,6 +2382,18 @@
 	/**
 	 * Check if the current vessel configuration is mixed (some charcoal, some natural)
 	 */
+	/**
+	 * Helper function to get vessel engraving text (handles both old and new format)
+	 * @param {string|Object} vesselData - Vessel engraving data (string or {text, enabled})
+	 * @returns {string} The engraving text
+	 */
+	getVesselEngravingText(vesselData) {
+		if (!vesselData) return "";
+		if (typeof vesselData === 'string') return vesselData;
+		if (typeof vesselData === 'object' && vesselData.text) return vesselData.text;
+		return "";
+	}
+
 	hasMixedVesselConfiguration() {
 		if (!window.pomcSystem) {
 			return false;
@@ -3124,15 +3338,16 @@
 		createVesselProperties(selection, vesselNumber, state, engravingEnabled, selectedProductAmountData, variantIndex) {
 			const properties = {};
 			
-			// VISIBLE PROPERTIES (for checkout display)
-			
-			// Add Monogram Initials for this specific vessel
-			const vesselEngraving = state.engraving?.vessels?.[vesselNumber] || "";
-			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
-				properties["Monogram Initials"] = vesselEngraving.trim().toUpperCase();
-			} else {
-				properties["Monogram Initials"] = "N/A";
-			}
+		// VISIBLE PROPERTIES (for checkout display)
+		
+		// Add Monogram Initials for this specific vessel
+		const vesselEngravingData = state.engraving?.vessels?.[vesselNumber] || "";
+		const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
+		if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
+			properties["Monogram Initials"] = vesselEngraving.trim().toUpperCase();
+		} else {
+			properties["Monogram Initials"] = "N/A";
+		}
 			
 		// For individual vessel products (mixed config), don't add bundle-specific properties
 		// Only add essential properties to avoid conflicts with Shopify's product structure
@@ -3291,9 +3506,10 @@
 				const selection = vesselSelections[i];
 				if (!selection) continue;
 				
-				// Check if this specific vessel has engraving
-				const vesselEngraving = state.engraving?.vessels?.[i] || "";
-				const vesselHasEngraving = engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "";
+			// Check if this specific vessel has engraving
+			const vesselEngravingData = state.engraving?.vessels?.[i] || "";
+			const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
+			const vesselHasEngraving = engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "";
 				
 				// Get individual vessel variant ID (async)
 				const individualVariantId = await this.getIndividualVesselVariantId(
@@ -3344,14 +3560,15 @@
 
 		// VISIBLE PROPERTIES (for checkout display)
 
-		// Add Monogram Initials (visible on checkout) - collect all vessel engravings
-		const allEngravings = [];
-		for (let i = 1; i <= multiplier; i++) {
-			const vesselEngraving = state.engraving?.vessels?.[i] || "";
-			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
-				allEngravings.push(vesselEngraving.trim().toUpperCase());
-			}
+	// Add Monogram Initials (visible on checkout) - collect all vessel engravings
+	const allEngravings = [];
+	for (let i = 1; i <= multiplier; i++) {
+		const vesselEngravingData = state.engraving?.vessels?.[i] || "";
+		const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
+		if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
+			allEngravings.push(vesselEngraving.trim().toUpperCase());
 		}
+	}
 		
 		if (allEngravings.length > 0) {
 			properties["Monogram Initials"] = allEngravings.join(", ");
@@ -3379,13 +3596,14 @@
 
 		// HIDDEN PROPERTIES (with underscore - for backend use only)
 
-		// Add vessel engravings (hidden) - one per vessel
-		for (let i = 1; i <= multiplier; i++) {
-			const vesselEngraving = state.engraving?.vessels?.[i] || "";
-			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
-				properties[`_Vessel ${i} Engraving`] = vesselEngraving.trim().toUpperCase();
-			}
+	// Add vessel engravings (hidden) - one per vessel
+	for (let i = 1; i <= multiplier; i++) {
+		const vesselEngravingData = state.engraving?.vessels?.[i] || "";
+		const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
+		if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
+			properties[`_Vessel ${i} Engraving`] = vesselEngraving.trim().toUpperCase();
 		}
+	}
 
 		// Add vessel selection details (hidden) - collect all vessel selections
 		for (let i = 1; i <= multiplier; i++) {
@@ -3607,19 +3825,20 @@
 			// Add modal source
 			attributes["Order Source"] = "Mini ATC Modal";
 
-			// Add personalization details
-			if (state.engraving?.enabled) {
-				attributes["Engraving Enabled"] = "Yes";
+		// Add personalization details
+		if (state.engraving?.enabled) {
+			attributes["Engraving Enabled"] = "Yes";
 
-				// Add individual vessel engravings
-				Object.entries(state.engraving.vessels || {}).forEach(
-					([vesselId, text]) => {
-						if (text && text.trim() !== "") {
-							attributes[`Vessel ${vesselId} Text`] = text.trim().toUpperCase();
-						}
+			// Add individual vessel engravings
+			Object.entries(state.engraving.vessels || {}).forEach(
+				([vesselId, vesselData]) => {
+					const text = this.getVesselEngravingText(vesselData);
+					if (text && text.trim() !== "") {
+						attributes[`Vessel ${vesselId} Text`] = text.trim().toUpperCase();
 					}
-				);
-			}
+				}
+			);
+		}
 
 			// Add POMC system data
 			if (window.pomcSystem) {

@@ -232,8 +232,8 @@
                 <fieldset class="modal__personalization-vessel-name-wrap">
                   <legend class="visually-hidden">Vessel Personalization</legend>
                   
-                  <!-- Vessel personalization inputs -->
-                  {% for i in (1..2) %}
+                  <!-- Vessel personalization inputs (supports up to 3 vessels) -->
+                  {% for i in (1..3) %}
                     <div class="vessel-personalization-row" data-vessel="{{ i }}">
                       <div class="vessel-info">
                         <span class="vessel-label">Vessel #{{ i }}</span>
