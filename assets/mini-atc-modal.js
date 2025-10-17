@@ -6365,8 +6365,9 @@
 			this.modal.setAttribute("aria-hidden", "false");
 			document.body.style.overflow = "hidden";
 
-			// Fetch and display product images
-			this.fetchAndDisplayImages();
+			// NOTE: Dynamic image loading disabled in favor of static theme settings images
+			// The images are now configured via Shopify Theme Settings > CHUUG Vessel Gallery
+			// this.fetchAndDisplayImages();
 
 			// Update swiper if it exists
 			if (this.swiper) {

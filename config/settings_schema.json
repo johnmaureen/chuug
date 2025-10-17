@@ -1507,5 +1507,62 @@
 				"info": "Format: HH:MM in 24-hour format (e.g., 23:59 for 11:59 PM)"
 			}
 		]
+	},
+	{
+		"name": "CHUUG Vessel Gallery",
+		"settings": [
+			{
+				"type": "header",
+				"content": "Design Preview Carousel Images"
+			},
+			{
+				"type": "paragraph",
+				"content": "Configure images for the design preview modal carousel (design-preview-swiper-global). Maximum 3 images."
+			},
+			{
+				"type": "image_picker",
+				"id": "design_preview_image_1",
+				"label": "Design Preview Image 1",
+				"info": "First image shown in the design preview modal"
+			},
+			{
+				"type": "image_picker",
+				"id": "design_preview_image_2",
+				"label": "Design Preview Image 2",
+				"info": "Second image shown in the design preview modal"
+			},
+			{
+				"type": "image_picker",
+				"id": "design_preview_image_3",
+				"label": "Design Preview Image 3",
+				"info": "Third image shown in the design preview modal"
+			},
+			{
+				"type": "header",
+				"content": "Mini ATC Product Gallery Images"
+			},
+			{
+				"type": "paragraph",
+				"content": "Configure images for the mini ATC product gallery carousel (mini-atc-product-swiper-global). Maximum 3 images."
+			},
+			{
+				"type": "image_picker",
+				"id": "mini_atc_gallery_image_1",
+				"label": "Mini ATC Gallery Image 1",
+				"info": "First image shown in the mini ATC product gallery"
+			},
+			{
+				"type": "image_picker",
+				"id": "mini_atc_gallery_image_2",
+				"label": "Mini ATC Gallery Image 2",
+				"info": "Second image shown in the mini ATC product gallery"
+			},
+			{
+				"type": "image_picker",
+				"id": "mini_atc_gallery_image_3",
+				"label": "Mini ATC Gallery Image 3",
+				"info": "Third image shown in the mini ATC product gallery"
+			}
+		]
 	}
 ]
