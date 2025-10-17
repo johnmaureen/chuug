@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Pricing Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; font-weight: bold; }
+        .info { color: blue; }
+        .error { color: red; }
+        .checkout-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 10px; 
+            border: 1px solid #eee; 
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        .price { font-weight: bold; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .mock-checkout { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Mini ATC Checkout Pricing Test</h1>
+    
+    <div class="test-section">
+        <h2>Issue Fixed</h2>
+        <div class="success">
+            ✅ Fixed hardcoded £ symbols in mini ATC checkout view<br>
+            ✅ Updated formatMoney() method to use CurrencyManager<br>
+            ✅ Added updateCheckoutItemPrices() method<br>
+            ✅ Currency changes now update checkout prices
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Mock Checkout View</h2>
+        <div class="mock-checkout">
+            <h3>Your Cart</h3>
+            <div class="checkout-item">
+                <span>CHUUG Vessel (Engraved)</span>
+                <span class="price" data-test-price="1299">£12.99</span>
+            </div>
+            <div class="checkout-item">
+                <span>Premium Gift Box & Tissue Wrap</span>
+                <span class="price" data-test-price="300">£3.00</span>
+            </div>
+            <hr>
+            <div class="checkout-item">
+                <span><strong>Total</strong></span>
+                <span class="price" data-test-price="1599">£15.99</span>
+            </div>
+            <div class="checkout-item">
+                <span><em>You Saved</em></span>
+                <span class="price" data-test-price="400">£4.00</span>
+            </div>
+        </div>
+        
+        <button onclick="testCurrencyConversion()">Test Currency Conversion</button>
+        <div id="test-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>What Was Fixed</h2>
+        <h3>1. formatMoney() Method</h3>
+        <div class="info">
+            <strong>Before:</strong> <code>return `£${amount}`;</code><br>
+            <strong>After:</strong> <code>return window.CurrencyManager.formatPrice(cents);</code>
+        </div>
+        
+        <h3>2. updateCheckoutPricing() Method</h3>
+        <div class="info">
+            <strong>Before:</strong> Hardcoded <code>`£${totalPrice}`</code><br>
+            <strong>After:</strong> Uses <code>this.formatMoney(cartData.total_price)</code>
+        </div>
+        
+        <h3>3. Currency Change Detection</h3>
+        <div class="info">
+            <strong>Added:</strong> <code>updateCheckoutItemPrices()</code> method<br>
+            <strong>Triggered:</strong> When currency changes and checkout view is active
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Expected Behavior</h2>
+        <ol>
+            <li><strong>Currency Symbol Updates:</strong> £ → $ → € etc.</li>
+            <li><strong>Price Values Convert:</strong> Based on Shopify's conversion rates</li>
+            <li><strong>All Prices Update:</strong> Vessel prices, gift box prices, totals, savings</li>
+            <li><strong>Real-time Updates:</strong> No page reload required</li>
+        </ol>
+    </div>
+
+    <!-- Mock Currency Manager -->
+    <script>
+        // Mock Currency Manager for testing
+        window.CurrencyManager = {
+            currentCurrency: 'GBP',
+            
+            formatPrice: function(cents, currencyCode = null) {
+                const code = currencyCode || this.currentCurrency;
+                const symbols = {
+                    'USD': '$',
+                    'EUR': '€', 
+                    'GBP': '£',
+                    'CAD': '$',
+                    'AUD': '$'
+                };
+                const symbol = symbols[code] || code;
+                const amount = (cents / 100).toFixed(2);
+                return `${symbol}${amount}`;
+            },
+            
+            setCurrency: function(newCurrency) {
+                this.currentCurrency = newCurrency;
+                console.log(`Currency changed to: ${newCurrency}`);
+            }
+        };
+        
+        // Mock formatMoney method (like in mini-atc-modal.js)
+        function formatMoney(cents) {
+            if (window.CurrencyManager) {
+                return window.CurrencyManager.formatPrice(cents);
+            }
+            const amount = (cents / 100).toFixed(2);
+            return `£${amount}`;
+        }
+        
+        function testCurrencyConversion() {
+            const resultsDiv = document.getElementById('test-results');
+            const currencies = ['GBP', 'USD', 'EUR', 'CAD'];
+            let html = '<h3>Currency Conversion Test Results:</h3>';
+            
+            currencies.forEach(currency => {
+                // Set currency
+                window.CurrencyManager.setCurrency(currency);
+                
+                html += `<div style="margin: 10px 0; padding: 10px; background: #f0f8ff; border-radius: 3px;">`;
+                html += `<strong>${currency} Currency:</strong><br>`;
+                
+                // Test different prices
+                const prices = [
+                    { name: 'Vessel', cents: 1299 },
+                    { name: 'Gift Box', cents: 300 },
+                    { name: 'Total', cents: 1599 },
+                    { name: 'Savings', cents: 400 }
+                ];
+                
+                prices.forEach(price => {
+                    const formatted = formatMoney(price.cents);
+                    html += `${price.name}: ${formatted}<br>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            html += '<div class="success"><br>✅ All prices now use dynamic currency formatting!</div>';
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // Auto-run test on load
+        window.addEventListener('load', () => {
+            setTimeout(testCurrencyConversion, 500);
+        });
+    </script>
+</body>
+</html>

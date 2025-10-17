@@ -1,0 +1,46 @@
+{% comment %}
+  Checkout Products Wrap - Usage Example
+  
+  This file demonstrates how to use the checkout-products-wrap component
+  in your checkout or cart templates.
+{% endcomment %}
+
+<!-- Include the CSS -->
+{{ 'checkout-products-wrap.css' | asset_url | stylesheet_tag }}
+
+<!-- Example usage in a checkout or cart context -->
+<div class="checkout-products-container">
+  {% if cart.items.size > 0 %}
+    {% for item in cart.items %}
+      {% render 'checkout-products-wrap', item: item %}
+    {% endfor %}
+  {% else %}
+    <div class="empty-cart-message">
+      <p>Your cart is empty</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Additional styling for the container -->
+<style>
+.checkout-products-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.checkout-products-container .checkout-products-wrap {
+  margin-bottom: 20px;
+}
+
+.checkout-products-container .checkout-products-wrap:last-child {
+  margin-bottom: 0;
+}
+
+.empty-cart-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 18px;
+}
+</style>

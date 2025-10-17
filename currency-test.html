@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Manager Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .price-display { font-size: 18px; font-weight: bold; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Currency Manager Test</h1>
+    
+    <div class="test-section">
+        <h2>Currency Manager Initialization</h2>
+        <div id="currency-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Price Formatting Test</h2>
+        <div id="price-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Currency Change Simulation</h2>
+        <button onclick="testCurrencyChange('USD')">Switch to USD</button>
+        <button onclick="testCurrencyChange('GBP')">Switch to GBP</button>
+        <button onclick="testCurrencyChange('EUR')">Switch to EUR</button>
+        <div id="currency-change-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>GraphQL Product Fetch Test</h2>
+        <button onclick="testGraphQLFetch()">Test GraphQL Product Fetch</button>
+        <div id="graphql-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Gift Box Pricing Test</h2>
+        <button onclick="testGiftBoxPricing()">Test Gift Box Pricing</button>
+        <div id="giftbox-results"></div>
+    </div>
+
+    <!-- Mock Shopify environment -->
+    <script>
+        // Mock Shopify environment for testing
+        window.Shopify = {
+            storefrontAccessToken: 'test-token',
+            currency: { active: 'GBP' },
+            shop: { currency: 'GBP' }
+        };
+        
+        // Mock cart currency
+        window.CURRENT_CURRENCY = 'GBP';
+        window.CURRENT_CURRENCY_SYMBOL = '£';
+        
+        // Mock POMC system
+        window.pomcSystem = {
+            getSelectedProductAmountData: () => ({
+                id: 'test-product-id',
+                variants: [
+                    { price: 1299, compare_at_price: 1999 },
+                    { price: 1499, compare_at_price: 2199 }
+                ]
+            })
+        };
+    </script>
+    
+    <!-- Load Currency Manager -->
+    <script src="assets/currency-manager.js"></script>
+    
+    <script>
+        // Test functions
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('currency-status');
+            statusDiv.innerHTML += `<div class="${type}">${message}</div>`;
+        }
+        
+        function testPriceFormatting() {
+            const testsDiv = document.getElementById('price-tests');
+            const tests = [
+                { amount: 1299, currency: 'GBP', expected: '£12.99' },
+                { amount: 1299, currency: 'USD', expected: '$12.99' },
+                { amount: 1299, currency: 'EUR', expected: '€12.99' }
+            ];
+            
+            tests.forEach(test => {
+                const result = window.CurrencyManager.formatPrice(test.amount, test.currency);
+                const success = result === test.expected;
+                testsDiv.innerHTML += `<div class="${success ? 'success' : 'error'}">
+                    ${test.currency}: ${result} ${success ? '✓' : `(expected ${test.expected})`}
+                </div>`;
+            });
+        }
+        
+        function testCurrencyChange(newCurrency) {
+            const resultsDiv = document.getElementById('currency-change-results');
+            
+            // Simulate currency change
+            window.CURRENT_CURRENCY = newCurrency;
+            window.CurrencyManager.currentCurrency = newCurrency;
+            
+            // Dispatch currency change event
+            document.dispatchEvent(new CustomEvent('currencyUpdated', {
+                detail: {
+                    currency: newCurrency,
+                    symbol: window.CurrencyManager.getCurrencySymbol(newCurrency)
+                }
+            }));
+            
+            // Test price formatting with new currency
+            const testPrice = 1299;
+            const formattedPrice = window.CurrencyManager.formatPrice(testPrice);
+            
+            resultsDiv.innerHTML += `<div class="info">
+                Currency changed to ${newCurrency}: ${formattedPrice}
+            </div>`;
+        }
+        
+        async function testGraphQLFetch() {
+            const resultsDiv = document.getElementById('graphql-results');
+            resultsDiv.innerHTML = '<div class="info">Testing GraphQL fetch...</div>';
+            
+            try {
+                // Mock a successful GraphQL response
+                const mockProductData = {
+                    id: 'gid://shopify/Product/test-product-id',
+                    title: 'Test Product',
+                    variants: {
+                        edges: [
+                            {
+                                node: {
+                                    id: 'variant1',
+                                    title: 'Default',
+                                    price: { amount: '12.99', currencyCode: window.CURRENT_CURRENCY },
+                                    compareAtPrice: { amount: '19.99', currencyCode: window.CURRENT_CURRENCY }
+                                }
+                            }
+                        ]
+                    }
+                };
+                
+                // Mock the fetch function for testing
+                const originalFetch = window.fetch;
+                window.fetch = async (url) => {
+                    if (url.includes('graphql')) {
+                        return {
+                            ok: true,
+                            json: async () => ({ data: { product: mockProductData } })
+                        };
+                    }
+                    return originalFetch(url);
+                };
+                
+                const result = await window.CurrencyManager.fetchProductData('test-product-id');
+                
+                if (result) {
+                    resultsDiv.innerHTML = `<div class="success">
+                        ✓ GraphQL fetch successful<br>
+                        Product: ${result.title}<br>
+                        Price: ${result.variants.edges[0].node.price.amount} ${result.variants.edges[0].node.price.currencyCode}
+                    </div>`;
+                } else {
+                    resultsDiv.innerHTML = '<div class="error">✗ GraphQL fetch failed</div>';
+                }
+                
+                // Restore original fetch
+                window.fetch = originalFetch;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">✗ GraphQL test error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testGiftBoxPricing() {
+            const resultsDiv = document.getElementById('giftbox-results');
+            resultsDiv.innerHTML = '<div class="info">Testing gift box pricing...</div>';
+            
+            try {
+                // Mock a successful GraphQL response for gift box
+                const mockGiftBoxData = {
+                    id: 'gid://shopify/Product/premium-gift-box-tissue-wrap',
+                    title: 'Premium Gift Box & Tissue Wrap',
+                    variants: {
+                        edges: [
+                            {
+                                node: {
+                                    id: 'gift-box-variant',
+                                    title: 'Default',
+                                    price: { amount: '3.00', currencyCode: window.CURRENT_CURRENCY }
+                                }
+                            }
+                        ]
+                    }
+                };
+                
+                // Mock the fetch function for testing
+                const originalFetch = window.fetch;
+                window.fetch = async (url) => {
+                    if (url.includes('graphql')) {
+                        return {
+                            ok: true,
+                            json: async () => ({ data: { product: mockGiftBoxData } })
+                        };
+                    }
+                    return originalFetch(url);
+                };
+                
+                const result = await window.CurrencyManager.fetchGiftBoxPricing();
+                
+                if (result) {
+                    const formattedPrice = window.CurrencyManager.formatPrice(result);
+                    resultsDiv.innerHTML = `<div class="success">
+                        ✓ Gift box pricing successful<br>
+                        Price: ${formattedPrice} (${result} cents)<br>
+                        Currency: ${window.CURRENT_CURRENCY}
+                    </div>`;
+                } else {
+                    resultsDiv.innerHTML = '<div class="error">✗ Gift box pricing failed</div>';
+                }
+                
+                // Restore original fetch
+                window.fetch = originalFetch;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">✗ Gift box test error: ${error.message}</div>`;
+            }
+        }
+        
+        // Initialize tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                updateStatus('Currency Manager loaded', 'success');
+                updateStatus(`Current currency: ${window.CurrencyManager.getCurrentCurrency()}`, 'info');
+                updateStatus(`Current symbol: ${window.CurrencyManager.getCurrencySymbol()}`, 'info');
+                
+                testPriceFormatting();
+            }, 100);
+        });
+        
+        // Listen for currency change events
+        document.addEventListener('currencyUpdated', (event) => {
+            updateStatus(`Currency updated event received: ${event.detail.currency}`, 'success');
+        });
+    </script>
+</body>
+</html>

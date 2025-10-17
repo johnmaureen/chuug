@@ -1,0 +1,279 @@
+{{ 'chuug-customiser-carousel.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background: #dfdfd8;
+  }
+
+{%- endstyle -%}
+
+<section class="chuug-customiser-carousel-section">
+  <div class="chuug-customiser-carousel-container">
+    <!-- Header Section -->
+    <header class="chuug-customiser-carousel-header">
+      <h1 class="chuug-customiser-carousel-title">{{ section.settings.section_title }}</h1>
+      <p class="chuug-customiser-carousel-subtitle">{{ section.settings.section_subtitle }}</p>
+    </header>
+
+    <!-- Main Content -->
+    <div class="chuug-customiser-carousel-content">
+      <div class="swiper chuug-customiser-carousel-swiper">
+        <div class="swiper-wrapper">
+          {% for block in section.blocks %}
+            <div class="swiper-slide chuug-customiser-carousel-slide">
+              <div class="chuug-customiser-carousel-slide-content">
+                <!-- Left Side - Product Image -->
+                <div class="chuug-customiser-carousel-image-container">
+                  <div class="chuug-customiser-carousel-image-wrapper">
+                    {% if block.settings.product_image == blank %}
+                      {{ 'image' | placeholder_svg_tag: 'chuug-customiser-carousel-placeholder' }}
+                    {% else %}
+                      <img
+                        src="{{ block.settings.product_image | image_url }}"
+                        class="chuug-customiser-carousel-image"
+                        alt="{{ block.settings.product_image_alt | default: 'Product Image' }}"
+                        width="380"
+                        height="380"
+                        loading="lazy"
+                      >
+                    {% endif %}
+                  </div>
+                  <!-- Social Media Tag -->
+                  <div class="chuug-customiser-carousel-social-tag">
+                    <div class="social-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="23" viewBox="0 0 20 23" fill="none">
+                        <path d="M0.552734 22.3955V2.43652C4.93149 2.43652 8.83331 4.47772 11.3594 7.66016C15.9438 6.61801 18.305 3.01717 18.7607 1.9541C19.9218 8.34078 16.583 13.203 14.7686 14.8359L14.2725 14.8203C14.3193 15.2825 14.3428 15.752 14.3428 16.2266V22.3955H0.552734Z" fill="#278EFF"/>
+                        <path d="M0.552734 22.3955H0.27001V22.6782H0.552734V22.3955ZM0.552734 2.43652V2.1538H0.27001V2.43652H0.552734ZM11.3594 7.66016L11.1379 7.83593L11.2485 7.97529L11.422 7.93585L11.3594 7.66016ZM18.7607 1.9541L19.0389 1.90353L18.8709 0.979563L18.5009 1.8427L18.7607 1.9541ZM14.7686 14.8359L14.7597 15.1185L14.8732 15.1221L14.9577 15.0461L14.7686 14.8359ZM14.2725 14.8203L14.2814 14.5377L13.9587 14.5276L13.9912 14.8488L14.2725 14.8203ZM14.3428 22.3955V22.6782H14.6255V22.3955H14.3428ZM0.552734 22.3955H0.835459V2.43652H0.552734H0.27001V22.3955H0.552734ZM0.552734 2.43652V2.71925C4.84156 2.71925 8.66318 4.71813 11.1379 7.83593L11.3594 7.66016L11.5808 7.48439C9.00345 4.2373 5.02142 2.1538 0.552734 2.1538V2.43652ZM11.3594 7.66016L11.422 7.93585C16.1204 6.86779 18.5411 3.18405 19.0206 2.0655L18.7607 1.9541L18.5009 1.8427C18.0689 2.85029 15.7671 6.36823 11.2967 7.38447L11.3594 7.66016ZM18.7607 1.9541L18.4826 2.00467C19.6215 8.26976 16.3422 13.0393 14.5794 14.6258L14.7686 14.8359L14.9577 15.0461C16.8237 13.3666 20.2221 8.4118 19.0389 1.90353L18.7607 1.9541ZM14.7686 14.8359L14.7775 14.5534L14.2814 14.5377L14.2725 14.8203L14.2636 15.1029L14.7597 15.1185L14.7686 14.8359ZM14.2725 14.8203L13.9912 14.8488C14.037 15.3014 14.0601 15.7613 14.0601 16.2266H14.3428H14.6255C14.6255 15.7427 14.6015 15.2637 14.5537 14.7918L14.2725 14.8203ZM14.3428 16.2266H14.0601V22.3955H14.3428H14.6255V16.2266H14.3428ZM14.3428 22.3955V22.1128H0.552734V22.3955V22.6782H14.3428V22.3955Z" fill="#278EFF"/>
+                      </svg>
+                    </div>
+                      <span class="social-handle">{{ block.settings.social_handle | default: '@chuugofficial' }}</span>
+                  </div>
+                </div>
+
+                <!-- Right Side - Feature Details -->
+                <div class="chuug-customiser-carousel-details">
+                  <div class="feature-icon">
+                    {% if block.settings.feature_icon == blank %}
+                      <div class="feature-icon-placeholder">
+                        <svg width="92" height="93" viewBox="0 0 92 93" fill="none">
+                          <circle cx="46" cy="46.5" r="40" stroke="#FFFFFF" stroke-width="2"/>
+                          <path d="M30 46.5L42 58.5L62 38.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                    {% else %}
+                      <img
+                        src="{{ block.settings.feature_icon | image_url }}"
+                        class="feature-icon-image"
+                        alt="{{ block.settings.feature_icon_alt | default: 'Feature Icon' }}"
+                        width="92"
+                        height="93"
+                        loading="lazy"
+                      >
+                    {% endif %}
+                  </div>
+                  <h2 class="feature-title">{{ block.settings.feature_title }}</h2>
+                  <p class="feature-description">{{ block.settings.feature_description }}</p>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <div class="swiper-pagination chuug-customiser-carousel-pagination"></div>
+      </div>
+
+      <!-- CTA Button -->
+      <div class="chuug-customiser-carousel-cta">
+        <button class="customize-button tw-container tw-text-[2rem] tw-leading-[1] tw-font-bold tw-p-0 tw-uppercase tw-bg-no-repeat tw-w-full tw-max-w-[36rem] tw-h-[4.375em] tw-rounded-[1.25em] tw-flex tw-justify-center tw-items-center tw-mt-[3rem] md:tw-mt-0 tw-transition-all tw-duration-300 tw-ease-in-out" onclick="window.location.href='{{ section.settings.button_url | default: '#' }}'">
+          {{ section.settings.button_text | default: 'CUSTOMIZE NOW' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function initCustomiserCarousel() {
+  if (typeof Swiper === 'undefined') {
+    setTimeout(initCustomiserCarousel, 50);
+    return;
+  }
+  
+  const swiper = new Swiper('.chuug-customiser-carousel-swiper', {
+    // Basic settings
+    slidesPerView: 1,
+    spaceBetween: 0,
+    centeredSlides: true,
+    
+    // Pagination
+    pagination: {
+      el: '.chuug-customiser-carousel-pagination',
+      clickable: true,
+      renderBullet: function (index, className) {
+        return '<span class="' + className + '"></span>';
+      },
+    },
+    
+    // Auto play settings
+    autoplay: {% if section.settings.auto_advance %}{
+      delay: {{ section.settings.auto_advance_delay | times: 1000 }},
+      disableOnInteraction: false,
+    }{% else %}false{% endif %},
+    
+    // Loop
+    loop: true,
+    
+    // Effect
+    effect: 'fade',
+    fadeEffect: {
+      crossFade: true
+    },
+    
+    // Responsive breakpoints
+    breakpoints: {
+      768: {
+        slidesPerView: 1,
+        spaceBetween: 0,
+      },
+      1024: {
+        slidesPerView: 1,
+        spaceBetween: 0,
+      }
+    }
+  });
+}
+
+// Initialize when ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCustomiserCarousel);
+} else {
+  initCustomiserCarousel();
+}
+</script>
+
+{% schema %}
+{
+  "name": "Chuug Customiser Carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Drinking Beer Just Got Cooler"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Section Subtitle",
+      "default": "Out-do your neighbour at the next awkward BBQ that you'd rather not attend"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "CUSTOMIZE NOW"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_advance",
+      "label": "Auto Advance Slides",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "auto_advance_delay",
+      "label": "Auto Advance Delay (seconds)",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature_slide",
+      "name": "Feature Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Product Image"
+        },
+        {
+          "type": "text",
+          "id": "product_image_alt",
+          "label": "Product Image Alt Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "feature_icon",
+          "label": "Feature Icon"
+        },
+        {
+          "type": "text",
+          "id": "feature_icon_alt",
+          "label": "Feature Icon Alt Text"
+        },
+        {
+          "type": "text",
+          "id": "feature_title",
+          "label": "Feature Title",
+          "default": "Smart Rope Technology"
+        },
+        {
+          "type": "textarea",
+          "id": "feature_description",
+          "label": "Feature Description",
+          "default": "Soft to the touch and no funky smells, from the tankard at least."
+        },
+        {
+          "type": "text",
+          "id": "social_handle",
+          "label": "Social Media Handle",
+          "default": "@chuugofficial"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Chuug Customiser Carousel",
+      "blocks": [
+        {
+          "type": "feature_slide",
+          "settings": {
+            "feature_title": "Smart Rope Technology",
+            "feature_description": "Soft to the touch and no funky smells, from the tankard at least."
+          }
+        },
+        {
+          "type": "feature_slide",
+          "settings": {
+            "feature_title": "Premium Materials",
+            "feature_description": "Crafted from the finest mango wood and food-grade stainless steel."
+          }
+        },
+        {
+          "type": "feature_slide",
+          "settings": {
+            "feature_title": "Insulation Technology",
+            "feature_description": "Keep your drinks cold for up to 2 hours, hot drinks hot for the same duration."
+          }
+        },
+        {
+          "type": "feature_slide",
+          "settings": {
+            "feature_title": "Handcrafted Quality",
+            "feature_description": "Each tankard is meticulously assembled by hand in Britain."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

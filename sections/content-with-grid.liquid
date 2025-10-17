@@ -1,0 +1,495 @@
+{{ 'section-content-with-grid.css' | asset_url | stylesheet_tag }}
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* Scoped Swiper styles only for modal carousel */
+  .modal-carousel-swiper {
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    z-index: 1;
+    display: block;
+  }
+
+  .modal-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    transition-property: transform;
+    transition-timing-function: var(--swiper-wrapper-transition-timing-function,initial);
+    box-sizing: content-box;
+  }
+
+  .modal-carousel-swiper .swiper-slide {
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition-property: transform;
+    display: block;
+  }
+
+  .modal-nav-next,
+  .modal-nav-prev {
+    position: absolute;
+    top: 50%;
+    width: calc(var(--swiper-navigation-size)/ 44 * 27);
+    height: var(--swiper-navigation-size);
+    margin-top: calc(0px - (var(--swiper-navigation-size)/ 2));
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--swiper-navigation-color,var(--swiper-theme-color));
+  }
+
+  .modal-nav-next:after,
+  .modal-nav-prev:after {
+    font-family: swiper-icons;
+    font-size: var(--swiper-navigation-size);
+    text-transform: none!important;
+    letter-spacing: 0;
+    font-variant: normal;
+    line-height: 1;
+  }
+
+  .modal-nav-prev {
+    left: 10px;
+    right: auto;
+  }
+
+  .modal-nav-prev:after {
+    content: 'prev';
+  }
+
+  .modal-nav-next {
+    right: 10px;
+    left: auto;
+  }
+
+  .modal-nav-next:after {
+    content: 'next';
+  }
+
+  /* Pagination dots are styled in main CSS file */
+{%- endstyle -%}
+
+<div class="content-with-grid-section color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="content-with-grid-title{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+    
+    <div class="content-with-grid-container{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <div class="content-with-grid">
+        {%- for block in section.blocks -%}
+          <div 
+            class="content-with-grid-item content-with-grid-item--{{ forloop.index }}{% if forloop.index > 4 %} hidden-item{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            {{ block.shopify_attributes }}
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+            data-item-index="{{ forloop.index }}"
+          >
+            <div class="content-image-wrapper content-image-clickable" data-image-index="{{ forloop.index0 }}" onclick="openContentModal({{ forloop.index0 }})">
+              {%- if block.settings.image != blank -%}
+                {%- liquid
+                  assign image_widths = '200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600'
+                  assign image_sizes = '(min-width: 1200px) 513px, (min-width: 750px) 45vw, 90vw'
+                -%}
+                {{
+                  block.settings.image
+                  | image_url: width: 1600
+                  | image_tag:
+                    loading: 'lazy',
+                    sizes: image_sizes,
+                    widths: image_widths,
+                    class: 'content-image'
+                }}
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+      
+      {%- if section.settings.load_more_text != blank -%}
+        <div class="content-load-more">
+          <button class="content-load-more-button" type="button" data-current-shown="4" data-total-items="{{ section.blocks.size }}">
+            {{ section.settings.load_more_text }}
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<!-- Image Carousel Modal - Independent Structure -->
+<div id="contentImageModal" class="content-modal" style="display: none;">
+  <div class="content-modal-overlay" onclick="closeContentModal()"></div>
+  <div class="content-modal-container">
+    <button class="content-modal-close" onclick="closeContentModal()" aria-label="Close modal">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <div class="swiper modal-carousel-swiper">
+      <div class="swiper-wrapper modal-carousel-wrapper">
+        <!-- Slides will be dynamically populated -->
+      </div>
+      
+      <!-- Navigation -->
+      <div class="swiper-button-prev modal-nav-prev"></div>
+      <div class="swiper-button-next modal-nav-next"></div>
+      
+      <!-- Pagination Dots -->
+      <nav class="modal-carousel__image-dots" aria-label="Image navigation"></nav>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden data for modal images -->
+<div id="modalImagesData" style="display: none;">
+  {%- for block in section.blocks -%}
+    {%- if block.settings.image != blank -%}
+      <div 
+        class="modal-image-data" 
+        data-src="{{ block.settings.image | image_url: width: 2000 }}"
+        data-alt="Image {{ forloop.index }}"
+      ></div>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+<script>
+  // Global variable for modal swiper
+  let contentModalSwiper;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const loadMoreButton = document.querySelector('.content-load-more-button');
+    const gridContainer = document.querySelector('.content-with-grid');
+    
+    console.log('Load More Button:', loadMoreButton);
+    console.log('Grid Container:', gridContainer);
+    
+    if (loadMoreButton && gridContainer) {
+      let currentShown = parseInt(loadMoreButton.dataset.currentShown) || 4;
+      const totalItems = parseInt(loadMoreButton.dataset.totalItems) || 0;
+      
+      console.log('Current Shown:', currentShown);
+      console.log('Total Items:', totalItems);
+      
+      // Hide button if we don't have more than 4 items
+      if (totalItems <= 4) {
+        console.log('Hiding button - only 4 or fewer items');
+        loadMoreButton.style.display = 'none';
+      } else {
+        console.log('Button should be visible');
+        loadMoreButton.style.display = 'block';
+      }
+      
+      loadMoreButton.addEventListener('click', function() {
+        // Show next 4 items
+        const itemsToShow = Math.min(4, totalItems - currentShown);
+        
+        for (let i = 0; i < itemsToShow; i++) {
+          const nextIndex = currentShown + i + 1;
+          const itemToShow = document.querySelector(`[data-item-index="${nextIndex}"]`);
+          
+          if (itemToShow) {
+            // Remove hidden class with animation
+            itemToShow.classList.remove('hidden-item');
+            itemToShow.style.opacity = '0';
+            itemToShow.style.transform = 'translateY(20px)';
+            
+            // Animate in
+            setTimeout(() => {
+              itemToShow.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              itemToShow.style.opacity = '1';
+              itemToShow.style.transform = 'translateY(0)';
+            }, i * 100); // Stagger the animation
+          }
+        }
+        
+        currentShown += itemsToShow;
+        loadMoreButton.dataset.currentShown = currentShown;
+        
+        // Update container height
+        updateContainerHeight(currentShown);
+        
+        // Hide button if all items are shown
+        if (currentShown >= totalItems) {
+          loadMoreButton.style.display = 'none';
+        }
+      });
+      
+      function updateContainerHeight(itemsShown) {
+        // Get all visible items (not hidden)
+        const visibleItems = Array.from(gridContainer.querySelectorAll('.content-with-grid-item:not(.hidden-item)'));
+        
+        if (visibleItems.length === 0) {
+          gridContainer.style.height = '1142.15px'; // Default height for first row
+          return;
+        }
+        
+        // Calculate height based on CSS positioning and item dimensions
+        let maxBottom = 0;
+        
+        // Define the height pattern based on Figma design
+        const heightPatterns = {
+          1: 645.44, // Large
+          2: 453.89, // Small  
+          3: 532.26, // Medium
+          4: 567     // Small
+        };
+        
+        // Define the top positioning pattern
+        const topPatterns = {
+          1: 0,      // Large - top
+          2: 688.26, // Small - bottom
+          3: 0,      // Medium - top
+          4: 575     // Small - bottom
+        };
+        
+        visibleItems.forEach(item => {
+          const itemIndex = parseInt(item.dataset.itemIndex);
+          const patternIndex = ((itemIndex - 1) % 4) + 1;
+          
+          // Calculate which row this item is in (0-based)
+          const row = Math.floor((itemIndex - 1) / 4);
+          const rowOffset = row * 1200; // 1200px offset per row
+          
+          // Get the base position for this pattern
+          const baseTop = topPatterns[patternIndex];
+          const itemHeight = heightPatterns[patternIndex];
+          
+          // Calculate actual position with row offset
+          const actualTop = baseTop + rowOffset;
+          const itemBottom = actualTop + itemHeight;
+          
+          maxBottom = Math.max(maxBottom, itemBottom);
+          
+          console.log(`Item ${itemIndex}: pattern ${patternIndex}, row ${row}, top ${actualTop}, height ${itemHeight}, bottom ${itemBottom}`);
+        });
+        
+        // Add some padding at the bottom
+        const actualHeight = maxBottom + 50;
+        gridContainer.style.height = actualHeight + 'px';
+        
+        console.log('Visible items:', visibleItems.length);
+        console.log('Calculated height:', actualHeight + 'px');
+        console.log('Max bottom position:', maxBottom + 'px');
+      }
+      
+      // Set initial container height
+      updateContainerHeight(currentShown);
+    }
+
+    // Build modal carousel from image data
+    function buildModalCarousel() {
+      const modalImagesData = document.querySelectorAll('.modal-image-data');
+      const modalWrapper = document.querySelector('.modal-carousel-wrapper');
+      
+      if (!modalWrapper || modalImagesData.length === 0) return;
+      
+      // Clear existing slides
+      modalWrapper.innerHTML = '';
+      
+      // Build slides from data
+      modalImagesData.forEach((imageData) => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        
+        const imageWrapper = document.createElement('div');
+        imageWrapper.className = 'modal-image-container';
+        
+        const img = document.createElement('img');
+        img.src = imageData.getAttribute('data-src');
+        img.alt = imageData.getAttribute('data-alt');
+        img.className = 'modal-carousel-image';
+        img.loading = 'lazy';
+        
+        imageWrapper.appendChild(img);
+        slide.appendChild(imageWrapper);
+        modalWrapper.appendChild(slide);
+      });
+    }
+
+    // Initialize Swiper for modal carousel
+    function initContentModalSwiper() {
+      if (!contentModalSwiper) {
+        // Check if Swiper is loaded
+        if (typeof Swiper === 'undefined') {
+          setTimeout(initContentModalSwiper, 50);
+          return;
+        }
+        
+        buildModalCarousel();
+        
+        contentModalSwiper = new Swiper('.modal-carousel-swiper', {
+          slidesPerView: 1,
+          spaceBetween: 30,
+          loop: false,
+          navigation: {
+            nextEl: '.modal-nav-next',
+            prevEl: '.modal-nav-prev',
+          },
+          pagination: {
+            el: '.modal-carousel__image-dots',
+            clickable: true,
+            bulletClass: 'dot',
+            bulletActiveClass: 'active',
+            renderBullet: function (index, className) {
+              return '<button class="' + className + '" aria-label="View image ' + (index + 1) + '" data-slide="' + index + '"></button>';
+            }
+          },
+          keyboard: {
+            enabled: true,
+          },
+          grabCursor: true,
+        });
+      }
+    }
+
+    // Initialize modal carousel on page load
+    initContentModalSwiper();
+  });
+
+  // Open modal function
+  function openContentModal(index) {
+    const modal = document.getElementById('contentImageModal');
+    const body = document.body;
+    
+    if (modal && contentModalSwiper) {
+      modal.style.display = 'flex';
+      body.style.overflow = 'hidden';
+      
+      // Navigate to the clicked image
+      contentModalSwiper.slideTo(index, 0);
+    }
+  }
+
+  // Close modal function
+  function closeContentModal() {
+    const modal = document.getElementById('contentImageModal');
+    const body = document.body;
+    
+    if (modal) {
+      modal.style.display = 'none';
+      body.style.overflow = '';
+    }
+  }
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      closeContentModal();
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Content with Grid",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Proof CHUUG Is Worth The Hype",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "load_more_text",
+      "default": "Load More",
+      "label": "Load More Button Text"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content_image",
+      "name": "Content Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Content with Grid",
+      "blocks": [
+        {
+          "type": "content_image"
+        },
+        {
+          "type": "content_image"
+        },
+        {
+          "type": "content_image"
+        },
+        {
+          "type": "content_image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

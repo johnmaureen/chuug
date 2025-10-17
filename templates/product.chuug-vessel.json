@@ -8,824 +8,934 @@
  * ------------------------------------------------------------
  */
 {
-  "sections": {
-    "pdp_chuug_vessel_8y8pAk": {
-      "type": "pdp-chuug-vessel",
-      "blocks": {
-        "main_carousel_image_nEV9T7": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/CHUU5684-Chugg5256-1.jpg",
-            "image_alt": "The Chuug V2+ 660ml"
-          }
-        },
-        "main_carousel_image_dGxYrd": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/dishwasher-safe.jpg",
-            "image_alt": "Beer warm is beer wasted"
-          }
-        },
-        "main_carousel_image_Lmngit": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/V3-personalised-coin-new-crunched_04c9d67a-6e9b-41c3-82d3-42e0ee57a2d9.jpg",
-            "image_alt": "Boring beer | The coolest vessel"
-          }
-        },
-        "main_carousel_image_bGEDdV": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/V3-personalised-coin-new-letters.jpg",
-            "image_alt": "Nature's gift forged into perfect"
-          }
-        },
-        "main_carousel_image_bmLUD9": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/CHUU5684-Chugg5281-1_copy_2.jpg",
-            "image_alt": "I'm gonna drink a beer"
-          }
-        },
-        "main_carousel_image_hLa47R": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/dusk-natural-words.jpg",
-            "image_alt": "A little bit of special"
-          }
-        },
-        "main_carousel_image_nU76hM": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/midnight-charcoal-words.jpg",
-            "image_alt": "Top 3 reasons to enjoy a cold one"
-          }
-        },
-        "main_carousel_image_igcP88": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/midnight-natural-words_1_08a6fbf9-0dbd-48e9-b15f-c0e18cdb67ab.jpg",
-            "image_alt": "Bundle and save"
-          }
-        },
-        "main_carousel_image_FbDCEg": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/dawn-charcoal_words.jpg",
-            "image_alt": "Drinking beer just got cooler"
-          }
-        },
-        "main_carousel_image_NGqe3P": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/dawn-natural-words.jpg",
-            "image_alt": "Free cotton bag included with each purchase"
-          }
-        },
-        "image_title_text_cnaKqG": {
-          "type": "image_title_text",
-          "settings": {
-            "block_image": "shopify://shop_images/ch-lp-image-adv-list-icon-1.png",
-            "block_image_alt": "Worldwide Delivery",
-            "block_title": "Worldwide Delivery",
-            "block_text": "Speedy delivery to anywhere in the world"
-          }
-        },
-        "image_title_text_riVwLm": {
-          "type": "image_title_text",
-          "settings": {
-            "block_image": "shopify://shop_images/ch-lp-image-adv-list-icon-2.png",
-            "block_image_alt": "Free Cotton Bag",
-            "block_title": "Free Cotton Bag",
-            "block_text": "Your tankards very own organic cotton home"
-          }
-        },
-        "image_title_text_HWeJDF": {
-          "type": "image_title_text",
-          "settings": {
-            "block_image": "shopify://shop_images/ch-lp-image-adv-list-icon-3.png",
-            "block_image_alt": "Lifetime Guarantee",
-            "block_title": "Lifetime Guarantee",
-            "block_text": "No questions asked, free replacement"
-          }
-        },
-        "benefits_R4YMcU": {
-          "type": "benefits",
-          "settings": {
-            "benefit_text": "Each tankard a masterpiece of British craftsmanship"
-          }
-        },
-        "benefits_HnRg3Q": {
-          "type": "benefits",
-          "settings": {
-            "benefit_text": "Enjoy ice cold beer from the first sip to the last drop"
-          }
-        },
-        "benefits_F8BYBe": {
-          "type": "benefits",
-          "settings": {
-            "benefit_text": "Anti-bacterial, water resistant SmartRope technology"
-          }
-        },
-        "accordion_pzWYme": {
-          "type": "accordion",
-          "settings": {
-            "accordion_title": "Specifications",
-            "accordion_text": "<ol><li><strong>Capacity:</strong> 660ml (enough for a pint or 2 of your favourite 330ml cans)</li><li><strong>Materials: </strong>Premium mango wood exterior with food grade stainless steel interior.  The handle is made from synthetic hemp meaning it’s water resistant and anti-bacterial.</li><li><strong>Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</li></ol>"
-          }
-        },
-        "accordion_mCpagc": {
-          "type": "accordion",
-          "settings": {
-            "accordion_title": "Shipping & returns",
-            "accordion_text": "<p>Free express shipping on orders over £75, otherwise just £3.49</p><ul><li>For all UK orders, shipping is 1-3 business days</li></ul>"
-          }
-        },
-        "bottom_carousel_image_ckekXn": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-3.png",
-            "botttom_image_alt": "Wow"
-          }
-        },
-        "bottom_carousel_image_DzMWw9": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-5.png",
-            "botttom_image_alt": "The Best"
-          }
-        },
-        "bottom_carousel_image_f6WhfM": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-2.png",
-            "botttom_image_alt": "Perfectly cold beer whilst on the grill"
-          }
-        },
-        "bottom_carousel_image_AexKKU": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-1.png",
-            "botttom_image_alt": "So cool"
-          }
-        },
-        "bottom_carousel_image_c64DEr": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-8.png",
-            "botttom_image_alt": "Never have I ever felt so manly drinking my Sunday bevvy"
-          }
-        },
-        "bottom_carousel_image_kdVckU": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-6.png",
-            "botttom_image_alt": "Now Dad respects me again"
-          }
-        },
-        "bottom_carousel_image_FEGPT3": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-7.png",
-            "botttom_image_alt": "Unbeerlievable"
-          }
-        },
-        "bottom_carousel_image_UctdEe": {
-          "type": "bottom_carousel_image",
-          "settings": {
-            "bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-4.png",
-            "botttom_image_alt": "I can't stop looking at it and picking it up"
-          }
-        },
-        "modal_aBWkVF": {
-          "type": "modal",
-          "settings": {
-            "modal_image_one": "shopify://shop_images/dawn-natural-invisible-bg.png",
-            "modal_title_one": "DAWN/NATURAL",
-            "modal_image_two": "shopify://shop_images/dusk-natural-invisible-bg.png",
-            "modal_title_two": "DUSK/NATURAL",
-            "modal_image_three": "shopify://shop_images/midnight-natural-invisible-bg.png",
-            "modal_title_three": "MIDNIGHT/NATURAL",
-            "modal_image_four": "shopify://shop_images/dawn-charcoal-invisible-bg.png",
-            "modal_title_four": "DAWN/CHARCOAL",
-            "modal_image_five": "shopify://shop_images/dusk-charcoal-invisible-bg.png",
-            "modal_title_five": "DUSK/CHARCOAL",
-            "modal_image_six": "shopify://shop_images/midnight-charcoal-invisible-bg.png",
-            "modal_title_six": "MIDNIGHT/CHARCOAL"
-          }
-        }
-      },
-      "block_order": [
-        "main_carousel_image_nEV9T7",
-        "main_carousel_image_dGxYrd",
-        "main_carousel_image_Lmngit",
-        "main_carousel_image_bGEDdV",
-        "main_carousel_image_bmLUD9",
-        "main_carousel_image_hLa47R",
-        "main_carousel_image_nU76hM",
-        "main_carousel_image_igcP88",
-        "main_carousel_image_FbDCEg",
-        "main_carousel_image_NGqe3P",
-        "image_title_text_cnaKqG",
-        "image_title_text_riVwLm",
-        "image_title_text_HWeJDF",
-        "benefits_R4YMcU",
-        "benefits_HnRg3Q",
-        "benefits_F8BYBe",
-        "accordion_pzWYme",
-        "accordion_mCpagc",
-        "bottom_carousel_image_ckekXn",
-        "bottom_carousel_image_DzMWw9",
-        "bottom_carousel_image_f6WhfM",
-        "bottom_carousel_image_AexKKU",
-        "bottom_carousel_image_c64DEr",
-        "bottom_carousel_image_kdVckU",
-        "bottom_carousel_image_FEGPT3",
-        "bottom_carousel_image_UctdEe",
-        "modal_aBWkVF"
-      ],
-      "settings": {
-        "product_title": "The Chuug V3 660ml",
-        "review_text": "4.9 - 12,690 Vessel Vikings",
-        "review_url": "https://uk.trustpilot.com/review/chuug.com?utm_medium=trustbox&utm_source=MicroStar",
-        "discount_number": "56",
-        "vessel_question": "1. Number of Vessels",
-        "engraving_question": "2. Personalised Engraving?",
-        "customise_vessel_question": "3. Customise Your Vessel(s)",
-        "button_text": "ADD TO CART",
-        "vessel_question_tooltip_text": "Select whether you want to purchase 1, 2, or 3 Chuugs.",
-        "engraving_question_tooltip_text": "Select YES if you would like to personalise your Chuug with your initials.",
-        "one_chuug_product": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag",
-        "two_chuug_product": "set-of-2-chuug®-v2-660ml-with-gift-bags",
-        "three_chuug_product": "set-of-3-chuug®-v2-660ml-with-gift-bags",
-        "one_chuug_no_initials": "shopify://shop_images/CHUU5684-Chugg5256-1.jpg",
-        "one_chuug_initials": "shopify://shop_images/V3-personalised-coin-new-crunched_04c9d67a-6e9b-41c3-82d3-42e0ee57a2d9.jpg",
-        "two_chuug_no_initials": "shopify://shop_images/pair-of-v3s_2859910f-385b-4acc-acc2-08f4d32f3f39.png",
-        "two_chuug_initials": "shopify://shop_images/pair-of-v3s_2859910f-385b-4acc-acc2-08f4d32f3f39.png",
-        "three_chuug_no_initials": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
-        "three_chuug_initials": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
-        "wood_finish_midnight_wood": "shopify://shop_images/midnight-wood.png",
-        "wood_finish_dawn_wood": "shopify://shop_images/dawn-wood.png",
-        "wood_finish_dusk_wood": "shopify://shop_images/dusk-wood.png",
-        "charcoal_rope": "shopify://shop_images/charcoal-rope.png",
-        "natural_rope": "shopify://shop_images/natural-rope.png",
-        "dusk_charcoal": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag",
-        "dusk_natural": "the-dusk-natural-chuug®-v2-660ml-with-gift-bag-copy",
-        "dawn_charcoal": "the-dawn-charcoal-chuug®-v2-660ml-with-gift-bag",
-        "dawn_natural": "the-dawn-natural-chuug®-v2-660ml-with-gift-bag",
-        "midnight_charcoal": "the-midnight-charcoal-chuug®-v2-660ml-with-gift-bag",
-        "midnight_natural": "the-midnight-natural-chuug®-v2-660ml-with-gift-bag",
-        "second_product_label_text": "Most Popular",
-        "third_product_label_text": "Best Value"
-      }
-    },
-    "several_text_and_images_EHXQ8F": {
-      "type": "several-text-and-images",
-      "blocks": {
-        "text_and_image_wqKmzh": {
-          "type": "text_and_image",
-          "settings": {
-            "block_image": "shopify://shop_images/man-chop-man-go.png",
-            "block_title": "Man chop. Man-go",
-            "block_text": "Quality from the onset. Each tankard is crafted from durable Mango wood. How else would it last a lifetime?"
-          }
-        },
-        "text_and_image_adzQFp": {
-          "type": "text_and_image",
-          "settings": {
-            "block_image": "shopify://shop_images/hand-crafted-in-britain.png",
-            "block_title": "Crafted by Hand, Built In Britain",
-            "block_text": "We source the finest materials and components from across the world, selecting only the best for our beer vessels. Every CHUUG is then meticulously assembled by hand in Britain, ensuring skilled craftsmanship and rock-solid quality. Because your drink deserves nothing less."
-          }
-        },
-        "text_and_image_nJRfHq": {
-          "type": "text_and_image",
-          "settings": {
-            "block_image": "shopify://shop_images/the-chef-kiss.png",
-            "block_title": "The Chef’s Kiss",
-            "block_text": "The personalisation station. We engrave your mark into your tankard to let others know it’s yours and not to be touched."
-          }
-        },
-        "text_and_image_Fba63x": {
-          "type": "text_and_image",
-          "settings": {
-            "block_image": "shopify://shop_images/lets-us-handle-it.png",
-            "block_title": "Let Us ‘Handle’ It",
-            "block_text": "Bet you didn’t know a rope could be ‘smart’? Anti-bacterial, water resistant AND it doesn’t warp or stretch. Pretty damn clever if you ask us."
-          }
-        }
-      },
-      "block_order": [
-        "text_and_image_wqKmzh",
-        "text_and_image_adzQFp",
-        "text_and_image_nJRfHq",
-        "text_and_image_Fba63x"
-      ],
-      "settings": {
-        "section_title": "<h1>Nature's gift, <em>forged </em>into perfection</h1>",
-        "section_subtitle": "Always built by hand, machines are cheating"
-      }
-    },
-    "five_images_hjC3Jd": {
-      "type": "five-images",
-      "blocks": {
-        "image_block_fAWXtY": {
-          "type": "image_block",
-          "settings": {
-            "block_image": "shopify://shop_images/british-flag.png",
-            "block_title": "Built in Britain",
-            "block_subtitle": "Because why get it made anywhere else?"
-          }
-        },
-        "image_block_h9rgVK": {
-          "type": "image_block",
-          "settings": {
-            "block_image": "shopify://shop_images/ice-cold-beer.png",
-            "block_title": "Ice Cold Beer",
-            "block_subtitle": "Cold for up to two hours, not that you’ll need it!"
-          }
-        },
-        "image_block_gdGxVq": {
-          "type": "image_block",
-          "settings": {
-            "block_image": "shopify://shop_images/smart-rope.png",
-            "block_title": "Smart Rope Technology",
-            "block_subtitle": "Soft to the touch and no funky smells, from the tankard at least."
-          }
-        },
-        "image_block_catVBx": {
-          "type": "image_block",
-          "settings": {
-            "block_image": "shopify://shop_images/fully-customizable.png",
-            "block_title": "Fully Customisable",
-            "block_subtitle": "Why buy a boring tankard that thousands of others own?"
-          }
-        }
-      },
-      "block_order": [
-        "image_block_fAWXtY",
-        "image_block_h9rgVK",
-        "image_block_gdGxVq",
-        "image_block_catVBx"
-      ],
-      "settings": {
-        "section_title": "<p>Drinking Beer Just Got <em>Cooler</em></p>",
-        "section_subtitle": "Out-do your neighbour at the next awkward BBQ that you’d rather not attend",
-        "main_image": "shopify://shop_images/giftboxed-chuug-invis.png",
-        "discount_number": "56",
-        "button_text": "Customise Now"
-      }
-    },
-    "reviews_carousel_QgJCgz": {
-      "type": "reviews-carousel",
-      "blocks": {
-        "review_iAWtRK": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-1.png",
-            "stars": "five",
-            "title": "“A little bit of special”",
-            "text": "“It’s bespoke and something that is mine to treasure for years to come, that is the key, it feels special and looks amazing and is comfortable to hold so what’s not like!”",
-            "name": "Jason Ellis",
-            "date": "August 20, 2024",
-            "image_position": "last"
-          }
-        },
-        "review_yn48eD": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-2.png",
-            "stars": "five",
-            "title": "“Gift for 40 year old man”",
-            "text": "“Extremely easy & efficient process from start to finish. Excellent delivery time, presentation was brilliant, the product itself was superbly crafted.”",
-            "name": "Cath Myers",
-            "date": "August 14, 2024",
-            "image_position": "first"
-          }
-        },
-        "review_rzpHxA": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-3.png",
-            "stars": "five",
-            "title": "“Easy 5 star”",
-            "text": "“My husband is a viking type so a perfect gift for him. The craftsmanship is outstanding and the rope handle elevates the Chuug that little bit more.”",
-            "name": "Emma Ockwell",
-            "date": "August 17, 2024",
-            "image_position": "last"
-          }
-        },
-        "review_Ta3Qy4": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-4.png",
-            "stars": "four",
-            "title": "“A nice solid mug”",
-            "text": "“Order arrived very quickly and was well presented. Really nice design and overall finish. Certainly good value for money as i have enjoyed it over the last month.”",
-            "name": "Jim w",
-            "date": "August 01, 2024",
-            "image_position": "first"
-          }
-        },
-        "review_UYLfke": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-5.png",
-            "stars": "five",
-            "title": "“Beautiful product”",
-            "text": "“Bought 2, one for my husband and one for my son ready for Xmas after them seeing them at a festival. Really well made and lovely looking.”",
-            "name": "Paula Charles",
-            "date": "August 21, 2024",
-            "image_position": "last"
-          }
-        },
-        "review_NnaWhe": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-6.png",
-            "stars": "five",
-            "title": "“Excellent quality”",
-            "text": "“I bought it for my dad for Christmas (he’s really hard too buy for) I know he’ll love it. Very quick delivery even with personalising.”",
-            "name": "Susan Taylor",
-            "date": "August 22, 2024",
-            "image_position": "first"
-          }
-        },
-        "review_KWgxeN": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-7.png",
-            "stars": "five",
-            "title": "“I love my Chugg”",
-            "text": "“It is great quality and looks fantastic. It will be my go to vessel for both tea and beers. Ordered Wednesday evening and it arrived Friday morning.”",
-            "name": "Keith Welch",
-            "date": "August 30, 2024",
-            "image_position": "last"
-          }
-        },
-        "review_qkdrpj": {
-          "type": "review",
-          "settings": {
-            "review_image": "shopify://shop_images/reviews-carousel-8.png",
-            "stars": "five",
-            "title": "“Quality is spot on”",
-            "text": "“Purchased for my Brother who loves things ‘Vikingish’. The rope handle detail works so well. I had his initials engraved which makes it a thoughtful gift.”",
-            "name": "Fallon Hanson, UK",
-            "date": "September 01, 2024",
-            "image_position": "first"
-          }
-        }
-      },
-      "block_order": [
-        "review_iAWtRK",
-        "review_yn48eD",
-        "review_rzpHxA",
-        "review_Ta3Qy4",
-        "review_UYLfke",
-        "review_NnaWhe",
-        "review_KWgxeN",
-        "review_qkdrpj"
-      ],
-      "settings": {}
-    },
-    "benefits_xeGgkP": {
-      "type": "benefits",
-      "blocks": {
-        "benefit_tab_1_RMEqHy": {
-          "type": "benefit_tab_1",
-          "settings": {
-            "benefit_title_1": "<h1><strong>Slippery Slope</strong></h1>",
-            "benefit_text_1_tab_1": "Flimsy and fragile handles ruin your ritual",
-            "benefit_text_2_tab_1": "Uncomfortable ceramic & metal handles",
-            "benefit_text_3_tab_1": "Slippy handles lead to spillage, not built for men"
-          }
-        },
-        "benefit_tab_1_Mbq9iU": {
-          "type": "benefit_tab_1",
-          "settings": {
-            "benefit_title_1": "<h1><strong>Rope Revolution</strong></h1>",
-            "benefit_text_1_tab_1": "A durable, comfortable grip built for men",
-            "benefit_text_2_tab_1": "Anti-bacterial means no fur growing on the side",
-            "benefit_text_3_tab_1": "Waterproof technology keeps it dry and fresh"
-          }
-        },
-        "benefit_tab_2_3iQ7Hn": {
-          "type": "benefit_tab_2",
-          "settings": {
-            "benefit_title_2": "<h1><em><strong>Boring </strong></em><strong>Beer</strong></h1>",
-            "benefit_text_1_tab_2": "Warms faster than you can drink it",
-            "benefit_text_2_tab_2": "Generic, boring glassware that lacks personality",
-            "benefit_text_3_tab_2": "Fragile and slippery, a recipe for disaster"
-          }
-        },
-        "benefit_tab_2_Rh78y9": {
-          "type": "benefit_tab_2",
-          "settings": {
-            "benefit_title_2": "<h1><strong>The </strong><em><strong>Coolest Vessel</strong></em></h1>",
-            "benefit_text_1_tab_2": "Cold for 2 hours -  savour that sweet nectar",
-            "benefit_text_2_tab_2": "Food grade stainless steel hugged in Mango Wood",
-            "benefit_text_3_tab_2": "Makes EVERY drinking experience great"
-          }
-        }
-      },
-      "block_order": [
-        "benefit_tab_1_RMEqHy",
-        "benefit_tab_1_Mbq9iU",
-        "benefit_tab_2_3iQ7Hn",
-        "benefit_tab_2_Rh78y9"
-      ],
-      "settings": {
-        "section_title": "<h1> Time To Ditch The <em>Dainty </em>Glassware</h1>",
-        "section_subtitle": "Leave that for Prosecco and Bucks-fizz. We’re here for real drinks",
-        "tab_1_title": "SMARTROPE TECH",
-        "tab_2_title": "THE CHUUG RITUAL",
-        "section_image": "shopify://shop_images/ch-lp-man-chuug-5.png",
-        "button_text": "Add to cart"
-      }
-    },
-    "text_and_image_carousel_TjCMqW": {
-      "type": "text-and-image-carousel",
-      "blocks": {
-        "slide_MgkXUc": {
-          "type": "slide",
-          "settings": {
-            "block_image": "shopify://shop_images/image-and-text-carousel-2.png"
-          }
-        },
-        "slide_dGTg37": {
-          "type": "slide",
-          "settings": {
-            "block_image": "shopify://shop_images/chuug_hammer-metal_studs_tankard_rope_handle.jpg"
-          }
-        },
-        "slide_WJEJzH": {
-          "type": "slide",
-          "settings": {
-            "block_image": "shopify://shop_images/image-and-text-carousel-3.png"
-          }
-        },
-        "slide_dPTLbg": {
-          "type": "slide",
-          "settings": {
-            "block_image": "shopify://shop_images/chuug_quality-check_tankard_rope_handle.jpg"
-          }
-        },
-        "slide_4jG6E8": {
-          "type": "slide",
-          "settings": {
-            "block_image": "shopify://shop_images/image-and-text-carousel-5.png"
-          }
-        }
-      },
-      "block_order": [
-        "slide_MgkXUc",
-        "slide_dGTg37",
-        "slide_WJEJzH",
-        "slide_dPTLbg",
-        "slide_4jG6E8"
-      ],
-      "settings": {
-        "title": "<h1>You’d Have To See It To Beerlieve It</h1>",
-        "description": "What’s better than drinking beer from a tankard? Drinking two. It’s no coincidence our tankards hold 660ml. (That’s two of your favourite 330ml cans, ales, or fancy craft beers - whatever's your poison)",
-        "button_text": "Add to cart",
-        "discount_number": "40"
-      }
-    },
-    "three_image_reviews_carousel_KxatHt": {
-      "type": "three-image-reviews-carousel",
-      "blocks": {
-        "review_4pdjfy": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“Got this as a gift for our son and he loves it, especially the handle and the engraving.”",
-            "review_author": "Helen B."
-          }
-        },
-        "review_aKfxYR": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“Amazing product! Stunning craftsmanship and will make a great gift for me and my son.”",
-            "review_author": "Walter H."
-          }
-        },
-        "review_hd3M4G": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“Loved the Chuug. The quality is amazing…best buy this year and cold beer for the summer.”",
-            "review_author": "Nathan T."
-          }
-        },
-        "review_PEVGzy": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "four",
-            "review_text": "“Nice mug and the handle feels solid. Easy to drink from and has a bag for giving as a gift.”",
-            "review_author": "Jim W."
-          }
-        },
-        "review_LAp7Xx": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“High quality, well made, look fantastic. Gift bag for each mug. Bought one for a gift, might buy more!”",
-            "review_author": "Sarah M."
-          }
-        },
-        "review_p8PzR4": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“Excellent quality bought for a friend's birthday.He was well pleased.”",
-            "review_author": "Neville R."
-          }
-        },
-        "review_4ccF4V": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“Lovely looking, great quality & keep my beer cold much longer than other coolers I have!”",
-            "review_author": "Iain."
-          }
-        },
-        "review_6dhDcE": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“The whole experience was first class and the product is crafted from high quality materials.”",
-            "review_author": "Steve R."
-          }
-        },
-        "review_VHNjxh": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“I bought this for my husband for one of his 60th birthday he is over the moon thank you.”",
-            "review_author": "Sharon S."
-          }
-        },
-        "review_C7mKYx": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "four",
-            "review_text": "“Does exactly what they say and keeps your beer cool while sitting in the sun at 27°.”",
-            "review_author": "Shaw O."
-          }
-        },
-        "review_mMYwyD": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”",
-            "review_author": "Jennie C."
-          }
-        },
-        "review_VQjKEX": {
-          "type": "review",
-          "settings": {
-            "background_image": "shopify://shop_images/dark-blue-chuug.png",
-            "stars": "five",
-            "review_text": "“Beautifully made item, looks like it it will last forever if looked after properly.”",
-            "review_author": "Phil K."
-          }
-        }
-      },
-      "block_order": [
-        "review_4pdjfy",
-        "review_aKfxYR",
-        "review_hd3M4G",
-        "review_PEVGzy",
-        "review_LAp7Xx",
-        "review_p8PzR4",
-        "review_4ccF4V",
-        "review_6dhDcE",
-        "review_VHNjxh",
-        "review_C7mKYx",
-        "review_mMYwyD",
-        "review_VQjKEX"
-      ],
-      "settings": {
-        "title": "<h1>“my go to vessel for tea and beer”</h1>",
-        "subtitle": "Hot or cold beverages. We don’t judge, our tankards can do it all."
-      }
-    },
-    "fading_text_carousel_9VgpBp": {
-      "type": "fading-text-carousel",
-      "settings": {
-        "section_title": "<h1>You Deserve Cold Beer</h1>",
-        "section_description": "Every guy needs his personalised beer tankard. If you’re a confused woman reading this, just trust us.",
-        "image_one": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
-        "feature_one_title": "Craft Your Perfect Tankard",
-        "feature_one_description": "Select from our range of premium wood finishes, each with its own character and charm. Sustainable, durable, and ready to become your new favourite drinking companion.",
-        "feature_two_title": "Select Your Grip",
-        "feature_two_description": "Complete your tankard's look with a rope that's as tough as you are. Our durable, anti-bacterial ropes are designed for comfort and longevity. Select a colour that matches your style and prepare for years of happy sipping.",
-        "feature_three_title": "Stamp Your Mark",
-        "feature_three_description": "The final touch to your perfect drinking vessel. Add a personal engraving to transform your tankard from great to unforgettable. Your story, your style, your tankard.",
-        "button_text": "Add to cart",
-        "discount_number": "56"
-      }
-    },
-    "accordions_M9ze79": {
-      "type": "accordions",
-      "blocks": {
-        "accordion_tab_1_t6dTx3": {
-          "type": "accordion_tab_1",
-          "settings": {
-            "accordion_title_tab_1": "How long will my Chuug tankard keep my drink cold?",
-            "accordion_text_tab_1": "Up to 2 hours of frosty goodness! Your Chuug tankard is designed to keep your brew at the perfect temperature, ensuring you enjoy every sip as much as the first."
-          }
-        },
-        "accordion_tab_1_x7ccWB": {
-          "type": "accordion_tab_1",
-          "settings": {
-            "accordion_title_tab_1": "is it dishwasher safe?",
-            "accordion_text_tab_1": "YES! Just unscrew the stainless steel core and put in the dishwasher as normal. For the wooden outer, wipe clean with a damp cloth - HANDWASH ONLY."
-          }
-        },
-        "accordion_tab_1_mF3ELh": {
-          "type": "accordion_tab_1",
-          "settings": {
-            "accordion_title_tab_1": "Can I put hot beverages in my Chuug tankard?",
-            "accordion_text_tab_1": "Yes, it will keep hot drinks hot for up to 2 hours. Your Chuug isn't just for cold ones – it's a year-round companion."
-          }
-        },
-        "accordion_tab_1_3eTKRt": {
-          "type": "accordion_tab_1",
-          "settings": {
-            "accordion_title_tab_1": "How do I look after my Chuug tankard?",
-            "accordion_text_tab_1": "Hand wash the exterior wood and SmartRope handle. Unscrew the inner metal core and wash how you like! This part is dishwasher-safe.\n\nThe wood might like an occasional rub with food-grade mineral oil to keep it looking sharp."
-          }
-        },
-        "accordion_tab_2_mWMj93": {
-          "type": "accordion_tab_2",
-          "settings": {
-            "accordion_title_tab_2": "HOW LONG WILL IT TAKE FOR MY ORDER TO ARRIVE?",
-            "accordion_text_tab_2": "Your Chuug is eager to meet you! Expect your order within 4 working days. For the most up-to-date and accurate ETA, check the product listing."
-          }
-        },
-        "accordion_tab_2_UihAen": {
-          "type": "accordion_tab_2",
-          "settings": {
-            "accordion_title_tab_2": "DO YOU OFFER INTERNATIONAL SHIPPING?",
-            "accordion_text_tab_2": "Yes! Chuug tankards are ready to travel the world. We ship internationally because everyone deserves cold beer."
-          }
-        },
-        "accordion_tab_2_WfLQpf": {
-          "type": "accordion_tab_2",
-          "settings": {
-            "accordion_title_tab_2": "HOW DO I TRACK MY ORDER?",
-            "accordion_text_tab_2": "We'll keep you in the loop! As soon as your Chuug begins its journey, we'll send you an email with tracking information. You can follow your tankard's adventure right to your doorstep."
-          }
-        },
-        "accordion_tab_2_6LPDJP": {
-          "type": "accordion_tab_2",
-          "settings": {
-            "accordion_title_tab_2": "WHAT IF MY CHUUG ARRIVES DAMAGED?",
-            "accordion_text_tab_2": "No worries, we've got you covered! If your Chuug arrives looking less than perfect, just send us a photo. We'll replace it faster than you can say \"cheers\" - no questions asked."
-          }
-        }
-      },
-      "block_order": [
-        "accordion_tab_1_t6dTx3",
-        "accordion_tab_1_x7ccWB",
-        "accordion_tab_1_mF3ELh",
-        "accordion_tab_1_3eTKRt",
-        "accordion_tab_2_mWMj93",
-        "accordion_tab_2_UihAen",
-        "accordion_tab_2_WfLQpf",
-        "accordion_tab_2_6LPDJP"
-      ],
-      "settings": {
-        "section_title": "<p>Let's <em>Clear </em>a Few Things Up</p>",
-        "section_subtitle": "If you still have questions, don’t hesitate to contact us",
-        "tab_1_title": "CHUUG Tankard",
-        "tab_2_title": "Delivery & Returns",
-        "button_text": "Add to cart"
-      }
-    }
-  },
-  "order": [
-    "pdp_chuug_vessel_8y8pAk",
-    "several_text_and_images_EHXQ8F",
-    "five_images_hjC3Jd",
-    "reviews_carousel_QgJCgz",
-    "benefits_xeGgkP",
-    "text_and_image_carousel_TjCMqW",
-    "three_image_reviews_carousel_KxatHt",
-    "fading_text_carousel_9VgpBp",
-    "accordions_M9ze79"
-  ]
+	"sections": {
+		"pdp_chuug_vessel_8y8pAk": {
+			"type": "pdp-chuug-vessel",
+			"blocks": {
+				"main_carousel_image_nEV9T7": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/CHUU5684-Chugg5256-1.jpg",
+						"image_alt": "The Chuug V2+ 660ml"
+					}
+				},
+				"main_carousel_image_dGxYrd": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/dishwasher-safe.jpg",
+						"image_alt": "Beer warm is beer wasted"
+					}
+				},
+				"main_carousel_image_Lmngit": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/V3-personalised-coin-new-crunched_04c9d67a-6e9b-41c3-82d3-42e0ee57a2d9.jpg",
+						"image_alt": "Boring beer | The coolest vessel"
+					}
+				},
+				"main_carousel_image_bGEDdV": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/V3-personalised-coin-new-letters.jpg",
+						"image_alt": "Nature's gift forged into perfect"
+					}
+				},
+				"main_carousel_image_bmLUD9": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/CHUU5684-Chugg5281-1_copy_2.jpg",
+						"image_alt": "I'm gonna drink a beer"
+					}
+				},
+				"main_carousel_image_hLa47R": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/dusk-natural-words.jpg",
+						"image_alt": "A little bit of special"
+					}
+				},
+				"main_carousel_image_nU76hM": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/midnight-charcoal-words.jpg",
+						"image_alt": "Top 3 reasons to enjoy a cold one"
+					}
+				},
+				"main_carousel_image_igcP88": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/midnight-natural-words_1_08a6fbf9-0dbd-48e9-b15f-c0e18cdb67ab.jpg",
+						"image_alt": "Bundle and save"
+					}
+				},
+				"main_carousel_image_FbDCEg": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/dawn-charcoal_words.jpg",
+						"image_alt": "Drinking beer just got cooler"
+					}
+				},
+				"main_carousel_image_NGqe3P": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/dawn-natural-words.jpg",
+						"image_alt": "Free cotton bag included with each purchase"
+					}
+				},
+				"image_title_text_cnaKqG": {
+					"type": "image_title_text",
+					"settings": {
+						"block_image": "shopify://shop_images/ch-lp-image-adv-list-icon-1.png",
+						"block_image_alt": "Worldwide Delivery",
+						"block_title": "Worldwide Delivery",
+						"block_text": "Speedy delivery to anywhere in the world"
+					}
+				},
+				"image_title_text_riVwLm": {
+					"type": "image_title_text",
+					"settings": {
+						"block_image": "shopify://shop_images/ch-lp-image-adv-list-icon-2.png",
+						"block_image_alt": "Free Cotton Bag",
+						"block_title": "Free Cotton Bag",
+						"block_text": "Your tankards very own organic cotton home"
+					}
+				},
+				"image_title_text_HWeJDF": {
+					"type": "image_title_text",
+					"settings": {
+						"block_image": "shopify://shop_images/ch-lp-image-adv-list-icon-3.png",
+						"block_image_alt": "Lifetime Guarantee",
+						"block_title": "Lifetime Guarantee",
+						"block_text": "No questions asked, free replacement"
+					}
+				},
+				"benefits_R4YMcU": {
+					"type": "benefits",
+					"settings": {
+						"benefit_text": "Each tankard a masterpiece of British craftsmanship"
+					}
+				},
+				"benefits_HnRg3Q": {
+					"type": "benefits",
+					"settings": {
+						"benefit_text": "Enjoy ice cold beer from the first sip to the last drop"
+					}
+				},
+				"benefits_F8BYBe": {
+					"type": "benefits",
+					"settings": {
+						"benefit_text": "Anti-bacterial, water resistant SmartRope technology"
+					}
+				},
+				"accordion_pzWYme": {
+					"type": "accordion",
+					"settings": {
+						"accordion_title": "Specifications",
+						"accordion_text": "<ol><li><strong>Capacity:</strong> 660ml (enough for a pint or 2 of your favourite 330ml cans)</li><li><strong>Materials: </strong>Premium mango wood exterior with food grade stainless steel interior.  The handle is made from synthetic hemp meaning it’s water resistant and anti-bacterial.</li><li><strong>Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</li></ol>"
+					}
+				},
+				"accordion_mCpagc": {
+					"type": "accordion",
+					"settings": {
+						"accordion_title": "Shipping & returns",
+						"accordion_text": "<p>Free express shipping on orders over £75, otherwise just £3.49</p><ul><li>For all UK orders, shipping is 1-3 business days</li></ul>"
+					}
+				},
+				"bottom_carousel_image_ckekXn": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-3.png",
+						"botttom_image_alt": "Wow"
+					}
+				},
+				"bottom_carousel_image_DzMWw9": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-5.png",
+						"botttom_image_alt": "The Best"
+					}
+				},
+				"bottom_carousel_image_f6WhfM": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-2.png",
+						"botttom_image_alt": "Perfectly cold beer whilst on the grill"
+					}
+				},
+				"bottom_carousel_image_AexKKU": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-1.png",
+						"botttom_image_alt": "So cool"
+					}
+				},
+				"bottom_carousel_image_c64DEr": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-8.png",
+						"botttom_image_alt": "Never have I ever felt so manly drinking my Sunday bevvy"
+					}
+				},
+				"bottom_carousel_image_kdVckU": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-6.png",
+						"botttom_image_alt": "Now Dad respects me again"
+					}
+				},
+				"bottom_carousel_image_FEGPT3": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-7.png",
+						"botttom_image_alt": "Unbeerlievable"
+					}
+				},
+				"bottom_carousel_image_UctdEe": {
+					"type": "bottom_carousel_image",
+					"settings": {
+						"bottom_carousel_image": "shopify://shop_images/bottom-autoplay-carousel-4.png",
+						"botttom_image_alt": "I can't stop looking at it and picking it up"
+					}
+				},
+				"modal_aBWkVF": {
+					"type": "modal",
+					"settings": {
+						"modal_image_one": "shopify://shop_images/dawn-natural-invisible-bg.png",
+						"modal_title_one": "DAWN/NATURAL",
+						"modal_image_two": "shopify://shop_images/dusk-natural-invisible-bg.png",
+						"modal_title_two": "DUSK/NATURAL",
+						"modal_image_three": "shopify://shop_images/midnight-natural-invisible-bg.png",
+						"modal_title_three": "MIDNIGHT/NATURAL",
+						"modal_image_four": "shopify://shop_images/dawn-charcoal-invisible-bg.png",
+						"modal_title_four": "DAWN/CHARCOAL",
+						"modal_image_five": "shopify://shop_images/dusk-charcoal-invisible-bg.png",
+						"modal_title_five": "DUSK/CHARCOAL",
+						"modal_image_six": "shopify://shop_images/midnight-charcoal-invisible-bg.png",
+						"modal_title_six": "MIDNIGHT/CHARCOAL"
+					}
+				}
+			},
+			"block_order": [
+				"main_carousel_image_nEV9T7",
+				"main_carousel_image_dGxYrd",
+				"main_carousel_image_Lmngit",
+				"main_carousel_image_bGEDdV",
+				"main_carousel_image_bmLUD9",
+				"main_carousel_image_hLa47R",
+				"main_carousel_image_nU76hM",
+				"main_carousel_image_igcP88",
+				"main_carousel_image_FbDCEg",
+				"main_carousel_image_NGqe3P",
+				"image_title_text_cnaKqG",
+				"image_title_text_riVwLm",
+				"image_title_text_HWeJDF",
+				"benefits_R4YMcU",
+				"benefits_HnRg3Q",
+				"benefits_F8BYBe",
+				"accordion_pzWYme",
+				"accordion_mCpagc",
+				"bottom_carousel_image_ckekXn",
+				"bottom_carousel_image_DzMWw9",
+				"bottom_carousel_image_f6WhfM",
+				"bottom_carousel_image_AexKKU",
+				"bottom_carousel_image_c64DEr",
+				"bottom_carousel_image_kdVckU",
+				"bottom_carousel_image_FEGPT3",
+				"bottom_carousel_image_UctdEe",
+				"modal_aBWkVF"
+			],
+			"settings": {
+				"product_title": "The Chuug V3 660ml",
+				"review_text": "4.9 - 12,690 Vessel Vikings",
+				"review_url": "https://uk.trustpilot.com/review/chuug.com?utm_medium=trustbox&utm_source=MicroStar",
+				"discount_number": "56",
+				"vessel_question": "1. Number of Vessels",
+				"engraving_question": "2. Personalised Engraving?",
+				"customise_vessel_question": "3. Customise Your Vessel(s)",
+				"button_text": "ADD TO CART",
+				"vessel_question_tooltip_text": "Select whether you want to purchase 1, 2, or 3 Chuugs.",
+				"engraving_question_tooltip_text": "Select YES if you would like to personalise your Chuug with your initials.",
+				"one_chuug_product": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag",
+				"two_chuug_product": "set-of-2-chuug®-v2-660ml-with-gift-bags",
+				"three_chuug_product": "set-of-3-chuug®-v2-660ml-with-gift-bags",
+				"one_chuug_no_initials": "shopify://shop_images/CHUU5684-Chugg5256-1.jpg",
+				"one_chuug_initials": "shopify://shop_images/V3-personalised-coin-new-crunched_04c9d67a-6e9b-41c3-82d3-42e0ee57a2d9.jpg",
+				"two_chuug_no_initials": "shopify://shop_images/pair-of-v3s_2859910f-385b-4acc-acc2-08f4d32f3f39.png",
+				"two_chuug_initials": "shopify://shop_images/pair-of-v3s_2859910f-385b-4acc-acc2-08f4d32f3f39.png",
+				"three_chuug_no_initials": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
+				"three_chuug_initials": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
+				"wood_finish_midnight_wood": "shopify://shop_images/midnight-wood.png",
+				"wood_finish_dawn_wood": "shopify://shop_images/dawn-wood.png",
+				"wood_finish_dusk_wood": "shopify://shop_images/dusk-wood.png",
+				"charcoal_rope": "shopify://shop_images/charcoal-rope.png",
+				"natural_rope": "shopify://shop_images/natural-rope.png",
+				"dusk_charcoal": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag",
+				"dusk_natural": "the-dusk-natural-chuug®-v2-660ml-with-gift-bag-copy",
+				"dawn_charcoal": "the-dawn-charcoal-chuug®-v2-660ml-with-gift-bag",
+				"dawn_natural": "the-dawn-natural-chuug®-v2-660ml-with-gift-bag",
+				"midnight_charcoal": "the-midnight-charcoal-chuug®-v2-660ml-with-gift-bag",
+				"midnight_natural": "the-midnight-natural-chuug®-v2-660ml-with-gift-bag",
+				"second_product_label_text": "Most Popular",
+				"third_product_label_text": "Best Value"
+			}
+		},
+		"reviews_carousel_QgJCgz": {
+			"type": "reviews-carousel",
+			"blocks": {
+				"review_iAWtRK": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-1.png",
+						"stars": "five",
+						"title": "“A little bit of special”",
+						"text": "“It’s bespoke and something that is mine to treasure for years to come, that is the key, it feels special and looks amazing and is comfortable to hold so what’s not like!”",
+						"name": "Jason Ellis",
+						"date": "August 20, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_yn48eD": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-2.png",
+						"stars": "five",
+						"title": "“Gift for 40 year old man”",
+						"text": "“Extremely easy & efficient process from start to finish. Excellent delivery time, presentation was brilliant, the product itself was superbly crafted.”",
+						"name": "Cath Myers",
+						"date": "August 14, 2024",
+						"image_position": "first"
+					}
+				},
+				"review_rzpHxA": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-3.png",
+						"stars": "five",
+						"title": "“Easy 5 star”",
+						"text": "“My husband is a viking type so a perfect gift for him. The craftsmanship is outstanding and the rope handle elevates the Chuug that little bit more.”",
+						"name": "Emma Ockwell",
+						"date": "August 17, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_Ta3Qy4": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-4.png",
+						"stars": "four",
+						"title": "“A nice solid mug”",
+						"text": "“Order arrived very quickly and was well presented. Really nice design and overall finish. Certainly good value for money as i have enjoyed it over the last month.”",
+						"name": "Jim w",
+						"date": "August 01, 2024",
+						"image_position": "first"
+					}
+				},
+				"review_UYLfke": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-5.png",
+						"stars": "five",
+						"title": "“Beautiful product”",
+						"text": "“Bought 2, one for my husband and one for my son ready for Xmas after them seeing them at a festival. Really well made and lovely looking.”",
+						"name": "Paula Charles",
+						"date": "August 21, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_NnaWhe": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-6.png",
+						"stars": "five",
+						"title": "“Excellent quality”",
+						"text": "“I bought it for my dad for Christmas (he’s really hard too buy for) I know he’ll love it. Very quick delivery even with personalising.”",
+						"name": "Susan Taylor",
+						"date": "August 22, 2024",
+						"image_position": "first"
+					}
+				},
+				"review_KWgxeN": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-7.png",
+						"stars": "five",
+						"title": "“I love my Chugg”",
+						"text": "“It is great quality and looks fantastic. It will be my go to vessel for both tea and beers. Ordered Wednesday evening and it arrived Friday morning.”",
+						"name": "Keith Welch",
+						"date": "August 30, 2024",
+						"image_position": "last"
+					}
+				},
+				"review_qkdrpj": {
+					"type": "review",
+					"settings": {
+						"review_image": "shopify://shop_images/reviews-carousel-8.png",
+						"stars": "five",
+						"title": "“Quality is spot on”",
+						"text": "“Purchased for my Brother who loves things ‘Vikingish’. The rope handle detail works so well. I had his initials engraved which makes it a thoughtful gift.”",
+						"name": "Fallon Hanson, UK",
+						"date": "September 01, 2024",
+						"image_position": "first"
+					}
+				}
+			},
+			"block_order": [
+				"review_iAWtRK",
+				"review_yn48eD",
+				"review_rzpHxA",
+				"review_Ta3Qy4",
+				"review_UYLfke",
+				"review_NnaWhe",
+				"review_KWgxeN",
+				"review_qkdrpj"
+			],
+			"settings": {}
+		},
+		"several_text_and_images_EHXQ8F": {
+			"type": "several-text-and-images",
+			"blocks": {
+				"text_and_image_wqKmzh": {
+					"type": "text_and_image",
+					"settings": {
+						"block_image": "shopify://shop_images/man-chop-man-go.png",
+						"block_title": "Man chop. Man-go",
+						"block_text": "Quality from the onset. Each tankard is crafted from durable Mango wood. How else would it last a lifetime?"
+					}
+				},
+				"text_and_image_adzQFp": {
+					"type": "text_and_image",
+					"disabled": true,
+					"settings": {
+						"block_image": "shopify://shop_images/hand-crafted-in-britain.png",
+						"block_title": "Crafted by Hand, Built In Britain",
+						"block_text": "We source the finest materials and components from across the world, selecting only the best for our beer vessels. Every CHUUG is then meticulously assembled by hand in Britain, ensuring skilled craftsmanship and rock-solid quality. Because your drink deserves nothing less."
+					}
+				},
+				"text_and_image_nJRfHq": {
+					"type": "text_and_image",
+					"disabled": true,
+					"settings": {
+						"block_image": "shopify://shop_images/the-chef-kiss.png",
+						"block_title": "The Chef's Kiss",
+						"block_text": "The personalisation station. We engrave your mark into your tankard to let others know it's yours and not to be touched."
+					}
+				},
+				"text_and_image_Fba63x": {
+					"type": "text_and_image",
+					"disabled": true,
+					"settings": {
+						"block_image": "shopify://shop_images/lets-us-handle-it.png",
+						"block_title": "Let Us 'Handle' It",
+						"block_text": "Bet you didn't know a rope could be 'smart'? Anti-bacterial, water resistant AND it doesn't warp or stretch. Pretty damn clever if you ask us."
+					}
+				}
+			},
+			"block_order": [
+				"text_and_image_wqKmzh",
+				"text_and_image_adzQFp",
+				"text_and_image_nJRfHq",
+				"text_and_image_Fba63x"
+			],
+			"settings": {
+				"section_title": "<h1>Nature's gift, <em>forged </em>into perfection</h1>",
+				"section_subtitle": "Always built by hand, machines are cheating"
+			}
+		},
+		"chuug_customiser_carousel_QHgy3x": {
+			"type": "chuug-customiser-carousel",
+			"blocks": {
+				"feature_slide_PexUQk": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
+						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/smart-rope.png",
+						"feature_icon_alt": "",
+						"feature_title": "Smart Rope Technology",
+						"feature_description": "Soft to the touch and no funky smells, from the tankard at least.",
+						"social_handle": "@chuugofficial"
+					}
+				},
+				"feature_slide_R3GDQr": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
+						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/ice-cold-beer.png",
+						"feature_icon_alt": "",
+						"feature_title": "Ice Cold Beer",
+						"feature_description": "Cold for up to two hours, not that you’ll need it!",
+						"social_handle": "@chuugofficial"
+					}
+				},
+				"feature_slide_xdHyCk": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
+						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/british-flag.png",
+						"feature_icon_alt": "",
+						"feature_title": "Built in Britain",
+						"feature_description": "Because why get it made anywhere else?",
+						"social_handle": "@chuugofficial"
+					}
+				},
+				"feature_slide_YPXjgX": {
+					"type": "feature_slide",
+					"settings": {
+						"product_image": "shopify://shop_images/Image.png",
+						"product_image_alt": "",
+						"feature_icon": "shopify://shop_images/fully-customizable.png",
+						"feature_icon_alt": "",
+						"feature_title": "Fully Customisable",
+						"feature_description": "Why buy a boring tankard that thousands of others own?",
+						"social_handle": "@chuugofficial"
+					}
+				}
+			},
+			"block_order": [
+				"feature_slide_PexUQk",
+				"feature_slide_R3GDQr",
+				"feature_slide_xdHyCk",
+				"feature_slide_YPXjgX"
+			],
+			"name": "Chuug Customiser Carousel",
+			"settings": {
+				"section_title": "Drinking Beer Just Got Cooler",
+				"section_subtitle": "Out-do your neighbour at the next awkward BBQ that you'd rather not attend",
+				"button_text": "CUSTOMIZE NOW",
+				"button_url": "",
+				"auto_advance": false,
+				"auto_advance_delay": 5
+			}
+		},
+		"content_with_grid_efaAzm": {
+			"type": "content-with-grid",
+			"blocks": {
+				"content_image_emteVy": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-1.png"
+					}
+				},
+				"content_image_AxdL3i": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-2.png"
+					}
+				},
+				"content_image_bzArh7": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-3.png"
+					}
+				},
+				"content_image_gTGtKK": {
+					"type": "content_image",
+					"settings": {
+						"image": "shopify://shop_images/ugc-image-4.png"
+					}
+				}
+			},
+			"block_order": [
+				"content_image_emteVy",
+				"content_image_AxdL3i",
+				"content_image_bzArh7",
+				"content_image_gTGtKK"
+			],
+			"name": "Content with Grid",
+			"settings": {
+				"heading": "Proof CHUUG Is Worth The Hype",
+				"load_more_text": "Load More",
+				"padding_top": 32,
+				"padding_bottom": 32
+			}
+		},
+		"five_images_hjC3Jd": {
+			"type": "five-images",
+			"blocks": {
+				"image_block_fAWXtY": {
+					"type": "image_block",
+					"settings": {
+						"block_image": "shopify://shop_images/british-flag.png",
+						"block_title": "Built in Britain",
+						"block_subtitle": "Because why get it made anywhere else?"
+					}
+				},
+				"image_block_h9rgVK": {
+					"type": "image_block",
+					"settings": {
+						"block_image": "shopify://shop_images/ice-cold-beer.png",
+						"block_title": "Ice Cold Beer",
+						"block_subtitle": "Cold for up to two hours, not that you’ll need it!"
+					}
+				},
+				"image_block_gdGxVq": {
+					"type": "image_block",
+					"settings": {
+						"block_image": "shopify://shop_images/smart-rope.png",
+						"block_title": "Smart Rope Technology",
+						"block_subtitle": "Soft to the touch and no funky smells, from the tankard at least."
+					}
+				},
+				"image_block_catVBx": {
+					"type": "image_block",
+					"settings": {
+						"block_image": "shopify://shop_images/fully-customizable.png",
+						"block_title": "Fully Customisable",
+						"block_subtitle": "Why buy a boring tankard that thousands of others own?"
+					}
+				}
+			},
+			"block_order": [
+				"image_block_fAWXtY",
+				"image_block_h9rgVK",
+				"image_block_gdGxVq",
+				"image_block_catVBx"
+			],
+			"disabled": true,
+			"settings": {
+				"section_title": "<p>Drinking Beer Just Got <em>Cooler</em></p>",
+				"section_subtitle": "Out-do your neighbour at the next awkward BBQ that you’d rather not attend",
+				"main_image": "shopify://shop_images/chuug_dusk_natural_invisible_bg_small_9f3be21e-7509-464a-bdd4-6c793783f235.png",
+				"discount_number": "56",
+				"button_text": "Customise Now"
+			}
+		},
+		"benefits_xeGgkP": {
+			"type": "benefits",
+			"blocks": {
+				"comparison_section_BaX79M": {
+					"type": "comparison_section",
+					"settings": {
+						"section_title": "Slippery Slope",
+						"section_type": "negative",
+						"point_1": "Flimsy and fragile handles ruin your ritual.",
+						"point_2": "Uncomfortable ceramic & metal handles.",
+						"point_3": "Slippy handles lead to spillage, not build for men."
+					}
+				},
+				"comparison_section_YRxRtr": {
+					"type": "comparison_section",
+					"settings": {
+						"section_title": "Rope Revolution",
+						"section_type": "positive",
+						"point_1": "Flimsy and fragile handles ruin your ritual.",
+						"point_2": "Uncomfortable ceramic & metal handles.",
+						"point_3": "Slippy handles lead to spillage, not build for men."
+					}
+				}
+			},
+			"block_order": ["comparison_section_BaX79M", "comparison_section_YRxRtr"],
+			"settings": {
+				"section_title": "Time To Ditch The Dainty Glassware",
+				"section_subtitle": "Leave that for Prosecco and Bucks-fizz. We’re here for real drinks",
+				"tab_1_title": "SMARTROPE TECH",
+				"tab_2_title": "THE CHUUG RITUAL",
+				"button_text": "Add to cart",
+				"button_url": ""
+			}
+		},
+		"text_and_image_carousel_TjCMqW": {
+			"type": "text-and-image-carousel",
+			"blocks": {
+				"slide_MgkXUc": {
+					"type": "slide",
+					"settings": {
+						"block_image": "shopify://shop_images/image-and-text-carousel-2.png"
+					}
+				},
+				"slide_dGTg37": {
+					"type": "slide",
+					"settings": {
+						"block_image": "shopify://shop_images/chuug_hammer-metal_studs_tankard_rope_handle.jpg"
+					}
+				},
+				"slide_WJEJzH": {
+					"type": "slide",
+					"settings": {
+						"block_image": "shopify://shop_images/image-and-text-carousel-3.png"
+					}
+				},
+				"slide_dPTLbg": {
+					"type": "slide",
+					"settings": {
+						"block_image": "shopify://shop_images/chuug_quality-check_tankard_rope_handle.jpg"
+					}
+				},
+				"slide_4jG6E8": {
+					"type": "slide",
+					"settings": {
+						"block_image": "shopify://shop_images/image-and-text-carousel-5.png"
+					}
+				}
+			},
+			"block_order": [
+				"slide_MgkXUc",
+				"slide_dGTg37",
+				"slide_WJEJzH",
+				"slide_dPTLbg",
+				"slide_4jG6E8"
+			],
+			"disabled": true,
+			"settings": {
+				"title": "<h1>You’d Have To See It To Beerlieve It</h1>",
+				"description": "What’s better than drinking beer from a tankard? Drinking two. It’s no coincidence our tankards hold 660ml. (That’s two of your favourite 330ml cans, ales, or fancy craft beers - whatever's your poison)",
+				"button_text": "Add to cart",
+				"discount_number": "40"
+			}
+		},
+		"three_image_reviews_carousel_KxatHt": {
+			"type": "three-image-reviews-carousel",
+			"blocks": {
+				"review_4pdjfy": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“Got this as a gift for our son and he loves it, especially the handle and the engraving.”",
+						"review_author": "Helen B."
+					}
+				},
+				"review_aKfxYR": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“Amazing product! Stunning craftsmanship and will make a great gift for me and my son.”",
+						"review_author": "Walter H."
+					}
+				},
+				"review_hd3M4G": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“Loved the Chuug. The quality is amazing…best buy this year and cold beer for the summer.”",
+						"review_author": "Nathan T."
+					}
+				},
+				"review_PEVGzy": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "four",
+						"review_text": "“Nice mug and the handle feels solid. Easy to drink from and has a bag for giving as a gift.”",
+						"review_author": "Jim W."
+					}
+				},
+				"review_LAp7Xx": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“High quality, well made, look fantastic. Gift bag for each mug. Bought one for a gift, might buy more!”",
+						"review_author": "Sarah M."
+					}
+				},
+				"review_p8PzR4": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“Excellent quality bought for a friend's birthday.He was well pleased.”",
+						"review_author": "Neville R."
+					}
+				},
+				"review_4ccF4V": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“Lovely looking, great quality & keep my beer cold much longer than other coolers I have!”",
+						"review_author": "Iain."
+					}
+				},
+				"review_6dhDcE": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“The whole experience was first class and the product is crafted from high quality materials.”",
+						"review_author": "Steve R."
+					}
+				},
+				"review_VHNjxh": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“I bought this for my husband for one of his 60th birthday he is over the moon thank you.”",
+						"review_author": "Sharon S."
+					}
+				},
+				"review_C7mKYx": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "four",
+						"review_text": "“Does exactly what they say and keeps your beer cool while sitting in the sun at 27°.”",
+						"review_author": "Shaw O."
+					}
+				},
+				"review_mMYwyD": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“A perfect gift for a man that just buys what he wants! Customer Support were really helpful.”",
+						"review_author": "Jennie C."
+					}
+				},
+				"review_VQjKEX": {
+					"type": "review",
+					"settings": {
+						"background_image": "shopify://shop_images/dark-blue-chuug.png",
+						"stars": "five",
+						"review_text": "“Beautifully made item, looks like it it will last forever if looked after properly.”",
+						"review_author": "Phil K."
+					}
+				}
+			},
+			"block_order": [
+				"review_4pdjfy",
+				"review_aKfxYR",
+				"review_hd3M4G",
+				"review_PEVGzy",
+				"review_LAp7Xx",
+				"review_p8PzR4",
+				"review_4ccF4V",
+				"review_6dhDcE",
+				"review_VHNjxh",
+				"review_C7mKYx",
+				"review_mMYwyD",
+				"review_VQjKEX"
+			],
+			"disabled": true,
+			"settings": {
+				"title": "<h1>“my go to vessel for tea and beer”</h1>",
+				"subtitle": "Hot or cold beverages. We don’t judge, our tankards can do it all."
+			}
+		},
+		"fading_text_carousel_9VgpBp": {
+			"type": "fading-text-carousel",
+			"disabled": true,
+			"settings": {
+				"section_title": "<h1>You Deserve Cold Beer</h1>",
+				"section_description": "Every guy needs his personalised beer tankard. If you’re a confused woman reading this, just trust us.",
+				"image_one": "shopify://shop_images/fading-text-carousel-image.png",
+				"feature_one_title": "Craft Your Perfect Tankard",
+				"feature_one_description": "Select from our range of premium wood finishes, each with its own character and charm. Sustainable, durable, and ready to become your new favourite drinking companion.",
+				"feature_two_title": "Select Your Grip",
+				"feature_two_description": "Complete your tankard's look with a rope that's as tough as you are. Our durable, anti-bacterial ropes are designed for comfort and longevity. Select a colour that matches your style and prepare for years of happy sipping.",
+				"feature_three_title": "Stamp Your Mark",
+				"feature_three_description": "The final touch to your perfect drinking vessel. Add a personal engraving to transform your tankard from great to unforgettable. Your story, your style, your tankard.",
+				"button_text": "Add to cart",
+				"discount_number": "56"
+			}
+		},
+		"accordions_M9ze79": {
+			"type": "accordions",
+			"blocks": {
+				"accordion_tab_1_t6dTx3": {
+					"type": "accordion_tab_1",
+					"settings": {
+						"accordion_title_tab_1": "How long will my Chuug tankard keep my drink cold?",
+						"accordion_text_tab_1": "Up to 2 hours of frosty goodness! Your Chuug tankard is designed to keep your brew at the perfect temperature, ensuring you enjoy every sip as much as the first."
+					}
+				},
+				"accordion_tab_1_x7ccWB": {
+					"type": "accordion_tab_1",
+					"settings": {
+						"accordion_title_tab_1": "is it dishwasher safe?",
+						"accordion_text_tab_1": "No, hand wash only. Your Chuug tankard deserves a bit of personal attention. A quick handwash will keep it in top shape and ready for your next adventure."
+					}
+				},
+				"accordion_tab_1_mF3ELh": {
+					"type": "accordion_tab_1",
+					"settings": {
+						"accordion_title_tab_1": "Can I put hot beverages in my Chuug tankard?",
+						"accordion_text_tab_1": "Yes, it will keep hot drinks hot for up to 2 hours. Your Chuug isn't just for cold ones – it's a year-round companion."
+					}
+				},
+				"accordion_tab_1_3eTKRt": {
+					"type": "accordion_tab_1",
+					"settings": {
+						"accordion_title_tab_1": "How do I look after my Chuug tankard?",
+						"accordion_text_tab_1": "Hand wash and towel dry. Keep your Chuug in prime condition with a simple care routine. Wash it gently with warm water and mild soap, then dry with a soft towel. For wooden parts, an occasional rub with food-grade mineral oil will keep them looking great"
+					}
+				},
+				"accordion_tab_2_mWMj93": {
+					"type": "accordion_tab_2",
+					"settings": {
+						"accordion_title_tab_2": "HOW LONG WILL IT TAKE FOR MY ORDER TO ARRIVE?",
+						"accordion_text_tab_2": "Your Chuug is eager to meet you! Expect your order within 4 working days. For the most up-to-date and accurate ETA, check the product listing."
+					}
+				},
+				"accordion_tab_2_UihAen": {
+					"type": "accordion_tab_2",
+					"settings": {
+						"accordion_title_tab_2": "DO YOU OFFER INTERNATIONAL SHIPPING?",
+						"accordion_text_tab_2": "Yes! Chuug tankards are ready to travel the world. We ship internationally because everyone deserves cold beer."
+					}
+				},
+				"accordion_tab_2_WfLQpf": {
+					"type": "accordion_tab_2",
+					"settings": {
+						"accordion_title_tab_2": "HOW DO I TRACK MY ORDER?",
+						"accordion_text_tab_2": "We'll keep you in the loop! As soon as your Chuug begins its journey, we'll send you an email with tracking information. You can follow your tankard's adventure right to your doorstep."
+					}
+				},
+				"accordion_tab_2_6LPDJP": {
+					"type": "accordion_tab_2",
+					"settings": {
+						"accordion_title_tab_2": "WHAT IF MY CHUUG ARRIVES DAMAGED?",
+						"accordion_text_tab_2": "No worries, we've got you covered! If your Chuug arrives looking less than perfect, just send us a photo. We'll replace it faster than you can say \"cheers\" - no questions asked."
+					}
+				}
+			},
+			"block_order": [
+				"accordion_tab_1_t6dTx3",
+				"accordion_tab_1_x7ccWB",
+				"accordion_tab_1_mF3ELh",
+				"accordion_tab_1_3eTKRt",
+				"accordion_tab_2_mWMj93",
+				"accordion_tab_2_UihAen",
+				"accordion_tab_2_WfLQpf",
+				"accordion_tab_2_6LPDJP"
+			],
+			"settings": {
+				"section_title": "<p>Let's <em>Clear </em>a Few Things Up</p>",
+				"section_subtitle": "If you still have questions, don’t hesitate to contact us",
+				"tab_1_title": "CHUUG Tankard",
+				"tab_2_title": "Delivery & Returns",
+				"button_text": "Add to cart"
+			}
+		},
+		"content_video_section_DwemtG": {
+			"type": "content-video-section",
+			"name": "Content Video Section",
+			"settings": {
+				"video_url": "https://youtu.be/WNOCtxs-aFs",
+				"video_file": "",
+				"video_poster": "shopify://shop_images/CHUU5126-Chuug0459-1.jpg",
+				"article_title": "Wood Becomes Art",
+				"article_content": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>"
+			}
+		}
+	},
+	"order": [
+		"pdp_chuug_vessel_8y8pAk",
+		"reviews_carousel_QgJCgz",
+		"several_text_and_images_EHXQ8F",
+		"chuug_customiser_carousel_QHgy3x",
+		"content_with_grid_efaAzm",
+		"five_images_hjC3Jd",
+		"benefits_xeGgkP",
+		"text_and_image_carousel_TjCMqW",
+		"three_image_reviews_carousel_KxatHt",
+		"fading_text_carousel_9VgpBp",
+		"accordions_M9ze79",
+		"content_video_section_DwemtG"
+	]
 }

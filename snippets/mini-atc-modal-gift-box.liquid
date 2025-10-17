@@ -1,0 +1,102 @@
+{% comment %}
+  Mini ATC Modal - Gift Box Component
+  
+  Semantic component for premium gift box add-on option.
+  Uses Liquid template instead of AJAX for better performance.
+{% endcomment %}
+
+{%- liquid
+  assign gift_box_handle = 'premium-gift-box-tissue-wrap'
+  assign gift_box_product = all_products[gift_box_handle]
+  assign gift_box_variant = gift_box_product.variants.first
+  assign gift_box_image = gift_box_product.featured_image | default: gift_box_product.images.first
+-%}
+
+<article class="premium-gift-box" data-addon="gift-box">
+  <h5 class="visually-hidden">Premium Gift Box Add-On</h5>
+  
+  <div class="premium-gift-box__container">
+    <!-- Product Image -->
+    <div class="premium-gift-box__image">
+      {%- if gift_box_image -%}
+        <img 
+          src="{{ gift_box_image | image_url: width: 142 }}" 
+          alt="{{ gift_box_product.title | escape }}" 
+          width="71" 
+          height="89"
+          loading="lazy"
+          data-gift-box-image
+        />
+      {%- else -%}
+        <img 
+          src="{{ 'premium-gift-box.png' | asset_url }}" 
+          alt="Premium Gift Box & Wrap" 
+          width="71" 
+          height="89"
+          loading="lazy"
+          data-gift-box-image
+        />
+      {%- endif -%}
+    </div>
+    
+    <!-- Content Area -->
+    <div class="premium-gift-box__content">
+      <div class="premium-gift-box__details">
+        <div class="premium-gift-box__text">
+          <h6 class="premium-gift-box__title" data-gift-box-title>
+            {%- if gift_box_product -%}
+              {{ gift_box_product.title }}<br>With All CHUUG Orders
+            {%- else -%}
+              Premium Gift Box & Tissue Wrap<br>With All CHUUG Orders
+            {%- endif -%}
+          </h6>
+        </div>
+        <div 
+          class="premium-gift-box__price" 
+          aria-label="Gift box price"
+          data-gift-box-price
+          data-price="{{ gift_box_variant.price | default: 200 }}"
+        >
+          {%- if gift_box_variant -%}
+            {{ gift_box_variant.price | money }}
+          {%- else -%}
+            {{ 200 | money }}
+          {%- endif -%}
+        </div>
+        <div class="premium-gift-box__error" data-gift-box-error style="display: none; color: red; font-size: 12px; margin-top: 5px;">
+          <!-- Error messages will appear here -->
+        </div>
+      </div>
+      
+      <!-- Toggle Section -->
+      <div class="premium-gift-box__toggle-section">
+        <div class="premium-gift-box__toggle-container">
+          <label class="premium-gift-box__toggle" for="{{ modal_id }}-premium-gift-box-toggle">
+            <input 
+              type="checkbox" 
+              id="{{ modal_id }}-premium-gift-box-toggle" 
+              class="premium-gift-box__toggle-input"
+              data-addon-toggle="gift-box"
+              aria-describedby="{{ modal_id }}-gift-box-description"
+              data-property="properties[Premium Gift Box]"
+              data-variant-id="{{ gift_box_variant.id | default: '' }}"
+              data-gift-box-variant-id="{{ gift_box_variant.id | default: '' }}"
+              data-gift-box-product-title="{{ gift_box_product.title | default: 'Premium Gift Box and Tissue Wrap' }}"
+            >
+            <span class="premium-gift-box__toggle-slider" aria-hidden="true"></span>
+            <span class="visually-hidden">Add premium gift box to order</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="{{ modal_id }}-gift-box-description" class="visually-hidden">
+    Add premium gift box and wrapping to make your CHUUG order gift-ready
+  </div>
+</article>
+
+{%- comment -%}
+  No JavaScript needed - all data is now rendered server-side via Liquid template
+  The gift box component is fully functional without AJAX calls
+{%- endcomment -%}

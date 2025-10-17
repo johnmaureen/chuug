@@ -1,0 +1,168 @@
+{% comment %}
+  Content Video Section
+  Displays a video section with article content and footer
+{% endcomment %}
+
+{{ 'content-video-section.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign section_id = section.id | prepend: 'content-video-section-'
+  assign video_image = section.settings.video_image
+  assign video_url = section.settings.video_url
+  assign video_file = section.settings.video_file
+  assign video_poster = section.settings.video_poster
+  assign article_title = section.settings.article_title
+  assign article_content = section.settings.article_content
+-%}
+
+<div id="{{ section_id }}" class="content-video-section">
+  <div class="content-video-section__container">
+    <!-- Article Section -->
+    <div class="content-video-section__article">
+      <h2 class="content-video-section__title">{{ article_title }}</h2>
+      <div class="content-video-section__content">
+        {{ article_content }}
+      </div>
+    </div>
+
+    <!-- Video Section -->
+    <div class="content-video-section__video">
+      {% if section.settings.video_url != blank %}
+        <!-- Embedded Video (YouTube/Vimeo) -->
+        <div class="content-video-section__video-embed">
+          {% assign video_id = '' %}
+          {% assign video_type = '' %}
+          
+          {% if section.settings.video_url contains 'youtube.com/watch' or section.settings.video_url contains 'youtu.be' %}
+            {% if section.settings.video_url contains 'youtube.com/watch' %}
+              {% assign video_id = section.settings.video_url | split: 'v=' | last | split: '&' | first %}
+            {% elsif section.settings.video_url contains 'youtu.be' %}
+              {% assign video_id = section.settings.video_url | split: 'youtu.be/' | last | split: '?' | first %}
+            {% endif %}
+            {% assign video_type = 'youtube' %}
+          {% elsif section.settings.video_url contains 'vimeo.com' %}
+            {% assign video_id = section.settings.video_url | split: 'vimeo.com/' | last | split: '?' | first %}
+            {% assign video_type = 'vimeo' %}
+          {% endif %}
+          
+          {% if video_type == 'youtube' %}
+            <iframe 
+              src="https://www.youtube.com/embed/{{ video_id }}?rel=0&showinfo=0&modestbranding=1&playsinline=1" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen
+              loading="lazy">
+            </iframe>
+          {% elsif video_type == 'vimeo' %}
+            <iframe 
+              src="https://player.vimeo.com/video/{{ video_id }}?title=0&byline=0&portrait=0&playsinline=1" 
+              frameborder="0" 
+              allow="autoplay; fullscreen; picture-in-picture" 
+              allowfullscreen
+              loading="lazy">
+            </iframe>
+          {% elsif section.settings.video_url contains '<iframe' %}
+            <!-- Direct embed code support -->
+            {{ section.settings.video_url }}
+          {% else %}
+            <!-- Fallback for unsupported URLs -->
+            <div class="content-video-section__video-error">
+              <p>Unsupported video URL format. Please use:</p>
+              <ul>
+                <li>YouTube URLs: https://www.youtube.com/watch?v=VIDEO_ID</li>
+                <li>Vimeo URLs: https://vimeo.com/VIDEO_ID</li>
+                <li>Direct embed codes with &lt;iframe&gt; tags</li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      {% elsif section.settings.video_file != blank %}
+        <!-- Direct Video File -->
+        <video 
+          class="content-video-section__video-element"
+          width="1080"
+          height="723"
+          controls
+          preload="metadata"
+          poster="{{ section.settings.video_poster | image_url: width: 1080 }}"
+        >
+          <source src="{{ section.settings.video_file }}" type="video/mp4">
+          <source src="{{ section.settings.video_file }}" type="video/webm">
+          Your browser does not support the video tag.
+        </video>
+      {% else %}
+        <!-- Fallback Image -->
+        <img 
+          src="{{ video_image | asset_url }}" 
+          alt="{{ article_title }}"
+          class="content-video-section__video-image"
+          width="1080"
+          height="723"
+          loading="lazy"
+        >
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Content Video Section",
+  "tag": "section",
+  "class": "section-content-video",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video Settings"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL or Embed Code",
+      "info": "YouTube/Vimeo URL or direct iframe embed code"
+    },
+    {
+      "type": "url",
+      "id": "video_file",
+      "label": "Video File URL",
+      "info": "Direct link to video file (MP4, WebM) - external URL or Shopify Files URL"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_poster",
+      "label": "Video Poster Image",
+      "info": "Thumbnail image shown before video plays"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_image",
+      "label": "Fallback Image",
+      "info": "Static image shown if no video is provided"
+    },
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "article_title",
+      "label": "Article Title",
+      "default": "Wood Becomes Art"
+    },
+    {
+      "type": "richtext",
+      "id": "article_content",
+      "label": "Article Content",
+      "default": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Content Video Section"
+    }
+  ]
+}
+{% endschema %}
+
+<script src="{{ 'content-video-section.js' | asset_url }}" defer></script>
