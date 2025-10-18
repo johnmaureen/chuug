@@ -47,7 +47,6 @@ export class PersonalizationState extends EventEmitter {
 			if (saved.mixMatch) {
 				this.state.mixMatch = { ...this.state.mixMatch, ...saved.mixMatch };
 			}
-			console.log("💾 Loaded state (selective):", {
 				restored: {
 					engraving: saved.engraving || null,
 					mixMatch: saved.mixMatch || null,
@@ -134,7 +133,6 @@ export class PersonalizationState extends EventEmitter {
 		this.saveState();
 
 		const verification = StorageManager.load(CONFIG.STORAGE_KEY);
-		console.log("🔄 Engraving state reset - verification:", {
 			engravingVessels: verification?.engraving?.vessels,
 			shouldBeEmpty:
 				Object.keys(verification?.engraving?.vessels || {}).length === 0,

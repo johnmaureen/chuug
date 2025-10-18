@@ -38,7 +38,6 @@ export class PricingCalculator extends EventEmitter {
 			total = vesselPricing.price;
 			originalTotal = vesselPricing.originalPrice;
 		} else {
-			console.warn("No vessel pricing data available from POMC system");
 			return { total: 0, originalPrice: 0, savings: 0 };
 		}
 
@@ -51,7 +50,6 @@ export class PricingCalculator extends EventEmitter {
 			total += giftBoxTotal;
 			originalTotal += giftBoxTotal;
 			
-			console.log("🎁 Gift box pricing added:", {
 				pricePerBox: giftBoxPrice,
 				multiplier,
 				total: giftBoxTotal

@@ -13,10 +13,6 @@
 		const miniATCModal = document.querySelector(".mini-atc-modal");
 
 		if (!cartIcon || !miniATCModal) {
-			console.warn("Cart icon or Mini ATC Modal not found", {
-				cartIcon: !!cartIcon,
-				miniATCModal: !!miniATCModal,
-			});
 			return;
 		}
 
@@ -25,8 +21,7 @@
 			cartIcon.classList.add('ready');
 			cartIcon.setAttribute('title', 'View cart');
 			cartIcon.setAttribute('aria-label', 'View cart');
-			console.log('✅ Cart icon enabled via integration script');
-		}
+			}
 
 		// Remove existing cart drawer event listeners by cloning the element
 		const newCartIcon = cartIcon.cloneNode(true);
@@ -63,8 +58,7 @@
 						}
 					}, 10); // Very fast response
 				} else {
-					console.warn("Mini ATC Modal instance not found for ID:", modalId);
-				}
+					}
 			} else if (window.openMiniATCModal) {
 				// Fallback to global function
 				window.openMiniATCModal(modalId);
@@ -89,8 +83,7 @@
 					}
 				}, 10); // Very fast response
 			} else {
-				console.warn("Mini ATC Modal system not available");
-			}
+				}
 		});
 
 		// Handle keyboard navigation (space key)
@@ -101,8 +94,7 @@
 			}
 		});
 
-		console.log("Cart icon successfully connected to Mini ATC Modal");
-	}
+		}
 
 	// Initialize when DOM is ready and modal system is available
 	function waitForModalSystem() {

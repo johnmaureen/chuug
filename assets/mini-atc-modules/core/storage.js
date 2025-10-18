@@ -15,7 +15,6 @@ export const StorageManager = {
 			localStorage.setItem(key, JSON.stringify(data));
 			return true;
 		} catch (error) {
-			console.warn(`[StorageManager] Failed to save ${key}:`, error);
 			return false;
 		}
 	},
@@ -30,7 +29,6 @@ export const StorageManager = {
 			const data = localStorage.getItem(key);
 			return data ? JSON.parse(data) : null;
 		} catch (error) {
-			console.warn(`[StorageManager] Failed to load ${key}:`, error);
 			return null;
 		}
 	},
@@ -45,7 +43,6 @@ export const StorageManager = {
 			localStorage.removeItem(key);
 			return true;
 		} catch (error) {
-			console.warn(`[StorageManager] Failed to remove ${key}:`, error);
 			return false;
 		}
 	},
