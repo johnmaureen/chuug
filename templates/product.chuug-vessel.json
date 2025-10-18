@@ -19,17 +19,59 @@
 						"image_alt": "The Chuug V2+ 660ml"
 					}
 				},
-				"main_carousel_image_dGxYrd": {
+				"main_carousel_image_rdUhDF": {
 					"type": "main_carousel_image",
 					"settings": {
-						"carousel_image": "shopify://shop_images/dishwasher-safe.jpg",
-						"image_alt": "Beer warm is beer wasted"
+						"carousel_image": "shopify://shop_images/Chuug-PDP1---hero.png",
+						"image_alt": ""
+					}
+				},
+				"main_carousel_image_xy37Rj": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/Chuug-PDP2.png",
+						"image_alt": ""
+					}
+				},
+				"main_carousel_image_zGjd8U": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/Chuug-PDP5.png",
+						"image_alt": ""
+					}
+				},
+				"main_carousel_image_kpnwXJ": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/Chuug-PDP6.png",
+						"image_alt": ""
+					}
+				},
+				"main_carousel_image_dDVHDe": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/Chuug-PDP7.png",
+						"image_alt": ""
+					}
+				},
+				"main_carousel_image_q68Bcd": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/Chuug-PDP8.png",
+						"image_alt": ""
+					}
+				},
+				"main_carousel_image_LtMiJc": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/Chuug-PDP9---cta.png",
+						"image_alt": ""
 					}
 				},
 				"main_carousel_image_Lmngit": {
 					"type": "main_carousel_image",
 					"settings": {
-						"carousel_image": "shopify://shop_images/V3-personalised-coin-new-crunched_04c9d67a-6e9b-41c3-82d3-42e0ee57a2d9.jpg",
+						"carousel_image": "shopify://shop_images/COIN_PREVIEW_3_1.png",
 						"image_alt": "Boring beer | The coolest vessel"
 					}
 				},
@@ -38,6 +80,13 @@
 					"settings": {
 						"carousel_image": "shopify://shop_images/V3-personalised-coin-new-letters.jpg",
 						"image_alt": "Nature's gift forged into perfect"
+					}
+				},
+				"main_carousel_image_dGxYrd": {
+					"type": "main_carousel_image",
+					"settings": {
+						"carousel_image": "shopify://shop_images/dishwasher-safe.jpg",
+						"image_alt": "Beer warm is beer wasted"
 					}
 				},
 				"main_carousel_image_bmLUD9": {
@@ -217,9 +266,16 @@
 			},
 			"block_order": [
 				"main_carousel_image_nEV9T7",
-				"main_carousel_image_dGxYrd",
+				"main_carousel_image_rdUhDF",
+				"main_carousel_image_xy37Rj",
+				"main_carousel_image_zGjd8U",
+				"main_carousel_image_kpnwXJ",
+				"main_carousel_image_dDVHDe",
+				"main_carousel_image_q68Bcd",
+				"main_carousel_image_LtMiJc",
 				"main_carousel_image_Lmngit",
 				"main_carousel_image_bGEDdV",
+				"main_carousel_image_dGxYrd",
 				"main_carousel_image_bmLUD9",
 				"main_carousel_image_hLa47R",
 				"main_carousel_image_nU76hM",
