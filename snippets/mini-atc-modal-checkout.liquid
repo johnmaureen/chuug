@@ -185,30 +185,25 @@
     const vessels = cartData.items.filter(item => {
       // Method 1: Check properties for 'Add-on' marker
       if (item.properties && item.properties['Add-on'] === 'Premium Gift Box') {
-        console.log('🎁 Excluded gift box (by property):', item.title || item.product_title);
         return false;
       }
       
       // Method 2: Check product title for gift box keywords
       const title = (item.title || item.product_title || '').toLowerCase();
       if (title.includes('gift box') || title.includes('tissue wrap')) {
-        console.log('🎁 Excluded gift box (by title):', item.title || item.product_title);
         return false;
       }
       
       // Method 3: Check product type
       const productType = (item.product_type || '').toLowerCase();
       if (productType.includes('gift') || productType.includes('add-on')) {
-        console.log('🎁 Excluded add-on (by type):', item.title || item.product_title);
         return false;
       }
       
       // This is a vessel/CHUUG
-      console.log('🍺 Counted vessel:', item.title || item.product_title);
       return true;
     });
     
-    console.log(`📊 Item Count: ${vessels.length} vessels (excluded ${cartData.items.length - vessels.length} gift boxes/add-ons)`);
     return vessels.length;
   }
   
@@ -219,10 +214,7 @@
     const step1 = document.querySelector('[data-step="shipping"]');
     const step1Icon = document.querySelector('[data-step-1-icon]');
     
-    if (!step1Icon) {
-      console.warn('⚠️ Step 1 icon element not found');
-      return;
-    }
+    if (!step1Icon) return;
     
     const truckIcon = step1Icon.querySelector('.step-process-indicator__truck-icon');
     const checkmark = step1Icon.querySelector('.step-process-indicator__checkmark');
@@ -237,8 +229,6 @@
         step1.classList.add('step-process-indicator__step--completed');
         step1.classList.remove('step-process-indicator__step--active');
       }
-      
-      console.log('✓ Step 1 (Shipping): Checkmark (completed)');
     } else {
       // Show truck, hide checkmark
       if (truckIcon) truckIcon.style.display = '';
@@ -249,8 +239,6 @@
         step1.classList.remove('step-process-indicator__step--completed');
         step1.classList.add('step-process-indicator__step--active');
       }
-      
-      console.log('🚚 Step 1 (Shipping): Truck (active)');
     }
   }
   
@@ -261,10 +249,7 @@
     const step2 = document.querySelector('[data-step="discount-30"]');
     const step2Icon = document.querySelector('[data-step-2-icon]');
     
-    if (!step2Icon) {
-      console.warn('⚠️ Step 2 icon element not found');
-      return;
-    }
+    if (!step2Icon) return;
     
     const currencySymbol = step2Icon.querySelector('.step-process-indicator__currency-symbol');
     const checkmark = step2Icon.querySelector('.step-process-indicator__checkmark');
@@ -279,8 +264,6 @@
         step2.classList.add('step-process-indicator__step--completed');
         step2.classList.remove('step-process-indicator__step--active');
       }
-      
-      console.log('✓ Step 2 (£30 OFF): Checkmark (completed)');
     } else {
       // Show currency symbol, hide checkmark
       if (currencySymbol) currencySymbol.style.display = '';
@@ -295,8 +278,6 @@
           step2.classList.remove('step-process-indicator__step--active');
         }
       }
-      
-      console.log(`£ Step 2 (£30 OFF): Currency symbol (${isActive ? 'active' : 'inactive'})`);
     }
   }
   
@@ -307,10 +288,7 @@
     const step3 = document.querySelector('[data-step="discount-45"]');
     const step3Icon = document.querySelector('[data-step-3-icon]');
     
-    if (!step3Icon) {
-      console.warn('⚠️ Step 3 icon element not found');
-      return;
-    }
+    if (!step3Icon) return;
     
     const currencySymbol = step3Icon.querySelector('.step-process-indicator__currency-symbol');
     const checkmark = step3Icon.querySelector('.step-process-indicator__checkmark');
@@ -325,8 +303,6 @@
         step3.classList.add('step-process-indicator__step--completed');
         step3.classList.remove('step-process-indicator__step--active');
       }
-      
-      console.log('✓ Step 3 (£45 OFF): Checkmark (completed)');
     } else {
       // Show currency symbol, hide checkmark
       if (currencySymbol) currencySymbol.style.display = '';
@@ -341,8 +317,6 @@
           step3.classList.remove('step-process-indicator__step--active');
         }
       }
-      
-      console.log(`£ Step 3 (£45 OFF): Currency symbol (${isActive ? 'active' : 'inactive'})`);
     }
   }
   
@@ -352,10 +326,7 @@
   function updateProgressBar(thresholdReached, cartTotal, threshold, itemCount) {
     const progressFill = document.querySelector('.step-process-indicator__progress-fill');
     
-    if (!progressFill) {
-      console.warn('⚠️ Progress bar element not found');
-      return;
-    }
+    if (!progressFill) return;
     
     // Remove all progress classes first
     progressFill.classList.remove('progress-zero', 'progress-ten', 'progress-half', 'progress-full');
@@ -366,7 +337,6 @@
       updateStep1Icon(false);        // Show truck (active)
       updateStep2Icon(false, false); // Show £ (inactive)
       updateStep3Icon(false, false); // Show £ (inactive)
-      console.log('📊 Progress: 0% - Working toward free shipping');
     }
     
     // STATE 2 (10%): Shipping unlocked, <2 CHUUGs
@@ -375,7 +345,6 @@
       updateStep1Icon(true);         // Show checkmark (completed)
       updateStep2Icon(false, true);  // Show £ (active)
       updateStep3Icon(false, false); // Show £ (inactive)
-      console.log('📊 Progress: 10% - Free shipping unlocked, working toward £30 OFF');
     }
     
     // STATE 3 (50%): 2+ CHUUGs, <3 CHUUGs
@@ -384,7 +353,6 @@
       updateStep1Icon(true);         // Show checkmark (completed)
       updateStep2Icon(true, false);  // Show checkmark (completed)
       updateStep3Icon(false, true);  // Show £ (active)
-      console.log('📊 Progress: 50% - £30 OFF unlocked, working toward £45 OFF');
     }
     
     // STATE 4 (100%): 3+ CHUUGs
@@ -393,7 +361,6 @@
       updateStep1Icon(true);         // Show checkmark (completed)
       updateStep2Icon(true, false);  // Show checkmark (completed)
       updateStep3Icon(true, false);  // Show checkmark (completed)
-      console.log('📊 Progress: 100% - £45 OFF unlocked! All milestones complete.');
     }
   }
   
@@ -402,17 +369,13 @@
    */
   async function updateProgressHeader(cartTotal, currency, cartData = null) {
     const header = document.querySelector('[data-progress-header]');
-    if (!header) {
-      console.warn('⚠️ Progress header element not found');
-      return;
-    }
+    if (!header) return;
     
     // Fetch cart data if not provided
     if (!cartData) {
       try {
         cartData = await getCart();
       } catch (error) {
-        console.error('Failed to fetch cart data:', error);
         cartData = { items: [] };
       }
     }
@@ -433,17 +396,6 @@
     
     // Also update the progress bar with item count
     updateProgressBar(result.thresholdReached, cartTotal, result.config.threshold, itemCount);
-    
-    console.log('📊 Progress Header & Bar Updated:', {
-      currency: currency,
-      cartTotal: formatAmount(cartTotal, result.config.symbol),
-      threshold: formatAmount(result.config.threshold, result.config.symbol),
-      amountNeeded: formatAmount(result.amountNeeded, result.config.symbol),
-      thresholdReached: result.thresholdReached,
-      itemCount: itemCount,
-      percentage: ((cartTotal / result.config.threshold) * 100).toFixed(1) + '%',
-      message: message.replace(/<[^>]*>/g, '') // Log without HTML tags
-    });
   }
   
   /**
@@ -475,7 +427,6 @@
     return getCart()
       .then(cartData => cartData.total_price || 0)
       .catch(error => {
-        console.error('❌ Failed to get cart total:', error);
         return 0;
       });
   }
@@ -487,7 +438,6 @@
     return fetch('/cart.js')
       .then(response => response.json())
       .catch(error => {
-        console.error('❌ Failed to fetch cart:', error);
         return { items: [], total_price: 0 };
       });
   }
@@ -503,7 +453,7 @@
       const cartTotal = cartData.total_price || 0;
       await updateProgressHeader(cartTotal, currency, cartData);
     } catch (error) {
-      console.error('❌ Failed to initialize progress header:', error);
+      // Silently fail
     }
   }
   
@@ -520,11 +470,8 @@
     
     if (modalInstances && modalInstances.size > 0) {
       modalInstances.forEach((instance, modalId) => {
-        console.log('🔗 Hooking into modal instance:', modalId);
-        
         // Listen to the modal's viewChanged event
         instance.on('viewChanged', async function(viewName) {
-          console.log('📍 View changed to:', viewName);
           if (viewName === 'checkout') {
             // Small delay to ensure DOM is updated
             setTimeout(async () => {
@@ -537,7 +484,6 @@
         
         // Listen to modal opened event
         instance.on('modalOpened', async function() {
-          console.log('📍 Modal opened');
           // If checkout view is active, initialize
           const checkoutView = document.querySelector('[data-view="checkout"]');
           if (checkoutView && checkoutView.classList.contains('mini-atc-modal__view--active')) {
@@ -551,12 +497,10 @@
         
         // Listen to cart updates from the modal
         instance.on('cartUpdated', async function() {
-          console.log('📍 Cart updated via modal');
           setTimeout(async () => await initProgressHeader(), 100);
         });
       });
       
-      console.log('✅ Successfully hooked into modal instance(s)');
       return true;
     }
     
@@ -575,10 +519,8 @@
       
       if (hookIntoModalInstance()) {
         clearInterval(checkInterval);
-        console.log('✅ Modal integration complete');
       } else if (attempts >= maxAttempts) {
         clearInterval(checkInterval);
-        console.warn('⚠️ Modal instance not found after 5 seconds, falling back to document events');
         useFallbackEvents();
       }
     }, 100);
@@ -590,7 +532,6 @@
   function useFallbackEvents() {
     // Update when cart changes
     document.addEventListener('cart:updated', async function(event) {
-      console.log('📍 cart:updated event received');
       const currency = getCurrentCurrency();
       const cartTotal = event.detail?.total_price || 0;
       const cartData = event.detail?.cart || null;
@@ -622,8 +563,6 @@
     
     cartEvents.forEach(eventName => {
       document.addEventListener(eventName, async function(event) {
-        console.log(`📍 Global cart event received: ${eventName}`);
-        
         // Check if checkout view is active
         const checkoutView = document.querySelector('[data-view="checkout"]');
         if (checkoutView && checkoutView.classList.contains('mini-atc-modal__view--active')) {
@@ -631,8 +570,6 @@
         }
       });
     });
-    
-    console.log('🎧 Global cart event listeners registered');
   }
   
   /**
@@ -642,10 +579,7 @@
   function setupCartDOMObserver() {
     const checkoutContainer = document.querySelector('.checkout-products-container');
     
-    if (!checkoutContainer) {
-      console.warn('⚠️ Checkout container not found for DOM observer');
-      return;
-    }
+    if (!checkoutContainer) return;
     
     const observer = new MutationObserver(async (mutations) => {
       // Check if checkout view is active
@@ -661,7 +595,6 @@
       });
       
       if (hasCartChanges) {
-        console.log('📍 Cart DOM change detected via MutationObserver');
         // Add small delay to ensure cart is updated
         setTimeout(async () => await initProgressHeader(), 200);
       }
@@ -672,8 +605,6 @@
       subtree: true,
       attributes: false
     });
-    
-    console.log('👁️ Cart DOM observer activated');
   }
   
   // ========================================
@@ -690,7 +621,6 @@
   } else {
     // Wait for modal to initialize
     document.addEventListener('miniATCModalReady', function() {
-      console.log('📢 Mini ATC Modal Ready event received');
       setTimeout(waitForModal, 100);
     });
     
@@ -701,8 +631,6 @@
       waitForModal();
     }
   }
-  
-  console.log('✅ Progress Header Dynamic Update Script Loaded (with item count tracking + global cart listeners + DOM observer)');
   
 })();
 </script>
@@ -734,7 +662,6 @@
     
     if (countdownSection) {
       countdownSection.style.display = '';
-      console.log('✅ Mini-ATC countdown section displayed (using global countdown)');
     }
     
     // Re-initialize global countdown when modal opens or view changes
@@ -858,21 +785,11 @@
     ]
   };
   
-  // Console log the cart data for debugging
-  console.log('🛒 LIQUID CART DATA:', liquidCartData);
-  console.log('🛒 Cart items count:', liquidCartData.itemCount);
-  console.log('🛒 Cart note:', liquidCartData.note);
-  console.log('🛒 Cart attributes:', liquidCartData.attributes);
-  console.log('🛒 All cart items:', liquidCartData.items);
-  
-  
   // Check for gift box items in Liquid data
   const giftBoxItems = liquidCartData.items.filter(item => {
     const title = (item.title || '').toLowerCase();
     return title.includes('gift') || title.includes('box');
   });
-  
-  console.log('🛒 Gift box items in Liquid data:', giftBoxItems);
   
 
   // Gift box state management - allow enabled state to persist

@@ -28,7 +28,6 @@ class CartManager {
    */
   async removeItem(itemId, options = {}) {
     if (this.isLoading) {
-      console.warn('Cart operation already in progress');
       return;
     }
 
@@ -70,7 +69,6 @@ class CartManager {
       return cartData;
 
     } catch (error) {
-      console.error('Error removing item from cart:', error);
       this.showErrorFeedback(itemId, error);
       throw error;
     } finally {
@@ -88,7 +86,6 @@ class CartManager {
    */
   async updateQuantity(itemId, quantity, options = {}) {
     if (this.isLoading) {
-      console.warn('Cart operation already in progress');
       return;
     }
 
@@ -120,7 +117,6 @@ class CartManager {
       return cartData;
 
     } catch (error) {
-      console.error('Error updating cart item quantity:', error);
       this.showErrorFeedback(itemId, error);
       throw error;
     } finally {
@@ -137,7 +133,6 @@ class CartManager {
    */
   async addItem(itemData, options = {}) {
     if (this.isLoading) {
-      console.warn('Cart operation already in progress');
       return;
     }
 
@@ -165,7 +160,6 @@ class CartManager {
       return cartData;
 
     } catch (error) {
-      console.error('Error adding item to cart:', error);
       throw error;
     } finally {
       this.isLoading = false;
@@ -179,7 +173,6 @@ class CartManager {
    */
   async clearCart(options = {}) {
     if (this.isLoading) {
-      console.warn('Cart operation already in progress');
       return;
     }
 
@@ -206,7 +199,6 @@ class CartManager {
       return cartData;
 
     } catch (error) {
-      console.error('Error clearing cart:', error);
       throw error;
     } finally {
       this.isLoading = false;
@@ -232,47 +224,9 @@ class CartManager {
       }
 
       const cartData = await response.json();
-      
-      // LOG CART DATA FOR DEBUGGING
-      console.group('🛒 CART DATA DEBUG');
-      console.log('Full cart object:', cartData);
-      console.log('Items count:', cartData.item_count);
-      console.log('Total price:', cartData.total_price);
-      console.log('Cart note:', cartData.note);
-      console.log('Cart attributes:', cartData.attributes);
-      
-      if (cartData.items && cartData.items.length > 0) {
-        console.log('Cart items:');
-        cartData.items.forEach((item, index) => {
-          console.log(`  Item ${index + 1}:`, {
-            id: item.id,
-            title: item.title,
-            product_title: item.product_title,
-            variant_title: item.variant_title,
-            quantity: item.quantity,
-            price: item.price,
-            properties: item.properties,
-            product_type: item.product_type,
-            vendor: item.vendor
-          });
-          
-          // Check for gift box patterns
-          const isGiftBox = item.product_title?.toLowerCase().includes('gift') || 
-                           item.product_title?.toLowerCase().includes('box') ||
-                           item.title?.toLowerCase().includes('gift') ||
-                           item.title?.toLowerCase().includes('box');
-          if (isGiftBox) {
-            console.log(`    🎁 POTENTIAL GIFT BOX DETECTED: "${item.product_title || item.title}"`);
-          }
-        });
-      } else {
-        console.log('No items in cart');
-      }
-      console.groupEnd();
 
       return cartData;
     } catch (error) {
-      console.error('Error fetching cart data:', error);
       throw error;
     }
   }

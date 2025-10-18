@@ -35,12 +35,6 @@
 
 		const price =
 			CHARCOAL_UPGRADE_PRICES[currency] || CHARCOAL_UPGRADE_PRICES.DEFAULT;
-		console.log("🌍 Currency-based charcoal pricing:", {
-			detectedCurrency: currency,
-			priceInCents: price,
-			priceFormatted: "$" + (price / 100).toFixed(2),
-			availableCurrencies: Object.keys(CHARCOAL_UPGRADE_PRICES),
-		});
 		return price;
 	}
 
@@ -202,21 +196,6 @@
 		const currentUpgradePrice = getCharcoalUpgradePriceForCurrency();
 		const totalUpgradePrice = charcoalCount * currentUpgradePrice;
 
-		console.log("🔍 CHARCOAL UPGRADE CALCULATION:", {
-			charcoalCount: charcoalCount,
-			pricePerUpgrade:
-				currentUpgradePrice +
-				" cents ($" +
-				(currentUpgradePrice / 100).toFixed(2) +
-				")",
-			totalUpgradePrice:
-				totalUpgradePrice +
-				" cents ($" +
-				(totalUpgradePrice / 100).toFixed(2) +
-				")",
-			currency: window.CURRENT_CURRENCY || "GBP",
-			vesselSelections: state.vesselSelections,
-		});
 
 		return totalUpgradePrice;
 	}
@@ -231,7 +210,6 @@
 			charcoalCount: Math.floor(upgradePrice / currentUpgradePrice),
 		};
 
-		console.log("📢 DISPATCHING pomcCharcoalUpgradePrice EVENT:", eventDetail);
 
 		// Dispatch event for price update
 		document.dispatchEvent(
@@ -1232,7 +1210,6 @@
 
 		if (isPageRefresh) {
 			storage.clear();
-			console.log("🔄 Page refreshed - localStorage cleared for fresh start");
 		}
 
 		// Initialize state - sync with the selected product amount (default is 2)
@@ -1562,12 +1539,6 @@
 			const upgradeLabels = document.querySelectorAll(
 				"[data-charcoal-upgrade-price] .upgrade-price-text"
 			);
-			console.log("🔍 DEBUGGING UPGRADE LABELS:", {
-				labelsFound: upgradeLabels.length,
-				windowCurrency: window.CURRENT_CURRENCY,
-				shopifyCurrency: window.Shopify?.currency?.active,
-				shopCurrency: window.Shopify?.shop?.currency,
-			});
 
 			if (upgradeLabels.length > 0) {
 				const currentCurrency = this.getCurrentCurrency();
@@ -1575,33 +1546,15 @@
 				// Use the per-unit price, not the total price
 				const formattedPrice = formatMoney(upgradePrice);
 
-				console.log("🔍 PRICE CALCULATION DEBUG:", {
-					currentCurrency: currentCurrency,
-					upgradePrice: upgradePrice,
-					formattedPrice: formattedPrice,
-					priceTable: CHARCOAL_UPGRADE_PRICES,
-					selectedPrice:
-						CHARCOAL_UPGRADE_PRICES[currentCurrency] ||
-						CHARCOAL_UPGRADE_PRICES.DEFAULT,
-				});
 
 				upgradeLabels.forEach((label) => {
 					label.textContent = "+ " + formattedPrice;
 				});
 
-				console.log("🏷️ UPGRADE LABELS UPDATED:", {
-					currency: currentCurrency,
-					priceInCents: upgradePrice,
-					formattedPrice: formattedPrice,
-					labelsFound: upgradeLabels.length,
-				});
-			} else {
-				console.log("⚠️ No upgrade labels found to update");
 			}
 		},
 		// Manual trigger for testing
 		testUpgradeLabels: function () {
-			console.log("🧪 MANUAL TEST - Update upgrade labels");
 			this.updateUpgradeLabels();
 		},
 	};

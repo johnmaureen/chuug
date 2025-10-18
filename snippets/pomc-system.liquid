@@ -15,8 +15,6 @@
 <script>
   // Make product IDs available to JavaScript
 
-  console.log("ASDAS")
-  console.log( {{ dusk_charcoal | json }})
   window.PRODUCT_IDS = {
     dusk_charcoal: {{ dusk_charcoal.id | json }},
     dusk_natural: {{ dusk_natural.id | json }},
@@ -400,25 +398,8 @@
                 </div>
 
                 <script>
-                  console.log('💰 SHOPIFY PRODUCT VARIANT PRICES (Vessel #{{ forloop.index }}):', {
-                    product: 'dusk_charcoal',
-                    naturalVariant: {
-                      id: '{{ dusk_charcoal.variants[0].id }}',
-                      price: {{ dusk_charcoal.variants[0].price }} + ' cents (${{ dusk_charcoal.variants[0].price | money }})',
-                    },
-                    charcoalVariant: {
-                      id: '{{ dusk_charcoal.variants[2].id }}',
-                      price: {{ dusk_charcoal.variants[2].price }} + ' cents (${{ dusk_charcoal.variants[2].price | money }})',
-                    },
-                    priceDifference: {
-                      cents: {{ price_difference }},
-                      formatted: '{{ price_difference | money }}'
-                    },
-                    displayedInUI: '+ {{ price_difference | money }}'
-                  });
                   
                   // Upgrade labels will be updated by the POMC system
-                  console.log('📋 Upgrade label container ready for Vessel #{{ forloop.index }}');
                   
                   // Standalone upgrade label updater (runs immediately on page load)
                   function updateUpgradeLabelsStandalone() {
@@ -457,12 +438,6 @@
                         label.textContent = '+ ' + formattedPrice;
                       });
                       
-                      console.log('🏷️ STANDALONE UPGRADE LABELS UPDATED:', {
-                        currency: currency,
-                        priceInCents: price,
-                        formattedPrice: formattedPrice,
-                        labelsFound: upgradeLabels.length
-                      });
                     }
                   }
                   

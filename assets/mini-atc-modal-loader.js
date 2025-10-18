@@ -38,7 +38,6 @@
 		}
 
 		isLoading = true;
-		console.log("🚀 [Modal Loader] Loading modal modules...");
 
 		try {
 			// Load modules in parallel for faster initialization
@@ -76,11 +75,9 @@
 			isLoaded = true;
 			isLoading = false;
 
-			console.log("✅ [Modal Loader] Modal modules loaded successfully");
 			return modalModules;
 		} catch (error) {
 			isLoading = false;
-			console.error("❌ [Modal Loader] Failed to load modal modules:", error);
 			throw error;
 		}
 	}
@@ -90,14 +87,12 @@
 	 * @param {string} context - Context of modal opening ('cart-icon' or 'add-multiple-products')
 	 */
 	async function initializeModal(context = 'unknown') {
-		console.log(`🔔 [Modal Loader] Modal requested from: ${context}`);
 
 		// Load modules if not already loaded
 		const modules = await loadModalModules();
 
 		// Import and initialize the main modal
 		// (This would load the full modal core in a subsequent implementation)
-		console.log("✅ [Modal Loader] Modal ready to open");
 
 		// Dispatch event to signal modal is ready
 		document.dispatchEvent(new CustomEvent('miniATCModalReady', {
@@ -129,7 +124,6 @@
 			});
 		}
 
-		console.log("👂 [Modal Loader] Triggers initialized");
 	}
 
 	/**
@@ -138,13 +132,11 @@
 	function preloadOnIdle() {
 		if ('requestIdleCallback' in window) {
 			requestIdleCallback(() => {
-				console.log("⏰ [Modal Loader] Preloading modules during idle time");
 				loadModalModules();
 			}, { timeout: 5000 });
 		} else {
 			// Fallback for browsers without requestIdleCallback
 			setTimeout(() => {
-				console.log("⏰ [Modal Loader] Preloading modules (fallback)");
 				loadModalModules();
 			}, 3000);
 		}
@@ -159,7 +151,6 @@
 		// Preload modules during idle time for instant opening
 		preloadOnIdle();
 
-		console.log("🎯 [Modal Loader] Initialized (lightweight loader active)");
 	}
 
 	// Initialize when DOM is ready

@@ -526,20 +526,12 @@
 
 				// Validate the date is valid
 				if (isNaN(this.flashSaleEndTime.getTime())) {
-					console.warn(
-						"⚠️ Invalid flash sale date/time, falling back to duration-based countdown"
-					);
 					this.useFlashSaleTime = false;
 					this.startTime = this.getStartTime();
-				} else {
-("✅ Using flash sale countdown:", this.flashSaleEndTime);
 				}
 			} else {
 				// Priority 3: Use duration-based countdown
 				this.startTime = this.getStartTime();
-(
-					"ℹ️ Using duration-based countdown (flash sale not configured)"
-				);
 			}
 
 			this.timer = null;
@@ -664,28 +656,16 @@
 				originalTotal = vesselPricing.originalPrice;
 			} else {
 				// If no POMC data available, return zero pricing
-				console.warn("No vessel pricing data available from POMC system");
 				return { total: 0, originalPrice: 0, savings: 0 };
 			}
 
 			// FORCE GIFT BOX PRICING - This is a direct fix to ensure gift box pricing is always applied
 			if (state.giftBox?.enabled) {
-("🎁 FORCE: Gift box enabled, adding pricing");
 				const giftBoxPrice = this.dynamicPrices.giftBox || 200; // Default to £2.00 if not loaded
 				const multiplier = window.pomcSystem?.getMultiplier() || 2; // Default to 2 vessels
 				const giftBoxTotal = giftBoxPrice * multiplier;
-(
-					"🎁 FORCE: Adding gift box pricing:",
-					giftBoxTotal,
-					"cents (",
-					giftBoxPrice,
-					"x",
-					multiplier,
-					")"
-				);
 				total += giftBoxTotal;
 				originalTotal += giftBoxTotal;
-("🎁 FORCE: New totals:", { total, originalTotal });
 			}
 
 			// Gift box pricing is now handled by the FORCE section above
@@ -760,7 +740,6 @@
 		const vesselSelections = window.pomcSystem.getAllVesselSelections();
 		const multiplier = window.pomcSystem.getMultiplier() || 1;
 		
-		console.log("🔧 Per-vessel pricing calculation started");
 		
 		// Check if master engraving toggle is on
 		const masterEngravingEnabled = this.modalInstance.isEngravingEnabled();
@@ -786,12 +765,6 @@
 			}
 		}
 		
-		console.log("🔍 Configuration:", {
-			masterEngravingEnabled,
-			charcoalCount,
-			naturalCount,
-			engravingCount
-		});
 		
 		// Determine base variant index based on configuration
 		// If all vessels are charcoal, use charcoal base (2), otherwise natural base (0)
@@ -800,7 +773,6 @@
 		const baseVariant = selectedProductAmountData.variants[baseVariantIndex];
 		
 		if (!baseVariant) {
-			console.warn("⚠️ Base variant not found");
 			return null;
 		}
 		
@@ -808,12 +780,6 @@
 		let totalPrice = baseVariant.price;
 		let totalOriginalPrice = baseVariant.compare_at_price || baseVariant.price;
 		
-		console.log("💰 Base bundle price:", {
-			variantIndex: baseVariantIndex,
-			ropeType: allCharcoal ? "all charcoal" : "all/some natural",
-			price: baseVariant.price,
-			priceFormatted: Utils.formatPrice(baseVariant.price)
-		});
 		
 	// Add charcoal upgrade charges (only if not all charcoal)
 	let charcoalCharges = 0;
@@ -822,12 +788,6 @@
 		const charcoalUpgradePrice = window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 400;
 		charcoalCharges = charcoalUpgradePrice * charcoalCount;
 		
-		console.log("🪢 Charcoal upgrade charges:", {
-			charcoalCount: charcoalCount,
-			pricePerVessel: charcoalUpgradePrice,
-			totalCharcoalCharges: charcoalCharges,
-			chargesFormatted: Utils.formatPrice(charcoalCharges)
-		});
 	}
 		
 		// Calculate engraving charges
@@ -845,13 +805,6 @@
 				const perVesselEngravingCost = bundleEngravingDiff / multiplier;
 				engravingCharges = perVesselEngravingCost * engravingCount;
 				
-				console.log("✏️ Engraving charges:", {
-					engravingCount: engravingCount,
-					bundleDifference: bundleEngravingDiff,
-					perVesselCost: perVesselEngravingCost,
-					totalEngravingCharges: engravingCharges,
-					chargesFormatted: Utils.formatPrice(engravingCharges)
-				});
 			}
 		}
 		
@@ -860,10 +813,6 @@
 			const vesselSelection = vesselSelections[i];
 			if (vesselSelection?.ropeType) {
 				const vesselEngravingEnabled = masterEngravingEnabled && this.getVesselEngravingEnabled(i);
-				console.log(`📊 Vessel ${i}:`, {
-					ropeType: vesselSelection.ropeType,
-					engravingEnabled: vesselEngravingEnabled
-				});
 			}
 		}
 		
@@ -871,13 +820,6 @@
 		totalPrice += charcoalCharges + engravingCharges;
 		totalOriginalPrice += charcoalCharges + engravingCharges;
 		
-		console.log("💰 Final Calculation:", {
-			basePrice: baseVariant.price,
-			charcoalCharges: charcoalCharges,
-			engravingCharges: engravingCharges,
-			totalPrice: totalPrice,
-			totalFormatted: Utils.formatPrice(totalPrice)
-		});
 		
 		// Store the pricing for reference
 		this.dynamicPrices.vessel = {
@@ -978,7 +920,6 @@
 			};
 		}
 		
-		console.warn("🪢 No pricing found for mixed vessel configuration");
 		return null;
 	}
 
@@ -1101,7 +1042,6 @@
 				try {
 					return JSON.parse(configScript.textContent);
 				} catch (error) {
-					console.warn("Failed to parse modal config:", error);
 				}
 			}
 			return {};
@@ -1136,7 +1076,6 @@
 				if (removeBtn) {
 					// Prevent duplicate removal attempts
 					if (this.isRemovingItem) {
-						console.warn("⚠️ Item removal already in progress, ignoring click");
 						event.preventDefault();
 						event.stopPropagation();
 						return;
@@ -1199,7 +1138,7 @@
 			this.initializeVesselInputs();
 
 			// Initial pricing calculation
-			this.calculatePricing().catch(console.error);
+			this.calculatePricing().catch(() => {});
 		}
 
 		setupAccessibility() {
@@ -1392,7 +1331,7 @@
 			this.toggleOptionsVisibility(toggle);
 
 			// Recalculate pricing when any toggle changes
-			this.calculatePricing().catch(console.error);
+			this.calculatePricing().catch(() => {});
 		}
 
 		handleCounterClick(event) {
@@ -1501,12 +1440,12 @@
 		}
 
 		handlePersonalizationChange(data) {
-			this.calculatePricing().catch(console.error);
+			this.calculatePricing().catch(() => {});
 			this.emit("personalizationChanged", data);
 		}
 
 		handleVariantChange(data) {
-			this.calculatePricing().catch(console.error);
+			this.calculatePricing().catch(() => {});
 			this.emit("variantChanged", data);
 		}
 
@@ -2087,13 +2026,13 @@
 			if (window.pomcSystem) {
 				// Create a custom event listener for POMC changes
 				const updatePricingFromPOMC = (event) => {
-					this.calculatePricing().catch(console.error);
+					this.calculatePricing().catch(() => {});
 				};
 
 				// Listen for currency changes
 				const updatePricingFromCurrencyChange = (event) => {
 ('💰 Currency changed in mini ATC modal:', event.detail);
-					this.calculatePricing().catch(console.error);
+					this.calculatePricing().catch(() => {});
 					
 					// Update checkout view prices if checkout view is active
 					const checkoutView = this.modal.querySelector('.mini-atc-modal__checkout');
@@ -2129,7 +2068,7 @@
 ("🪢 Charcoal upgrade price changed, updating pricing:", event.detail);
 						// Small delay to ensure POMC system has fully updated
 						setTimeout(() => {
-							this.calculatePricing().catch(console.error);
+							this.calculatePricing().catch(() => {});
 						}, 50);
 					}
 				);
@@ -2149,7 +2088,7 @@
 							(event) => {
 ("🪢 Charcoal upgrade price changed (delayed setup), updating pricing:", event.detail);
 								setTimeout(() => {
-									this.calculatePricing().catch(console.error);
+									this.calculatePricing().catch(() => {});
 								}, 50);
 							}
 						);
@@ -2307,7 +2246,6 @@
 					await this.updateCheckoutView();
 				}
 			} catch (error) {
-				console.error("Failed to update cart item compare-at prices:", error);
 			}
 		}
 
@@ -2495,21 +2433,17 @@
 				personalizeView &&
 				window.getComputedStyle(personalizeView).display !== "none"
 			) {
-("Using personalize pricing");
 				try {
 					await this.updatePersonalizePricing(pricing);
 				} catch (error) {
-					console.error("Error in updatePersonalizePricing:", error);
 				}
 				return;
 			}
 
 			// Fallback to personalize pricing if no view is clearly active
-("Fallback to personalize pricing");
 			try {
 				await this.updatePersonalizePricing(pricing);
 			} catch (error) {
-				console.error("Error in updatePersonalizePricing (fallback):", error);
 			}
 		}
 
@@ -2581,7 +2515,6 @@
 					}
 				})
 				.catch((error) => {
-					console.error("Failed to fetch cart data for pricing:", error);
 				});
 		}
 
@@ -2675,22 +2608,14 @@
 							: null;
 
 						if (!state) {
-							console.error("🎁 ERROR: this.state is undefined");
 							return;
 						}
 
 						if (!this.dynamicPrices) {
-(
-								"🎁 this.dynamicPrices is undefined, using fallback approach"
-							);
 							// Use a fallback approach - get gift box price from global modal instance
 							const modalInstance = window.MiniATCModal?.getInstance?.();
 							if (modalInstance && modalInstance.pricing) {
 								giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
-(
-									"🎁 Got gift box price from modal instance:",
-									giftBoxPrice
-								);
 							}
 
 							// If still no gift box price, use default
@@ -2766,22 +2691,14 @@
 					: null;
 
 				if (!state) {
-					console.error("🎁 FALLBACK ERROR: this.state is undefined");
 					return;
 				}
 
 				if (!this.dynamicPrices) {
-(
-						"🎁 FALLBACK: this.dynamicPrices is undefined, using fallback approach"
-					);
 					// Use a fallback approach - get gift box price from global modal instance
 					const modalInstance = window.MiniATCModal?.getInstance?.();
 					if (modalInstance && modalInstance.pricing) {
 						giftBoxPrice = modalInstance.pricing.dynamicPrices?.giftBox;
-(
-							"🎁 FALLBACK: Got gift box price from modal instance:",
-							giftBoxPrice
-						);
 					}
 
 					// If still no gift box price, use default
@@ -2938,14 +2855,9 @@
 					default:
 						btnTextEl.textContent = "ADD TO CART";
 						addToCartBtn.setAttribute("data-modal-action", "add-to-cart");
-("✅ Button updated for personalize view: ADD TO CART");
 						break;
 				}
 			} else {
-				console.warn("⚠️ Could not update button text:", {
-					btnTextEl: !!btnTextEl,
-					addToCartBtn: !!addToCartBtn,
-				});
 			}
 
 			// Scroll to top
@@ -3084,14 +2996,14 @@
 			// this.fetchVesselSelectionsAndUpdateImages();
 
 			// Calculate initial pricing
-			this.calculatePricing().catch(console.error);
+			this.calculatePricing().catch(() => {});
 
 			// Setup engraving toggle listener now that modal is visible
 			this.setupEngravingToggleListener();
 
 			// Force pricing refresh to ensure it's up to date with any changes made while modal was closed
 			setTimeout(() => {
-				this.calculatePricing().catch(console.error);
+				this.calculatePricing().catch(() => {});
 			}, 200);
 
 			// Initialize components that need the modal to be visible
@@ -3243,7 +3155,7 @@
 				);
 
 				// Update pricing after reset
-				this.calculatePricing().catch(console.error);
+				this.calculatePricing().catch(() => {});
 
 				// Update checkout pricing to reflect cart totals
 				this.updateCheckoutPricing();
@@ -3253,7 +3165,6 @@
 				//   window.location.href = window.routes.cart_url || '/cart';
 				// }, 2000);
 			} catch (error) {
-				console.error("Add to cart error:", error);
 				this.handleAddToCartError(error.message);
 				// Hide cart loading spinner on error
 				this.hideCartLoadingSpinner();
@@ -3414,7 +3325,6 @@
 		
 		// Check if we have product handles
 		if (!window.PRODUCT_HANDLES || !window.PRODUCT_HANDLES[key]) {
-			console.error(`❌ No product handle found for: ${key}`);
 			return null;
 		}
 		
@@ -3426,7 +3336,6 @@
 			const productData = await response.json();
 			
 			if (!productData || !productData.variants || productData.variants.length === 0) {
-				console.error(`❌ No variants found for product: ${productHandle}`);
 				return null;
 			}
 			
@@ -3449,11 +3358,9 @@
 			
 			const variant = productData.variants[variantIndex] || productData.variants[0];
 			
-(`🔍 Individual vessel variant: ${woodType} ${ropeType}, engraving=${hasEngraving}, index=${variantIndex}, variantId=${variant.id}`);
 			
 			return variant.id;
 		} catch (error) {
-			console.error(`❌ Error fetching product data for ${productHandle}:`, error);
 			return null;
 		}
 	}
@@ -3464,7 +3371,6 @@
 	getIndividualVesselProductId(woodType, ropeType) {
 		// Use POMC system's product ID mapping
 		if (!window.PRODUCT_IDS) {
-			console.error("❌ PRODUCT_IDS not available on window object");
 			return null;
 		}
 		
@@ -3472,7 +3378,6 @@
 		const productId = window.PRODUCT_IDS[key];
 		
 		if (!productId) {
-			console.error(`❌ No product ID found for key: ${key}`, Object.keys(window.PRODUCT_IDS));
 		}
 		
 		return productId || null;
@@ -3519,7 +3424,6 @@
 				);
 				
 				if (!individualVariantId) {
-					console.error(`❌ No variant ID for Vessel ${i}: ${selection.woodType} ${selection.ropeType}`);
 					continue;
 				}
 				
@@ -3652,15 +3556,6 @@
 
 		// Check if no vessel items were collected
 		if (items.length === 0) {
-			console.error("❌ CRITICAL: No vessel items were collected for cart!");
-			console.error("❌ This means vessel item creation failed completely");
-			console.error("❌ Debug info:", {
-				hasMixedConfig,
-				multiplier,
-				engravingEnabled,
-				hasSelectedProductAmountData: !!selectedProductAmountData,
-				vesselSelections: window.pomcSystem?.getAllVesselSelections()
-			});
 		}
 
 		return items;
@@ -4219,7 +4114,7 @@
 
 					// Reset personalization state when cart becomes empty
 					this.state.reset();
-					this.calculatePricing().catch(console.error);
+					this.calculatePricing().catch(() => {});
 
 					// Stay in checkout view to show empty state - don't switch back to personalize
 ("🔄 Cart is empty, staying in checkout view to show empty state");
@@ -6332,7 +6227,7 @@
 
 		reset() {
 			this.state.reset();
-			this.calculatePricing().catch(console.error);
+			this.calculatePricing().catch(() => {});
 			this.switchView("personalize");
 		}
 

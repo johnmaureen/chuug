@@ -709,12 +709,6 @@ function addEventListenerToMonogramInitialsInput() {
   if (window.pomcSystem) {
     window.pomcSystem.setCurrentProductId({{ product.id }});
     window.pomcSystem.setCurrentProductHandle('{{ product.handle }}');
-    console.log('✅ Product data set for POMC system:', {
-      id: {{ product.id }},
-      handle: '{{ product.handle }}'
-    });
-  } else {
-    console.error('❌ POMC system not available. Please check if pomc-system.js is loaded correctly.');
   }
 
   // Add event listener for the button when DOM is ready
@@ -730,40 +724,25 @@ function addEventListenerToMonogramInitialsInput() {
 
   // Also listen for when the modal system is ready
   document.addEventListener('miniATCModalReady', function() {
-    console.log('Mini ATC Modal system is ready');
+    // Modal system ready
   });
 
   function handlePersonalizeVessel() {
-    // Log current POMC system data when add-multiple-products is clicked
-    console.log('=== ADD-MULTIPLE-PRODUCTS CLICKED ===');
     if (window.pomcSystem) {
-      console.log('Current POMC System Data:', {
-        allVesselSelections: window.pomcSystem.getAllVesselSelections(),
-        currentProductId: window.pomcSystem.getCurrentProductId(),
-        currentProductHandle: window.pomcSystem.getCurrentProductHandle(),
-        multiplier: window.pomcSystem.getMultiplier(),
-        currentVesselSelection: window.pomcSystem.getCurrentVesselSelection(),
-        charcoalUpgradeData: window.pomcSystem.getCharcoalUpgradeData()
-      });
-      
       // Validate all vessels before proceeding
       const validation = window.pomcSystem.validateAllVesselsForAddToCart();
       if (!validation.isValid) {
-        console.warn('Validation failed:', validation.errors);
         showVesselValidationError(validation.message);
         return;
       }
     } else {
-      console.log('POMC System not available');
       return;
     }
-    console.log('=====================================');
     
     // Find the mini ATC modal element on the page
     const miniATCModal = document.querySelector('.mini-atc-modal');
     
     if (!miniATCModal) {
-      console.error('Mini ATC Modal element not found on page');
       return;
     }
 
@@ -773,7 +752,6 @@ function addEventListenerToMonogramInitialsInput() {
     const tryOpenModal = () => {
       // Method 1: Use the main MiniATCModal API
       if (window.MiniATCModal && typeof window.MiniATCModal.getInstance === 'function') {
-        console.log("Using window.MiniATCModal.getInstance");
         const instance = window.MiniATCModal.getInstance(modalId);
         if (instance) {
           instance.open('add-multiple-products');
@@ -783,7 +761,6 @@ function addEventListenerToMonogramInitialsInput() {
       
       // Fallback: Use the openModal method
       if (window.MiniATCModal && typeof window.MiniATCModal.openModal === 'function') {
-        console.log("Using window.MiniATCModal.openModal (fallback)");
         window.MiniATCModal.openModal(modalId);
         // Set context after opening
         setTimeout(() => {
@@ -797,7 +774,6 @@ function addEventListenerToMonogramInitialsInput() {
       
       // Method 2: Use the global helper function
       if (window.openMiniATCModal && typeof window.openMiniATCModal === 'function') {
-        console.log("Using window.openMiniATCModal");
         window.openMiniATCModal(modalId, 'add-multiple-products');
         return true;
       }
@@ -811,11 +787,9 @@ function addEventListenerToMonogramInitialsInput() {
     }
 
     // If not available, wait for script to load with a more efficient approach
-    console.log('Mini ATC Modal JavaScript not loaded yet. Waiting for script...');
     
     // Listen for the modal ready event
     document.addEventListener('miniATCModalReady', () => {
-      console.log('Mini ATC Modal ready event received, attempting to open modal');
       if (tryOpenModal()) {
         return;
       }
@@ -835,18 +809,14 @@ function addEventListenerToMonogramInitialsInput() {
       
       if (retryCount >= maxRetries) {
         clearInterval(retryInterval);
-        console.warn('Mini ATC Modal JavaScript not ready after 1 second, using fallback');
         
         // Method 4: Fallback - try to manually trigger the modal
-        console.log('Attempting manual modal trigger...');
         if (miniATCModal) {
           // Try to find the modal instance and call open() properly
           const modalInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
           if (modalInstance && typeof modalInstance.open === 'function') {
-            console.log('Found modal instance, calling open() method');
             modalInstance.open();
           } else {
-            console.log('Modal instance not found, using CSS fallback');
             miniATCModal.classList.add('mini-atc-modal--active');
             miniATCModal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
@@ -855,12 +825,10 @@ function addEventListenerToMonogramInitialsInput() {
             setTimeout(() => {
               const modalInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
               if (modalInstance) {
-                console.log('Setting isActive state on modal instance');
                 modalInstance.isActive = true;
                 
                 // Manually trigger the fetchVesselSelectionsAndUpdateImages function
                 if (typeof modalInstance.fetchVesselSelectionsAndUpdateImages === 'function') {
-                  console.log('Manually calling fetchVesselSelectionsAndUpdateImages');
                   modalInstance.fetchVesselSelectionsAndUpdateImages();
                 }
               } else {
@@ -868,7 +836,6 @@ function addEventListenerToMonogramInitialsInput() {
                 setTimeout(() => {
                   const delayedInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
                   if (delayedInstance && typeof delayedInstance.fetchVesselSelectionsAndUpdateImages === 'function') {
-                    console.log('Delayed call to fetchVesselSelectionsAndUpdateImages');
                     delayedInstance.fetchVesselSelectionsAndUpdateImages();
                   }
                 }, 200);
@@ -924,7 +891,6 @@ function addEventListenerToMonogramInitialsInput() {
         window.location.href = '/cart';
       })
       .catch((error) => {
-        console.error('Error:', error);
         alert('There was a problem adding products to the cart.');
       });
   }
@@ -1249,15 +1215,6 @@ function addEventListenerToMonogramInitialsInput() {
   const SHOP_DEFAULT_CURRENCY = {{ shop.currency | json }};
   const CURRENT_CURRENCY = window.CURRENT_CURRENCY || SHOP_DEFAULT_CURRENCY;
 
-  console.log('💵 PDP BASE PRICES LOADED:', {
-    '1x_no_engraving': BASE_PRICES.one_no_engraving + ' cents ($' + (BASE_PRICES.one_no_engraving / 100).toFixed(2) + ')',
-    '1x_engraving': BASE_PRICES.one_engraving + ' cents ($' + (BASE_PRICES.one_engraving / 100).toFixed(2) + ')',
-    '2x_no_engraving': BASE_PRICES.two_no_engraving + ' cents ($' + (BASE_PRICES.two_no_engraving / 100).toFixed(2) + ')',
-    '2x_engraving': BASE_PRICES.two_engraving + ' cents ($' + (BASE_PRICES.two_engraving / 100).toFixed(2) + ')',
-    '3x_no_engraving': BASE_PRICES.three_no_engraving + ' cents ($' + (BASE_PRICES.three_no_engraving / 100).toFixed(2) + ')',
-    '3x_engraving': BASE_PRICES.three_engraving + ' cents ($' + (BASE_PRICES.three_engraving / 100).toFixed(2) + ')',
-  });
-
   // Helper function to format money with fallback
   function formatMoneyWithFallback(cents) {
     // Try Shopify.formatMoney first
@@ -1280,7 +1237,6 @@ function addEventListenerToMonogramInitialsInput() {
 
   // Listen for charcoal upgrade price changes
   document.addEventListener('pomcCharcoalUpgradePrice', function(e) {
-    console.log('POMC: Received charcoal upgrade price event in PDP, updating prices...', e.detail);
     
     const upgradePrice = e.detail.upgradePrice; // in cents
     const inputs = document.querySelector('.inputs');
@@ -1310,29 +1266,12 @@ function addEventListenerToMonogramInitialsInput() {
     
     // If currency conversion is needed, we need to get the correct prices for the current currency
     if (needsCurrencyConversion) {
-      console.log('💱 Currency conversion needed:', {
-        shopCurrency: SHOP_DEFAULT_CURRENCY,
-        currentCurrency: CURRENT_CURRENCY,
-        upgradePrice: upgradePrice + ' cents',
-        note: 'Base prices are in shop currency, upgrade price is in current currency'
-      });
-      
       // Try to get current currency prices using CurrencyManager
-      console.log('🔍 CurrencyManager check:', {
-        exists: !!window.CurrencyManager,
-        hasFetchMethod: !!(window.CurrencyManager && window.CurrencyManager.fetchProductData),
-        CurrencyManager: window.CurrencyManager
-      });
-      
       if (window.CurrencyManager && window.CurrencyManager.fetchProductData) {
-        console.log('🔄 Attempting to fetch current currency prices...');
-        
         // Get the product IDs for the current amount
         const productAmountData = window.pomcSystem?.getSelectedProductAmountData();
-        console.log('📦 Product amount data:', productAmountData);
         
         if (productAmountData && productAmountData.id) {
-          console.log('🔄 Fetching product data for ID:', productAmountData.id);
           
           // Add timeout to prevent hanging
           const fetchPromise = window.CurrencyManager.fetchProductData(productAmountData.id);
@@ -1342,14 +1281,10 @@ function addEventListenerToMonogramInitialsInput() {
           
           Promise.race([fetchPromise, timeoutPromise])
             .then(productData => {
-              console.log('📊 Product data received:', productData);
-              
               if (productData && productData.variants) {
                 const variants = productData.variants.edges.map(edge => edge.node);
                 const variantIndex = isEngraving ? 1 : 0;
                 const variant = variants[variantIndex];
-                
-                console.log('🎯 Selected variant:', variant);
                 
                 if (variant && variant.price) {
                   const currentCurrencyBasePrice = Math.round(parseFloat(variant.price.amount) * 100); // Convert to cents
@@ -1359,59 +1294,36 @@ function addEventListenerToMonogramInitialsInput() {
                   newPriceForTwo = currentCurrencyBasePrice + upgradePrice;
                   newPriceForThree = currentCurrencyBasePrice + upgradePrice;
                   
-                  console.log('✅ Currency conversion successful:', {
-                    basePriceInCurrentCurrency: currentCurrencyBasePrice + ' cents',
-                    upgradePrice: upgradePrice + ' cents',
-                    totalPrice: newPriceForOne + ' cents'
-                  });
-                  
                   // Update the CTA price with the converted price
                   updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, e.detail);
                 } else {
-                  console.log('⚠️ No price data in variant');
                   fallbackToSimpleCalculation();
                 }
               } else {
-                console.log('⚠️ No variants data received');
                 fallbackToSimpleCalculation();
               }
             })
             .catch(error => {
-              console.error('❌ Currency conversion failed:', error);
               fallbackToSimpleCalculation();
             });
         } else {
-          console.log('⚠️ No product amount data available for currency conversion');
           fallbackToSimpleCalculation();
         }
       } else {
-        console.log('⚠️ CurrencyManager not available, using fallback calculation');
         fallbackToSimpleCalculation();
       }
       
       // Fallback function for when currency conversion fails
       function fallbackToSimpleCalculation() {
-        console.log('🔧 Using fallback calculation - extracting current currency prices from page');
-        
         // Try to extract current currency prices from existing price elements
         const currentPrices = extractCurrentCurrencyPrices();
         
         if (currentPrices) {
-          console.log('💰 Extracted current currency prices:', currentPrices);
-          
           // Use the extracted prices + upgrade price
           newPriceForOne = currentPrices.one + upgradePrice;
           newPriceForTwo = currentPrices.two + upgradePrice;
           newPriceForThree = currentPrices.three + upgradePrice;
-          
-          console.log('✅ Fallback calculation successful:', {
-            basePrice: currentPrices.one + ' cents',
-            upgradePrice: upgradePrice + ' cents',
-            totalPrice: newPriceForOne + ' cents'
-          });
         } else {
-          console.log('⚠️ Could not extract current currency prices, using upgrade price only');
-          
           // Last resort: just use the upgrade price
           newPriceForOne = upgradePrice;
           newPriceForTwo = upgradePrice;
@@ -1434,12 +1346,6 @@ function addEventListenerToMonogramInitialsInput() {
             const onePriceText = onePriceEl.textContent || onePriceEl.innerText;
             const twoPriceText = twoPriceEl.textContent || twoPriceEl.innerText;
             const threePriceText = threePriceEl.textContent || threePriceEl.innerText;
-            
-            console.log('📊 Price elements found:', {
-              one: onePriceText,
-              two: twoPriceText,
-              three: threePriceText
-            });
             
             // Parse prices (remove currency symbols and convert to cents)
             const parsePrice = (priceText) => {
@@ -1468,10 +1374,8 @@ function addEventListenerToMonogramInitialsInput() {
             }
           }
           
-          console.log('⚠️ Could not extract prices from page elements');
           return null;
         } catch (error) {
-          console.error('❌ Error extracting current currency prices:', error);
           return null;
         }
       }
@@ -1502,29 +1406,8 @@ function addEventListenerToMonogramInitialsInput() {
         currentPrice = newPriceForThree;
       }
       cta_product_price.innerHTML = formatMoneyWithFallback(currentPrice);
-      
-      console.log('🎯 CTA PRICE ELEMENT UPDATED:', {
-        element: cta_product_price,
-        newPrice: formatMoneyWithFallback(currentPrice),
-        productAmount: product_amount
-      });
-    } else {
-      console.log('⚠️ CTA price element not found:', '.cta-product-price');
     }
     
-    const finalPrice = product_amount === 1 ? newPriceForOne : product_amount === 2 ? newPriceForTwo : newPriceForThree;
-    const basePrice = isEngraving ? 
-      (product_amount === 1 ? BASE_PRICES.one_engraving : product_amount === 2 ? BASE_PRICES.two_engraving : BASE_PRICES.three_engraving) :
-      (product_amount === 1 ? BASE_PRICES.one_no_engraving : product_amount === 2 ? BASE_PRICES.two_no_engraving : BASE_PRICES.three_no_engraving);
-    
-    console.log('💳 POMC: CTA PRICE UPDATED WITH CHARCOAL UPGRADE:', {
-      upgradePrice: eventDetail.upgradePriceFormatted + ' (' + eventDetail.upgradePrice + ' cents)',
-      productAmount: product_amount + 'x vessels',
-      isEngraving: isEngraving,
-      basePrice: formatMoneyWithFallback(basePrice) + ' (' + basePrice + ' cents)',
-      calculation: formatMoneyWithFallback(basePrice) + ' + ' + eventDetail.upgradePriceFormatted + ' = ' + formatMoneyWithFallback(finalPrice),
-      finalCTAPrice: formatMoneyWithFallback(finalPrice) + ' (' + finalPrice + ' cents)'
-    });
   }
 </script>
 
@@ -1606,7 +1489,7 @@ function addEventListenerToMonogramInitialsInput() {
         }
       })
       .catch(err => {
-        console.error("Geo lookup failed:", err);
+        // Geo lookup failed silently
       });
   });
 </script>
