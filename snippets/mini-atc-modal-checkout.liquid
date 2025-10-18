@@ -19,20 +19,10 @@
     </div>
     
     <ol class="step-process-indicator__steps">
-      <li class="step-process-indicator__step step-process-indicator__step--completed">
-        <div class="step-process-indicator__step-icon" aria-hidden="true">
-          <div class="step-process-indicator__step-circle">
-            <svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-        <div class="step-process-indicator__step-text">Buy More & Save</div>
-      </li>
-      
+      <!-- Step 1: Free Shipping (Dynamic) -->
       <li class="step-process-indicator__step step-process-indicator__step--active" data-step="shipping">
         <div class="step-process-indicator__step-icon" aria-hidden="true">
-          <div class="step-process-indicator__step-circle step-free-shipping" data-shipping-icon>
+          <div class="step-process-indicator__step-circle" data-step-1-icon>
             <svg class="step-process-indicator__truck-icon" fill="#fff" width="15" height="15" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
               <path d="M 0 6 L 0 8 L 19 8 L 19 23 L 12.84375 23 C 12.398438 21.28125 10.851563 20 9 20 C 7.148438 20 5.601563 21.28125 5.15625 23 L 4 23 L 4 18 L 2 18 L 2 25 L 5.15625 25 C 5.601563 26.71875 7.148438 28 9 28 C 10.851563 28 12.398438 26.71875 12.84375 25 L 21.15625 25 C 21.601563 26.71875 23.148438 28 25 28 C 26.851563 28 28.398438 26.71875 28.84375 25 L 32 25 L 32 16.84375 L 31.9375 16.6875 L 29.9375 10.6875 L 29.71875 10 L 21 10 L 21 6 Z M 1 10 L 1 12 L 10 12 L 10 10 Z M 21 12 L 28.28125 12 L 30 17.125 L 30 23 L 28.84375 23 C 28.398438 21.28125 26.851563 20 25 20 C 23.148438 20 21.601563 21.28125 21.15625 23 L 21 23 Z M 2 14 L 2 16 L 8 16 L 8 14 Z M 9 22 C 10.117188 22 11 22.882813 11 24 C 11 25.117188 10.117188 26 9 26 C 7.882813 26 7 25.117188 7 24 C 7 22.882813 7.882813 22 9 22 Z M 25 22 C 26.117188 22 27 22.882813 27 24 C 27 25.117188 26.117188 26 25 26 C 23.882813 26 23 25.117188 23 24 C 23 22.882813 23.882813 22 25 22 Z"></path>
             </svg>
@@ -44,16 +34,30 @@
         <div class="step-process-indicator__step-text">Free Shipping</div>
       </li>
       
-      <li class="step-process-indicator__step step-process-indicator__step--active" data-step="discount">
+      <!-- Step 2: Unlock Extra $30 OFF (Dynamic) -->
+      <li class="step-process-indicator__step" data-step="discount-30">
         <div class="step-process-indicator__step-icon" aria-hidden="true">
-          <div class="step-process-indicator__step-circle" data-discount-icon>
-            <span class="step-process-indicator__pound-symbol">£</span>
+          <div class="step-process-indicator__step-circle" data-step-2-icon>
+            <span class="step-process-indicator__currency-symbol">£</span>
             <svg class="step-process-indicator__checkmark" width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
               <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </div>
         </div>
         <div class="step-process-indicator__step-text" data-currency-text="Unlock Extra {amount} OFF" data-amount="3000">Unlock Extra {{ 3000 | money }} OFF</div>
+      </li>
+      
+      <!-- Step 3: Unlock Extra $45 OFF (NEW - Dynamic) -->
+      <li class="step-process-indicator__step" data-step="discount-45">
+        <div class="step-process-indicator__step-icon" aria-hidden="true">
+          <div class="step-process-indicator__step-circle" data-step-3-icon>
+            <span class="step-process-indicator__currency-symbol">£</span>
+            <svg class="step-process-indicator__checkmark" width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+              <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="step-process-indicator__step-text" data-currency-text="Unlock Extra {amount} OFF" data-amount="4500">Unlock Extra {{ 4500 | money }} OFF</div>
       </li>
     </ol>
   </div>
@@ -145,25 +149,29 @@
   }
   
   /**
-   * Format progress message based on cart state
+   * Format progress message based on cart state (4 states)
    */
   function formatProgressMessage(amountNeeded, config, thresholdReached, currency, itemCount) {
-    if (thresholdReached) {
-      const discountSymbol = config.symbol;
-      
-      // Check if discount is fully unlocked (2+ CHUUGs)
-      if (itemCount >= 2) {
-        // Step 3: Discount unlocked (100%)
-        return `🔥 You've unlock <span>EXTRA ${discountSymbol}30 OFF</span>`;
-      } else {
-        // Step 2: Free shipping unlocked, working toward discount (50%)
-        return `🔥 You're only 1 CHUUG away to unlock <span>EXTRA ${discountSymbol}30 OFF</span>`;
-      }
+    const symbol = config.symbol;
+    
+    // STATE 1 (0%): Below shipping threshold - show amount needed
+    if (!thresholdReached) {
+      const formattedAmount = formatAmount(amountNeeded, symbol);
+      return config.message.replace('{amount}', formattedAmount);
     }
     
-    // Step 1: Still working toward free shipping - show Step 1 message
-    const formattedAmount = formatAmount(amountNeeded, config.symbol);
-    return config.message.replace('{amount}', formattedAmount);
+    // STATE 2 (10%): Shipping unlocked, <2 CHUUGs - show "1 CHUUG away £30 OFF"
+    if (itemCount < 2) {
+      return `🔥 You're only 1 CHUUG away to unlock <span>EXTRA ${symbol}30 OFF</span>`;
+    }
+    
+    // STATE 3 (50%): 2+ CHUUGs, <3 CHUUGs - show "1 CHUUG away £45 OFF"
+    if (itemCount >= 2 && itemCount < 3) {
+      return `🔥 You're only 1 CHUUG away to unlock <span>EXTRA ${symbol}45 OFF</span>`;
+    }
+    
+    // STATE 4 (100%): 3+ CHUUGs - show "unlocked £45 OFF"
+    return `🔥 You've unlocked <span>EXTRA ${symbol}45 OFF</span>`;
   }
   
   /**
@@ -205,19 +213,19 @@
   }
   
   /**
-   * Update the shipping step icon (truck or checkmark) and step state
+   * Update Step 1 icon (Free Shipping: truck or checkmark)
    */
-  function updateShippingStepIcon(isCompleted) {
-    const shippingStep = document.querySelector('[data-step="shipping"]');
-    const shippingIcon = document.querySelector('[data-shipping-icon]');
+  function updateStep1Icon(isCompleted) {
+    const step1 = document.querySelector('[data-step="shipping"]');
+    const step1Icon = document.querySelector('[data-step-1-icon]');
     
-    if (!shippingIcon) {
-      console.warn('⚠️ Shipping icon element not found');
+    if (!step1Icon) {
+      console.warn('⚠️ Step 1 icon element not found');
       return;
     }
     
-    const truckIcon = shippingIcon.querySelector('.step-process-indicator__truck-icon');
-    const checkmark = shippingIcon.querySelector('.step-process-indicator__checkmark');
+    const truckIcon = step1Icon.querySelector('.step-process-indicator__truck-icon');
+    const checkmark = step1Icon.querySelector('.step-process-indicator__checkmark');
     
     if (isCompleted) {
       // Show checkmark, hide truck
@@ -225,71 +233,121 @@
       if (checkmark) checkmark.style.display = 'block';
       
       // Add completed class to step
-      if (shippingStep) {
-        shippingStep.classList.add('step-process-indicator__step--completed');
-        shippingStep.classList.remove('step-process-indicator__step--active');
+      if (step1) {
+        step1.classList.add('step-process-indicator__step--completed');
+        step1.classList.remove('step-process-indicator__step--active');
       }
       
-      console.log('✓ Shipping step icon: Checkmark (completed)');
+      console.log('✓ Step 1 (Shipping): Checkmark (completed)');
     } else {
       // Show truck, hide checkmark
       if (truckIcon) truckIcon.style.display = '';
       if (checkmark) checkmark.style.display = 'none';
       
       // Remove completed class, keep active
-      if (shippingStep) {
-        shippingStep.classList.remove('step-process-indicator__step--completed');
-        shippingStep.classList.add('step-process-indicator__step--active');
+      if (step1) {
+        step1.classList.remove('step-process-indicator__step--completed');
+        step1.classList.add('step-process-indicator__step--active');
       }
       
-      console.log('🚚 Shipping step icon: Truck (pending)');
+      console.log('🚚 Step 1 (Shipping): Truck (active)');
     }
   }
   
   /**
-   * Update the discount step icon (£ or checkmark) and step state
+   * Update Step 2 icon (£30 OFF: currency symbol or checkmark)
    */
-  function updateDiscountStepIcon(isCompleted) {
-    const discountStep = document.querySelector('[data-step="discount"]');
-    const discountIcon = document.querySelector('[data-discount-icon]');
+  function updateStep2Icon(isCompleted, isActive = false) {
+    const step2 = document.querySelector('[data-step="discount-30"]');
+    const step2Icon = document.querySelector('[data-step-2-icon]');
     
-    if (!discountIcon) {
-      console.warn('⚠️ Discount icon element not found');
+    if (!step2Icon) {
+      console.warn('⚠️ Step 2 icon element not found');
       return;
     }
     
-    const poundSymbol = discountIcon.querySelector('.step-process-indicator__pound-symbol');
-    const checkmark = discountIcon.querySelector('.step-process-indicator__checkmark');
+    const currencySymbol = step2Icon.querySelector('.step-process-indicator__currency-symbol');
+    const checkmark = step2Icon.querySelector('.step-process-indicator__checkmark');
     
     if (isCompleted) {
-      // Show checkmark, hide pound symbol
-      if (poundSymbol) poundSymbol.style.display = 'none';
+      // Show checkmark, hide currency symbol
+      if (currencySymbol) currencySymbol.style.display = 'none';
       if (checkmark) checkmark.style.display = 'block';
       
       // Add completed class to step
-      if (discountStep) {
-        discountStep.classList.add('step-process-indicator__step--completed');
-        discountStep.classList.remove('step-process-indicator__step--active');
+      if (step2) {
+        step2.classList.add('step-process-indicator__step--completed');
+        step2.classList.remove('step-process-indicator__step--active');
       }
       
-      console.log('✓ Discount step icon: Checkmark (completed)');
+      console.log('✓ Step 2 (£30 OFF): Checkmark (completed)');
     } else {
-      // Show pound symbol, hide checkmark
-      if (poundSymbol) poundSymbol.style.display = '';
+      // Show currency symbol, hide checkmark
+      if (currencySymbol) currencySymbol.style.display = '';
       if (checkmark) checkmark.style.display = 'none';
       
-      // Remove completed class, keep active
-      if (discountStep) {
-        discountStep.classList.remove('step-process-indicator__step--completed');
-        discountStep.classList.add('step-process-indicator__step--active');
+      // Set active or inactive state
+      if (step2) {
+        step2.classList.remove('step-process-indicator__step--completed');
+        if (isActive) {
+          step2.classList.add('step-process-indicator__step--active');
+        } else {
+          step2.classList.remove('step-process-indicator__step--active');
+        }
       }
       
-      console.log('£ Discount step icon: Currency symbol (pending)');
+      console.log(`£ Step 2 (£30 OFF): Currency symbol (${isActive ? 'active' : 'inactive'})`);
     }
   }
   
   /**
-   * Update the progress bar fill based on threshold progress and item count
+   * Update Step 3 icon (£45 OFF: currency symbol or checkmark)
+   */
+  function updateStep3Icon(isCompleted, isActive = false) {
+    const step3 = document.querySelector('[data-step="discount-45"]');
+    const step3Icon = document.querySelector('[data-step-3-icon]');
+    
+    if (!step3Icon) {
+      console.warn('⚠️ Step 3 icon element not found');
+      return;
+    }
+    
+    const currencySymbol = step3Icon.querySelector('.step-process-indicator__currency-symbol');
+    const checkmark = step3Icon.querySelector('.step-process-indicator__checkmark');
+    
+    if (isCompleted) {
+      // Show checkmark, hide currency symbol
+      if (currencySymbol) currencySymbol.style.display = 'none';
+      if (checkmark) checkmark.style.display = 'block';
+      
+      // Add completed class to step
+      if (step3) {
+        step3.classList.add('step-process-indicator__step--completed');
+        step3.classList.remove('step-process-indicator__step--active');
+      }
+      
+      console.log('✓ Step 3 (£45 OFF): Checkmark (completed)');
+    } else {
+      // Show currency symbol, hide checkmark
+      if (currencySymbol) currencySymbol.style.display = '';
+      if (checkmark) checkmark.style.display = 'none';
+      
+      // Set active or inactive state
+      if (step3) {
+        step3.classList.remove('step-process-indicator__step--completed');
+        if (isActive) {
+          step3.classList.add('step-process-indicator__step--active');
+        } else {
+          step3.classList.remove('step-process-indicator__step--active');
+        }
+      }
+      
+      console.log(`£ Step 3 (£45 OFF): Currency symbol (${isActive ? 'active' : 'inactive'})`);
+    }
+  }
+  
+  /**
+   * Update the progress bar fill based on threshold progress and item count (4 states)
    */
   function updateProgressBar(thresholdReached, cartTotal, threshold, itemCount) {
     const progressFill = document.querySelector('.step-process-indicator__progress-fill');
@@ -300,25 +358,42 @@
     }
     
     // Remove all progress classes first
-    progressFill.classList.remove('progress-full', 'progress-half');
+    progressFill.classList.remove('progress-zero', 'progress-ten', 'progress-half', 'progress-full');
     
+    // STATE 1 (0%): Below shipping threshold
     if (!thresholdReached) {
-      // Step 1: Below shipping threshold - 0% progress
-      updateShippingStepIcon(false); // Show truck icon
-      updateDiscountStepIcon(false); // Show £ symbol
-      console.log('📊 Progress Bar: Step 1 - Working towards free shipping (0%)');
-    } else if (itemCount >= 2) {
-      // Step 3: Threshold reached + 2+ CHUUGs - 100% progress
-      progressFill.classList.add('progress-full');
-      updateShippingStepIcon(true);  // Show checkmark
-      updateDiscountStepIcon(true);  // Show checkmark
-      console.log('📊 Progress Bar: Step 3 - Discount Unlocked! (100%)', { itemCount });
-    } else {
-      // Step 2: Threshold reached + 1 CHUUG - 50% progress
+      progressFill.classList.add('progress-zero');
+      updateStep1Icon(false);        // Show truck (active)
+      updateStep2Icon(false, false); // Show £ (inactive)
+      updateStep3Icon(false, false); // Show £ (inactive)
+      console.log('📊 Progress: 0% - Working toward free shipping');
+    }
+    
+    // STATE 2 (10%): Shipping unlocked, <2 CHUUGs
+    else if (itemCount < 2) {
+      progressFill.classList.add('progress-ten');
+      updateStep1Icon(true);         // Show checkmark (completed)
+      updateStep2Icon(false, true);  // Show £ (active)
+      updateStep3Icon(false, false); // Show £ (inactive)
+      console.log('📊 Progress: 10% - Free shipping unlocked, working toward £30 OFF');
+    }
+    
+    // STATE 3 (50%): 2+ CHUUGs, <3 CHUUGs
+    else if (itemCount >= 2 && itemCount < 3) {
       progressFill.classList.add('progress-half');
-      updateShippingStepIcon(true);  // Show checkmark
-      updateDiscountStepIcon(false); // Show £ symbol (not yet unlocked)
-      console.log('📊 Progress Bar: Step 2 - Free Shipping Unlocked (50%)', { itemCount });
+      updateStep1Icon(true);         // Show checkmark (completed)
+      updateStep2Icon(true, false);  // Show checkmark (completed)
+      updateStep3Icon(false, true);  // Show £ (active)
+      console.log('📊 Progress: 50% - £30 OFF unlocked, working toward £45 OFF');
+    }
+    
+    // STATE 4 (100%): 3+ CHUUGs
+    else if (itemCount >= 3) {
+      progressFill.classList.add('progress-full');
+      updateStep1Icon(true);         // Show checkmark (completed)
+      updateStep2Icon(true, false);  // Show checkmark (completed)
+      updateStep3Icon(true, false);  // Show checkmark (completed)
+      console.log('📊 Progress: 100% - £45 OFF unlocked! All milestones complete.');
     }
   }
   

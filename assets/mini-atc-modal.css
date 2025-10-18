@@ -1060,21 +1060,29 @@
 	left: 10px;
 	top: 50%;
 	transform: translateY(-50%);
-	width: 14%;
+	width: 0%;
 	height: 18.64px;
 	background: #dbe188;
 	border-radius: 2px;
-	transition: width 0.3s ease-in-out;
+	transition: width 0.5s ease-in-out;
 	display: block !important;
 }
 
-/* Progress Fill State Classes */
-.step-process-indicator__progress-fill.progress-full {
-	width: calc(100% - 20px);
+/* Progress Fill State Classes (4 states: 0%, 10%, 50%, 100%) */
+.step-process-indicator__progress-fill.progress-zero {
+	width: 0%;
+}
+
+.step-process-indicator__progress-fill.progress-ten {
+	width: calc(10% - 5px);
 }
 
 .step-process-indicator__progress-fill.progress-half {
 	width: calc(50% - 10px);
+}
+
+.step-process-indicator__progress-fill.progress-full {
+	width: calc(100% - 20px);
 }
 
 .step-process-indicator__steps {
@@ -1112,6 +1120,8 @@
 	justify-content: center;
 	align-items: center;
 	position: relative;
+	background: #969393;
+	color:#fff;
 }
 
 /* Step States */
@@ -1138,6 +1148,20 @@
 	background: #969393;
 }
 
+.step-process-indicator__step--active .step-process-indicator__currency-symbol {
+	color: #ffffff;
+	font-family: Gabarito, sans-serif;
+	font-size: 25.42px;
+	font-weight: 400;
+	line-height: 1em;
+	position: absolute;
+	left: 9.66px;
+	top: 3.3px;
+	width: 13px;
+	height: 25px;
+}
+
+/* Also support the old class name for backward compatibility */
 .step-process-indicator__step--active .step-process-indicator__pound-symbol {
 	color: #ffffff;
 	font-family: Gabarito, sans-serif;
@@ -1162,7 +1186,6 @@
 	font-size: 16px;
 	font-weight: 600;
 	line-height: 1.2em;
-	white-space: nowrap;
 }
 
 /* ============================================
@@ -1728,6 +1751,8 @@
 		top: 10px;
 	}
 
+	.step-process-indicator__step--active
+		.step-process-indicator__currency-symbol,
 	.step-process-indicator__step--active .step-process-indicator__pound-symbol {
 		font-size: 20px;
 		left: 8px;
