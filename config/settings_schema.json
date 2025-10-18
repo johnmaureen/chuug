@@ -1538,6 +1538,12 @@
 				"info": "Third image shown in the design preview modal"
 			},
 			{
+				"type": "image_picker",
+				"id": "design_preview_image_4",
+				"label": "Design Preview Image 4",
+				"info": "Fourth image shown in the design preview modal"
+			},
+			{
 				"type": "header",
 				"content": "Mini ATC Product Gallery Images"
 			},

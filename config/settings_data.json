@@ -8,493 +8,494 @@
  * ------------------------------------------------------------
  */
 {
-  "current": {
-    "logo": "shopify://shop_images/2-blue-chuug-logo-rope-handle-beer-tankard-words.png",
-    "logo_width": 100,
-    "favicon": "shopify://shop_images/chuug-favicon-invis2.png",
-    "type_header_font": "fs_kim_n5",
-    "heading_scale": 130,
-    "type_body_font": "fs_koopman_n4",
-    "body_scale": 100,
-    "page_width": 1200,
-    "spacing_sections": 0,
-    "spacing_grid_horizontal": 40,
-    "spacing_grid_vertical": 40,
-    "animations_reveal_on_scroll": false,
-    "animations_hover_elements": "vertical-lift",
-    "buttons_border_thickness": 1,
-    "buttons_border_opacity": 100,
-    "buttons_radius": 40,
-    "buttons_shadow_opacity": 0,
-    "buttons_shadow_horizontal_offset": 0,
-    "buttons_shadow_vertical_offset": 4,
-    "buttons_shadow_blur": 5,
-    "variant_pills_border_thickness": 1,
-    "variant_pills_border_opacity": 100,
-    "variant_pills_radius": 40,
-    "variant_pills_shadow_opacity": 0,
-    "variant_pills_shadow_horizontal_offset": 0,
-    "variant_pills_shadow_vertical_offset": 4,
-    "variant_pills_shadow_blur": 5,
-    "inputs_border_thickness": 1,
-    "inputs_border_opacity": 100,
-    "inputs_radius": 0,
-    "inputs_shadow_opacity": 0,
-    "inputs_shadow_horizontal_offset": 0,
-    "inputs_shadow_vertical_offset": 4,
-    "inputs_shadow_blur": 5,
-    "card_style": "card",
-    "card_image_padding": 0,
-    "card_text_alignment": "left",
-    "card_color_scheme": "background-1",
-    "card_border_thickness": 0,
-    "card_border_opacity": 10,
-    "card_corner_radius": 0,
-    "card_shadow_opacity": 0,
-    "card_shadow_horizontal_offset": 0,
-    "card_shadow_vertical_offset": 4,
-    "card_shadow_blur": 5,
-    "collection_card_style": "card",
-    "collection_card_image_padding": 0,
-    "collection_card_text_alignment": "left",
-    "collection_card_color_scheme": "inverse",
-    "collection_card_border_thickness": 0,
-    "collection_card_border_opacity": 10,
-    "collection_card_corner_radius": 0,
-    "collection_card_shadow_opacity": 0,
-    "collection_card_shadow_horizontal_offset": 0,
-    "collection_card_shadow_vertical_offset": 4,
-    "collection_card_shadow_blur": 5,
-    "blog_card_style": "standard",
-    "blog_card_image_padding": 0,
-    "blog_card_text_alignment": "left",
-    "blog_card_color_scheme": "background-2",
-    "blog_card_border_thickness": 0,
-    "blog_card_border_opacity": 10,
-    "blog_card_corner_radius": 0,
-    "blog_card_shadow_opacity": 0,
-    "blog_card_shadow_horizontal_offset": 0,
-    "blog_card_shadow_vertical_offset": 4,
-    "blog_card_shadow_blur": 5,
-    "text_boxes_border_thickness": 0,
-    "text_boxes_border_opacity": 10,
-    "text_boxes_radius": 0,
-    "text_boxes_shadow_opacity": 0,
-    "text_boxes_shadow_horizontal_offset": 0,
-    "text_boxes_shadow_vertical_offset": 4,
-    "text_boxes_shadow_blur": 5,
-    "media_border_thickness": 0,
-    "media_border_opacity": 10,
-    "media_radius": 0,
-    "media_shadow_opacity": 0,
-    "media_shadow_horizontal_offset": 0,
-    "media_shadow_vertical_offset": 0,
-    "media_shadow_blur": 5,
-    "popup_border_thickness": 1,
-    "popup_border_opacity": 100,
-    "popup_corner_radius": 0,
-    "popup_shadow_opacity": 5,
-    "popup_shadow_horizontal_offset": 0,
-    "popup_shadow_vertical_offset": 4,
-    "popup_shadow_blur": 5,
-    "drawer_border_thickness": 1,
-    "drawer_border_opacity": 100,
-    "drawer_shadow_opacity": 0,
-    "drawer_shadow_horizontal_offset": 0,
-    "drawer_shadow_vertical_offset": 4,
-    "drawer_shadow_blur": 5,
-    "badge_position": "top right",
-    "badge_corner_radius": 0,
-    "sale_badge_color_scheme": "background-2",
-    "sold_out_badge_color_scheme": "accent-2",
-    "brand_headline": "The Chuug Mug: A Handcrafted Masterpiece for Discerning Gentlemen",
-    "brand_description": "<p>Discover the allure of the Nordic aesthetic through our premium Chuug Mug - an emblem of sophistication and masculinity.</p>",
-    "brand_image": "shopify://shop_images/chuug-logo-5-wood.png",
-    "brand_image_width": 100,
-    "social_facebook_link": "",
-    "social_instagram_link": "https://instagram.com/chuugmug",
-    "social_youtube_link": "",
-    "social_tiktok_link": "",
-    "social_twitter_link": "",
-    "social_snapchat_link": "",
-    "social_pinterest_link": "",
-    "social_tumblr_link": "",
-    "social_vimeo_link": "",
-    "predictive_search_enabled": true,
-    "predictive_search_show_vendor": false,
-    "predictive_search_show_price": false,
-    "currency_code_enabled": true,
-    "cart_type": "page",
-    "show_vendor": true,
-    "show_cart_note": true,
-    "cart_drawer_collection": "choose-your-vessel",
-    "enable_flash_sale": true,
-    "flash_sale_text": "Sale ends in",
-    "mini_atc_countdown_text": "Extra {amount} off ends in",
-    "flash_sale_end_date": "2025-10-20",
-    "flash_sale_end_time": "23:59",
-    "design_preview_image_1": "shopify://shop_images/PHOTO_ASSET_1.png",
-    "design_preview_image_2": "shopify://shop_images/PHOTO_ASSET_2.png",
-    "design_preview_image_3": "shopify://shop_images/PHOTO_ASSET_3.png",
-    "mini_atc_gallery_image_1": "shopify://shop_images/COIN_PREVIEW_1_1.png",
-    "mini_atc_gallery_image_2": "shopify://shop_images/COIN_PREVIEW_2_1.png",
-    "mini_atc_gallery_image_3": "shopify://shop_images/COIN_PREVIEW_3_1.png",
-    "checkout_logo_image": "shopify://shop_images/chuug-logo-rope-handle-beer-tankard-r.png",
-    "checkout_body_background_color": "#dfdfd8",
-    "checkout_heading_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
-    "checkout_body_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
-    "checkout_accent_color": "#11151c",
-    "checkout_button_color": "#6093a3",
-    "sections": {
-      "main-password-header": {
-        "type": "main-password-header",
-        "settings": {
-          "color_scheme": "background-1"
-        }
-      },
-      "main-password-footer": {
-        "type": "main-password-footer",
-        "settings": {
-          "color_scheme": "background-1"
-        }
-      }
-    },
-    "content_for_index": [],
-    "blocks": {
-      "3838990611052461119": {
-        "type": "shopify://apps/customerhub/blocks/app-embed/0fb3ba0b-4c65-4919-a85a-48bc2d368e9c",
-        "disabled": false,
-        "settings": {
-          "account_primary_page": "",
-          "main_element": "",
-          "custom_element": "",
-          "page_element": "",
-          "proxy_element": "",
-          "mount_json_code": ""
-        }
-      },
-      "6986766168588894248": {
-        "type": "shopify://apps/preorder-now-wolf/blocks/app-embed/7ee1d740-e67b-4ea8-b0c9-1f62cb8777ec",
-        "disabled": false,
-        "settings": {}
-      },
-      "855628211100114053": {
-        "type": "shopify://apps/klaviyo-email-marketing-sms/blocks/klaviyo-onsite-embed/2632fe16-c075-4321-a88b-50b567f42507",
-        "disabled": false,
-        "settings": {}
-      },
-      "15683396631634586217": {
-        "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
-        "disabled": true,
-        "settings": {
-          "button_color": "#102f39",
-          "secondary_color": "#FFFFFF",
-          "ternary_color": "#6A6A6A",
-          "button_icon": "chat_bubble",
-          "button_text": "no_text",
-          "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "lowest",
-          "greeting_message": "👋 Hi, message us with any questions. We're happy to help!"
-        }
-      },
-      "9094328589753815681": {
-        "type": "shopify://apps/hextom-shipping-bar/blocks/fsb-embeded-block/7ef5d9af-75a2-45c7-9b1b-f9240ee488e9",
-        "disabled": false,
-        "settings": {}
-      },
-      "16216491870256628967": {
-        "type": "shopify://apps/bss-labels-badges/blocks/bss-pl-config-data/91bfe765-b604-49a1-805e-3599fa600b24",
-        "disabled": false,
-        "settings": {}
-      },
-      "1877152918344802950": {
-        "type": "shopify://apps/intelligems-a-b-testing/blocks/intelligems-script/fa83b64c-0c77-4c0c-b4b2-b94b42f5ef19",
-        "disabled": true,
-        "settings": {}
-      },
-      "6251270934270006384": {
-        "type": "shopify://apps/stape-server-gtm/blocks/gtm/7e13c847-7971-409d-8fe0-29ec14d5f048",
-        "disabled": false,
-        "settings": {}
-      },
-      "15014643352720781508": {
-        "type": "shopify://apps/wrapped/blocks/app-embed/1714fc7d-e525-4a14-8c3e-1b6ed95734c5",
-        "disabled": false,
-        "settings": {
-          "extension_background_primary_color": "#ffffff",
-          "extension_background_secondary_color": "#f3f3f3",
-          "extension_border_color": "#bf0707",
-          "border_radius": 6,
-          "font_color": "#bf0707",
-          "font_scale": 80,
-          "background_color": "#ffffff",
-          "border_color": "#bf0707",
-          "checkbox_radio_color": "#bf0707",
-          "gift_thumbnail_size": 105,
-          "gift_thumbnail_position": "--wrapped-thumbnail-position-end"
-        }
-      },
-      "3138269044488530766": {
-        "type": "shopify://apps/uppromote-affiliate/blocks/core-script/64c32457-930d-4cb9-9641-e24c0d9cf1f4",
-        "disabled": false,
-        "settings": {}
-      }
-    },
-    "color_schemes": {
-      "background-1": {
-        "settings": {
-          "background": "#dfdfd8",
-          "background_gradient": "",
-          "text": "#0d2026",
-          "button": "#6093a3",
-          "button_label": "#ffffff",
-          "secondary_button_label": "#6093a3",
-          "shadow": "#11151c"
-        }
-      },
-      "background-2": {
-        "settings": {
-          "background": "#bf0707",
-          "background_gradient": "linear-gradient(133deg, rgba(186, 0, 0, 1) 33%, rgba(255, 255, 255, 1) 87%)",
-          "text": "#ffffff",
-          "button": "#6093a3",
-          "button_label": "#ffffff",
-          "secondary_button_label": "#6093a3",
-          "shadow": "#11151c"
-        }
-      },
-      "inverse": {
-        "settings": {
-          "background": "#0d2026",
-          "background_gradient": "",
-          "text": "#ffffff",
-          "button": "#ffffff",
-          "button_label": "#6093a3",
-          "secondary_button_label": "#ffffff",
-          "shadow": "#11151c"
-        }
-      },
-      "accent-1": {
-        "settings": {
-          "background": "#ffffff",
-          "background_gradient": "",
-          "text": "#ffffff",
-          "button": "#6093a3",
-          "button_label": "#ffffff",
-          "secondary_button_label": "#6093a3",
-          "shadow": "#11151c"
-        }
-      },
-      "accent-2": {
-        "settings": {
-          "background": "#4c9e72",
-          "background_gradient": "",
-          "text": "#ffffff",
-          "button": "#dfdfd8",
-          "button_label": "#6093a3",
-          "secondary_button_label": "#dfdfd8",
-          "shadow": "#11151c"
-        }
-      }
-    }
-  },
-  "presets": {
-    "Default": {
-      "logo_width": 160,
-      "color_schemes": {
-        "background-1": {
-          "settings": {
-            "background": "#dfdfd8",
-            "background_gradient": "",
-            "text": "#11151c",
-            "button": "#855832",
-            "button_label": "#dfdfd8",
-            "secondary_button_label": "#855832",
-            "shadow": "#11151c"
-          }
-        },
-        "background-2": {
-          "settings": {
-            "background": "#ffffff",
-            "background_gradient": "",
-            "text": "#11151c",
-            "button": "#11151c",
-            "button_label": "#ffffff",
-            "secondary_button_label": "#11151c",
-            "shadow": "#11151c"
-          }
-        },
-        "inverse": {
-          "settings": {
-            "background": "#11151c",
-            "background_gradient": "",
-            "text": "#ffffff",
-            "button": "#ffffff",
-            "button_label": "#11151c",
-            "secondary_button_label": "#ffffff",
-            "shadow": "#11151c"
-          }
-        },
-        "accent-1": {
-          "settings": {
-            "background": "#855832",
-            "background_gradient": "",
-            "text": "#dfdfd8",
-            "button": "#dfdfd8",
-            "button_label": "#855832",
-            "secondary_button_label": "#dfdfd8",
-            "shadow": "#11151c"
-          }
-        },
-        "accent-2": {
-          "settings": {
-            "background": "#4c6762",
-            "background_gradient": "",
-            "text": "#dfdfd8",
-            "button": "#dfdfd8",
-            "button_label": "#4c6762",
-            "secondary_button_label": "#dfdfd8",
-            "shadow": "#11151c"
-          }
-        }
-      },
-      "type_header_font": "fs_kim_n5",
-      "heading_scale": 130,
-      "type_body_font": "fs_koopman_n4",
-      "body_scale": 100,
-      "page_width": 1200,
-      "spacing_sections": 0,
-      "spacing_grid_horizontal": 40,
-      "spacing_grid_vertical": 40,
-      "animations_reveal_on_scroll": true,
-      "animations_hover_elements": "none",
-      "buttons_border_thickness": 1,
-      "buttons_border_opacity": 100,
-      "buttons_radius": 0,
-      "buttons_shadow_opacity": 0,
-      "buttons_shadow_horizontal_offset": 0,
-      "buttons_shadow_vertical_offset": 4,
-      "buttons_shadow_blur": 5,
-      "variant_pills_border_thickness": 1,
-      "variant_pills_border_opacity": 100,
-      "variant_pills_radius": 0,
-      "variant_pills_shadow_opacity": 0,
-      "variant_pills_shadow_horizontal_offset": 0,
-      "variant_pills_shadow_vertical_offset": 4,
-      "variant_pills_shadow_blur": 5,
-      "inputs_border_thickness": 1,
-      "inputs_border_opacity": 100,
-      "inputs_radius": 0,
-      "inputs_shadow_opacity": 0,
-      "inputs_shadow_horizontal_offset": 0,
-      "inputs_shadow_vertical_offset": 4,
-      "inputs_shadow_blur": 5,
-      "card_style": "standard",
-      "card_image_padding": 0,
-      "card_text_alignment": "left",
-      "card_color_scheme": "background-2",
-      "card_border_thickness": 0,
-      "card_border_opacity": 10,
-      "card_corner_radius": 0,
-      "card_shadow_opacity": 0,
-      "card_shadow_horizontal_offset": 0,
-      "card_shadow_vertical_offset": 4,
-      "card_shadow_blur": 5,
-      "collection_card_border_opacity": 10,
-      "collection_card_shadow_opacity": 0,
-      "collection_card_shadow_vertical_offset": 4,
-      "collection_card_shadow_blur": 5,
-      "collection_card_style": "standard",
-      "collection_card_image_padding": 0,
-      "collection_card_text_alignment": "left",
-      "collection_card_color_scheme": "background-2",
-      "collection_card_border_thickness": 0,
-      "collection_card_corner_radius": 0,
-      "collection_card_shadow_horizontal_offset": 0,
-      "blog_card_style": "standard",
-      "blog_card_image_padding": 0,
-      "blog_card_text_alignment": "left",
-      "blog_card_color_scheme": "background-2",
-      "blog_card_border_thickness": 0,
-      "blog_card_border_opacity": 10,
-      "blog_card_corner_radius": 0,
-      "blog_card_shadow_opacity": 0,
-      "blog_card_shadow_horizontal_offset": 0,
-      "blog_card_shadow_vertical_offset": 4,
-      "blog_card_shadow_blur": 5,
-      "text_boxes_border_thickness": 0,
-      "text_boxes_border_opacity": 10,
-      "text_boxes_radius": 0,
-      "text_boxes_shadow_opacity": 0,
-      "text_boxes_shadow_horizontal_offset": 0,
-      "text_boxes_shadow_vertical_offset": 4,
-      "text_boxes_shadow_blur": 5,
-      "media_border_thickness": 0,
-      "media_border_opacity": 10,
-      "media_radius": 0,
-      "media_shadow_opacity": 0,
-      "media_shadow_horizontal_offset": 0,
-      "media_shadow_vertical_offset": 4,
-      "media_shadow_blur": 5,
-      "popup_border_thickness": 1,
-      "popup_border_opacity": 100,
-      "popup_corner_radius": 0,
-      "popup_shadow_opacity": 5,
-      "popup_shadow_horizontal_offset": 0,
-      "popup_shadow_vertical_offset": 4,
-      "popup_shadow_blur": 5,
-      "drawer_border_thickness": 1,
-      "drawer_border_opacity": 100,
-      "drawer_shadow_opacity": 0,
-      "drawer_shadow_horizontal_offset": 0,
-      "drawer_shadow_vertical_offset": 4,
-      "drawer_shadow_blur": 5,
-      "badge_position": "top left",
-      "badge_corner_radius": 0,
-      "sale_badge_color_scheme": "accent-2",
-      "sold_out_badge_color_scheme": "background-1",
-      "brand_headline": "",
-      "brand_description": "<p></p>",
-      "brand_image_width": 100,
-      "social_twitter_link": "",
-      "social_facebook_link": "",
-      "social_pinterest_link": "",
-      "social_instagram_link": "",
-      "social_tiktok_link": "",
-      "social_tumblr_link": "",
-      "social_snapchat_link": "",
-      "social_youtube_link": "",
-      "social_vimeo_link": "",
-      "predictive_search_enabled": true,
-      "predictive_search_show_vendor": false,
-      "predictive_search_show_price": false,
-      "currency_code_enabled": true,
-      "cart_type": "drawer",
-      "show_vendor": true,
-      "show_cart_note": true,
-      "cart_drawer_collection": "",
-      "sections": {
-        "main-password-header": {
-          "type": "main-password-header",
-          "settings": {
-            "color_scheme": "background-1"
-          }
-        },
-        "main-password-footer": {
-          "type": "main-password-footer",
-          "settings": {
-            "color_scheme": "background-1"
-          }
-        }
-      }
-    }
-  },
-  "platform_customizations": {
-    "custom_css": [
-      "button.mmq-button {border-radius: 50px; /* This gives the pill shape */ padding: 20px 20px; /* Adjust the padding as needed */ /* Add any other styles you need, such as background-color, border, etc. */}",
-      "s.price-item.price-item--regular br {display: none;}",
-      "s.price-item.price-item--regular span.dpCompareAtPrice {margin-right: 20px;}",
-      ".product__title h1 {font-size: xx-large;}"
-    ]
-  }
+	"current": {
+		"logo": "shopify://shop_images/2-blue-chuug-logo-rope-handle-beer-tankard-words.png",
+		"logo_width": 100,
+		"favicon": "shopify://shop_images/chuug-favicon-invis2.png",
+		"type_header_font": "fs_kim_n5",
+		"heading_scale": 130,
+		"type_body_font": "fs_koopman_n4",
+		"body_scale": 100,
+		"page_width": 1200,
+		"spacing_sections": 0,
+		"spacing_grid_horizontal": 40,
+		"spacing_grid_vertical": 40,
+		"animations_reveal_on_scroll": false,
+		"animations_hover_elements": "vertical-lift",
+		"buttons_border_thickness": 1,
+		"buttons_border_opacity": 100,
+		"buttons_radius": 40,
+		"buttons_shadow_opacity": 0,
+		"buttons_shadow_horizontal_offset": 0,
+		"buttons_shadow_vertical_offset": 4,
+		"buttons_shadow_blur": 5,
+		"variant_pills_border_thickness": 1,
+		"variant_pills_border_opacity": 100,
+		"variant_pills_radius": 40,
+		"variant_pills_shadow_opacity": 0,
+		"variant_pills_shadow_horizontal_offset": 0,
+		"variant_pills_shadow_vertical_offset": 4,
+		"variant_pills_shadow_blur": 5,
+		"inputs_border_thickness": 1,
+		"inputs_border_opacity": 100,
+		"inputs_radius": 0,
+		"inputs_shadow_opacity": 0,
+		"inputs_shadow_horizontal_offset": 0,
+		"inputs_shadow_vertical_offset": 4,
+		"inputs_shadow_blur": 5,
+		"card_style": "card",
+		"card_image_padding": 0,
+		"card_text_alignment": "left",
+		"card_color_scheme": "background-1",
+		"card_border_thickness": 0,
+		"card_border_opacity": 10,
+		"card_corner_radius": 0,
+		"card_shadow_opacity": 0,
+		"card_shadow_horizontal_offset": 0,
+		"card_shadow_vertical_offset": 4,
+		"card_shadow_blur": 5,
+		"collection_card_style": "card",
+		"collection_card_image_padding": 0,
+		"collection_card_text_alignment": "left",
+		"collection_card_color_scheme": "inverse",
+		"collection_card_border_thickness": 0,
+		"collection_card_border_opacity": 10,
+		"collection_card_corner_radius": 0,
+		"collection_card_shadow_opacity": 0,
+		"collection_card_shadow_horizontal_offset": 0,
+		"collection_card_shadow_vertical_offset": 4,
+		"collection_card_shadow_blur": 5,
+		"blog_card_style": "standard",
+		"blog_card_image_padding": 0,
+		"blog_card_text_alignment": "left",
+		"blog_card_color_scheme": "background-2",
+		"blog_card_border_thickness": 0,
+		"blog_card_border_opacity": 10,
+		"blog_card_corner_radius": 0,
+		"blog_card_shadow_opacity": 0,
+		"blog_card_shadow_horizontal_offset": 0,
+		"blog_card_shadow_vertical_offset": 4,
+		"blog_card_shadow_blur": 5,
+		"text_boxes_border_thickness": 0,
+		"text_boxes_border_opacity": 10,
+		"text_boxes_radius": 0,
+		"text_boxes_shadow_opacity": 0,
+		"text_boxes_shadow_horizontal_offset": 0,
+		"text_boxes_shadow_vertical_offset": 4,
+		"text_boxes_shadow_blur": 5,
+		"media_border_thickness": 0,
+		"media_border_opacity": 10,
+		"media_radius": 0,
+		"media_shadow_opacity": 0,
+		"media_shadow_horizontal_offset": 0,
+		"media_shadow_vertical_offset": 0,
+		"media_shadow_blur": 5,
+		"popup_border_thickness": 1,
+		"popup_border_opacity": 100,
+		"popup_corner_radius": 0,
+		"popup_shadow_opacity": 5,
+		"popup_shadow_horizontal_offset": 0,
+		"popup_shadow_vertical_offset": 4,
+		"popup_shadow_blur": 5,
+		"drawer_border_thickness": 1,
+		"drawer_border_opacity": 100,
+		"drawer_shadow_opacity": 0,
+		"drawer_shadow_horizontal_offset": 0,
+		"drawer_shadow_vertical_offset": 4,
+		"drawer_shadow_blur": 5,
+		"badge_position": "top right",
+		"badge_corner_radius": 0,
+		"sale_badge_color_scheme": "background-2",
+		"sold_out_badge_color_scheme": "accent-2",
+		"brand_headline": "The Chuug Mug: A Handcrafted Masterpiece for Discerning Gentlemen",
+		"brand_description": "<p>Discover the allure of the Nordic aesthetic through our premium Chuug Mug - an emblem of sophistication and masculinity.</p>",
+		"brand_image": "shopify://shop_images/chuug-logo-5-wood.png",
+		"brand_image_width": 100,
+		"social_facebook_link": "",
+		"social_instagram_link": "https://instagram.com/chuugmug",
+		"social_youtube_link": "",
+		"social_tiktok_link": "",
+		"social_twitter_link": "",
+		"social_snapchat_link": "",
+		"social_pinterest_link": "",
+		"social_tumblr_link": "",
+		"social_vimeo_link": "",
+		"predictive_search_enabled": true,
+		"predictive_search_show_vendor": false,
+		"predictive_search_show_price": false,
+		"currency_code_enabled": true,
+		"cart_type": "page",
+		"show_vendor": true,
+		"show_cart_note": true,
+		"cart_drawer_collection": "choose-your-vessel",
+		"enable_flash_sale": true,
+		"flash_sale_text": "Sale ends in",
+		"mini_atc_countdown_text": "Extra {amount} off ends in",
+		"flash_sale_end_date": "2025-10-20",
+		"flash_sale_end_time": "23:59",
+		"design_preview_image_1": "shopify://shop_images/v3-personalised-coin-new-letters_720.jpg",
+		"design_preview_image_2": "shopify://shop_images/PHOTO_ASSET_1.png",
+		"design_preview_image_3": "shopify://shop_images/PHOTO_ASSET_2.png",
+		"design_preview_image_4": "shopify://shop_images/PHOTO_ASSET_3.png",
+		"mini_atc_gallery_image_1": "shopify://shop_images/COIN_PREVIEW_2_1.png",
+		"mini_atc_gallery_image_2": "shopify://shop_images/COIN_PREVIEW_1_1.png",
+		"mini_atc_gallery_image_3": "shopify://shop_images/COIN_PREVIEW_3_1.png",
+		"checkout_logo_image": "shopify://shop_images/chuug-logo-rope-handle-beer-tankard-r.png",
+		"checkout_body_background_color": "#dfdfd8",
+		"checkout_heading_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+		"checkout_body_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+		"checkout_accent_color": "#11151c",
+		"checkout_button_color": "#6093a3",
+		"sections": {
+			"main-password-header": {
+				"type": "main-password-header",
+				"settings": {
+					"color_scheme": "background-1"
+				}
+			},
+			"main-password-footer": {
+				"type": "main-password-footer",
+				"settings": {
+					"color_scheme": "background-1"
+				}
+			}
+		},
+		"content_for_index": [],
+		"blocks": {
+			"3838990611052461119": {
+				"type": "shopify://apps/customerhub/blocks/app-embed/0fb3ba0b-4c65-4919-a85a-48bc2d368e9c",
+				"disabled": false,
+				"settings": {
+					"account_primary_page": "",
+					"main_element": "",
+					"custom_element": "",
+					"page_element": "",
+					"proxy_element": "",
+					"mount_json_code": ""
+				}
+			},
+			"6986766168588894248": {
+				"type": "shopify://apps/preorder-now-wolf/blocks/app-embed/7ee1d740-e67b-4ea8-b0c9-1f62cb8777ec",
+				"disabled": false,
+				"settings": {}
+			},
+			"855628211100114053": {
+				"type": "shopify://apps/klaviyo-email-marketing-sms/blocks/klaviyo-onsite-embed/2632fe16-c075-4321-a88b-50b567f42507",
+				"disabled": false,
+				"settings": {}
+			},
+			"15683396631634586217": {
+				"type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
+				"disabled": true,
+				"settings": {
+					"button_color": "#102f39",
+					"secondary_color": "#FFFFFF",
+					"ternary_color": "#6A6A6A",
+					"button_icon": "chat_bubble",
+					"button_text": "no_text",
+					"button_horizontal_position": "bottom_right",
+					"button_vertical_position": "lowest",
+					"greeting_message": "👋 Hi, message us with any questions. We're happy to help!"
+				}
+			},
+			"9094328589753815681": {
+				"type": "shopify://apps/hextom-shipping-bar/blocks/fsb-embeded-block/7ef5d9af-75a2-45c7-9b1b-f9240ee488e9",
+				"disabled": false,
+				"settings": {}
+			},
+			"16216491870256628967": {
+				"type": "shopify://apps/bss-labels-badges/blocks/bss-pl-config-data/91bfe765-b604-49a1-805e-3599fa600b24",
+				"disabled": false,
+				"settings": {}
+			},
+			"1877152918344802950": {
+				"type": "shopify://apps/intelligems-a-b-testing/blocks/intelligems-script/fa83b64c-0c77-4c0c-b4b2-b94b42f5ef19",
+				"disabled": true,
+				"settings": {}
+			},
+			"6251270934270006384": {
+				"type": "shopify://apps/stape-server-gtm/blocks/gtm/7e13c847-7971-409d-8fe0-29ec14d5f048",
+				"disabled": false,
+				"settings": {}
+			},
+			"15014643352720781508": {
+				"type": "shopify://apps/wrapped/blocks/app-embed/1714fc7d-e525-4a14-8c3e-1b6ed95734c5",
+				"disabled": false,
+				"settings": {
+					"extension_background_primary_color": "#ffffff",
+					"extension_background_secondary_color": "#f3f3f3",
+					"extension_border_color": "#bf0707",
+					"border_radius": 6,
+					"font_color": "#bf0707",
+					"font_scale": 80,
+					"background_color": "#ffffff",
+					"border_color": "#bf0707",
+					"checkbox_radio_color": "#bf0707",
+					"gift_thumbnail_size": 105,
+					"gift_thumbnail_position": "--wrapped-thumbnail-position-end"
+				}
+			},
+			"3138269044488530766": {
+				"type": "shopify://apps/uppromote-affiliate/blocks/core-script/64c32457-930d-4cb9-9641-e24c0d9cf1f4",
+				"disabled": false,
+				"settings": {}
+			}
+		},
+		"color_schemes": {
+			"background-1": {
+				"settings": {
+					"background": "#dfdfd8",
+					"background_gradient": "",
+					"text": "#0d2026",
+					"button": "#6093a3",
+					"button_label": "#ffffff",
+					"secondary_button_label": "#6093a3",
+					"shadow": "#11151c"
+				}
+			},
+			"background-2": {
+				"settings": {
+					"background": "#bf0707",
+					"background_gradient": "linear-gradient(133deg, rgba(186, 0, 0, 1) 33%, rgba(255, 255, 255, 1) 87%)",
+					"text": "#ffffff",
+					"button": "#6093a3",
+					"button_label": "#ffffff",
+					"secondary_button_label": "#6093a3",
+					"shadow": "#11151c"
+				}
+			},
+			"inverse": {
+				"settings": {
+					"background": "#0d2026",
+					"background_gradient": "",
+					"text": "#ffffff",
+					"button": "#ffffff",
+					"button_label": "#6093a3",
+					"secondary_button_label": "#ffffff",
+					"shadow": "#11151c"
+				}
+			},
+			"accent-1": {
+				"settings": {
+					"background": "#ffffff",
+					"background_gradient": "",
+					"text": "#ffffff",
+					"button": "#6093a3",
+					"button_label": "#ffffff",
+					"secondary_button_label": "#6093a3",
+					"shadow": "#11151c"
+				}
+			},
+			"accent-2": {
+				"settings": {
+					"background": "#4c9e72",
+					"background_gradient": "",
+					"text": "#ffffff",
+					"button": "#dfdfd8",
+					"button_label": "#6093a3",
+					"secondary_button_label": "#dfdfd8",
+					"shadow": "#11151c"
+				}
+			}
+		}
+	},
+	"presets": {
+		"Default": {
+			"logo_width": 160,
+			"color_schemes": {
+				"background-1": {
+					"settings": {
+						"background": "#dfdfd8",
+						"background_gradient": "",
+						"text": "#11151c",
+						"button": "#855832",
+						"button_label": "#dfdfd8",
+						"secondary_button_label": "#855832",
+						"shadow": "#11151c"
+					}
+				},
+				"background-2": {
+					"settings": {
+						"background": "#ffffff",
+						"background_gradient": "",
+						"text": "#11151c",
+						"button": "#11151c",
+						"button_label": "#ffffff",
+						"secondary_button_label": "#11151c",
+						"shadow": "#11151c"
+					}
+				},
+				"inverse": {
+					"settings": {
+						"background": "#11151c",
+						"background_gradient": "",
+						"text": "#ffffff",
+						"button": "#ffffff",
+						"button_label": "#11151c",
+						"secondary_button_label": "#ffffff",
+						"shadow": "#11151c"
+					}
+				},
+				"accent-1": {
+					"settings": {
+						"background": "#855832",
+						"background_gradient": "",
+						"text": "#dfdfd8",
+						"button": "#dfdfd8",
+						"button_label": "#855832",
+						"secondary_button_label": "#dfdfd8",
+						"shadow": "#11151c"
+					}
+				},
+				"accent-2": {
+					"settings": {
+						"background": "#4c6762",
+						"background_gradient": "",
+						"text": "#dfdfd8",
+						"button": "#dfdfd8",
+						"button_label": "#4c6762",
+						"secondary_button_label": "#dfdfd8",
+						"shadow": "#11151c"
+					}
+				}
+			},
+			"type_header_font": "fs_kim_n5",
+			"heading_scale": 130,
+			"type_body_font": "fs_koopman_n4",
+			"body_scale": 100,
+			"page_width": 1200,
+			"spacing_sections": 0,
+			"spacing_grid_horizontal": 40,
+			"spacing_grid_vertical": 40,
+			"animations_reveal_on_scroll": true,
+			"animations_hover_elements": "none",
+			"buttons_border_thickness": 1,
+			"buttons_border_opacity": 100,
+			"buttons_radius": 0,
+			"buttons_shadow_opacity": 0,
+			"buttons_shadow_horizontal_offset": 0,
+			"buttons_shadow_vertical_offset": 4,
+			"buttons_shadow_blur": 5,
+			"variant_pills_border_thickness": 1,
+			"variant_pills_border_opacity": 100,
+			"variant_pills_radius": 0,
+			"variant_pills_shadow_opacity": 0,
+			"variant_pills_shadow_horizontal_offset": 0,
+			"variant_pills_shadow_vertical_offset": 4,
+			"variant_pills_shadow_blur": 5,
+			"inputs_border_thickness": 1,
+			"inputs_border_opacity": 100,
+			"inputs_radius": 0,
+			"inputs_shadow_opacity": 0,
+			"inputs_shadow_horizontal_offset": 0,
+			"inputs_shadow_vertical_offset": 4,
+			"inputs_shadow_blur": 5,
+			"card_style": "standard",
+			"card_image_padding": 0,
+			"card_text_alignment": "left",
+			"card_color_scheme": "background-2",
+			"card_border_thickness": 0,
+			"card_border_opacity": 10,
+			"card_corner_radius": 0,
+			"card_shadow_opacity": 0,
+			"card_shadow_horizontal_offset": 0,
+			"card_shadow_vertical_offset": 4,
+			"card_shadow_blur": 5,
+			"collection_card_border_opacity": 10,
+			"collection_card_shadow_opacity": 0,
+			"collection_card_shadow_vertical_offset": 4,
+			"collection_card_shadow_blur": 5,
+			"collection_card_style": "standard",
+			"collection_card_image_padding": 0,
+			"collection_card_text_alignment": "left",
+			"collection_card_color_scheme": "background-2",
+			"collection_card_border_thickness": 0,
+			"collection_card_corner_radius": 0,
+			"collection_card_shadow_horizontal_offset": 0,
+			"blog_card_style": "standard",
+			"blog_card_image_padding": 0,
+			"blog_card_text_alignment": "left",
+			"blog_card_color_scheme": "background-2",
+			"blog_card_border_thickness": 0,
+			"blog_card_border_opacity": 10,
+			"blog_card_corner_radius": 0,
+			"blog_card_shadow_opacity": 0,
+			"blog_card_shadow_horizontal_offset": 0,
+			"blog_card_shadow_vertical_offset": 4,
+			"blog_card_shadow_blur": 5,
+			"text_boxes_border_thickness": 0,
+			"text_boxes_border_opacity": 10,
+			"text_boxes_radius": 0,
+			"text_boxes_shadow_opacity": 0,
+			"text_boxes_shadow_horizontal_offset": 0,
+			"text_boxes_shadow_vertical_offset": 4,
+			"text_boxes_shadow_blur": 5,
+			"media_border_thickness": 0,
+			"media_border_opacity": 10,
+			"media_radius": 0,
+			"media_shadow_opacity": 0,
+			"media_shadow_horizontal_offset": 0,
+			"media_shadow_vertical_offset": 4,
+			"media_shadow_blur": 5,
+			"popup_border_thickness": 1,
+			"popup_border_opacity": 100,
+			"popup_corner_radius": 0,
+			"popup_shadow_opacity": 5,
+			"popup_shadow_horizontal_offset": 0,
+			"popup_shadow_vertical_offset": 4,
+			"popup_shadow_blur": 5,
+			"drawer_border_thickness": 1,
+			"drawer_border_opacity": 100,
+			"drawer_shadow_opacity": 0,
+			"drawer_shadow_horizontal_offset": 0,
+			"drawer_shadow_vertical_offset": 4,
+			"drawer_shadow_blur": 5,
+			"badge_position": "top left",
+			"badge_corner_radius": 0,
+			"sale_badge_color_scheme": "accent-2",
+			"sold_out_badge_color_scheme": "background-1",
+			"brand_headline": "",
+			"brand_description": "<p></p>",
+			"brand_image_width": 100,
+			"social_twitter_link": "",
+			"social_facebook_link": "",
+			"social_pinterest_link": "",
+			"social_instagram_link": "",
+			"social_tiktok_link": "",
+			"social_tumblr_link": "",
+			"social_snapchat_link": "",
+			"social_youtube_link": "",
+			"social_vimeo_link": "",
+			"predictive_search_enabled": true,
+			"predictive_search_show_vendor": false,
+			"predictive_search_show_price": false,
+			"currency_code_enabled": true,
+			"cart_type": "drawer",
+			"show_vendor": true,
+			"show_cart_note": true,
+			"cart_drawer_collection": "",
+			"sections": {
+				"main-password-header": {
+					"type": "main-password-header",
+					"settings": {
+						"color_scheme": "background-1"
+					}
+				},
+				"main-password-footer": {
+					"type": "main-password-footer",
+					"settings": {
+						"color_scheme": "background-1"
+					}
+				}
+			}
+		}
+	},
+	"platform_customizations": {
+		"custom_css": [
+			"button.mmq-button {border-radius: 50px; /* This gives the pill shape */ padding: 20px 20px; /* Adjust the padding as needed */ /* Add any other styles you need, such as background-color, border, etc. */}",
+			"s.price-item.price-item--regular br {display: none;}",
+			"s.price-item.price-item--regular span.dpCompareAtPrice {margin-right: 20px;}",
+			".product__title h1 {font-size: xx-large;}"
+		]
+	}
 }

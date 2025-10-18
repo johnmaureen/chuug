@@ -503,9 +503,9 @@
     <!-- Modal Content -->
     <div class="design-preview-modal__content">
       <p class="design-preview-modal__description">
-        We carefully engrave each CHUUG coin by hand to best fit your chosen initials.
+        Add a touch of legacy to your CHUUG.
         <br/><br/>
-        Inside the mug, you'll be able to preview how your engraving will appear on the coin modal. Keep in mind: what you see here is just a digital preview — the final engraving may have slight variations that make your CHUUG one-of-a-kind
+        We’ll carefully engrave your chosen initial into a solid Antique Gold coin, cast in durable nickel alloy and set into your tankard by hand. It’s a mark of craftsmanship, turning your CHUUG into something unmistakably yours.
       </p>
 
       <!-- Image Gallery with Swiper -->
@@ -551,8 +551,19 @@
               />
             </div>
             {%- endif -%}
+            {%- if settings.design_preview_image_4 != blank -%}
+            <div class="swiper-slide">
+              <img 
+                src="{{ settings.design_preview_image_4 | image_url: width: 934 }}" 
+                alt="Design Preview 4" 
+                width="467" 
+                height="467"
+                loading="lazy"
+              />
+            </div>
+            {%- endif -%}
             {%- comment -%} Fallback if no images are set {%- endcomment -%}
-            {%- if settings.design_preview_image_1 == blank and settings.design_preview_image_2 == blank and settings.design_preview_image_3 == blank -%}
+            {%- if settings.design_preview_image_1 == blank and settings.design_preview_image_2 == blank and settings.design_preview_image_3 == blank and settings.design_preview_image_4 == blank -%}
             <div class="swiper-slide">
               <div class="design-preview-loader">
                 <p>No design preview images configured</p>
