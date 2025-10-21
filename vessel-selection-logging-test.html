@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vessel Selection Display Logging Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #005a87;
+        }
+        .log-output {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .instructions {
+            background: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #007cba;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Vessel Selection Display Logging Test</h1>
+    
+    <div class="instructions">
+        <h3>📋 Instructions:</h3>
+        <ol>
+            <li>Open your browser's Developer Console (F12)</li>
+            <li>Navigate to the vessel selection page</li>
+            <li>Use the buttons below to test logging functionality</li>
+            <li>Watch the console for detailed logging output</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h3>🎯 Test Functions</h3>
+        <button class="button" onclick="testLogSelections()">📋 Log Current Selections</button>
+        <button class="button" onclick="testDebugInfo()">🔍 Show Debug Info</button>
+        <button class="button" onclick="testVerboseLogging()">🔊 Enable Verbose Logging</button>
+        <button class="button" onclick="testDisableVerbose()">🔇 Disable Verbose Logging</button>
+        <button class="button" onclick="testSyncSelections()">🔄 Sync with POMC System</button>
+        <button class="button" onclick="testClearSelections()">🗑️ Clear All Selections</button>
+    </div>
+
+    <div class="test-section">
+        <h3>🧪 Manual Testing</h3>
+        <button class="button" onclick="simulateWoodSelection()">🌳 Simulate Wood Selection</button>
+        <button class="button" onclick="simulateRopeSelection()">🪢 Simulate Rope Selection</button>
+        <button class="button" onclick="simulateVesselCountChange()">🔢 Simulate Vessel Count Change</button>
+    </div>
+
+    <div class="test-section">
+        <h3>🖼️ Image Testing</h3>
+        <button class="button" onclick="checkAvailableImages()">🔍 Check Available Images</button>
+        <button class="button" onclick="checkAssetUrlTemplate()">🔗 Check Asset URL Template</button>
+        <button class="button" onclick="testDuskNatural()">🌅 Test Dusk + Natural</button>
+        <button class="button" onclick="testDawnCharcoal()">🌄 Test Dawn + Charcoal</button>
+        <button class="button" onclick="testMidnightNatural()">🌙 Test Midnight + Natural</button>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 Log Output</h3>
+        <div id="logOutput" class="log-output">
+            Click the test buttons above to see logging output here...
+        </div>
+        <button class="button" onclick="clearLogOutput()">🧹 Clear Log Output</button>
+    </div>
+
+    <script>
+        // Override console.log to capture output
+        const originalLog = console.log;
+        const logOutput = document.getElementById('logOutput');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            
+            // Capture logs that contain vessel selection info
+            const message = args.join(' ');
+            if (message.includes('Vessel Selection') || 
+                message.includes('🎯') || 
+                message.includes('🌳') || 
+                message.includes('🪢') || 
+                message.includes('🔢') || 
+                message.includes('🔄') || 
+                message.includes('📊')) {
+                
+                const timestamp = new Date().toLocaleTimeString();
+                logOutput.textContent += `[${timestamp}] ${message}\n`;
+                logOutput.scrollTop = logOutput.scrollHeight;
+            }
+        };
+
+        // Test functions
+        function testLogSelections() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.logSelections();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testDebugInfo() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.debug();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testVerboseLogging() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.enableVerboseLogging();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testDisableVerbose() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.disableVerboseLogging();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testSyncSelections() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.syncWithExistingSelections();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testClearSelections() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.clearSelections();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function simulateWoodSelection() {
+            if (window.vesselSelectionDisplay) {
+                // Simulate wood selection for vessel 1
+                window.vesselSelectionDisplay.trackVesselSelection(1, 'DUSK', null);
+                console.log('🧪 Simulated wood selection: DUSK for vessel 1');
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function simulateRopeSelection() {
+            if (window.vesselSelectionDisplay) {
+                // Simulate rope selection for vessel 1
+                window.vesselSelectionDisplay.trackVesselSelection(1, 'DUSK', 'CHARCOAL');
+                console.log('🧪 Simulated rope selection: CHARCOAL for vessel 1');
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function simulateVesselCountChange() {
+            if (window.vesselSelectionDisplay) {
+                // Simulate vessel count change
+                window.vesselSelectionDisplay.updateVesselCount(2);
+                console.log('🧪 Simulated vessel count change to 2');
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function clearLogOutput() {
+            logOutput.textContent = 'Log output cleared...\n';
+        }
+
+        // Image testing functions
+        function checkAvailableImages() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.checkAvailableImages();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testDuskNatural() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.testImageLoading('DUSK', 'NATURAL');
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testDawnCharcoal() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.testImageLoading('DAWN', 'CHARCOAL');
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function testMidnightNatural() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.testImageLoading('MIDNIGHT', 'NATURAL');
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        function checkAssetUrlTemplate() {
+            if (window.vesselSelectionDisplay) {
+                window.vesselSelectionDisplay.checkAssetUrlTemplate();
+            } else {
+                console.log('❌ Vessel Selection Display not available');
+            }
+        }
+
+        // Check if the system is available
+        window.addEventListener('load', function() {
+            if (window.vesselSelectionDisplay) {
+                console.log('✅ Vessel Selection Display System is available');
+                console.log('🎯 Ready for testing! Use the buttons above to test logging functionality.');
+            } else {
+                console.log('❌ Vessel Selection Display System not found');
+                console.log('💡 Make sure you are on the vessel selection page with the system loaded.');
+            }
+        });
+    </script>
+</body>
+</html>

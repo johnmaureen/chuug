@@ -1278,6 +1278,12 @@ function addEventListenerToMonogramInitialsInput() {
   });
 </script>
 
+<!-- Vessel Selection Display System -->
+<script>
+  // Provide asset URL template for vessel selection display
+  window.SHOPIFY_ASSET_URL_TEMPLATE = "{{ 'dusk_natural.png' | asset_url }}";
+</script>
+{{ 'vessel-selection-display.js' | asset_url | script_tag }}
 
 {% schema %}
 {
