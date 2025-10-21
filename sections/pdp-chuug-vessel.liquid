@@ -18,6 +18,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 {{ 'pdp-chuug-vessel.css' | asset_url | stylesheet_tag }}
+{{ 'flash-section.css' | asset_url | stylesheet_tag }}
 
 {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
 {% assign dusk_natural = all_products[section.settings.dusk_natural] %}
@@ -214,7 +215,8 @@
             <div class="tw-w-full">
               <label
                 onclick="setProductAmount('3')"
-                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;"
+                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase"
+                style="opacity: 0.85;"
               >
                 <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
                   <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
@@ -425,6 +427,61 @@
         </div>
       </div>
 
+      <!-- Flash Section -->
+<section class="tw-bg-chuug-dark-navy tw-py-[2rem] md:tw-py-[3rem]">
+  <div class="tw-container">
+    <div class="flash-section">
+      <!-- Flash Sale Section with Countdown Timer -->
+      <div class="flash-sale-container">
+        <p class="flash-sale-text">{{ section.settings.flash_sale_text | default: 'Sale ends in' }}</p>
+        <div class="flash-sale-divider"></div>
+        <div class="flash-countdown-timer chuug-countdown">
+          <div class="flash-timer-unit">
+            <span class="flash-timer-number" data-countdown-hours>00</span>
+            <span class="flash-timer-label">HOURS</span>
+          </div>
+          <span class="flash-timer-separator">:</span>
+          <div class="flash-timer-unit">
+            <span class="flash-timer-number" data-countdown-minutes>00</span>
+            <span class="flash-timer-label">MINUTES</span>
+          </div>
+          <span class="flash-timer-separator">:</span>
+          <div class="flash-timer-unit">
+            <span class="flash-timer-number" data-countdown-seconds>00</span>
+            <span class="flash-timer-label">SECONDS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- USP Grid Section -->
+      <div class="usp-grid">
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when 'usp_item' -%}
+              <div class="usp-item">
+                <div class="usp-icon">
+                  {% if block.settings.usp_icon_image != blank %}
+                    <img 
+                      src="{{ block.settings.usp_icon_image | image_url: width: 50 }}" 
+                      alt="{{ block.settings.usp_icon_alt | default: 'Icon' }}"
+                      width="50"
+                      height="50"
+                    >
+                  {% elsif block.settings.usp_icon_emoji != blank %}
+                    {{ block.settings.usp_icon_emoji }}
+                  {% endif %}
+                </div>
+                <div class="usp-text">
+                  {{ block.settings.usp_text }}
+                </div>
+              </div>
+          {%- endcase -%}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
       {% for block in section.blocks %}
         {%- case block.type -%}
           {%- when 'accordion' -%}
@@ -498,6 +555,8 @@
     </div>
   </div>
 </section>
+
+
 
 <style type="text/tailwindcss">
   @layer base {
@@ -1401,6 +1460,12 @@ function addEventListenerToMonogramInitialsInput() {
       "id": "third_product_label_text",
       "label": "Third product label text",
       "default": "Best value"
+    },
+    {
+      "type": "text",
+      "id": "flash_sale_text",
+      "label": "Flash Sale Text",
+      "default": "Sale ends in"
     }
   ],
   "blocks": [
@@ -1495,6 +1560,34 @@ function addEventListenerToMonogramInitialsInput() {
           "type": "text",
           "id": "botttom_image_alt",
           "label": "Alt Text"
+        }
+      ]
+    },
+    {
+      "type": "usp_item",
+      "name": "USP Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "usp_icon_image",
+          "label": "Icon Image (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "usp_icon_emoji",
+          "label": "Icon Emoji (if no image)",
+          "default": "✅"
+        },
+        {
+          "type": "text",
+          "id": "usp_icon_alt",
+          "label": "Icon Alt Text"
+        },
+        {
+          "type": "richtext",
+          "id": "usp_text",
+          "label": "USP Text",
+          "default": "<p><strong>Feature Title</strong><br>Feature description</p>"
         }
       ]
     },
