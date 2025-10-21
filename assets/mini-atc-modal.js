@@ -211,20 +211,21 @@
 					this.state.mixMatch = { ...this.state.mixMatch, ...saved.mixMatch };
 				}
 				// Explicitly keep giftBox and extraCups at their defaults (don't load from storage)
-("💾 Loaded state (selective):", {
-					restored: {
-						engraving: saved.engraving || null,
-						mixMatch: saved.mixMatch || null,
-					},
-					keptAtDefaults: {
-						giftBox: this.state.giftBox,
-						extraCups: this.state.extraCups,
-					},
-					ignoredFromStorage: {
-						giftBox: saved.giftBox || null,
-						extraCups: saved.extraCups || null,
-					},
-				});
+				"💾 Loaded state (selective):",
+					{
+						restored: {
+							engraving: saved.engraving || null,
+							mixMatch: saved.mixMatch || null,
+						},
+						keptAtDefaults: {
+							giftBox: this.state.giftBox,
+							extraCups: this.state.extraCups,
+						},
+						ignoredFromStorage: {
+							giftBox: saved.giftBox || null,
+							extraCups: saved.extraCups || null,
+						},
+					};
 			}
 		}
 
@@ -255,71 +256,74 @@
 			this.emit("variantChanged", { type, variantId, quantity });
 		}
 
-	updateVesselEngraving(vesselId, text) {
-		if (!this.state.engraving.vessels) {
-			this.state.engraving.vessels = {};
+		updateVesselEngraving(vesselId, text) {
+			if (!this.state.engraving.vessels) {
+				this.state.engraving.vessels = {};
+			}
+			// Support both old format (string) and new format (object with text and enabled)
+			if (typeof this.state.engraving.vessels[vesselId] === "string") {
+				// Convert old format to new format
+				this.state.engraving.vessels[vesselId] = {
+					text: Utils.sanitizeInput(text),
+					enabled: true,
+				};
+			} else if (typeof this.state.engraving.vessels[vesselId] === "object") {
+				// Update text, keep enabled state
+				this.state.engraving.vessels[vesselId].text = Utils.sanitizeInput(text);
+			} else {
+				// Initialize new vessel
+				this.state.engraving.vessels[vesselId] = {
+					text: Utils.sanitizeInput(text),
+					enabled: true,
+				};
+			}
+			this.saveState();
+			this.emit("vesselChanged", {
+				vesselId,
+				text: this.state.engraving.vessels[vesselId].text,
+				enabled: this.state.engraving.vessels[vesselId].enabled,
+			});
 		}
-		// Support both old format (string) and new format (object with text and enabled)
-		if (typeof this.state.engraving.vessels[vesselId] === 'string') {
-			// Convert old format to new format
-			this.state.engraving.vessels[vesselId] = {
-				text: Utils.sanitizeInput(text),
-				enabled: true
-			};
-		} else if (typeof this.state.engraving.vessels[vesselId] === 'object') {
-			// Update text, keep enabled state
-			this.state.engraving.vessels[vesselId].text = Utils.sanitizeInput(text);
-		} else {
-			// Initialize new vessel
-			this.state.engraving.vessels[vesselId] = {
-				text: Utils.sanitizeInput(text),
-				enabled: true
-			};
-		}
-		this.saveState();
-		this.emit("vesselChanged", {
-			vesselId,
-			text: this.state.engraving.vessels[vesselId].text,
-			enabled: this.state.engraving.vessels[vesselId].enabled
-		});
-	}
 
-	updateVesselEngravingEnabled(vesselId, enabled) {
-		if (!this.state.engraving.vessels) {
-			this.state.engraving.vessels = {};
+		updateVesselEngravingEnabled(vesselId, enabled) {
+			if (!this.state.engraving.vessels) {
+				this.state.engraving.vessels = {};
+			}
+			// Support both old format (string) and new format (object)
+			if (typeof this.state.engraving.vessels[vesselId] === "string") {
+				// Convert old format to new format
+				const text = this.state.engraving.vessels[vesselId];
+				this.state.engraving.vessels[vesselId] = {
+					text: text,
+					enabled: enabled,
+				};
+			} else if (typeof this.state.engraving.vessels[vesselId] === "object") {
+				// Update enabled state
+				this.state.engraving.vessels[vesselId].enabled = enabled;
+			} else {
+				// Initialize new vessel
+				this.state.engraving.vessels[vesselId] = {
+					text: "",
+					enabled: enabled,
+				};
+			}
+			this.saveState();
+			this.emit("vesselEngravingEnabledChanged", { vesselId, enabled });
 		}
-		// Support both old format (string) and new format (object)
-		if (typeof this.state.engraving.vessels[vesselId] === 'string') {
-			// Convert old format to new format
-			const text = this.state.engraving.vessels[vesselId];
-			this.state.engraving.vessels[vesselId] = {
-				text: text,
-				enabled: enabled
-			};
-		} else if (typeof this.state.engraving.vessels[vesselId] === 'object') {
-			// Update enabled state
-			this.state.engraving.vessels[vesselId].enabled = enabled;
-		} else {
-			// Initialize new vessel
-			this.state.engraving.vessels[vesselId] = {
-				text: "",
-				enabled: enabled
-			};
-		}
-		this.saveState();
-		this.emit("vesselEngravingEnabledChanged", { vesselId, enabled });
-	}
 
-	getVesselEngravingEnabled(vesselId) {
-		if (!this.state.engraving.vessels || !this.state.engraving.vessels[vesselId]) {
-			return true; // Default to enabled
+		getVesselEngravingEnabled(vesselId) {
+			if (
+				!this.state.engraving.vessels ||
+				!this.state.engraving.vessels[vesselId]
+			) {
+				return true; // Default to enabled
+			}
+			const vessel = this.state.engraving.vessels[vesselId];
+			if (typeof vessel === "string") {
+				return true; // Old format, assume enabled
+			}
+			return vessel.enabled !== false; // Default to true if not set
 		}
-		const vessel = this.state.engraving.vessels[vesselId];
-		if (typeof vessel === 'string') {
-			return true; // Old format, assume enabled
-		}
-		return vessel.enabled !== false; // Default to true if not set
-	}
 
 		getState() {
 			return { ...this.state };
@@ -335,14 +339,15 @@
 
 			// Force verification that localStorage was updated
 			const verification = StorageManager.load(CONFIG.STORAGE_KEY);
-("🔄 Engraving state reset - verification:", {
-				engravingVessels: verification?.engraving?.vessels,
-				shouldBeEmpty:
-					Object.keys(verification?.engraving?.vessels || {}).length === 0,
-			});
+			"🔄 Engraving state reset - verification:",
+				{
+					engravingVessels: verification?.engraving?.vessels,
+					shouldBeEmpty:
+						Object.keys(verification?.engraving?.vessels || {}).length === 0,
+				};
 
 			this.emit("engravingReset");
-("🔄 Engraving state reset - all vessel engravings cleared");
+			("🔄 Engraving state reset - all vessel engravings cleared");
 		}
 
 		reset() {
@@ -519,8 +524,8 @@
 			let vesselOnlyTotal = 0;
 			let vesselOnlyOriginal = 0;
 
-		// Use static pricing (GraphQL disabled to prevent 403 errors)
-		const vesselPricing = this.getVesselPricingForMultiplier();
+			// Use static pricing (GraphQL disabled to prevent 403 errors)
+			const vesselPricing = this.getVesselPricingForMultiplier();
 
 			if (vesselPricing) {
 				vesselOnlyTotal = vesselPricing.price;
@@ -587,200 +592,113 @@
 			return this.getVesselPricingForMultiplier();
 		}
 
-	getVesselPricingForMultiplier() {
-		// Get pricing from POMC system - this is the source of truth
-		if (window.pomcSystem) {
-	const selectedProductAmountData =
-		window.pomcSystem.getSelectedProductAmountData();
-	if (selectedProductAmountData && selectedProductAmountData.variants) {
-		// Use per-vessel pricing calculation
-		return this.getPerVesselPricing(selectedProductAmountData);
-		}
-	}
-
-	// No pricing data available
-	return null;
-}
-
-	/**
-	 * Calculate pricing for each vessel individually based on its configuration
-	 * @param {Object} selectedProductAmountData - Product data with variants
-	 * @returns {Object|null} Pricing breakdown with total
-	 */
-	getPerVesselPricing(selectedProductAmountData) {
-		if (!window.pomcSystem) return null;
-		
-		const vesselSelections = window.pomcSystem.getAllVesselSelections();
-		const multiplier = window.pomcSystem.getMultiplier() || 1;
-		
-		
-		// Check if master engraving toggle is on
-		const masterEngravingEnabled = this.modalInstance.isEngravingEnabled();
-		
-		// Count vessel types
-		let charcoalCount = 0;
-		let naturalCount = 0;
-		let engravingCount = 0;
-		
-		for (let i = 1; i <= multiplier; i++) {
-			const selection = vesselSelections[i];
-			if (selection?.ropeType) {
-				if (selection.ropeType.toLowerCase() === 'charcoal') {
-					charcoalCount++;
-				} else {
-					naturalCount++;
+		getVesselPricingForMultiplier() {
+			// Get pricing from POMC system - this is the source of truth
+			if (window.pomcSystem) {
+				const selectedProductAmountData =
+					window.pomcSystem.getSelectedProductAmountData();
+				if (selectedProductAmountData && selectedProductAmountData.variants) {
+					// Use per-vessel pricing calculation
+					return this.getPerVesselPricing(selectedProductAmountData);
 				}
 			}
-			
-			// Count vessels with engraving enabled
-			if (masterEngravingEnabled && this.getVesselEngravingEnabled(i)) {
-				engravingCount++;
-			}
-		}
-		
-		
-		// Determine base variant index based on configuration
-		// If all vessels are charcoal, use charcoal base (2), otherwise natural base (0)
-		const allCharcoal = charcoalCount === multiplier;
-		const baseVariantIndex = allCharcoal ? 2 : 0;
-		const baseVariant = selectedProductAmountData.variants[baseVariantIndex];
-		
-		if (!baseVariant) {
+
+			// No pricing data available
 			return null;
 		}
-		
-		// Start with appropriate base bundle price
-		let totalPrice = baseVariant.price;
-		let totalOriginalPrice = baseVariant.compare_at_price || baseVariant.price;
-		
-		
-	// Add charcoal upgrade charges (only if not all charcoal)
-	let charcoalCharges = 0;
-	if (charcoalCount > 0 && !allCharcoal) {
-		// Get charcoal upgrade price from POMC system (e.g., $4.00 = 400 cents)
-		const charcoalUpgradePrice = window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 400;
-		charcoalCharges = charcoalUpgradePrice * charcoalCount;
-		
-	}
-		
-		// Calculate engraving charges
-		let engravingCharges = 0;
-		if (masterEngravingEnabled && engravingCount > 0) {
-			// Get engraving cost per vessel based on the base variant we're using
-			const withEngravingIndex = allCharcoal ? 3 : 1;
-			const withoutEngravingIndex = allCharcoal ? 2 : 0;
-			
-			const withEngraving = selectedProductAmountData.variants[withEngravingIndex];
-			const withoutEngraving = selectedProductAmountData.variants[withoutEngravingIndex];
-			
-			if (withEngraving && withoutEngraving) {
-				const bundleEngravingDiff = withEngraving.price - withoutEngraving.price;
-				const perVesselEngravingCost = bundleEngravingDiff / multiplier;
-				engravingCharges = perVesselEngravingCost * engravingCount;
-				
-			}
-		}
-		
-		// Log per-vessel breakdown
-		for (let i = 1; i <= multiplier; i++) {
-			const vesselSelection = vesselSelections[i];
-			if (vesselSelection?.ropeType) {
-				const vesselEngravingEnabled = masterEngravingEnabled && this.getVesselEngravingEnabled(i);
-			}
-		}
-		
-		// Calculate final total
-		totalPrice += charcoalCharges + engravingCharges;
-		totalOriginalPrice += charcoalCharges + engravingCharges;
-		
-		
-		// Store the pricing for reference
-		this.dynamicPrices.vessel = {
-			price: totalPrice,
-			originalPrice: totalOriginalPrice,
-		};
-		
-		return {
-			price: totalPrice,
-			originalPrice: totalOriginalPrice
-		};
-	}
 
-	/**
-	 * Get vessel-specific engraving enabled state
-	 * @param {number} vesselId - Vessel ID (1, 2, or 3)
-	 * @returns {boolean} Whether engraving is enabled for this vessel
-	 */
-	getVesselEngravingEnabled(vesselId) {
-		// First check if master engraving toggle is disabled
-		if (!this.modalInstance) {
-			return true; // Default to enabled if no modal instance
-		}
-		
-		const masterEngravingEnabled = this.modalInstance.isEngravingEnabled();
-		if (!masterEngravingEnabled) {
-			return false; // Master toggle overrides all vessel toggles
-		}
-		
-		// Check vessel-specific toggle state from PersonalizationState
-		if (this.modalInstance.state) {
-			return this.modalInstance.state.getVesselEngravingEnabled(vesselId);
-		}
-		
-		return true; // Default to enabled
-	}
+		/**
+		 * Calculate pricing for each vessel individually based on its configuration
+		 * @param {Object} selectedProductAmountData - Product data with variants
+		 * @returns {Object|null} Pricing breakdown with total
+		 */
+		getPerVesselPricing(selectedProductAmountData) {
+			if (!window.pomcSystem) return null;
 
-	/**
-	 * Calculate pricing for mixed vessel configurations (some charcoal, some natural)
-	 * For mixed configs, we use the charcoal rope variant pricing as the base,
-	 * since it represents the higher-value configuration
-	 */
-	getMixedVesselPricing(selectedProductAmountData, engravingEnabled) {
-("🪢 Calculating mixed vessel pricing");
-		
-		const vesselSelections = window.pomcSystem.getAllVesselSelections();
-		const multiplier = window.pomcSystem.getMultiplier() || 1;
-		
-		// Count charcoal vs natural vessels
-		let charcoalCount = 0;
-		let naturalCount = 0;
-		
-		for (let i = 1; i <= multiplier; i++) {
-			const selection = vesselSelections[i];
-			if (selection?.ropeType) {
-				if (selection.ropeType.toLowerCase() === 'charcoal') {
-					charcoalCount++;
-				} else {
-					naturalCount++;
+			const vesselSelections = window.pomcSystem.getAllVesselSelections();
+			const multiplier = window.pomcSystem.getMultiplier() || 1;
+
+			// Check if master engraving toggle is on
+			const masterEngravingEnabled = this.modalInstance.isEngravingEnabled();
+
+			// Count vessel types
+			let charcoalCount = 0;
+			let naturalCount = 0;
+			let engravingCount = 0;
+
+			for (let i = 1; i <= multiplier; i++) {
+				const selection = vesselSelections[i];
+				if (selection?.ropeType) {
+					if (selection.ropeType.toLowerCase() === "charcoal") {
+						charcoalCount++;
+					} else {
+						naturalCount++;
+					}
+				}
+
+				// Count vessels with engraving enabled
+				if (masterEngravingEnabled && this.getVesselEngravingEnabled(i)) {
+					engravingCount++;
 				}
 			}
-		}
-		
-(`🪢 Vessel breakdown: ${charcoalCount} charcoal, ${naturalCount} natural`);
-		
-		// For mixed configurations, use the charcoal rope variant pricing as the base
-		// This ensures we get the higher pricing that includes charcoal upgrade costs
-		const charcoalVariantIndex = engravingEnabled ? 3 : 2;
-		const variant = selectedProductAmountData.variants[charcoalVariantIndex];
-		
-		if (variant) {
-			// Get charcoal upgrade price from POMC system or use default (299 cents = £2.99)
-			const charcoalUpgradePrice = window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 299;
-			
-			// Add charcoal upgrade price for each charcoal vessel
-			const totalCharcoalUpgradePrice = charcoalUpgradePrice * charcoalCount;
-			
-			// Calculate total price: bundle base price + charcoal upgrade costs
-			const totalPrice = variant.price + totalCharcoalUpgradePrice;
-			const totalOriginalPrice = variant.compare_at_price + totalCharcoalUpgradePrice;
-			
-(`🪢 Using charcoal rope variant ${charcoalVariantIndex} for mixed bundle pricing`);
-(`🪢 Bundle base price: ${variant.price}`);
-(`🪢 Charcoal upgrade price per vessel: ${charcoalUpgradePrice}`);
-(`🪢 Total charcoal upgrade cost (${charcoalCount} vessels): ${totalCharcoalUpgradePrice}`);
-(`🪢 Final total price: ${totalPrice} (${variant.price} + ${totalCharcoalUpgradePrice})`);
-(`🪢 Final original price: ${totalOriginalPrice}`);
-			
+
+			// Determine base variant index based on configuration
+			// If all vessels are charcoal, use charcoal base (2), otherwise natural base (0)
+			const allCharcoal = charcoalCount === multiplier;
+			const baseVariantIndex = allCharcoal ? 2 : 0;
+			const baseVariant = selectedProductAmountData.variants[baseVariantIndex];
+
+			if (!baseVariant) {
+				return null;
+			}
+
+			// Start with appropriate base bundle price
+			let totalPrice = baseVariant.price;
+			let totalOriginalPrice =
+				baseVariant.compare_at_price || baseVariant.price;
+
+			// Add charcoal upgrade charges (only if not all charcoal)
+			let charcoalCharges = 0;
+			if (charcoalCount > 0 && !allCharcoal) {
+				// Get charcoal upgrade price from POMC system (e.g., $4.00 = 400 cents)
+				const charcoalUpgradePrice =
+					window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 400;
+				charcoalCharges = charcoalUpgradePrice * charcoalCount;
+			}
+
+			// Calculate engraving charges
+			let engravingCharges = 0;
+			if (masterEngravingEnabled && engravingCount > 0) {
+				// Get engraving cost per vessel based on the base variant we're using
+				const withEngravingIndex = allCharcoal ? 3 : 1;
+				const withoutEngravingIndex = allCharcoal ? 2 : 0;
+
+				const withEngraving =
+					selectedProductAmountData.variants[withEngravingIndex];
+				const withoutEngraving =
+					selectedProductAmountData.variants[withoutEngravingIndex];
+
+				if (withEngraving && withoutEngraving) {
+					const bundleEngravingDiff =
+						withEngraving.price - withoutEngraving.price;
+					const perVesselEngravingCost = bundleEngravingDiff / multiplier;
+					engravingCharges = perVesselEngravingCost * engravingCount;
+				}
+			}
+
+			// Log per-vessel breakdown
+			for (let i = 1; i <= multiplier; i++) {
+				const vesselSelection = vesselSelections[i];
+				if (vesselSelection?.ropeType) {
+					const vesselEngravingEnabled =
+						masterEngravingEnabled && this.getVesselEngravingEnabled(i);
+				}
+			}
+
+			// Calculate final total
+			totalPrice += charcoalCharges + engravingCharges;
+			totalOriginalPrice += charcoalCharges + engravingCharges;
+
 			// Store the pricing for reference
 			this.dynamicPrices.vessel = {
 				price: totalPrice,
@@ -792,9 +710,98 @@
 				originalPrice: totalOriginalPrice,
 			};
 		}
-		
-		return null;
-	}
+
+		/**
+		 * Get vessel-specific engraving enabled state
+		 * @param {number} vesselId - Vessel ID (1, 2, or 3)
+		 * @returns {boolean} Whether engraving is enabled for this vessel
+		 */
+		getVesselEngravingEnabled(vesselId) {
+			// First check if master engraving toggle is disabled
+			if (!this.modalInstance) {
+				return true; // Default to enabled if no modal instance
+			}
+
+			const masterEngravingEnabled = this.modalInstance.isEngravingEnabled();
+			if (!masterEngravingEnabled) {
+				return false; // Master toggle overrides all vessel toggles
+			}
+
+			// Check vessel-specific toggle state from PersonalizationState
+			if (this.modalInstance.state) {
+				return this.modalInstance.state.getVesselEngravingEnabled(vesselId);
+			}
+
+			return true; // Default to enabled
+		}
+
+		/**
+		 * Calculate pricing for mixed vessel configurations (some charcoal, some natural)
+		 * For mixed configs, we use the charcoal rope variant pricing as the base,
+		 * since it represents the higher-value configuration
+		 */
+		getMixedVesselPricing(selectedProductAmountData, engravingEnabled) {
+			("🪢 Calculating mixed vessel pricing");
+
+			const vesselSelections = window.pomcSystem.getAllVesselSelections();
+			const multiplier = window.pomcSystem.getMultiplier() || 1;
+
+			// Count charcoal vs natural vessels
+			let charcoalCount = 0;
+			let naturalCount = 0;
+
+			for (let i = 1; i <= multiplier; i++) {
+				const selection = vesselSelections[i];
+				if (selection?.ropeType) {
+					if (selection.ropeType.toLowerCase() === "charcoal") {
+						charcoalCount++;
+					} else {
+						naturalCount++;
+					}
+				}
+			}
+
+			`🪢 Vessel breakdown: ${charcoalCount} charcoal, ${naturalCount} natural`;
+
+			// For mixed configurations, use the charcoal rope variant pricing as the base
+			// This ensures we get the higher pricing that includes charcoal upgrade costs
+			const charcoalVariantIndex = engravingEnabled ? 3 : 2;
+			const variant = selectedProductAmountData.variants[charcoalVariantIndex];
+
+			if (variant) {
+				// Get charcoal upgrade price from POMC system or use default (299 cents = £2.99)
+				const charcoalUpgradePrice =
+					window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 299;
+
+				// Add charcoal upgrade price for each charcoal vessel
+				const totalCharcoalUpgradePrice = charcoalUpgradePrice * charcoalCount;
+
+				// Calculate total price: bundle base price + charcoal upgrade costs
+				const totalPrice = variant.price + totalCharcoalUpgradePrice;
+				const totalOriginalPrice =
+					variant.compare_at_price + totalCharcoalUpgradePrice;
+
+				`🪢 Using charcoal rope variant ${charcoalVariantIndex} for mixed bundle pricing`;
+				`🪢 Bundle base price: ${variant.price}`;
+				`🪢 Charcoal upgrade price per vessel: ${charcoalUpgradePrice}`;
+				`🪢 Total charcoal upgrade cost (${charcoalCount} vessels): ${totalCharcoalUpgradePrice}`;
+				`🪢 Final total price: ${totalPrice} (${variant.price} + ${totalCharcoalUpgradePrice})`;
+				`🪢 Final original price: ${totalOriginalPrice}`;
+
+				// Store the pricing for reference
+				this.dynamicPrices.vessel = {
+					price: totalPrice,
+					originalPrice: totalOriginalPrice,
+				};
+
+				return {
+					price: totalPrice,
+					originalPrice: totalOriginalPrice,
+				};
+			}
+
+			return null;
+		}
 
 		/**
 		 * Fetch vessel pricing via GraphQL with current currency
@@ -810,54 +817,64 @@
 					return null;
 				}
 
-				const selectedProductAmountData = window.pomcSystem.getSelectedProductAmountData();
+				const selectedProductAmountData =
+					window.pomcSystem.getSelectedProductAmountData();
 				if (!selectedProductAmountData || !selectedProductAmountData.id) {
 					return null;
 				}
 
-		// Fetch product data via GraphQL
-		const productData = await window.CurrencyManager.fetchProductData(selectedProductAmountData.id);
-		if (!productData || !productData.variants) {
-			return this.getVesselPricingForMultiplier(); // Fallback
-		}
+				// Fetch product data via GraphQL
+				const productData = await window.CurrencyManager.fetchProductData(
+					selectedProductAmountData.id
+				);
+				if (!productData || !productData.variants) {
+					return this.getVesselPricingForMultiplier(); // Fallback
+				}
 
-		const engravingEnabled = this.getEngravingState();
-		
-		// Check for mixed vessel configuration
-		const hasMixedConfig = this.modalInstance.hasMixedVesselConfiguration();
-		let variantIndex;
-		
-		if (hasMixedConfig) {
-("🪢 Mixed vessel configuration detected in GraphQL pricing");
-			// For mixed configurations, use charcoal rope variant pricing
-			variantIndex = engravingEnabled ? 3 : 2;
-		} else {
-			// Standard logic for uniform configuration
-			const hasCharcoalRope = this.modalInstance.hasAnyCharcoalRopeSelected();
-			variantIndex = this.modalInstance.getVariantIndex(hasCharcoalRope, engravingEnabled);
-		}
-		
-		// Find the correct variant
-		const variants = productData.variants.edges.map(edge => edge.node);
-		const variant = variants[variantIndex];
+				const engravingEnabled = this.getEngravingState();
+
+				// Check for mixed vessel configuration
+				const hasMixedConfig = this.modalInstance.hasMixedVesselConfiguration();
+				let variantIndex;
+
+				if (hasMixedConfig) {
+					("🪢 Mixed vessel configuration detected in GraphQL pricing");
+					// For mixed configurations, use charcoal rope variant pricing
+					variantIndex = engravingEnabled ? 3 : 2;
+				} else {
+					// Standard logic for uniform configuration
+					const hasCharcoalRope =
+						this.modalInstance.hasAnyCharcoalRopeSelected();
+					variantIndex = this.modalInstance.getVariantIndex(
+						hasCharcoalRope,
+						engravingEnabled
+					);
+				}
+
+				// Find the correct variant
+				const variants = productData.variants.edges.map((edge) => edge.node);
+				const variant = variants[variantIndex];
 
 				if (variant && variant.price) {
 					// Convert GraphQL price to cents (Shopify returns as decimal string)
-					const priceInCents = Math.round(parseFloat(variant.price.amount) * 100);
-					const originalPriceInCents = variant.compareAtPrice ? 
-						Math.round(parseFloat(variant.compareAtPrice.amount) * 100) : null;
+					const priceInCents = Math.round(
+						parseFloat(variant.price.amount) * 100
+					);
+					const originalPriceInCents = variant.compareAtPrice
+						? Math.round(parseFloat(variant.compareAtPrice.amount) * 100)
+						: null;
 
 					// Store the pricing for reference with currency info
 					this.dynamicPrices.vessel = {
 						price: priceInCents,
 						originalPrice: originalPriceInCents,
-						currency: variant.price.currencyCode
+						currency: variant.price.currencyCode,
 					};
 
 					return {
 						price: priceInCents,
 						originalPrice: originalPriceInCents,
-						currency: variant.price.currencyCode
+						currency: variant.price.currencyCode,
 					};
 				}
 
@@ -914,8 +931,7 @@
 			if (configScript) {
 				try {
 					return JSON.parse(configScript.textContent);
-				} catch (error) {
-				}
+				} catch (error) {}
 			}
 			return {};
 		}
@@ -955,7 +971,7 @@
 					}
 
 					const itemId = removeBtn.getAttribute("data-remove-item");
-(`🖱️ CLICK: Delete button clicked for item ${itemId}`);
+					`🖱️ CLICK: Delete button clicked for item ${itemId}`;
 					event.preventDefault();
 					event.stopPropagation();
 					this.removeCartItem(itemId);
@@ -1083,33 +1099,34 @@
 			}
 		}
 
-	initializeVesselInputs() {
-		// Find all vessel toggles and sync their corresponding inputs
-		const vesselToggles = this.modal.querySelectorAll("[data-vessel-toggle]");
+		initializeVesselInputs() {
+			// Find all vessel toggles and sync their corresponding inputs
+			const vesselToggles = this.modal.querySelectorAll("[data-vessel-toggle]");
 
-		vesselToggles.forEach((toggle) => {
-			const vesselId = toggle.getAttribute("data-vessel-toggle");
-			const input = toggle
-				.closest(".vessel-personalization-row")
-				?.querySelector(".vessel-name-input");
+			vesselToggles.forEach((toggle) => {
+				const vesselId = toggle.getAttribute("data-vessel-toggle");
+				const input = toggle
+					.closest(".vessel-personalization-row")
+					?.querySelector(".vessel-name-input");
 
-			// Restore vessel toggle state from saved state
-			if (this.state) {
-				const vesselEngravingEnabled = this.state.getVesselEngravingEnabled(vesselId);
-				toggle.checked = vesselEngravingEnabled;
-			}
-
-			if (input) {
-				// Enable/disable input based on toggle state
-				input.disabled = !toggle.checked;
-
-				// If toggle is checked, ensure input is enabled
-				if (toggle.checked) {
-					input.removeAttribute("disabled");
+				// Restore vessel toggle state from saved state
+				if (this.state) {
+					const vesselEngravingEnabled =
+						this.state.getVesselEngravingEnabled(vesselId);
+					toggle.checked = vesselEngravingEnabled;
 				}
-			}
-		});
-	}
+
+				if (input) {
+					// Enable/disable input based on toggle state
+					input.disabled = !toggle.checked;
+
+					// If toggle is checked, ensure input is enabled
+					if (toggle.checked) {
+						input.removeAttribute("disabled");
+					}
+				}
+			});
+		}
 
 		handleModalClick(event) {
 			// Handle overlay clicks
@@ -1149,57 +1166,50 @@
 			);
 			if (!toggle) return;
 
-("🔄 Toggle changed:", {
-				element: toggle,
-				checked: toggle.checked,
-				hasPersonalizationToggle: toggle.hasAttribute(
-					"data-personalization-toggle"
-				),
-				hasAddonToggle: toggle.hasAttribute("data-addon-toggle"),
-				hasVesselToggle: toggle.hasAttribute("data-vessel-toggle"),
-				hasGiftBoxVariantId: toggle.hasAttribute("data-gift-box-variant-id"),
-			});
+			"🔄 Toggle changed:",
+				{
+					element: toggle,
+					checked: toggle.checked,
+					hasPersonalizationToggle: toggle.hasAttribute(
+						"data-personalization-toggle"
+					),
+					hasAddonToggle: toggle.hasAttribute("data-addon-toggle"),
+					hasVesselToggle: toggle.hasAttribute("data-vessel-toggle"),
+					hasGiftBoxVariantId: toggle.hasAttribute("data-gift-box-variant-id"),
+				};
 
 			if (toggle.hasAttribute("data-personalization-toggle")) {
 				const type = toggle.getAttribute("data-personalization-toggle");
-(
-					"🔄 Updating personalization:",
-					type,
-					"enabled:",
-					toggle.checked
-				);
+				"🔄 Updating personalization:", type, "enabled:", toggle.checked;
 				this.state.updatePersonalization(type, { enabled: toggle.checked });
 			} else if (toggle.hasAttribute("data-addon-toggle")) {
 				const type = toggle.getAttribute("data-addon-toggle");
-("🔄 Addon toggle:", type, "enabled:", toggle.checked);
+				"🔄 Addon toggle:", type, "enabled:", toggle.checked;
 				// Handle gift box toggle specifically with correct key
 				if (type === "gift-box") {
-("🎁 Gift box toggle changed to:", toggle.checked);
+					"🎁 Gift box toggle changed to:", toggle.checked;
 					this.state.updatePersonalization("giftBox", {
 						enabled: toggle.checked,
 					});
-(
-						"🎁 Gift box state after update:",
-						this.state.state.giftBox
-					);
+					"🎁 Gift box state after update:", this.state.state.giftBox;
 				} else {
 					this.state.updatePersonalization(type, { enabled: toggle.checked });
 				}
-		} else if (toggle.hasAttribute("data-vessel-toggle")) {
-			const vesselId = toggle.getAttribute("data-vessel-toggle");
-			const input = toggle
-				.closest(".vessel-personalization-row")
-				.querySelector(".vessel-name-input");
-			if (input) {
-				input.disabled = !toggle.checked;
-				if (!toggle.checked) {
-					input.value = "";
-					this.state.updateVesselEngraving(vesselId, "");
+			} else if (toggle.hasAttribute("data-vessel-toggle")) {
+				const vesselId = toggle.getAttribute("data-vessel-toggle");
+				const input = toggle
+					.closest(".vessel-personalization-row")
+					.querySelector(".vessel-name-input");
+				if (input) {
+					input.disabled = !toggle.checked;
+					if (!toggle.checked) {
+						input.value = "";
+						this.state.updateVesselEngraving(vesselId, "");
+					}
 				}
+				// Update the vessel-specific engraving enabled state
+				this.state.updateVesselEngravingEnabled(vesselId, toggle.checked);
 			}
-			// Update the vessel-specific engraving enabled state
-			this.state.updateVesselEngravingEnabled(vesselId, toggle.checked);
-		}
 
 			this.toggleOptionsVisibility(toggle);
 
@@ -1377,97 +1387,97 @@
 			}
 		}
 
-	updateVesselPersonalizationRows() {
-		// Get vessel count from POMC system
-		if (!window.pomcSystem) {
-			return;
-		}
-
-		const vesselCount = window.pomcSystem.getMultiplier() || 2;
-
-		// Find the vessel personalization container
-		const vesselContainer = this.modal.querySelector(
-			".modal__personalization-vessel-name-wrap"
-		);
-		if (!vesselContainer) {
-			return;
-		}
-
-		// Store existing vessel values before removing rows
-		const existingRows = vesselContainer.querySelectorAll(
-			".vessel-personalization-row"
-		);
-		const existingValues = {};
-		existingRows.forEach((row) => {
-			const vesselId = row.getAttribute("data-vessel");
-			const input = row.querySelector("[data-vessel-input]");
-			if (input && input.value) {
-				existingValues[vesselId] = input.value;
+		updateVesselPersonalizationRows() {
+			// Get vessel count from POMC system
+			if (!window.pomcSystem) {
+				return;
 			}
-		});
 
-		// Remove existing vessel rows
-		existingRows.forEach((row) => row.remove());
+			const vesselCount = window.pomcSystem.getMultiplier() || 2;
 
-		// Create new vessel rows based on vessel count
-		for (let i = 1; i <= vesselCount; i++) {
-			const vesselRow = this.createVesselPersonalizationRow(i);
-			vesselContainer.appendChild(vesselRow);
+			// Find the vessel personalization container
+			const vesselContainer = this.modal.querySelector(
+				".modal__personalization-vessel-name-wrap"
+			);
+			if (!vesselContainer) {
+				return;
+			}
 
-			// Restore previous value if it existed
-			if (existingValues[i]) {
-				const input = vesselRow.querySelector("[data-vessel-input]");
-				if (input) {
-					input.value = existingValues[i];
+			// Store existing vessel values before removing rows
+			const existingRows = vesselContainer.querySelectorAll(
+				".vessel-personalization-row"
+			);
+			const existingValues = {};
+			existingRows.forEach((row) => {
+				const vesselId = row.getAttribute("data-vessel");
+				const input = row.querySelector("[data-vessel-input]");
+				if (input && input.value) {
+					existingValues[vesselId] = input.value;
+				}
+			});
+
+			// Remove existing vessel rows
+			existingRows.forEach((row) => row.remove());
+
+			// Create new vessel rows based on vessel count
+			for (let i = 1; i <= vesselCount; i++) {
+				const vesselRow = this.createVesselPersonalizationRow(i);
+				vesselContainer.appendChild(vesselRow);
+
+				// Restore previous value if it existed
+				if (existingValues[i]) {
+					const input = vesselRow.querySelector("[data-vessel-input]");
+					if (input) {
+						input.value = existingValues[i];
+					}
 				}
 			}
+
+			// CRITICAL FIX: After recreating rows, sync the engraving content visibility with toggle state
+			this.syncEngravingContentVisibility();
 		}
 
-		// CRITICAL FIX: After recreating rows, sync the engraving content visibility with toggle state
-		this.syncEngravingContentVisibility();
-	}
+		syncEngravingContentVisibility() {
+			// Get the engraving toggle element
+			const engravingToggle = this.modal.querySelector(
+				'[data-personalization-toggle="engraving"]'
+			);
 
-	syncEngravingContentVisibility() {
-		// Get the engraving toggle element
-		const engravingToggle = this.modal.querySelector(
-			'[data-personalization-toggle="engraving"]'
-		);
-		
-		if (!engravingToggle) {
-			return;
-		}
+			if (!engravingToggle) {
+				return;
+			}
 
-		// If not in "add-multiple-products" context, restore toggle state from personalization state
-		if (this.openingContext !== "add-multiple-products" && this.state) {
-			const state = this.state.getState();
-			if (state.engraving && typeof state.engraving.enabled === "boolean") {
-				engravingToggle.checked = state.engraving.enabled;
+			// If not in "add-multiple-products" context, restore toggle state from personalization state
+			if (this.openingContext !== "add-multiple-products" && this.state) {
+				const state = this.state.getState();
+				if (state.engraving && typeof state.engraving.enabled === "boolean") {
+					engravingToggle.checked = state.engraving.enabled;
+				}
+			}
+
+			// Find the engraving content container
+			const engravingPersonalization = engravingToggle.closest(
+				".mini-atc-modal__personalization"
+			);
+			const engravingContent = engravingPersonalization?.querySelector(
+				"[data-personalization-content='engraving'], .mini-atc-modal__complete-options"
+			);
+
+			if (!engravingContent) {
+				return;
+			}
+
+			// Sync the content visibility with the toggle state
+			if (engravingToggle.checked) {
+				engravingContent.classList.remove(
+					"mini-atc-modal__complete-options--hidden"
+				);
+			} else {
+				engravingContent.classList.add(
+					"mini-atc-modal__complete-options--hidden"
+				);
 			}
 		}
-
-		// Find the engraving content container
-		const engravingPersonalization = engravingToggle.closest(
-			".mini-atc-modal__personalization"
-		);
-		const engravingContent = engravingPersonalization?.querySelector(
-			"[data-personalization-content='engraving'], .mini-atc-modal__complete-options"
-		);
-
-		if (!engravingContent) {
-			return;
-		}
-
-		// Sync the content visibility with the toggle state
-		if (engravingToggle.checked) {
-			engravingContent.classList.remove(
-				"mini-atc-modal__complete-options--hidden"
-			);
-		} else {
-			engravingContent.classList.add(
-				"mini-atc-modal__complete-options--hidden"
-			);
-		}
-	}
 
 		createVesselPersonalizationRow(vesselNumber) {
 			const modalId = this.modal.id;
@@ -1887,15 +1897,15 @@
 		}
 
 		async calculatePricing() {
-("🔍 calculatePricing called");
+			("🔍 calculatePricing called");
 			const state = this.state.getState();
 			await this.pricing.calculateTotal(state);
 		}
 
 		setupPOMCIntegration() {
 			// Listen for POMC system changes and update pricing
-("🔍 Setting up POMC integration, pomcSystem exists:", !!window.pomcSystem);
-			
+			"🔍 Setting up POMC integration, pomcSystem exists:", !!window.pomcSystem;
+
 			if (window.pomcSystem) {
 				// Create a custom event listener for POMC changes
 				const updatePricingFromPOMC = (event) => {
@@ -1904,12 +1914,17 @@
 
 				// Listen for currency changes
 				const updatePricingFromCurrencyChange = (event) => {
-('💰 Currency changed in mini ATC modal:', event.detail);
+					"💰 Currency changed in mini ATC modal:", event.detail;
 					this.calculatePricing().catch(() => {});
-					
+
 					// Update checkout view prices if checkout view is active
-					const checkoutView = this.modal.querySelector('.mini-atc-modal__checkout');
-					if (checkoutView && window.getComputedStyle(checkoutView).display !== 'none') {
+					const checkoutView = this.modal.querySelector(
+						".mini-atc-modal__checkout"
+					);
+					if (
+						checkoutView &&
+						window.getComputedStyle(checkoutView).display !== "none"
+					) {
 						this.updateCheckoutItemPrices();
 					}
 				};
@@ -1923,7 +1938,7 @@
 					"pomcMultiplierChanged",
 					updatePricingFromPOMC
 				);
-				
+
 				// Listen for currency changes
 				document.addEventListener(
 					"currencyUpdated",
@@ -1933,18 +1948,15 @@
 					"pomcProductAmountChanged",
 					updatePricingFromPOMC
 				);
-				
+
 				// Listen for charcoal upgrade price changes
-				document.addEventListener(
-					"pomcCharcoalUpgradePrice",
-					(event) => {
-("🪢 Charcoal upgrade price changed, updating pricing:", event.detail);
-						// Small delay to ensure POMC system has fully updated
-						setTimeout(() => {
-							this.calculatePricing().catch(() => {});
-						}, 50);
-					}
-				);
+				document.addEventListener("pomcCharcoalUpgradePrice", (event) => {
+					"🪢 Charcoal upgrade price changed, updating pricing:", event.detail;
+					// Small delay to ensure POMC system has fully updated
+					setTimeout(() => {
+						this.calculatePricing().catch(() => {});
+					}, 50);
+				});
 
 				// Also listen for the modal opening to ensure pricing is current
 				this.modal.addEventListener("modalOpened", () => {
@@ -1952,19 +1964,17 @@
 				});
 			} else {
 				// POMC system not ready yet, set up event listener anyway for when it becomes available
-("🔍 POMC system not ready, setting up delayed event listener");
+				("🔍 POMC system not ready, setting up delayed event listener");
 				const setupDelayedListener = () => {
 					if (window.pomcSystem) {
-("🔍 POMC system now available, setting up charcoal upgrade listener");
-						document.addEventListener(
-							"pomcCharcoalUpgradePrice",
-							(event) => {
-("🪢 Charcoal upgrade price changed (delayed setup), updating pricing:", event.detail);
-								setTimeout(() => {
-									this.calculatePricing().catch(() => {});
-								}, 50);
-							}
-						);
+						("🔍 POMC system now available, setting up charcoal upgrade listener");
+						document.addEventListener("pomcCharcoalUpgradePrice", (event) => {
+							"🪢 Charcoal upgrade price changed (delayed setup), updating pricing:",
+								event.detail;
+							setTimeout(() => {
+								this.calculatePricing().catch(() => {});
+							}, 50);
+						});
 					} else {
 						setTimeout(setupDelayedListener, 100);
 					}
@@ -2033,24 +2043,27 @@
 				const selectedProductAmountData =
 					window.pomcSystem?.getSelectedProductAmountData();
 
-			if (!selectedProductAmountData?.variants) {
-				return;
-			}
+				if (!selectedProductAmountData?.variants) {
+					return;
+				}
 
-			// Calculate the new per-item compare-at price
-			// Check for mixed vessel configuration
-			const hasMixedConfig = this.hasMixedVesselConfiguration();
-			let variantIndex;
-			
-			if (hasMixedConfig) {
-("🛒🪢 Mixed configuration detected for cart update");
-				variantIndex = engravingEnabled ? 3 : 2;
-			} else {
-				const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
-				variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
-			}
-			
-			const variantData = selectedProductAmountData.variants[variantIndex];
+				// Calculate the new per-item compare-at price
+				// Check for mixed vessel configuration
+				const hasMixedConfig = this.hasMixedVesselConfiguration();
+				let variantIndex;
+
+				if (hasMixedConfig) {
+					("🛒🪢 Mixed configuration detected for cart update");
+					variantIndex = engravingEnabled ? 3 : 2;
+				} else {
+					const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+					variantIndex = this.getVariantIndex(
+						hasCharcoalRope,
+						engravingEnabled
+					);
+				}
+
+				const variantData = selectedProductAmountData.variants[variantIndex];
 
 				if (!variantData?.compare_at_price) {
 					return;
@@ -2088,11 +2101,9 @@
 
 				// Perform the updates
 				if (updates.length > 0) {
-(
-						`📝 Updating compare-at prices for ${updates.length} items to £${(
-							perItemCompareAtPrice / 100
-						).toFixed(2)}`
-					);
+					`📝 Updating compare-at prices for ${updates.length} items to £${(
+						perItemCompareAtPrice / 100
+					).toFixed(2)}`;
 
 					for (const update of updates) {
 						const response = await fetch("/cart/change.js", {
@@ -2118,8 +2129,7 @@
 					// Refresh the checkout view to show updated prices
 					await this.updateCheckoutView();
 				}
-			} catch (error) {
-			}
+			} catch (error) {}
 		}
 
 		isEngravingEnabled() {
@@ -2154,101 +2164,110 @@
 				return mainPageEngravingEnabled;
 			}
 
-		return engravingEnabled;
-	}
-
-	hasAnyCharcoalRopeSelected() {
-		if (!window.pomcSystem) {
-			return false;
+			return engravingEnabled;
 		}
-		
-		const vesselSelections = window.pomcSystem.getAllVesselSelections();
-		const multiplier = window.pomcSystem.getMultiplier() || 1;
-		
-		// Check only active vessels (based on multiplier)
-		for (let i = 1; i <= multiplier; i++) {
-			const selection = vesselSelections[i];
-			if (selection?.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
-				return true;
+
+		hasAnyCharcoalRopeSelected() {
+			if (!window.pomcSystem) {
+				return false;
 			}
-		}
-		
-		return false;
-	}
 
-	getVariantIndex(hasCharcoalRope, engravingEnabled) {
-		// Variant mapping:
-		// 0: Natural, No Engraving
-		// 1: Natural, With Engraving
-		// 2: Charcoal, No Engraving
-		// 3: Charcoal, With Engraving
-		
-		const variantIndex = hasCharcoalRope 
-			? (engravingEnabled ? 3 : 2)
-			: (engravingEnabled ? 1 : 0);
-		
-		return variantIndex;
-	}
+			const vesselSelections = window.pomcSystem.getAllVesselSelections();
+			const multiplier = window.pomcSystem.getMultiplier() || 1;
 
-	/**
-	 * Check if the current vessel configuration is mixed (some charcoal, some natural)
-	 */
-	/**
-	 * Helper function to get vessel engraving text (handles both old and new format)
-	 * @param {string|Object} vesselData - Vessel engraving data (string or {text, enabled})
-	 * @returns {string} The engraving text
-	 */
-	getVesselEngravingText(vesselData) {
-		if (!vesselData) return "";
-		if (typeof vesselData === 'string') return vesselData;
-		if (typeof vesselData === 'object' && vesselData.text) return vesselData.text;
-		return "";
-	}
-
-	hasMixedVesselConfiguration() {
-		if (!window.pomcSystem) {
-			return false;
-		}
-		
-		const vesselSelections = window.pomcSystem.getAllVesselSelections();
-		const multiplier = window.pomcSystem.getMultiplier() || 1;
-		
-		if (multiplier <= 1) {
-			return false; // Can't have mixed with only 1 vessel
-		}
-		
-		let hasCharcoal = false;
-		let hasNatural = false;
-		
-		for (let i = 1; i <= multiplier; i++) {
-			const selection = vesselSelections[i];
-			if (selection?.ropeType) {
-				if (selection.ropeType.toLowerCase() === 'charcoal') {
-					hasCharcoal = true;
-				} else {
-					hasNatural = true;
+			// Check only active vessels (based on multiplier)
+			for (let i = 1; i <= multiplier; i++) {
+				const selection = vesselSelections[i];
+				if (
+					selection?.ropeType &&
+					selection.ropeType.toLowerCase() === "charcoal"
+				) {
+					return true;
 				}
 			}
+
+			return false;
 		}
-		
-		const isMixed = hasCharcoal && hasNatural;
-(`🔍 Mixed vessel config check: multiplier=${multiplier}, hasCharcoal=${hasCharcoal}, hasNatural=${hasNatural}, isMixed=${isMixed}`);
-		
-		// Mixed if we have both charcoal and natural
-		return isMixed;
-	}
 
-	/**
-	 * Get variant index for a specific vessel based on its rope type
-	 */
-	getVariantIndexForVessel(vesselSelection, engravingEnabled) {
-		const hasCharcoal = vesselSelection?.ropeType && 
-			vesselSelection.ropeType.toLowerCase() === 'charcoal';
-		
-		return this.getVariantIndex(hasCharcoal, engravingEnabled);
-	}
+		getVariantIndex(hasCharcoalRope, engravingEnabled) {
+			// Variant mapping:
+			// 0: Natural, No Engraving
+			// 1: Natural, With Engraving
+			// 2: Charcoal, No Engraving
+			// 3: Charcoal, With Engraving
 
-	async initializeGiftBoxPricing() {
+			const variantIndex = hasCharcoalRope
+				? engravingEnabled
+					? 3
+					: 2
+				: engravingEnabled
+				? 1
+				: 0;
+
+			return variantIndex;
+		}
+
+		/**
+		 * Check if the current vessel configuration is mixed (some charcoal, some natural)
+		 */
+		/**
+		 * Helper function to get vessel engraving text (handles both old and new format)
+		 * @param {string|Object} vesselData - Vessel engraving data (string or {text, enabled})
+		 * @returns {string} The engraving text
+		 */
+		getVesselEngravingText(vesselData) {
+			if (!vesselData) return "";
+			if (typeof vesselData === "string") return vesselData;
+			if (typeof vesselData === "object" && vesselData.text)
+				return vesselData.text;
+			return "";
+		}
+
+		hasMixedVesselConfiguration() {
+			if (!window.pomcSystem) {
+				return false;
+			}
+
+			const vesselSelections = window.pomcSystem.getAllVesselSelections();
+			const multiplier = window.pomcSystem.getMultiplier() || 1;
+
+			if (multiplier <= 1) {
+				return false; // Can't have mixed with only 1 vessel
+			}
+
+			let hasCharcoal = false;
+			let hasNatural = false;
+
+			for (let i = 1; i <= multiplier; i++) {
+				const selection = vesselSelections[i];
+				if (selection?.ropeType) {
+					if (selection.ropeType.toLowerCase() === "charcoal") {
+						hasCharcoal = true;
+					} else {
+						hasNatural = true;
+					}
+				}
+			}
+
+			const isMixed = hasCharcoal && hasNatural;
+			`🔍 Mixed vessel config check: multiplier=${multiplier}, hasCharcoal=${hasCharcoal}, hasNatural=${hasNatural}, isMixed=${isMixed}`;
+
+			// Mixed if we have both charcoal and natural
+			return isMixed;
+		}
+
+		/**
+		 * Get variant index for a specific vessel based on its rope type
+		 */
+		getVariantIndexForVessel(vesselSelection, engravingEnabled) {
+			const hasCharcoal =
+				vesselSelection?.ropeType &&
+				vesselSelection.ropeType.toLowerCase() === "charcoal";
+
+			return this.getVariantIndex(hasCharcoal, engravingEnabled);
+		}
+
+		async initializeGiftBoxPricing() {
 			try {
 				const response = await fetch(
 					"/products/premium-gift-box-tissue-wrap.js"
@@ -2264,8 +2283,8 @@
 		}
 
 		async updatePricingDisplay(pricing) {
-("🚀🚀🚀 UPDATEPRICINGDISPLAY METHOD CALLED 🚀🚀🚀");
-("🚀 updatePricingDisplay called with pricing:", pricing);
+			("🚀🚀🚀 UPDATEPRICINGDISPLAY METHOD CALLED 🚀🚀🚀");
+			"🚀 updatePricingDisplay called with pricing:", pricing;
 			// Check which view is currently active
 			const checkoutView = this.modal.querySelector(
 				".mini-atc-modal__view.mini-atc-modal__checkout-view"
@@ -2274,29 +2293,20 @@
 				".mini-atc-modal__view.mini-atc-modal__personalise-view"
 			);
 
-(
-				"Pricing update - checkoutView display:",
-				checkoutView?.style.display
-			);
-(
-				"Pricing update - personalizeView display:",
-				personalizeView?.style.display
-			);
-(
-				"Pricing update - checkoutView computed display:",
-				window.getComputedStyle(checkoutView)?.display
-			);
-(
-				"Pricing update - personalizeView computed display:",
-				window.getComputedStyle(personalizeView)?.display
-			);
+			"Pricing update - checkoutView display:", checkoutView?.style.display;
+			"Pricing update - personalizeView display:",
+				personalizeView?.style.display;
+			"Pricing update - checkoutView computed display:",
+				window.getComputedStyle(checkoutView)?.display;
+			"Pricing update - personalizeView computed display:",
+				window.getComputedStyle(personalizeView)?.display;
 
 			// Check if checkout view is active (visible) - use computed style
 			if (
 				checkoutView &&
 				window.getComputedStyle(checkoutView).display !== "none"
 			) {
-("Using checkout pricing");
+				("Using checkout pricing");
 				this.updateCheckoutPricing();
 				return;
 			}
@@ -2308,16 +2318,14 @@
 			) {
 				try {
 					await this.updatePersonalizePricing(pricing);
-				} catch (error) {
-				}
+				} catch (error) {}
 				return;
 			}
 
 			// Fallback to personalize pricing if no view is clearly active
 			try {
 				await this.updatePersonalizePricing(pricing);
-			} catch (error) {
-			}
+			} catch (error) {}
 		}
 
 		updateCheckoutPricing() {
@@ -2358,7 +2366,9 @@
 						if (placeholder) {
 							placeholder.textContent = this.formatMoney(cartData.total_price);
 						} else {
-							currentPriceEl.textContent = this.formatMoney(cartData.total_price);
+							currentPriceEl.textContent = this.formatMoney(
+								cartData.total_price
+							);
 						}
 					}
 
@@ -2369,7 +2379,8 @@
 						if (placeholder) {
 							placeholder.textContent = this.formatMoney(totalCompareAtPrice);
 						} else {
-							originalPriceEl.textContent = this.formatMoney(totalCompareAtPrice);
+							originalPriceEl.textContent =
+								this.formatMoney(totalCompareAtPrice);
 						}
 					}
 
@@ -2380,27 +2391,32 @@
 							// Update only the text content, preserve structure
 							const placeholder = savingsEl.querySelector(".pricing-dynamic");
 							if (placeholder) {
-								placeholder.textContent = `You Saved ${this.formatMoney(savings)}`;
+								placeholder.textContent = `You Saved ${this.formatMoney(
+									savings
+								)}`;
 							} else {
-								savingsEl.textContent = `You Saved ${this.formatMoney(savings)}`;
+								savingsEl.textContent = `You Saved ${this.formatMoney(
+									savings
+								)}`;
 							}
 						}
 					}
 				})
-				.catch((error) => {
-				});
+				.catch((error) => {});
 		}
 
 		updateCheckoutItemPrices() {
 			// Update all checkout item prices to use current currency
-			const checkoutItems = this.modal.querySelectorAll('.checkout-products-wrap__current-price, .checkout-products-wrap__original-price, .checkout-products-wrap__addon-price, .premium-gift-box__price');
-			
-			checkoutItems.forEach(item => {
+			const checkoutItems = this.modal.querySelectorAll(
+				".checkout-products-wrap__current-price, .checkout-products-wrap__original-price, .checkout-products-wrap__addon-price, .premium-gift-box__price"
+			);
+
+			checkoutItems.forEach((item) => {
 				const currentText = item.textContent;
 				// Extract numeric value from price text
 				const priceMatch = currentText.match(/[\d,]+\.?\d*/);
 				if (priceMatch) {
-					const numericValue = parseFloat(priceMatch[0].replace(/,/g, ''));
+					const numericValue = parseFloat(priceMatch[0].replace(/,/g, ""));
 					const priceInCents = Math.round(numericValue * 100);
 					item.textContent = this.formatMoney(priceInCents);
 				}
@@ -2408,66 +2424,58 @@
 		}
 
 		async updatePersonalizePricing(pricing) {
-("🎁🎁🎁 UPDATEPERSONALIZEPRICING METHOD CALLED 🎁🎁🎁");
-("🎁 updatePersonalizePricing START - METHOD CALLED");
-("🎁 updatePersonalizePricing START");
-("🎁 METHOD IS DEFINITELY BEING CALLED NOW");
-("🎁 Received pricing parameter:", pricing);
-("🎁 this.state exists:", !!this.state);
-(
-				"🎁 window.chuug_vessel_selections exists:",
-				!!window.chuug_vessel_selections
-			);
-(
-				"🎁 window.chuug_vessel_selections.selectedProductAmountData exists:",
+			("🎁🎁🎁 UPDATEPERSONALIZEPRICING METHOD CALLED 🎁🎁🎁");
+			("🎁 updatePersonalizePricing START - METHOD CALLED");
+			("🎁 updatePersonalizePricing START");
+			("🎁 METHOD IS DEFINITELY BEING CALLED NOW");
+			"🎁 Received pricing parameter:", pricing;
+			"🎁 this.state exists:", !!this.state;
+			"🎁 window.chuug_vessel_selections exists:",
+				!!window.chuug_vessel_selections;
+			"🎁 window.chuug_vessel_selections.selectedProductAmountData exists:",
 				!!(
 					window.chuug_vessel_selections &&
 					window.chuug_vessel_selections.selectedProductAmountData
-				)
-			);
-(
-				"🎁 Full window.chuug_vessel_selections:",
-				window.chuug_vessel_selections
-			);
-("🎁 window.pomcSystem exists:", !!window.pomcSystem);
-(
-				"🎁 window.pomcSystem.getMultiplier():",
-				window.pomcSystem?.getMultiplier()
-			);
+				);
+			"🎁 Full window.chuug_vessel_selections:", window.chuug_vessel_selections;
+			"🎁 window.pomcSystem exists:", !!window.pomcSystem;
+			"🎁 window.pomcSystem.getMultiplier():",
+				window.pomcSystem?.getMultiplier();
 
 			// Get pricing from chuug_vessel_selections -> selectedProductAmountData
 			if (
 				window.chuug_vessel_selections &&
 				window.chuug_vessel_selections.selectedProductAmountData
 			) {
-(
-					"🎁 Found chuug_vessel_selections.selectedProductAmountData"
-				);
+				("🎁 Found chuug_vessel_selections.selectedProductAmountData");
 				const selectedData =
 					window.chuug_vessel_selections.selectedProductAmountData;
-("🎁 selectedData:", selectedData);
-			if (selectedData.variants) {
-("🎁 Found variants in selectedData");
-				const engravingEnabled = this.getEngravingState();
-				
-				// Check for mixed vessel configuration
-				const hasMixedConfig = this.hasMixedVesselConfiguration();
-				let variantIndex;
-				
-				if (hasMixedConfig) {
-("🎁🪢 Mixed vessel configuration detected in personalize pricing");
-					// For mixed configurations, use charcoal rope variant pricing
-					// This ensures we get the higher pricing that includes charcoal upgrade costs
-					variantIndex = engravingEnabled ? 3 : 2;
-				} else {
-					// Standard logic for uniform configuration
-					const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
-					variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
-				}
-				
-				const variant = selectedData.variants[variantIndex];
-("🎁 Selected variant index:", variantIndex);
-("🎁 Selected variant:", variant);
+				"🎁 selectedData:", selectedData;
+				if (selectedData.variants) {
+					("🎁 Found variants in selectedData");
+					const engravingEnabled = this.getEngravingState();
+
+					// Check for mixed vessel configuration
+					const hasMixedConfig = this.hasMixedVesselConfiguration();
+					let variantIndex;
+
+					if (hasMixedConfig) {
+						("🎁🪢 Mixed vessel configuration detected in personalize pricing");
+						// For mixed configurations, use charcoal rope variant pricing
+						// This ensures we get the higher pricing that includes charcoal upgrade costs
+						variantIndex = engravingEnabled ? 3 : 2;
+					} else {
+						// Standard logic for uniform configuration
+						const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+						variantIndex = this.getVariantIndex(
+							hasCharcoalRope,
+							engravingEnabled
+						);
+					}
+
+					const variant = selectedData.variants[variantIndex];
+					"🎁 Selected variant index:", variantIndex;
+					"🎁 Selected variant:", variant;
 
 					if (variant) {
 						// Use pricing from selectedProductAmountData as base, but add gift box pricing
@@ -2494,45 +2502,40 @@
 							// If still no gift box price, use default
 							if (!giftBoxPrice && state.giftBox?.enabled) {
 								giftBoxPrice = 200; // Default £2.00 in cents
-("🎁 Using default gift box price:", giftBoxPrice);
+								"🎁 Using default gift box price:", giftBoxPrice;
 							}
 						} else {
 							// If gift box price isn't loaded yet, try to initialize it
 							if (!giftBoxPrice && state.giftBox?.enabled) {
-(
-									"🎁 Gift box price not loaded yet, initializing..."
-								);
+								("🎁 Gift box price not loaded yet, initializing...");
 								await this.initializeGiftBoxPricing();
 								giftBoxPrice = this.dynamicPrices.giftBox;
-(
-									"🎁 Gift box price after initialization:",
-									giftBoxPrice
-								);
+								"🎁 Gift box price after initialization:", giftBoxPrice;
 							}
 						}
 
 						const multiplier = window.pomcSystem?.getMultiplier() || 1;
-("🎁 Personalize pricing debug:", {
-							giftBoxEnabled: state.giftBox?.enabled,
-							giftBoxPrice: giftBoxPrice,
-							multiplier: multiplier,
-							variantPrice: variant.price,
-							variantCompareAtPrice: variant.compare_at_price,
-							beforeTotal: total,
-							beforeOriginalTotal: originalTotal,
-							giftBoxPriceIsValid: giftBoxPrice && giftBoxPrice > 0,
-						});
+						"🎁 Personalize pricing debug:",
+							{
+								giftBoxEnabled: state.giftBox?.enabled,
+								giftBoxPrice: giftBoxPrice,
+								multiplier: multiplier,
+								variantPrice: variant.price,
+								variantCompareAtPrice: variant.compare_at_price,
+								beforeTotal: total,
+								beforeOriginalTotal: originalTotal,
+								giftBoxPriceIsValid: giftBoxPrice && giftBoxPrice > 0,
+							};
 						// Skip gift box pricing in main path since it's already applied by FORCE pricing
-(
-							"🎁 Main path: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting"
-						);
+						("🎁 Main path: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting");
 
 						// Validate values before formatting
-("🎁 Validating pricing values:", {
-							total,
-							originalTotal,
-							savings: originalTotal - total,
-						});
+						"🎁 Validating pricing values:",
+							{
+								total,
+								originalTotal,
+								savings: originalTotal - total,
+							};
 
 						const validTotal = total && !isNaN(total) ? total : 0;
 						const validOriginalTotal =
@@ -2550,13 +2553,11 @@
 							formattedSavings: Utils.formatPrice(validSavings),
 						};
 
-("🎁 Final pricing object:", pricing);
+						"🎁 Final pricing object:", pricing;
 					}
 				}
 			} else {
-(
-					"🎁 No chuug_vessel_selections.selectedProductAmountData found, using fallback pricing"
-				);
+				("🎁 No chuug_vessel_selections.selectedProductAmountData found, using fallback pricing");
 				// Fallback: Add gift box pricing to the existing pricing parameter
 				const state = this.state ? this.state.getState() : null;
 				let giftBoxPrice = this.dynamicPrices
@@ -2577,29 +2578,19 @@
 					// If still no gift box price, use default
 					if (!giftBoxPrice && state.giftBox?.enabled) {
 						giftBoxPrice = 200; // Default £2.00 in cents
-(
-							"🎁 FALLBACK: Using default gift box price:",
-							giftBoxPrice
-						);
+						"🎁 FALLBACK: Using default gift box price:", giftBoxPrice;
 					}
 				} else {
 					if (!giftBoxPrice && state.giftBox?.enabled) {
-(
-							"🎁 Fallback: Gift box price not loaded yet, initializing..."
-						);
+						("🎁 Fallback: Gift box price not loaded yet, initializing...");
 						await this.initializeGiftBoxPricing();
 						giftBoxPrice = this.dynamicPrices.giftBox;
-(
-							"🎁 Fallback: Gift box price after initialization:",
-							giftBoxPrice
-						);
+						"🎁 Fallback: Gift box price after initialization:", giftBoxPrice;
 					}
 				}
 
 				// Skip gift box pricing in fallback since it's already applied by FORCE pricing
-(
-					"🎁 Fallback: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting"
-				);
+				("🎁 Fallback: Gift box pricing already applied by FORCE pricing, skipping to avoid double counting");
 			}
 
 			// Try multiple selectors to find the price elements
@@ -2663,11 +2654,11 @@
 					savingsEl.textContent = `You Saved ${pricing.formattedSavings}`;
 				}
 			}
-("🎁 updatePersonalizePricing END");
+			("🎁 updatePersonalizePricing END");
 		}
 
 		switchView(viewName) {
-("Switching to view:", viewName);
+			"Switching to view:", viewName;
 			const views = this.modal.querySelectorAll(".mini-atc-modal__view");
 			const targetView = this.modal.querySelector(`[data-view="${viewName}"]`);
 			const titleEl = this.modal.querySelector(".mini-atc-modal__title");
@@ -2710,18 +2701,20 @@
 					case "checkout":
 						// Check if cart is empty to show appropriate button
 						// For now, we'll check if we're in an empty state by looking for the empty message
-						const emptyMessage = this.modal.querySelector(".empty-cart-message");
+						const emptyMessage = this.modal.querySelector(
+							".empty-cart-message"
+						);
 						if (emptyMessage && emptyMessage.style.display !== "none") {
 							btnTextEl.textContent = "CONTINUE SHOPPING";
 							addToCartBtn.setAttribute("data-modal-action", "close-modal");
-("✅ Button updated for empty checkout view: CONTINUE SHOPPING");
+							("✅ Button updated for empty checkout view: CONTINUE SHOPPING");
 						} else {
 							btnTextEl.textContent = "PROCEED TO CHECKOUT";
 							addToCartBtn.setAttribute(
 								"data-modal-action",
 								"proceed-to-checkout"
 							);
-("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
+							("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
 						}
 						break;
 					case "personalize":
@@ -2767,24 +2760,22 @@
 			if (context === "add-multiple-products") {
 				this.switchView("personalize");
 
-			// Reset engraving state when opening from add-multiple-products
-(
-				"🔄 Resetting engraving state for add-multiple-products..."
-			);
-			this.state.resetEngraving();
+				// Reset engraving state when opening from add-multiple-products
+				("🔄 Resetting engraving state for add-multiple-products...");
+				this.state.resetEngraving();
 
-			// Reset engraving toggle to checked (default state)
-			const engravingToggle = this.modal.querySelector(
-				'[data-personalization-toggle="engraving"]'
-			);
-			if (engravingToggle) {
-				engravingToggle.checked = true;
-				
-				// CRITICAL FIX: Sync content visibility immediately after resetting toggle
-				this.syncEngravingContentVisibility();
-			}
+				// Reset engraving toggle to checked (default state)
+				const engravingToggle = this.modal.querySelector(
+					'[data-personalization-toggle="engraving"]'
+				);
+				if (engravingToggle) {
+					engravingToggle.checked = true;
 
-			// Ensure footer is visible for add-multiple-products context
+					// CRITICAL FIX: Sync content visibility immediately after resetting toggle
+					this.syncEngravingContentVisibility();
+				}
+
+				// Ensure footer is visible for add-multiple-products context
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
 					footer.style.display = "";
@@ -2792,15 +2783,16 @@
 				}
 
 				// Console log state after clicking add-multiple-products
-("🛒 State after clicking add-multiple-products:", {
-					context: this.openingContext,
-					currentView: this.currentView,
-					isActive: this.isActive,
-					state: this.state.getState(),
-					engravingVessels: this.state.getState().engraving?.vessels,
-					modalId: this.modal.id,
-					timestamp: new Date().toISOString(),
-				});
+				"🛒 State after clicking add-multiple-products:",
+					{
+						context: this.openingContext,
+						currentView: this.currentView,
+						isActive: this.isActive,
+						state: this.state.getState(),
+						engravingVessels: this.state.getState().engraving?.vessels,
+						modalId: this.modal.id,
+						timestamp: new Date().toISOString(),
+					};
 			} else if (context === "cart-icon") {
 				this.switchView("checkout");
 				// Pre-hide sections for cart icon to prevent flash when cart is empty
@@ -2833,20 +2825,20 @@
 				this.hideCheckoutSections();
 			}
 
-		// Dispatch modal opened event for POMC integration
-		this.modal.dispatchEvent(new CustomEvent("modalOpened"));
+			// Dispatch modal opened event for POMC integration
+			this.modal.dispatchEvent(new CustomEvent("modalOpened"));
 
-		// Update vessel personalization rows based on current vessel count
-		this.updateVesselPersonalizationRows();
+			// Update vessel personalization rows based on current vessel count
+			this.updateVesselPersonalizationRows();
 
-		// CRITICAL FIX: Ensure engraving content visibility is synced after rows are updated
-		// This handles cases where the toggle state doesn't match the content visibility
-		setTimeout(() => {
-			this.syncEngravingContentVisibility();
-		}, 10);
+			// CRITICAL FIX: Ensure engraving content visibility is synced after rows are updated
+			// This handles cases where the toggle state doesn't match the content visibility
+			setTimeout(() => {
+				this.syncEngravingContentVisibility();
+			}, 10);
 
-		// If opening from add-multiple-products, ensure all vessel inputs are cleared
-		if (context === "add-multiple-products") {
+			// If opening from add-multiple-products, ensure all vessel inputs are cleared
+			if (context === "add-multiple-products") {
 				// Use setTimeout to ensure inputs are cleared after DOM updates
 				setTimeout(() => {
 					const vesselInputs = this.modal.querySelectorAll(
@@ -2858,10 +2850,7 @@
 						// CRITICAL: Also update state since programmatic changes don't trigger 'input' event
 						this.state.updateVesselEngraving(vesselId, "");
 					});
-(
-						"🔄 Cleared all vessel input fields AND state:",
-						vesselInputs.length
-					);
+					"🔄 Cleared all vessel input fields AND state:", vesselInputs.length;
 				}, 50);
 			}
 
@@ -2931,17 +2920,15 @@
 			if (this.isAddingToCart) {
 				return;
 			}
-			
+
 			this.isAddingToCart = true;
-			
+
 			try {
 				// Show loading state
 				this.setLoadingState(true);
 
 				// CRITICAL: Sync input field values with state before collecting cart data
-(
-					"🔄 Syncing input field values with state before adding to cart..."
-				);
+				("🔄 Syncing input field values with state before adding to cart...");
 				const vesselInputs = this.modal.querySelectorAll("[data-vessel-input]");
 				vesselInputs.forEach((input) => {
 					const vesselId = input.getAttribute("data-vessel-input");
@@ -2949,23 +2936,19 @@
 					const stateValue =
 						this.state.getState().engraving?.vessels?.[vesselId] || "";
 
-(
-						`🔄 Vessel ${vesselId}: Input="${currentValue}", State="${stateValue}"`
-					);
+					`🔄 Vessel ${vesselId}: Input="${currentValue}", State="${stateValue}"`;
 
 					// If values don't match, update state to match input
 					if (currentValue !== stateValue) {
-(
-							`⚠️ MISMATCH! Updating state to match input for Vessel ${vesselId}`
-						);
+						`⚠️ MISMATCH! Updating state to match input for Vessel ${vesselId}`;
 						this.state.updateVesselEngraving(vesselId, currentValue);
 					}
 				});
 
-			// Collect all data for cart
-			const cartData = await this.collectCartData();
+				// Collect all data for cart
+				const cartData = await this.collectCartData();
 
-			if (!cartData || cartData.items.length === 0) {
+				if (!cartData || cartData.items.length === 0) {
 					throw new Error("No items to add to cart");
 				}
 
@@ -3022,10 +3005,7 @@
 				// Reset extra cups state as well
 				this.state.updatePersonalization("extraCups", { enabled: false });
 
-(
-					"🔄 Reset add-on states after cart addition:",
-					this.state.getState()
-				);
+				"🔄 Reset add-on states after cart addition:", this.state.getState();
 
 				// Update pricing after reset
 				this.calculatePricing().catch(() => {});
@@ -3048,14 +3028,14 @@
 			}
 		}
 
-	async collectCartData() {
-		const state = this.state.getState();
+		async collectCartData() {
+			const state = this.state.getState();
 
-		const items = [];
+			const items = [];
 
-		// Collect vessel products and their associated add-ons in interleaved order
-		const vesselItems = await this.collectVesselProducts(state);
-		const addonItems = this.collectAddonProducts(state);
+			// Collect vessel products and their associated add-ons in interleaved order
+			const vesselItems = await this.collectVesselProducts(state);
+			const addonItems = this.collectAddonProducts(state);
 
 			// Group add-ons by vessel number for easier lookup
 			const addonsByVessel = {};
@@ -3111,7 +3091,7 @@
 				attributes: this.collectOrderAttributes(state),
 			};
 
-("🛒 CART DATA TO BE SENT:", JSON.stringify(cartData, null, 2));
+			"🛒 CART DATA TO BE SENT:", JSON.stringify(cartData, null, 2);
 
 			return cartData;
 		}
@@ -3119,51 +3099,70 @@
 		/**
 		 * Create properties for a single vessel item
 		 */
-		createVesselProperties(selection, vesselNumber, state, engravingEnabled, selectedProductAmountData, variantIndex) {
+		createVesselProperties(
+			selection,
+			vesselNumber,
+			state,
+			engravingEnabled,
+			selectedProductAmountData,
+			variantIndex
+		) {
 			const properties = {};
-			
-		// VISIBLE PROPERTIES (for checkout display)
-		
-		// Add Monogram Initials for this specific vessel
-		const vesselEngravingData = state.engraving?.vessels?.[vesselNumber] || "";
-		const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
-		if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
-			properties["Monogram Initials"] = vesselEngraving.trim().toUpperCase();
-		} else {
-			properties["Monogram Initials"] = "N/A";
-		}
-			
-		// For individual vessel products (mixed config), don't add bundle-specific properties
-		// Only add essential properties to avoid conflicts with Shopify's product structure
-		
-		// Check if gift box is enabled (only if this is a bundle product)
-		if (selectedProductAmountData?.variants && variantIndex !== null) {
-			// This is a bundle product, add bundle properties
-			const variantData = selectedProductAmountData.variants[variantIndex];
-			if (variantData?.title) {
-				properties["Choose Your Coins"] = variantData.title;
+
+			// VISIBLE PROPERTIES (for checkout display)
+
+			// Add Monogram Initials for this specific vessel
+			const vesselEngravingData =
+				state.engraving?.vessels?.[vesselNumber] || "";
+			const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
+			if (
+				engravingEnabled &&
+				vesselEngraving &&
+				vesselEngraving.trim() !== ""
+			) {
+				properties["Monogram Initials"] = vesselEngraving.trim().toUpperCase();
+			} else {
+				properties["Monogram Initials"] = "N/A";
 			}
-			
-			const hasGiftBox = state.giftBox?.enabled;
-			properties["Gift Box"] = hasGiftBox ? "yes" : "no";
-			
-			if (hasGiftBox) {
-				const giftBoxTitle = this.getGiftBoxProductTitle();
-				properties["Gift Option"] = giftBoxTitle;
+
+			// For individual vessel products (mixed config), don't add bundle-specific properties
+			// Only add essential properties to avoid conflicts with Shopify's product structure
+
+			// Check if gift box is enabled (only if this is a bundle product)
+			if (selectedProductAmountData?.variants && variantIndex !== null) {
+				// This is a bundle product, add bundle properties
+				const variantData = selectedProductAmountData.variants[variantIndex];
+				if (variantData?.title) {
+					properties["Choose Your Coins"] = variantData.title;
+				}
+
+				const hasGiftBox = state.giftBox?.enabled;
+				properties["Gift Box"] = hasGiftBox ? "yes" : "no";
+
+				if (hasGiftBox) {
+					const giftBoxTitle = this.getGiftBoxProductTitle();
+					properties["Gift Option"] = giftBoxTitle;
+				}
 			}
-		}
-			
+
 			// HIDDEN PROPERTIES (with underscore - for backend use only)
-			
+
 			// Add vessel engraving (hidden) - for this specific vessel
-			if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
-				properties[`_Vessel ${vesselNumber} Engraving`] = vesselEngraving.trim().toUpperCase();
+			if (
+				engravingEnabled &&
+				vesselEngraving &&
+				vesselEngraving.trim() !== ""
+			) {
+				properties[`_Vessel ${vesselNumber} Engraving`] = vesselEngraving
+					.trim()
+					.toUpperCase();
 			}
-			
+
 			// Add vessel selection details (hidden) - for this specific vessel
 			if (selection) {
 				if (selection.productHandle) {
-					properties[`_Vessel ${vesselNumber} Product`] = selection.productHandle;
+					properties[`_Vessel ${vesselNumber} Product`] =
+						selection.productHandle;
 				}
 				if (selection.woodType) {
 					properties[`_Vessel ${vesselNumber} Wood Type`] = selection.woodType;
@@ -3172,7 +3171,7 @@
 					properties[`_Vessel ${vesselNumber} Rope Type`] = selection.ropeType;
 				}
 			}
-			
+
 			// Add compare-at price (hidden) - per item price for this vessel
 			if (selectedProductAmountData?.variants && variantIndex !== null) {
 				const variantData = selectedProductAmountData.variants[variantIndex];
@@ -3181,82 +3180,88 @@
 				}
 			}
 			// For individual vessel products, we don't have compare-at price from bundle data
-			
-			// Add unique line identifier to prevent Shopify from consolidating items
-			const uniqueLineId = `${Date.now()}-V${vesselNumber}-${Math.random().toString(36).substring(2, 11)}`;
-			properties["_Unique Line ID"] = uniqueLineId;
-			
-		return properties;
-	}
 
-	/**
-	 * Get individual vessel variant ID based on wood type and rope type
-	 * For individual products, we need variant IDs, not product IDs
-	 */
-	async getIndividualVesselVariantId(woodType, ropeType, hasEngraving) {
-		const key = `${woodType?.toLowerCase()}_${ropeType?.toLowerCase()}`;
-		
-		// Check if we have product handles
-		if (!window.PRODUCT_HANDLES || !window.PRODUCT_HANDLES[key]) {
-			return null;
+			// Add unique line identifier to prevent Shopify from consolidating items
+			const uniqueLineId = `${Date.now()}-V${vesselNumber}-${Math.random()
+				.toString(36)
+				.substring(2, 11)}`;
+			properties["_Unique Line ID"] = uniqueLineId;
+
+			return properties;
 		}
-		
-		const productHandle = window.PRODUCT_HANDLES[key];
-		
-		// Fetch product data to get variant IDs
-		try {
-			const response = await fetch(`/products/${productHandle}.js`);
-			const productData = await response.json();
-			
-			if (!productData || !productData.variants || productData.variants.length === 0) {
+
+		/**
+		 * Get individual vessel variant ID based on wood type and rope type
+		 * For individual products, we need variant IDs, not product IDs
+		 */
+		async getIndividualVesselVariantId(woodType, ropeType, hasEngraving) {
+			const key = `${woodType?.toLowerCase()}_${ropeType?.toLowerCase()}`;
+
+			// Check if we have product handles
+			if (!window.PRODUCT_HANDLES || !window.PRODUCT_HANDLES[key]) {
 				return null;
 			}
-			
-			// Determine variant index based on rope type and engraving
-			// Individual vessel products have the same variant structure as bundles:
-			// 0: Natural, No Engraving
-			// 1: Natural, With Engraving
-			// 2: Charcoal, No Engraving
-			// 3: Charcoal, With Engraving
-			const isCharcoal = ropeType && ropeType.toLowerCase() === 'charcoal';
-			let variantIndex;
-			
-			if (isCharcoal) {
-				// Charcoal products: index 2 (no engraving) or 3 (with engraving)
-				variantIndex = hasEngraving ? 3 : 2;
-			} else {
-				// Natural products: index 0 (no engraving) or 1 (with engraving)
-				variantIndex = hasEngraving ? 1 : 0;
-			}
-			
-			const variant = productData.variants[variantIndex] || productData.variants[0];
-			
-			
-			return variant.id;
-		} catch (error) {
-			return null;
-		}
-	}
-	
-	/**
-	 * Get individual vessel product ID based on wood type and rope type (synchronous fallback)
-	 */
-	getIndividualVesselProductId(woodType, ropeType) {
-		// Use POMC system's product ID mapping
-		if (!window.PRODUCT_IDS) {
-			return null;
-		}
-		
-		const key = `${woodType?.toLowerCase()}_${ropeType?.toLowerCase()}`;
-		const productId = window.PRODUCT_IDS[key];
-		
-		if (!productId) {
-		}
-		
-		return productId || null;
-	}
 
-	async collectVesselProducts(state) {
+			const productHandle = window.PRODUCT_HANDLES[key];
+
+			// Fetch product data to get variant IDs
+			try {
+				const response = await fetch(`/products/${productHandle}.js`);
+				const productData = await response.json();
+
+				if (
+					!productData ||
+					!productData.variants ||
+					productData.variants.length === 0
+				) {
+					return null;
+				}
+
+				// Determine variant index based on rope type and engraving
+				// Individual vessel products have the same variant structure as bundles:
+				// 0: Natural, No Engraving
+				// 1: Natural, With Engraving
+				// 2: Charcoal, No Engraving
+				// 3: Charcoal, With Engraving
+				const isCharcoal = ropeType && ropeType.toLowerCase() === "charcoal";
+				let variantIndex;
+
+				if (isCharcoal) {
+					// Charcoal products: index 2 (no engraving) or 3 (with engraving)
+					variantIndex = hasEngraving ? 3 : 2;
+				} else {
+					// Natural products: index 0 (no engraving) or 1 (with engraving)
+					variantIndex = hasEngraving ? 1 : 0;
+				}
+
+				const variant =
+					productData.variants[variantIndex] || productData.variants[0];
+
+				return variant.id;
+			} catch (error) {
+				return null;
+			}
+		}
+
+		/**
+		 * Get individual vessel product ID based on wood type and rope type (synchronous fallback)
+		 */
+		getIndividualVesselProductId(woodType, ropeType) {
+			// Use POMC system's product ID mapping
+			if (!window.PRODUCT_IDS) {
+				return null;
+			}
+
+			const key = `${woodType?.toLowerCase()}_${ropeType?.toLowerCase()}`;
+			const productId = window.PRODUCT_IDS[key];
+
+			if (!productId) {
+			}
+
+			return productId || null;
+		}
+
+		async collectVesselProducts(state) {
 			const items = [];
 
 			// Get vessel selections from POMC system
@@ -3272,166 +3277,195 @@
 			// Determine if engraving is enabled
 			const engravingEnabled = this.isEngravingEnabled();
 
+			// Check for mixed vessel configuration
+			const hasMixedConfig = this.hasMixedVesselConfiguration();
 
-		// Check for mixed vessel configuration
-		const hasMixedConfig = this.hasMixedVesselConfiguration();
-		
-		if (hasMixedConfig) {
-("🛒 Mixed config: Creating separate items");
-			
-			// For mixed configurations, create separate items for each vessel using individual vessel variant IDs
+			if (hasMixedConfig) {
+				("🛒 Mixed config: Creating separate items");
+
+				// For mixed configurations, create separate items for each vessel using individual vessel variant IDs
+				for (let i = 1; i <= multiplier; i++) {
+					const selection = vesselSelections[i];
+					if (!selection) continue;
+
+					// Check if this specific vessel has engraving
+					const vesselEngravingData = state.engraving?.vessels?.[i] || "";
+					const vesselEngraving =
+						this.getVesselEngravingText(vesselEngravingData);
+					const vesselHasEngraving =
+						engravingEnabled &&
+						vesselEngraving &&
+						vesselEngraving.trim() !== "";
+
+					// Get individual vessel variant ID (async)
+					const individualVariantId = await this.getIndividualVesselVariantId(
+						selection.woodType,
+						selection.ropeType,
+						vesselHasEngraving
+					);
+
+					if (!individualVariantId) {
+						continue;
+					}
+
+					// Create properties for this specific vessel
+					const vesselProperties = this.createVesselProperties(
+						selection,
+						i,
+						state,
+						engravingEnabled,
+						null,
+						null
+					);
+
+					// Create individual vessel item using individual variant ID
+					const vesselItem = {
+						id: individualVariantId,
+						quantity: 1,
+						properties: vesselProperties,
+					};
+
+					items.push(vesselItem);
+				}
+
+				return items; // Return early for mixed configurations
+			}
+
+			// Standard logic for uniform configuration (all vessels have same rope type)
+			const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
+			const variantIndex = this.getVariantIndex(
+				hasCharcoalRope,
+				engravingEnabled
+			);
+
+			let variantId = null;
+			if (selectedProductAmountData?.variants?.[variantIndex]) {
+				variantId = selectedProductAmountData.variants[variantIndex].id;
+			} else {
+				return items;
+			}
+
+			if (!variantId) {
+				return items;
+			}
+
+			// Create properties object for the bundle
+			const properties = {};
+
+			// VISIBLE PROPERTIES (for checkout display)
+
+			// Add Monogram Initials (visible on checkout) - collect all vessel engravings
+			const allEngravings = [];
+			for (let i = 1; i <= multiplier; i++) {
+				const vesselEngravingData = state.engraving?.vessels?.[i] || "";
+				const vesselEngraving =
+					this.getVesselEngravingText(vesselEngravingData);
+				if (
+					engravingEnabled &&
+					vesselEngraving &&
+					vesselEngraving.trim() !== ""
+				) {
+					allEngravings.push(vesselEngraving.trim().toUpperCase());
+				}
+			}
+
+			if (allEngravings.length > 0) {
+				properties["Monogram Initials"] = allEngravings.join(", ");
+			} else {
+				properties["Monogram Initials"] = "N/A";
+			}
+
+			// Add Choose Your Coins info (visible on checkout)
+			if (selectedProductAmountData?.variants) {
+				const variantData = selectedProductAmountData.variants[variantIndex];
+				if (variantData?.title) {
+					properties["Choose Your Coins"] = variantData.title;
+				}
+			}
+
+			// Check if gift box is enabled
+			const hasGiftBox = state.giftBox?.enabled;
+			properties["Gift Box"] = hasGiftBox ? "yes" : "no";
+
+			if (hasGiftBox) {
+				// Get the actual gift box product title dynamically
+				const giftBoxTitle = this.getGiftBoxProductTitle();
+				properties["Gift Option"] = giftBoxTitle;
+			}
+
+			// HIDDEN PROPERTIES (with underscore - for backend use only)
+
+			// Add vessel engravings (hidden) - one per vessel
+			for (let i = 1; i <= multiplier; i++) {
+				const vesselEngravingData = state.engraving?.vessels?.[i] || "";
+				const vesselEngraving =
+					this.getVesselEngravingText(vesselEngravingData);
+				if (
+					engravingEnabled &&
+					vesselEngraving &&
+					vesselEngraving.trim() !== ""
+				) {
+					properties[`_Vessel ${i} Engraving`] = vesselEngraving
+						.trim()
+						.toUpperCase();
+				}
+			}
+
+			// Add vessel selection details (hidden) - collect all vessel selections
 			for (let i = 1; i <= multiplier; i++) {
 				const selection = vesselSelections[i];
-				if (!selection) continue;
-				
-			// Check if this specific vessel has engraving
-			const vesselEngravingData = state.engraving?.vessels?.[i] || "";
-			const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
-			const vesselHasEngraving = engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "";
-				
-				// Get individual vessel variant ID (async)
-				const individualVariantId = await this.getIndividualVesselVariantId(
-					selection.woodType, 
-					selection.ropeType,
-					vesselHasEngraving
-				);
-				
-				if (!individualVariantId) {
-					continue;
+				if (selection) {
+					if (selection.productHandle) {
+						properties[`_Vessel ${i} Product`] = selection.productHandle;
+					}
+					if (selection.woodType) {
+						properties[`_Vessel ${i} Wood Type`] = selection.woodType;
+					}
+					if (selection.ropeType) {
+						properties[`_Vessel ${i} Rope Type`] = selection.ropeType;
+					}
 				}
-				
-				// Create properties for this specific vessel
-				const vesselProperties = this.createVesselProperties(selection, i, state, engravingEnabled, null, null);
-				
-				// Create individual vessel item using individual variant ID
-				const vesselItem = {
-					id: individualVariantId,
-					quantity: 1,
-					properties: vesselProperties,
-				};
-				
-				items.push(vesselItem);
 			}
-			
-			return items; // Return early for mixed configurations
-		}
-		
-		// Standard logic for uniform configuration (all vessels have same rope type)
-		const hasCharcoalRope = this.hasAnyCharcoalRopeSelected();
-		const variantIndex = this.getVariantIndex(hasCharcoalRope, engravingEnabled);
-		
-		let variantId = null;
-		if (selectedProductAmountData?.variants?.[variantIndex]) {
-			variantId = selectedProductAmountData.variants[variantIndex].id;
-		} else {
+
+			// Add compare-at price (hidden)
+			if (selectedProductAmountData?.variants) {
+				const variantData = selectedProductAmountData.variants[variantIndex];
+				if (variantData?.compare_at_price && multiplier > 0) {
+					// Divide bundle compare-at price by multiplier to get per-item price
+					const perItemCompareAtPrice = Math.round(
+						variantData.compare_at_price / multiplier
+					);
+					properties["_Compare At Price"] = perItemCompareAtPrice;
+				}
+			}
+
+			// Add unique line identifier to prevent Shopify from consolidating items
+			// Use a consistent ID based on the bundle configuration to prevent duplicates
+			const ropeConfig = hasMixedConfig
+				? "mixed"
+				: this.hasAnyCharcoalRopeSelected()
+				? "charcoal"
+				: "natural";
+			const bundleConfig = `${multiplier}-${ropeConfig}-${
+				engravingEnabled ? "engraved" : "plain"
+			}`;
+			const uniqueLineId = `BUNDLE-${bundleConfig}-${Date.now()}`;
+			properties["_Unique Line ID"] = uniqueLineId;
+
+			// Create ONE bundle item with quantity = multiplier
+			const bundleItem = {
+				id: variantId,
+				quantity: multiplier, // This is the key fix - quantity should be the number of vessels
+				properties,
+			};
+
+			items.push(bundleItem);
+
+			// Check if no vessel items were collected
+			if (items.length === 0) {
+			}
+
 			return items;
-		}
-
-		if (!variantId) {
-			return items;
-		}
-
-
-		// Create properties object for the bundle
-		const properties = {};
-
-		// VISIBLE PROPERTIES (for checkout display)
-
-	// Add Monogram Initials (visible on checkout) - collect all vessel engravings
-	const allEngravings = [];
-	for (let i = 1; i <= multiplier; i++) {
-		const vesselEngravingData = state.engraving?.vessels?.[i] || "";
-		const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
-		if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
-			allEngravings.push(vesselEngraving.trim().toUpperCase());
-		}
-	}
-		
-		if (allEngravings.length > 0) {
-			properties["Monogram Initials"] = allEngravings.join(", ");
-		} else {
-			properties["Monogram Initials"] = "N/A";
-		}
-
-		// Add Choose Your Coins info (visible on checkout)
-		if (selectedProductAmountData?.variants) {
-			const variantData = selectedProductAmountData.variants[variantIndex];
-			if (variantData?.title) {
-				properties["Choose Your Coins"] = variantData.title;
-			}
-		}
-
-		// Check if gift box is enabled
-		const hasGiftBox = state.giftBox?.enabled;
-		properties["Gift Box"] = hasGiftBox ? "yes" : "no";
-
-		if (hasGiftBox) {
-			// Get the actual gift box product title dynamically
-			const giftBoxTitle = this.getGiftBoxProductTitle();
-			properties["Gift Option"] = giftBoxTitle;
-		}
-
-		// HIDDEN PROPERTIES (with underscore - for backend use only)
-
-	// Add vessel engravings (hidden) - one per vessel
-	for (let i = 1; i <= multiplier; i++) {
-		const vesselEngravingData = state.engraving?.vessels?.[i] || "";
-		const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
-		if (engravingEnabled && vesselEngraving && vesselEngraving.trim() !== "") {
-			properties[`_Vessel ${i} Engraving`] = vesselEngraving.trim().toUpperCase();
-		}
-	}
-
-		// Add vessel selection details (hidden) - collect all vessel selections
-		for (let i = 1; i <= multiplier; i++) {
-			const selection = vesselSelections[i];
-			if (selection) {
-				if (selection.productHandle) {
-					properties[`_Vessel ${i} Product`] = selection.productHandle;
-				}
-				if (selection.woodType) {
-					properties[`_Vessel ${i} Wood Type`] = selection.woodType;
-				}
-				if (selection.ropeType) {
-					properties[`_Vessel ${i} Rope Type`] = selection.ropeType;
-				}
-			}
-		}
-
-		// Add compare-at price (hidden)
-		if (selectedProductAmountData?.variants) {
-			const variantData = selectedProductAmountData.variants[variantIndex];
-			if (variantData?.compare_at_price && multiplier > 0) {
-				// Divide bundle compare-at price by multiplier to get per-item price
-				const perItemCompareAtPrice = Math.round(
-					variantData.compare_at_price / multiplier
-				);
-				properties["_Compare At Price"] = perItemCompareAtPrice;
-			}
-		}
-
-		// Add unique line identifier to prevent Shopify from consolidating items
-		// Use a consistent ID based on the bundle configuration to prevent duplicates
-		const ropeConfig = hasMixedConfig ? 'mixed' : (this.hasAnyCharcoalRopeSelected() ? 'charcoal' : 'natural');
-		const bundleConfig = `${multiplier}-${ropeConfig}-${engravingEnabled ? 'engraved' : 'plain'}`;
-		const uniqueLineId = `BUNDLE-${bundleConfig}-${Date.now()}`;
-		properties["_Unique Line ID"] = uniqueLineId;
-		
-
-		// Create ONE bundle item with quantity = multiplier
-		const bundleItem = {
-			id: variantId,
-			quantity: multiplier, // This is the key fix - quantity should be the number of vessels
-			properties,
-		};
-
-		items.push(bundleItem);
-
-		// Check if no vessel items were collected
-		if (items.length === 0) {
-		}
-
-		return items;
 		}
 
 		collectAddonProducts(state) {
@@ -3441,39 +3475,44 @@
 			if (window.pomcSystem) {
 				const vesselSelections = window.pomcSystem.getAllVesselSelections();
 				const charcoalUpgradeVariantId = this.getCharcoalUpgradeVariantId();
-				
+
 				// Only add charcoal upgrades if the variant ID is available
 				// If not available, skip charcoal upgrades (they might be included in the vessel price)
 				if (charcoalUpgradeVariantId) {
 					let charcoalVesselNumber = 0;
-					Object.entries(vesselSelections).forEach(([vesselIndex, selection]) => {
-						if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
-							charcoalVesselNumber++;
-							const uniqueLineId = `${Date.now()}-CHARCOAL${charcoalVesselNumber}-${Math.random()
-								.toString(36)
-								.substr(2, 9)}`;
+					Object.entries(vesselSelections).forEach(
+						([vesselIndex, selection]) => {
+							if (
+								selection.ropeType &&
+								selection.ropeType.toLowerCase() === "charcoal"
+							) {
+								charcoalVesselNumber++;
+								const uniqueLineId = `${Date.now()}-CHARCOAL${charcoalVesselNumber}-${Math.random()
+									.toString(36)
+									.substr(2, 9)}`;
 
-							const charcoalUpgradeItem = {
-								id: charcoalUpgradeVariantId,
-								quantity: 1,
-								properties: {
-									// VISIBLE PROPERTIES (for checkout display)
-									"Monogram Initials": "N/A",
-									
-									// HIDDEN PROPERTIES (for backend use only)
-									"_Add-on": "Charcoal Rope Upgrade",
-									"_Product Handle": "charcoal-rope-upgrade",
-									"_Vessel Number": vesselIndex,
-									"_Unique Line ID": uniqueLineId,
-								},
-							};
-						items.push(charcoalUpgradeItem);
-					}
-				});
+								const charcoalUpgradeItem = {
+									id: charcoalUpgradeVariantId,
+									quantity: 1,
+									properties: {
+										// VISIBLE PROPERTIES (for checkout display)
+										"Monogram Initials": "N/A",
+
+										// HIDDEN PROPERTIES (for backend use only)
+										"_Add-on": "Charcoal Rope Upgrade",
+										"_Product Handle": "charcoal-rope-upgrade",
+										"_Vessel Number": vesselIndex,
+										"_Unique Line ID": uniqueLineId,
+									},
+								};
+								items.push(charcoalUpgradeItem);
+							}
+						}
+					);
+				}
 			}
-		}
 
-		// 1. Gift Box - Add one per vessel
+			// 1. Gift Box - Add one per vessel
 			if (state.giftBox?.enabled) {
 				// Get vessel count from POMC system
 				const vesselCount = window.pomcSystem
@@ -3505,10 +3544,10 @@
 								"_Unique Line ID": uniqueLineId,
 							},
 						};
-					items.push(giftBoxItem);
+						items.push(giftBoxItem);
+					}
 				}
 			}
-		}
 
 			// 2. Mix & Match variants
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
@@ -3565,7 +3604,10 @@
 				const vesselSelections = window.pomcSystem.getAllVesselSelections();
 				let charcoalCount = 0;
 				Object.values(vesselSelections).forEach((selection) => {
-					if (selection.ropeType && selection.ropeType.toLowerCase() === 'charcoal') {
+					if (
+						selection.ropeType &&
+						selection.ropeType.toLowerCase() === "charcoal"
+					) {
 						charcoalCount++;
 					}
 				});
@@ -3593,20 +3635,20 @@
 			// Add modal source
 			attributes["Order Source"] = "Mini ATC Modal";
 
-		// Add personalization details
-		if (state.engraving?.enabled) {
-			attributes["Engraving Enabled"] = "Yes";
+			// Add personalization details
+			if (state.engraving?.enabled) {
+				attributes["Engraving Enabled"] = "Yes";
 
-			// Add individual vessel engravings
-			Object.entries(state.engraving.vessels || {}).forEach(
-				([vesselId, vesselData]) => {
-					const text = this.getVesselEngravingText(vesselData);
-					if (text && text.trim() !== "") {
-						attributes[`Vessel ${vesselId} Text`] = text.trim().toUpperCase();
+				// Add individual vessel engravings
+				Object.entries(state.engraving.vessels || {}).forEach(
+					([vesselId, vesselData]) => {
+						const text = this.getVesselEngravingText(vesselData);
+						if (text && text.trim() !== "") {
+							attributes[`Vessel ${vesselId} Text`] = text.trim().toUpperCase();
+						}
 					}
-				}
-			);
-		}
+				);
+			}
 
 			// Add POMC system data
 			if (window.pomcSystem) {
@@ -3620,13 +3662,13 @@
 		}
 
 		getGiftBoxVariantId() {
-("🔍 Getting gift box variant ID...");
+			("🔍 Getting gift box variant ID...");
 
 			// Try to get from modal config first
 			const config = this.config;
-("🔍 Modal config:", config);
+			"🔍 Modal config:", config;
 			if (config.giftBox?.variantId) {
-("✅ Found variant ID in config:", config.giftBox.variantId);
+				"✅ Found variant ID in config:", config.giftBox.variantId;
 				return config.giftBox.variantId;
 			}
 
@@ -3634,30 +3676,27 @@
 			const giftBoxToggle = this.modal.querySelector(
 				"[data-gift-box-variant-id]"
 			);
-("🔍 Gift box toggle element:", giftBoxToggle);
+			"🔍 Gift box toggle element:", giftBoxToggle;
 			if (giftBoxToggle) {
 				const variantId = giftBoxToggle.getAttribute(
 					"data-gift-box-variant-id"
 				);
-("✅ Found variant ID in DOM:", variantId);
+				"✅ Found variant ID in DOM:", variantId;
 				return variantId;
 			}
 
 			// Fallback - you may need to set this based on your actual gift box product
-("❌ No gift box variant ID found in config or DOM");
+			("❌ No gift box variant ID found in config or DOM");
 			return null;
 		}
 
 		getGiftBoxProductTitle() {
-("🔍 Getting gift box product title...");
+			("🔍 Getting gift box product title...");
 
 			// Try to get from modal config first
 			const config = this.config;
 			if (config.giftBox?.productTitle) {
-(
-					"✅ Found product title in config:",
-					config.giftBox.productTitle
-				);
+				"✅ Found product title in config:", config.giftBox.productTitle;
 				return config.giftBox.productTitle;
 			}
 
@@ -3669,22 +3708,23 @@
 				const productTitle = giftBoxToggle.getAttribute(
 					"data-gift-box-product-title"
 				);
-("✅ Found product title in DOM:", productTitle);
+				"✅ Found product title in DOM:", productTitle;
 				return productTitle;
 			}
 
 			// Fallback
-("⚠️ No gift box product title found, using fallback");
+			("⚠️ No gift box product title found, using fallback");
 			return "Premium Gift Box and Tissue Wrap";
 		}
 
 		getCharcoalUpgradeVariantId() {
-("🔍 Getting charcoal upgrade variant ID...");
+			("🔍 Getting charcoal upgrade variant ID...");
 
 			// Try to get from modal config first
 			const config = this.config;
 			if (config.charcoalUpgrade?.variantId) {
-("✅ Found charcoal upgrade variant ID in config:", config.charcoalUpgrade.variantId);
+				"✅ Found charcoal upgrade variant ID in config:",
+					config.charcoalUpgrade.variantId;
 				return config.charcoalUpgrade.variantId;
 			}
 
@@ -3696,26 +3736,27 @@
 				const variantId = charcoalUpgradeElement.getAttribute(
 					"data-charcoal-upgrade-variant-id"
 				);
-("✅ Found charcoal upgrade variant ID in DOM:", variantId);
+				"✅ Found charcoal upgrade variant ID in DOM:", variantId;
 				return variantId;
 			}
 
 			// Try to get from global config
 			if (window.CHARCOAL_UPGRADE_VARIANT_ID) {
-("✅ Found charcoal upgrade variant ID in global config:", window.CHARCOAL_UPGRADE_VARIANT_ID);
+				"✅ Found charcoal upgrade variant ID in global config:",
+					window.CHARCOAL_UPGRADE_VARIANT_ID;
 				return window.CHARCOAL_UPGRADE_VARIANT_ID;
 			}
 
 			// Fallback - needs to be set in Shopify theme settings
-("❌ No charcoal upgrade variant ID found in config or DOM");
+			("❌ No charcoal upgrade variant ID found in config or DOM");
 			return null;
 		}
 
-	async addItemsToShopifyCart(cartData) {
-		// Add items to cart without clearing existing items
-		// Each item has a unique _Unique Line ID property to prevent Shopify from consolidating
-		
-		const config = {
+		async addItemsToShopifyCart(cartData) {
+			// Add items to cart without clearing existing items
+			// Each item has a unique _Unique Line ID property to prevent Shopify from consolidating
+
+			const config = {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -3733,39 +3774,40 @@
 				}),
 			};
 
-("🛒 SENDING TO SHOPIFY:", config.body);
-		const response = await fetch("/cart/add.js", config);
-		const result = await response.json();
-		
-		// Check for errors
-		if (result.status || result.errors || result.message) {
-			console.error("❌ SHOPIFY CART ERROR:", {
-				status: result.status,
-				errors: result.errors,
-				message: result.message,
-				description: result.description,
-				full_response: result
-			});
-			
-			// Try to get more details by testing each item individually
-("🔍 Testing individual items to find the problematic one...");
-			const cartData = JSON.parse(config.body);
-			for (let i = 0; i < cartData.items.length; i++) {
-				const item = cartData.items[i];
-(`🔍 Testing item ${i + 1}/${cartData.items.length}:`, {
-					id: item.id,
-					quantity: item.quantity,
-					properties: item.properties
-				});
-			}
-		} else {
-("✅ SHOPIFY RESPONSE:", result);
-		}
-		
-		return result;
-	}
+			"🛒 SENDING TO SHOPIFY:", config.body;
+			const response = await fetch("/cart/add.js", config);
+			const result = await response.json();
 
-	updateCartIconBubble(response) {
+			// Check for errors
+			if (result.status || result.errors || result.message) {
+				console.error("❌ SHOPIFY CART ERROR:", {
+					status: result.status,
+					errors: result.errors,
+					message: result.message,
+					description: result.description,
+					full_response: result,
+				});
+
+				// Try to get more details by testing each item individually
+				("🔍 Testing individual items to find the problematic one...");
+				const cartData = JSON.parse(config.body);
+				for (let i = 0; i < cartData.items.length; i++) {
+					const item = cartData.items[i];
+					`🔍 Testing item ${i + 1}/${cartData.items.length}:`,
+						{
+							id: item.id,
+							quantity: item.quantity,
+							properties: item.properties,
+						};
+				}
+			} else {
+				"✅ SHOPIFY RESPONSE:", result;
+			}
+
+			return result;
+		}
+
+		updateCartIconBubble(response) {
 			// Update cart icon bubble with the returned section HTML
 			if (response.sections && response.sections["cart-icon-bubble"]) {
 				const cartIconBubble = document.getElementById("cart-icon-bubble");
@@ -3806,7 +3848,7 @@
 				addToCartBtn?.setAttribute("disabled", "true");
 				if (btnText) {
 					btnText.textContent = "ADDING TO CART...";
-("🔄 Button loading state: ADDING TO CART...");
+					("🔄 Button loading state: ADDING TO CART...");
 				}
 			} else {
 				addToCartBtn?.classList.remove("loading");
@@ -3815,14 +3857,10 @@
 				if (btnText) {
 					if (this.currentView === "checkout") {
 						btnText.textContent = "PROCEED TO CHECKOUT";
-(
-							"✅ Button loading complete (checkout view): PROCEED TO CHECKOUT"
-						);
+						("✅ Button loading complete (checkout view): PROCEED TO CHECKOUT");
 					} else {
 						btnText.textContent = "ADD TO CART";
-(
-							"✅ Button loading complete (personalize view): ADD TO CART"
-						);
+						("✅ Button loading complete (personalize view): ADD TO CART");
 					}
 				}
 			}
@@ -3966,9 +4004,7 @@
 					const allExistingItems = checkoutContainer.querySelectorAll(
 						".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]"
 					);
-(
-						`🧹 Empty cart: Clearing ${allExistingItems.length} existing items to show clean empty state`
-					);
+					`🧹 Empty cart: Clearing ${allExistingItems.length} existing items to show clean empty state`;
 					allExistingItems.forEach((item) => item.remove());
 
 					// Show empty state
@@ -3990,7 +4026,7 @@
 					this.calculatePricing().catch(() => {});
 
 					// Stay in checkout view to show empty state - don't switch back to personalize
-("🔄 Cart is empty, staying in checkout view to show empty state");
+					("🔄 Cart is empty, staying in checkout view to show empty state");
 				} else {
 					// Hide empty state
 					if (emptyState) {
@@ -4016,30 +4052,30 @@
 					// REMOVED: bindCheckoutItemEvents() - using event delegation instead (line 767)
 					// this.bindCheckoutItemEvents();
 
-				// Refresh pricing to reflect the updated cart totals
-				this.updateCheckoutPricing();
+					// Refresh pricing to reflect the updated cart totals
+					this.updateCheckoutPricing();
 
-				// Update progress indicator based on non-gift-box item count
-				// DISABLED: Conflicts with multi-currency progress indicator in mini-atc-modal-checkout.liquid
-				// The Liquid script has more comprehensive currency support (GBP, AUD, USD)
-				// this.updateProgressIndicator(cartData);
-			}
+					// Update progress indicator based on non-gift-box item count
+					// DISABLED: Conflicts with multi-currency progress indicator in mini-atc-modal-checkout.liquid
+					// The Liquid script has more comprehensive currency support (GBP, AUD, USD)
+					// this.updateProgressIndicator(cartData);
+				}
 			} catch (error) {
 				console.error("Failed to update checkout view with cart data:", error);
 			}
 		}
 
-	/* DISABLED: This method conflicts with the multi-currency progress indicator in mini-atc-modal-checkout.liquid
-	 * The Liquid script has more comprehensive features:
-	 * - Multi-currency support (GBP £75, AUD $200, USD $14.95)
-	 * - Non-destructive DOM updates (toggles visibility instead of innerHTML replacement)
-	 * - MutationObserver for real-time updates
-	 * - Global cart event listeners
-	 * 
-	 * This old method only supports hardcoded £80 GBP and uses destructive innerHTML replacement.
-	 * Keeping both causes race conditions and inconsistent UI states.
-	 */
-	/*
+		/* DISABLED: This method conflicts with the multi-currency progress indicator in mini-atc-modal-checkout.liquid
+		 * The Liquid script has more comprehensive features:
+		 * - Multi-currency support (GBP £75, AUD $200, USD $14.95)
+		 * - Non-destructive DOM updates (toggles visibility instead of innerHTML replacement)
+		 * - MutationObserver for real-time updates
+		 * - Global cart event listeners
+		 *
+		 * This old method only supports hardcoded £80 GBP and uses destructive innerHTML replacement.
+		 * Keeping both causes race conditions and inconsistent UI states.
+		 */
+		/*
 	updateProgressIndicator(cartData) {
 		try {
 ("🔄 updateProgressIndicator called with cartData:", cartData);
@@ -4232,7 +4268,7 @@
 	}
 	*/
 
-	async fetchUpdatedCartData() {
+		async fetchUpdatedCartData() {
 			try {
 				const response = await fetch("/cart.js");
 				if (!response.ok) {
@@ -4247,14 +4283,10 @@
 
 		async renderCartItems(cartItems, container) {
 			try {
-(
-					"🛒 renderCartItems called with:",
-					cartItems.length,
-					"items"
-				);
+				"🛒 renderCartItems called with:", cartItems.length, "items";
 
-("ASDSADSADDS");
-(cartItems);
+				("ASDSADSADDS");
+				cartItems;
 
 				// Create a temporary container to hold the rendered items
 				const tempContainer = document.createElement("div");
@@ -4264,10 +4296,10 @@
 					// Reverse order (newest first, like Liquid template)
 					for (let i = cartItems.length - 1; i >= 0; i--) {
 						const item = cartItems[i];
-("🛒 Rendering item:", item.id, item.product_title);
+						"🛒 Rendering item:", item.id, item.product_title;
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
-("🛒 Item element created:", itemElement);
+							"🛒 Item element created:", itemElement;
 							tempContainer.appendChild(itemElement);
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
@@ -4277,10 +4309,10 @@
 					// Normal order (oldest first)
 					for (let i = 0; i < cartItems.length; i++) {
 						const item = cartItems[i];
-("🛒 Rendering item:", item.id, item.product_title);
+						"🛒 Rendering item:", item.id, item.product_title;
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
-("🛒 Item element created:", itemElement);
+							"🛒 Item element created:", itemElement;
 							tempContainer.appendChild(itemElement);
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
@@ -4299,11 +4331,7 @@
 
 		async renderCartItem(item, allCartItems) {
 			try {
-(
-					"🛒 renderCartItem called for:",
-					item.id,
-					item.product_title
-				);
+				"🛒 renderCartItem called for:", item.id, item.product_title;
 
 				// Check if this is an add-on item that should be grouped with a vessel
 				const isAddon =
@@ -4311,11 +4339,11 @@
 					Object.entries(item.properties).some(
 						([key, value]) => key === "_Add-on"
 					);
-("🛒 Is addon:", isAddon);
+				"🛒 Is addon:", isAddon;
 
 				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
 				if (isAddon) {
-("🛒 Skipping addon item:", item.id);
+					"🛒 Skipping addon item:", item.id;
 					return null;
 				}
 
@@ -4404,7 +4432,10 @@
 					let hasInsulatedCup = false;
 
 					Object.entries(item.properties).forEach(([key, value]) => {
-						if (key.includes("Engraving")) {
+						if (
+							key.includes("Engraving") ||
+							key.includes("PERSONALISED INITIAL")
+						) {
 							engravingText = value;
 						}
 						const keyLower = key.toLowerCase();
@@ -4549,10 +4580,8 @@
 				// Premium Gift Box section (matching Liquid logic)
 				// Look for gift box add-ons that belong to this specific vessel
 				const vesselNumber = this.extractVesselNumber(item);
-(
-					`🎁 DEBUG: Item ${item.id} (${item.product_title}) has vessel number:`,
-					vesselNumber
-				);
+				`🎁 DEBUG: Item ${item.id} (${item.product_title}) has vessel number:`,
+					vesselNumber;
 
 				if (vesselNumber) {
 					// Debug: Log all gift box items
@@ -4561,14 +4590,12 @@
 							giftItem.properties &&
 							giftItem.properties["_Add-on"] === "Premium Gift Box"
 					);
-(
-						`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`,
+					`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`,
 						allGiftBoxes.map((gb) => ({
 							id: gb.id,
 							title: gb.product_title,
 							vesselNumber: gb.properties["_Vessel Number"],
-						}))
-					);
+						}));
 
 					const giftBoxForThisVessel = allCartItems.find(
 						(giftItem) =>
@@ -4578,15 +4605,13 @@
 								String(vesselNumber)
 					);
 
-(
-						`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`,
+					`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`,
 						giftBoxForThisVessel
 							? {
 									id: giftBoxForThisVessel.id,
 									title: giftBoxForThisVessel.product_title,
 							  }
-							: "NOT FOUND"
-					);
+							: "NOT FOUND";
 
 					if (giftBoxForThisVessel) {
 						const giftBoxSection = document.createElement("div");
@@ -4735,98 +4760,87 @@
 		extractVesselNumber(item) {
 			// Extract vessel number from item properties
 			// Look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc.
-(
-				`🔍 DEBUG: Extracting vessel number for item ${item.id}:`,
-				item.properties
-			);
+			`🔍 DEBUG: Extracting vessel number for item ${item.id}:`,
+				item.properties;
 
 			if (item.properties) {
 				for (const [key, value] of Object.entries(item.properties)) {
-(`🔍 DEBUG: Checking property: ${key} = ${value}`);
-					
+					`🔍 DEBUG: Checking property: ${key} = ${value}`;
+
 					// First, check for direct "_Vessel Number" property (used by gift boxes and some items)
 					if (key === "_Vessel Number") {
 						const vesselNum = value.toString();
-(`🔍 DEBUG: Found direct vessel number: ${vesselNum}`);
+						`🔍 DEBUG: Found direct vessel number: ${vesselNum}`;
 						return vesselNum;
 					}
 					// Then look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc. (used by main products)
 					else if (key.includes("Vessel") && key.includes("Product")) {
 						const parts = key.split(" ");
-(`🔍 DEBUG: Found vessel property, parts:`, parts);
+						`🔍 DEBUG: Found vessel property, parts:`, parts;
 						if (parts.length >= 2) {
 							const vesselNum = parts[1];
-(`🔍 DEBUG: Extracted vessel number from product property: ${vesselNum}`);
+							`🔍 DEBUG: Extracted vessel number from product property: ${vesselNum}`;
 							return vesselNum; // Return the vessel number
 						}
 					}
 				}
 			}
-(`🔍 DEBUG: No vessel number found for item ${item.id}`);
+			`🔍 DEBUG: No vessel number found for item ${item.id}`;
 			return null;
 		}
 
 		async findAssociatedGiftBoxesFromCartData(vesselItemKey, cartData) {
 			try {
-(
-					`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`
-				);
+				`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`;
 
 				if (!cartData || !cartData.items) {
-(`🔍 DEBUG: No cart data or items found`);
+					`🔍 DEBUG: No cart data or items found`;
 					return [];
 				}
 
-(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-(
-					`🔍 DEBUG: All cart items:`,
+				`🔍 DEBUG: Cart has ${cartData.items.length} items`;
+				`🔍 DEBUG: All cart items:`,
 					cartData.items.map((item) => ({
 						key: item.key,
 						id: item.id,
 						title: item.product_title,
 						properties: item.properties,
-					}))
-				);
+					}));
 
 				// Find the vessel item to get its vessel number
 				const vesselItem = cartData.items.find(
 					(item) => item.key === vesselItemKey
 				);
 				if (!vesselItem) {
-(
-						`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`
-					);
-(
-						`🔍 DEBUG: Available item keys:`,
-						cartData.items.map((item) => item.key)
-					);
+					`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`;
+					`🔍 DEBUG: Available item keys:`,
+						cartData.items.map((item) => item.key);
 					return [];
 				}
 
-(`🔍 DEBUG: Found vessel item:`, {
-					key: vesselItem.key,
-					id: vesselItem.id,
-					title: vesselItem.product_title,
-					properties: vesselItem.properties,
-				});
+				`🔍 DEBUG: Found vessel item:`,
+					{
+						key: vesselItem.key,
+						id: vesselItem.id,
+						title: vesselItem.product_title,
+						properties: vesselItem.properties,
+					};
 
 				// Extract vessel number AND unique line ID timestamp from the vessel item's properties
 				let vesselNumber = null;
 				let vesselUniqueLineId = null;
-(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+				`🔍 DEBUG: Vessel item properties:`, vesselItem.properties;
 
 				// Properties are stored as an object, not an array
 				for (const [key, value] of Object.entries(
 					vesselItem.properties || {}
 				)) {
-(
-						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
-					);
-					
+					`🔍 DEBUG: Checking property key: ${key}, value: ${value}`;
+
 					// First, check for direct "_Vessel Number" property (used by gift boxes and some items)
 					if (key === "_Vessel Number") {
 						vesselNumber = value.toString();
-(`🔍 DEBUG: Found direct vessel number: ${vesselNumber}`);
+						`🔍 DEBUG: Found direct vessel number: ${vesselNumber}`;
 					}
 					// Then look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc. (used by main products)
 					else if (key.includes("Vessel") && key.includes("Product")) {
@@ -4834,31 +4848,25 @@
 						const vesselPropertyParts = key.split(" ");
 						if (vesselPropertyParts.length >= 2) {
 							vesselNumber = vesselPropertyParts[1];
-(`🔍 DEBUG: Found vessel number from product property: ${vesselNumber}`);
+							`🔍 DEBUG: Found vessel number from product property: ${vesselNumber}`;
 						}
 					}
 					// Get the unique line ID to match the timestamp
 					if (key === "_Unique Line ID") {
 						vesselUniqueLineId = value;
-(
-							`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`
-						);
+						`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`;
 					}
 				}
 
 				if (!vesselNumber) {
-(
-						`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`
-					);
-(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+					`🔍 DEBUG: No vessel number found for item with key ${vesselItemKey}`;
+					`🔍 DEBUG: Available properties:`, vesselItem.properties;
 					return [];
 				}
 
 				if (!vesselUniqueLineId) {
-(
-						`🔍 DEBUG: No unique line ID found for item with key ${vesselItemKey}`
-					);
-(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+					`🔍 DEBUG: No unique line ID found for item with key ${vesselItemKey}`;
+					`🔍 DEBUG: Available properties:`, vesselItem.properties;
 					return [];
 				}
 
@@ -4873,9 +4881,7 @@
 					// For regular format: "1760363090570-GB1-9wv1allbt"
 					vesselTimestampPrefix = vesselUniqueLineId.split("-")[0];
 				}
-(
-					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`
-				);
+				`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`;
 
 				// Find gift boxes with matching vessel number AND timestamp prefix
 				const associatedGiftBoxKeys = [];
@@ -4884,10 +4890,11 @@
 						continue; // Skip the vessel item itself
 					}
 
-(`🔍 DEBUG: Checking item ${item.key}:`, {
-						title: item.product_title,
-						properties: item.properties,
-					});
+					`🔍 DEBUG: Checking item ${item.key}:`,
+						{
+							title: item.product_title,
+							properties: item.properties,
+						};
 
 					// Check if this item is a gift box
 					let isGiftBox = false;
@@ -4896,14 +4903,12 @@
 
 					// Properties are stored as an object, not an array
 					for (const [key, value] of Object.entries(item.properties || {})) {
-(
-							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
-						);
+						`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`;
 
 						// Check if it's a gift box
 						if (key === "_Add-on" && value === "Premium Gift Box") {
 							isGiftBox = true;
-(`🔍 DEBUG: Item ${item.key} is a gift box`);
+							`🔍 DEBUG: Item ${item.key} is a gift box`;
 						}
 
 						// Check if it has the matching vessel number
@@ -4912,9 +4917,7 @@
 							value.toString() === vesselNumber.toString()
 						) {
 							hasMatchingVesselNumber = true;
-(
-								`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`
-							);
+							`🔍 DEBUG: Item ${item.key} has matching vessel number ${vesselNumber}`;
 						}
 
 						// Check if it has the matching timestamp prefix in the unique line ID
@@ -4928,21 +4931,22 @@
 								// For regular format: "1760363090570-GB1-9wv1allbt"
 								giftBoxTimestampPrefix = value.split("-")[0];
 							}
-							
+
 							// Allow for small timestamp differences (within 10 seconds) to handle timing issues
 							const vesselTimestamp = parseInt(vesselTimestampPrefix);
 							const giftBoxTimestamp = parseInt(giftBoxTimestampPrefix);
-							const timeDifference = Math.abs(vesselTimestamp - giftBoxTimestamp);
-							
-							if (giftBoxTimestampPrefix === vesselTimestampPrefix || timeDifference <= 10000) {
+							const timeDifference = Math.abs(
+								vesselTimestamp - giftBoxTimestamp
+							);
+
+							if (
+								giftBoxTimestampPrefix === vesselTimestampPrefix ||
+								timeDifference <= 10000
+							) {
 								hasMatchingTimestamp = true;
-(
-									`🔍 DEBUG: Item ${item.key} has matching timestamp prefix ${giftBoxTimestampPrefix} (difference: ${timeDifference}ms)`
-								);
+								`🔍 DEBUG: Item ${item.key} has matching timestamp prefix ${giftBoxTimestampPrefix} (difference: ${timeDifference}ms)`;
 							} else {
-(
-									`🔍 DEBUG: Item ${item.key} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix}, difference: ${timeDifference}ms)`
-								);
+								`🔍 DEBUG: Item ${item.key} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix}, difference: ${timeDifference}ms)`;
 							}
 						}
 					}
@@ -4951,24 +4955,18 @@
 					if (isGiftBox && hasMatchingVesselNumber && hasMatchingTimestamp) {
 						// Use the key for cart API
 						associatedGiftBoxKeys.push(item.key);
-(
-							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`
-						);
+						`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`;
 					} else if (
 						isGiftBox &&
 						hasMatchingVesselNumber &&
 						!hasMatchingTimestamp
 					) {
-(
-							`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`
-						);
+						`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`;
 					}
 				}
 
-(
-					`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`,
-					associatedGiftBoxKeys
-				);
+				`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`,
+					associatedGiftBoxKeys;
 				return associatedGiftBoxKeys;
 			} catch (error) {
 				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
@@ -4978,99 +4976,82 @@
 
 		async findAssociatedGiftBoxes(vesselItemId) {
 			try {
-(
-					`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`
-				);
+				`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`;
 
 				// Fetch current cart data
 				const cartData = await this.fetchUpdatedCartData();
 				if (!cartData || !cartData.items) {
-(`🔍 DEBUG: No cart data or items found`);
+					`🔍 DEBUG: No cart data or items found`;
 					return [];
 				}
 
-(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-(
-					`🔍 DEBUG: All cart items:`,
+				`🔍 DEBUG: Cart has ${cartData.items.length} items`;
+				`🔍 DEBUG: All cart items:`,
 					cartData.items.map((item) => ({
 						id: item.id,
 						title: item.product_title,
 						properties: item.properties,
-					}))
-				);
+					}));
 
 				// Find the vessel item to get its vessel number
 				const vesselItem = cartData.items.find(
 					(item) => item.id.toString() === vesselItemId.toString()
 				);
 				if (!vesselItem) {
-(
-						`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`
-					);
-(
-						`🔍 DEBUG: Available item IDs:`,
-						cartData.items.map((item) => item.id)
-					);
+					`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`;
+					`🔍 DEBUG: Available item IDs:`,
+						cartData.items.map((item) => item.id);
 					return [];
 				}
 
-(`🔍 DEBUG: Found vessel item:`, {
-					id: vesselItem.id,
-					title: vesselItem.product_title,
-					properties: vesselItem.properties,
-				});
+				`🔍 DEBUG: Found vessel item:`,
+					{
+						id: vesselItem.id,
+						title: vesselItem.product_title,
+						properties: vesselItem.properties,
+					};
 
 				// Extract vessel number AND unique line ID timestamp from the vessel item's properties
 				let vesselNumber = null;
 				let vesselUniqueLineId = null;
-(`🔍 DEBUG: Vessel item properties:`, vesselItem.properties);
+				`🔍 DEBUG: Vessel item properties:`, vesselItem.properties;
 
 				// Properties are stored as an object, not an array
 				for (const [key, value] of Object.entries(
 					vesselItem.properties || {}
 				)) {
-(
-						`🔍 DEBUG: Checking property key: ${key}, value: ${value}`
-					);
+					`🔍 DEBUG: Checking property key: ${key}, value: ${value}`;
 					// Look for properties like "_Vessel 2 Product", "_Vessel 1 Product", etc.
 					if (key.includes("Vessel") && key.includes("Product")) {
 						// Extract number from property name like "_Vessel 2 Product"
 						const vesselPropertyParts = key.split(" ");
 						if (vesselPropertyParts.length >= 2) {
 							vesselNumber = vesselPropertyParts[1];
-(`🔍 DEBUG: Found vessel number: ${vesselNumber}`);
+							`🔍 DEBUG: Found vessel number: ${vesselNumber}`;
 						}
 					}
 					// Get the unique line ID to match the timestamp
 					if (key === "_Unique Line ID") {
 						vesselUniqueLineId = value;
-(
-							`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`
-						);
+						`🔍 DEBUG: Found unique line ID: ${vesselUniqueLineId}`;
 					}
 				}
 
 				if (!vesselNumber) {
-(
-						`🔍 DEBUG: No vessel number found for item ${vesselItemId}`
-					);
-(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+					`🔍 DEBUG: No vessel number found for item ${vesselItemId}`;
+					`🔍 DEBUG: Available properties:`, vesselItem.properties;
 					return [];
 				}
 
 				if (!vesselUniqueLineId) {
-(
-						`🔍 DEBUG: No unique line ID found for item ${vesselItemId}`
-					);
-(`🔍 DEBUG: Available properties:`, vesselItem.properties);
+					`🔍 DEBUG: No unique line ID found for item ${vesselItemId}`;
+					`🔍 DEBUG: Available properties:`, vesselItem.properties;
 					return [];
 				}
 
 				// Extract the timestamp prefix from the unique line ID (e.g., "1759401169659" from "1759401169659-V1-26bfsczov")
 				const vesselTimestampPrefix = vesselUniqueLineId.split("-")[0];
-(
-					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`
-				);
+				`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber} and timestamp prefix ${vesselTimestampPrefix}`;
 
 				// Find gift boxes with matching vessel number AND timestamp prefix
 				const associatedGiftBoxIds = [];
@@ -5079,10 +5060,11 @@
 						continue; // Skip the vessel item itself
 					}
 
-(`🔍 DEBUG: Checking item ${item.id}:`, {
-						title: item.product_title,
-						properties: item.properties,
-					});
+					`🔍 DEBUG: Checking item ${item.id}:`,
+						{
+							title: item.product_title,
+							properties: item.properties,
+						};
 
 					// Check if this item is a gift box
 					let isGiftBox = false;
@@ -5091,14 +5073,12 @@
 
 					// Properties are stored as an object, not an array
 					for (const [key, value] of Object.entries(item.properties || {})) {
-(
-							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
-						);
+						`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`;
 
 						// Check if it's a gift box
 						if (key === "_Add-on" && value === "Premium Gift Box") {
 							isGiftBox = true;
-(`🔍 DEBUG: Item ${item.id} is a gift box`);
+							`🔍 DEBUG: Item ${item.id} is a gift box`;
 						}
 
 						// Check if it has the matching vessel number
@@ -5107,9 +5087,7 @@
 							value.toString() === vesselNumber.toString()
 						) {
 							hasMatchingVesselNumber = true;
-(
-								`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
-							);
+							`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`;
 						}
 
 						// Check if it has the matching timestamp prefix in the unique line ID
@@ -5117,13 +5095,9 @@
 							const giftBoxTimestampPrefix = value.split("-")[0];
 							if (giftBoxTimestampPrefix === vesselTimestampPrefix) {
 								hasMatchingTimestamp = true;
-(
-									`🔍 DEBUG: Item ${item.id} has matching timestamp prefix ${giftBoxTimestampPrefix}`
-								);
+								`🔍 DEBUG: Item ${item.id} has matching timestamp prefix ${giftBoxTimestampPrefix}`;
 							} else {
-(
-									`🔍 DEBUG: Item ${item.id} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix})`
-								);
+								`🔍 DEBUG: Item ${item.id} has different timestamp prefix ${giftBoxTimestampPrefix} (expected ${vesselTimestampPrefix})`;
 							}
 						}
 					}
@@ -5132,24 +5106,18 @@
 					if (isGiftBox && hasMatchingVesselNumber && hasMatchingTimestamp) {
 						// Use the key instead of id for cart API
 						associatedGiftBoxIds.push(item.key);
-(
-							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`
-						);
+						`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber} with matching timestamp`;
 					} else if (
 						isGiftBox &&
 						hasMatchingVesselNumber &&
 						!hasMatchingTimestamp
 					) {
-(
-							`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`
-						);
+						`🔍 DEBUG: Skipping gift box ${item.key} - vessel number matches but timestamp doesn't`;
 					}
 				}
 
-(
-					`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`,
-					associatedGiftBoxIds
-				);
+				`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`,
+					associatedGiftBoxIds;
 				return associatedGiftBoxIds;
 			} catch (error) {
 				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
@@ -5179,9 +5147,7 @@
 		// REMOVED: isGiftBoxItem, renderCheckoutItem, renderItemProperties, renderGiftBoxItem - using Liquid templates instead
 
 		async removeCartItem(itemKey) {
-(
-				`🗑️ REMOVE ITEM: Starting removal of item with key ${itemKey}`
-			);
+			`🗑️ REMOVE ITEM: Starting removal of item with key ${itemKey}`;
 
 			// Prevent multiple simultaneous removal attempts
 			if (this.isRemovingItem) {
@@ -5233,9 +5199,7 @@
 						return;
 					}
 				} else {
-(
-						`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`
-					);
+					`🗑️ REMOVE ITEM: Processing item removal for key ${itemKey}`;
 
 					// Get current cart data to check if this is a gift box item
 					const currentCartData = await this.fetchUpdatedCartData();
@@ -5253,9 +5217,7 @@
 						);
 
 					if (isGiftBoxItem) {
-(
-							`🎁 Removing gift box item with key ${itemKey} directly`
-						);
+						`🎁 Removing gift box item with key ${itemKey} directly`;
 						// For gift box items, remove only this specific item using the key as id
 						const response = await fetch("/cart/change.js", {
 							method: "POST",
@@ -5286,9 +5248,7 @@
 						await this.updateCheckoutViewWithCartData(cartData);
 						cartData.checkoutViewAlreadyUpdated = true;
 					} else {
-(
-							`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`
-						);
+						`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`;
 
 						// Find associated gift boxes BEFORE removing the main item
 						const associatedGiftBoxKeys =
@@ -5297,10 +5257,8 @@
 								currentCartData
 							);
 
-(
-							`🗑️ REMOVE ITEM: Found ${associatedGiftBoxKeys.length} associated gift boxes to remove:`,
-							associatedGiftBoxKeys
-						);
+						`🗑️ REMOVE ITEM: Found ${associatedGiftBoxKeys.length} associated gift boxes to remove:`,
+							associatedGiftBoxKeys;
 
 						// Remove the main item first using the key as id
 						const response = await fetch("/cart/change.js", {
@@ -5328,24 +5286,18 @@
 
 						// Remove associated gift boxes
 						if (associatedGiftBoxKeys.length > 0) {
-(
-								`🎁 Removing ${associatedGiftBoxKeys.length} associated gift boxes`
-							);
-(`🎁 Gift box keys to remove:`, associatedGiftBoxKeys);
+							`🎁 Removing ${associatedGiftBoxKeys.length} associated gift boxes`;
+							`🎁 Gift box keys to remove:`, associatedGiftBoxKeys;
 
 							for (const giftBoxKey of associatedGiftBoxKeys) {
-(
-									`🎁 Attempting to remove gift box with key: ${giftBoxKey}`
-								);
-(
-									`🎁 Request body:`,
+								`🎁 Attempting to remove gift box with key: ${giftBoxKey}`;
+								`🎁 Request body:`,
 									JSON.stringify({
 										id: giftBoxKey,
 										quantity: 0,
 										sections: "cart-icon-bubble",
 										sections_url: window.location.pathname,
-									})
-								);
+									});
 								try {
 									const giftBoxResponse = await fetch("/cart/change.js", {
 										method: "POST",
@@ -5361,17 +5313,12 @@
 										}),
 									});
 
-(
-										`🎁 Gift box removal response status:`,
-										giftBoxResponse.status
-									);
+									`🎁 Gift box removal response status:`,
+										giftBoxResponse.status;
 
 									if (giftBoxResponse.ok) {
 										const responseData = await giftBoxResponse.json();
-(
-											`✅ Removed gift box ${giftBoxKey}`,
-											responseData
-										);
+										`✅ Removed gift box ${giftBoxKey}`, responseData;
 
 										// Update cart icon bubble with the latest response
 										this.updateCartIconBubble(responseData);
@@ -5393,12 +5340,10 @@
 								}
 							}
 
-(
-								`🎁 Finished removing gift boxes, fetching updated cart data...`
-							);
+							`🎁 Finished removing gift boxes, fetching updated cart data...`;
 							// Fetch updated cart data after removing gift boxes (for checkout view update)
 							const updatedCartData = await this.fetchUpdatedCartData();
-(`🎁 Updated cart data:`, updatedCartData);
+							`🎁 Updated cart data:`, updatedCartData;
 
 							// Use updated cart data for checkout view and replace cartData
 							if (updatedCartData) {
@@ -5409,7 +5354,7 @@
 								cartData.checkoutViewAlreadyUpdated = true;
 							}
 						} else {
-(`🎁 No gift boxes to remove`);
+							`🎁 No gift boxes to remove`;
 							// Update checkout view for single item removal (no gift boxes)
 							await this.updateCheckoutViewWithCartData(cartData);
 							cartData.checkoutViewAlreadyUpdated = true;
@@ -6134,7 +6079,9 @@
 	function initializeModals() {
 		// Prevent duplicate initialization
 		if (window.MiniATCModal && window.MiniATCModal._initialized) {
-			console.warn("⚠️ Mini ATC Modal already initialized, skipping duplicate initialization");
+			console.warn(
+				"⚠️ Mini ATC Modal already initialized, skipping duplicate initialization"
+			);
 			return window.MiniATCModal.getAllInstances();
 		}
 
@@ -6151,7 +6098,7 @@
 
 			const instance = new MiniATCModal(modal);
 			instances.set(modal.id, instance);
-			
+
 			// Store reference on the modal element to prevent duplicate initialization
 			modal._miniATCInstance = instance;
 
@@ -6163,7 +6110,7 @@
 		// Global API
 		window.MiniATCModal = {
 			_initialized: true,
-			
+
 			getInstance(modalId) {
 				return instances.get(modalId);
 			},
@@ -6197,7 +6144,9 @@
 
 	// Initialize when DOM is ready - use a single approach
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initializeModals, { once: true });
+		document.addEventListener("DOMContentLoaded", initializeModals, {
+			once: true,
+		});
 	} else {
 		// DOM already loaded, initialize immediately
 		initializeModals();
@@ -6244,17 +6193,13 @@
 			const triggers = document.querySelectorAll(
 				`[data-open-design-modal="${this.modalId}"]`
 			);
-(
-				`[DesignPreviewModal] Found ${triggers.length} trigger(s) for modal: ${this.modalId}`
-			);
+			`[DesignPreviewModal] Found ${triggers.length} trigger(s) for modal: ${this.modalId}`;
 
 			triggers.forEach((trigger) => {
 				trigger.addEventListener("click", (e) => {
 					e.preventDefault();
 					e.stopPropagation();
-(
-						`[DesignPreviewModal] Trigger clicked for modal: ${this.modalId}`
-					);
+					`[DesignPreviewModal] Trigger clicked for modal: ${this.modalId}`;
 					this.open();
 				});
 			});
@@ -6355,13 +6300,11 @@
 		open() {
 			// Prevent opening if already active
 			if (this.modal.classList.contains("design-preview-modal--active")) {
-(
-					`[DesignPreviewModal] Modal ${this.modalId} already open, ignoring open request`
-				);
+				`[DesignPreviewModal] Modal ${this.modalId} already open, ignoring open request`;
 				return;
 			}
 
-(`[DesignPreviewModal] Opening modal: ${this.modalId}`);
+			`[DesignPreviewModal] Opening modal: ${this.modalId}`;
 			this.modal.classList.add("design-preview-modal--active");
 			this.modal.setAttribute("aria-hidden", "false");
 			document.body.style.overflow = "hidden";
@@ -6385,11 +6328,11 @@
 
 			try {
 				this.isLoading = true;
-(`[DesignPreviewModal] Fetching product images...`);
+				`[DesignPreviewModal] Fetching product images...`;
 
 				// Get vessel selections from POMC system
 				if (!window.pomcSystem) {
-(`[DesignPreviewModal] POMC system not found`);
+					`[DesignPreviewModal] POMC system not found`;
 					this.showNoImagesMessage();
 					return;
 				}
@@ -6404,10 +6347,8 @@
 					}
 				});
 
-(
-					`[DesignPreviewModal] Found ${productHandles.length} product handle(s):`,
-					productHandles
-				);
+				`[DesignPreviewModal] Found ${productHandles.length} product handle(s):`,
+					productHandles;
 
 				if (productHandles.length === 0) {
 					this.showNoImagesMessage();
@@ -6422,9 +6363,7 @@
 				const products = await Promise.all(productPromises);
 				const validProducts = products.filter((product) => product !== null);
 
-(
-					`[DesignPreviewModal] Fetched ${validProducts.length} valid product(s)`
-				);
+				`[DesignPreviewModal] Fetched ${validProducts.length} valid product(s)`;
 
 				// Update the swiper with product images
 				this.updateSwiperImages(validProducts);
@@ -6493,9 +6432,7 @@
 				}
 			});
 
-(
-				`[DesignPreviewModal] Added ${swiperWrapper.children.length} featured image slide(s)`
-			);
+			`[DesignPreviewModal] Added ${swiperWrapper.children.length} featured image slide(s)`;
 
 			// Update swiper if it exists
 			if (this.swiper) {
@@ -6537,7 +6474,7 @@
 				return;
 			}
 
-(`[DesignPreviewModal] Closing modal: ${this.modalId}`);
+			`[DesignPreviewModal] Closing modal: ${this.modalId}`;
 			this.modal.classList.remove("design-preview-modal--active");
 			this.modal.setAttribute("aria-hidden", "true");
 			document.body.style.overflow = "";
@@ -6563,7 +6500,7 @@
 			instances.push(instance);
 
 			// Log initialization for debugging
-(`[DesignPreviewModal] Initialized modal: ${modal.id}`);
+			`[DesignPreviewModal] Initialized modal: ${modal.id}`;
 		});
 
 		return instances;
