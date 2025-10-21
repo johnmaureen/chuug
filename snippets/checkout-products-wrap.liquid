@@ -1,0 +1,262 @@
+{% comment %}
+  Checkout Products Wrap Component
+  
+  A pixel-perfect implementation of the checkout product toggle component
+  based on Figma design specifications.
+  
+  Usage:
+  {% render 'checkout-products-wrap', item: cart_item %}
+{% endcomment %}
+
+{% comment %} Check if this is an add-on item that should be grouped with a vessel {% endcomment %}
+{% assign is_addon = false %}
+{% for property in item.properties %}
+  {% if property.first == '_Add-on' %}
+    {% assign is_addon = true %}
+  {% endif %}
+{% endfor %}
+
+{% comment %} Only render main vessel items, not add-ons (they'll be rendered within vessel items) {% endcomment %}
+{% unless is_addon %}
+<div class="checkout-product-item-wrap">
+
+  <div class="checkout-products-wrap" data-item-id="{{ item.id }}">
+    <div class="checkout-products-wrap__container">
+      <!-- Product Image Section -->
+      <div class="checkout-products-wrap__image">
+        <div class="checkout-products-wrap__image-container">
+          {% if item.image %}
+            <img 
+              src="{{ item.image | image_url: width: 128, height: 128 }}"
+              alt="{{ item.image.alt | escape }}"
+              width="128"
+              height="128"
+              loading="lazy"
+              class="checkout-products-wrap__product-image"
+            />
+          {% else %}
+            <div class="checkout-products-wrap__placeholder">
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Product Details Section -->
+      <div class="checkout-products-wrap__details">
+        <!-- Product Title and Delete Button -->
+        <div class="checkout-products-wrap__header">
+          <h3 class="checkout-products-wrap__title">
+            {{ item.product.title }}
+          </h3>
+          <button 
+            type="button" 
+            class="checkout-products-wrap__delete"
+            data-remove-item="{{ item.key }}"
+            aria-label="Remove {{ item.product.title }} from cart"
+          >
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Product Options/Chips - Simplified Display -->
+        <div class="checkout-products-wrap__options">
+          {% comment %} Show only essential product details like in the reference images {% endcomment %}
+          {% if item.product.title contains 'CHUUG' or item.product.title contains 'Chuug' %}
+            {% comment %} Find engraving text from properties {% endcomment %}
+            {% assign engraving_text = '' %}
+            {% for property in item.properties %}
+              {% if property.first contains 'Engraving' %}
+                {% assign engraving_text = property.last %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+            
+            {% comment %} Show monogram information if present {% endcomment %}
+            {% if engraving_text != blank %}
+              <div class="checkout-products-wrap__option-chip">
+                Monogram Initials: {{ engraving_text }}
+              </div>
+            {% else %}
+              <div class="checkout-products-wrap__option-chip">
+                Monogram Initials: N/A
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        <!-- Add-on Products Section -->
+        {% comment %} 
+          With the new interleaved cart order, add-ons will appear immediately after their vessels.
+          We'll check if the next item in the cart is an add-on for this vessel.
+        {% endcomment %}
+        {% assign current_vessel_number = null %}
+        {% for property in item.properties %}
+          {% if property.first contains 'Vessel' and property.first contains 'Product' %}
+            {% assign vessel_property_parts = property.first | split: ' ' %}
+            {% comment %} Handle both "_Vessel" and "Vessel" formats {% endcomment %}
+            {% if vessel_property_parts.size >= 2 %}
+              {% assign current_vessel_number = vessel_property_parts[1] %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        {% if current_vessel_number %}
+          {% comment %} Find the next item in cart that might be an add-on for this vessel {% endcomment %}
+          {% assign found_current_item = false %}
+          {% for cart_item in cart.items %}
+            {% if found_current_item %}
+              {% comment %} Check if this next item is an add-on for the current vessel {% endcomment %}
+              {% assign is_addon_for_vessel = false %}
+              {% for property in cart_item.properties %}
+                {% if property.first == '_Add-on' and property.last == 'Premium Gift Box' %}
+                  {% for vessel_property in cart_item.properties %}
+                    {% if vessel_property.first == '_Vessel Number' and vessel_property.last == current_vessel_number %}
+                      {% assign is_addon_for_vessel = true %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+              
+              {% if is_addon_for_vessel %}
+                <div class="checkout-products-wrap__addon">
+                  <div class="checkout-products-wrap__addon-item">
+                    <div class="checkout-products-wrap__addon-icon">🎁</div>
+                    <div class="checkout-products-wrap__addon-details">
+                      <span class="checkout-products-wrap__addon-title">Premium Gift Box</span>
+                      <span class="checkout-products-wrap__addon-price">{{ cart_item.final_price | money }}</span>
+                    </div>
+                    <button 
+                      type="button" 
+                      class="checkout-products-wrap__addon-remove"
+                      data-remove-item="{{ cart_item.key }}"
+                      aria-label="Remove Premium Gift Box from cart"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 4H3H13" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5 4V3C5 2.44772 5.44772 2 6 2H9C9.55228 2 10 2.44772 10 3V4M12 4V13C12 13.5523 11.5523 14 11 14H4C3.44772 14 3 13.5523 3 13V4H12Z" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7 7V11" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 7V11" stroke="#969393" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                {% break %}
+              {% else %}
+                {% comment %} If next item is not an add-on for this vessel, stop looking {% endcomment %}
+                {% break %}
+              {% endif %}
+            {% endif %}
+            
+            {% comment %} Mark when we find the current item {% endcomment %}
+            {% if cart_item.id == item.id %}
+              {% assign found_current_item = true %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        <!-- Pricing Section -->
+        <div class="checkout-products-wrap__pricing">
+          {% if item.original_price != item.final_price %}
+            <span class="checkout-products-wrap__current-price">
+              {{ item.final_price | money }}
+            </span>
+            <span class="checkout-products-wrap__original-price">
+              {% if item.properties["_Compare At Price"] %}
+                {{ item.properties["_Compare At Price"] | money }}
+              {% elsif item.variant.compare_at_price and item.variant.compare_at_price > item.original_price %}
+                {{ item.variant.compare_at_price | money }}
+              {% else %}
+                {{ item.original_price | money }}
+              {% endif %}
+            </span>
+          {% else %}
+            <span class="checkout-products-wrap__current-price">
+              {{ item.original_price | money }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Premium Gift Box - Hidden by default -->
+  {% assign show_gift_box = false %}
+  {% assign gift_box_item = null %}
+  
+  
+  <!-- Check if Premium Gift Box is mentioned in cart note or attributes -->
+  {% if cart.note contains 'Premium Gift Box' or cart.attributes['Premium Gift Box'] %}
+    {% assign show_gift_box = true %}
+  {% endif %}
+  
+  <!-- Look for actual gift box item in cart -->
+  {% for gift_item in cart.items %}
+    {% if gift_item.product.title contains 'Premium Gift Box' or gift_item.product.title contains 'Gift Box' %}
+      {% assign show_gift_box = true %}
+      {% assign gift_box_item = gift_item %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+  
+  <!-- Gift box container is now hidden by default - show_gift_box remains false -->
+  
+  
+  {% if show_gift_box %}
+    <div class="premium-gift-box">
+      <div class="premium-gift-box__container">
+        <!-- Product Image -->
+        <div class="premium-gift-box__image">
+          {% if gift_box_item and gift_box_item.image %}
+            <img src="{{ gift_box_item.image | image_url: width: 71, height: 89 }}" alt="{{ gift_box_item.image.alt | escape }}" width="71" height="89" />
+          {% else %}
+            <img src="{{ 'premium-gift-box.png' | asset_url }}" alt="Premium Gift Box & Wrap" width="71" height="89" />
+          {% endif %}
+        </div>
+        
+        <!-- Content Area -->
+        <div class="premium-gift-box__content">
+          <div class="premium-gift-box__details">
+            <div class="premium-gift-box__text">
+              <h4 class="premium-gift-box__title">
+                {% if gift_box_item %}
+                  {{ gift_box_item.product.title }}
+                {% else %}
+                  Premium Gift Box & Wrap<br>With All CHUUG Orders
+                {% endif %}
+              </h4>
+            </div>
+            <div class="premium-gift-box__price" data-price="200">
+              {% if gift_box_item %}
+                {{ gift_box_item.final_price | money }}
+              {% else %}
+                {{ 200 | money }}
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Toggle Section -->
+          <button 
+            type="button" 
+            class="checkout-products-wrap__delete"
+            data-remove-item="{% if gift_box_item %}{{ gift_box_item.key }}{% else %}gift-box{% endif %}"
+            aria-label="Remove Premium Gift Box from cart"
+          >
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endunless %}

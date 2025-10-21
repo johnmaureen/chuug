@@ -6,26 +6,53 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link
-  href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Gabarito:wght@400..900&display=swap"
   rel="stylesheet"
+  media="print"
+  onload="this.media='all'"
 >
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+{% comment %} Tailwind CDN removed - causes 200ms delay and 20+ errors. Use custom CSS instead {% endcomment %}
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+{% comment %} Preload LCP image for faster rendering - saves ~650ms {% endcomment %}
+{% for block in section.blocks limit: 1 %}
+  {%- if block.type == 'main_carousel_image' -%}
+    <link rel="preload" as="image" href="{{ block.settings.carousel_image | image_url }}" fetchpriority="high">
+  {%- endif -%}
+{% endfor %}
 
 {{ 'pdp-chuug-vessel.css' | asset_url | stylesheet_tag }}
 {{ 'flash-section.css' | asset_url | stylesheet_tag }}
 
-{% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
-{% assign dusk_natural = all_products[section.settings.dusk_natural] %}
-{% assign dawn_charcoal = all_products[section.settings.dawn_charcoal] %}
-{% assign dawn_natural = all_products[section.settings.dawn_natural] %}
-{% assign midnight_charcoal = all_products[section.settings.midnight_charcoal] %}
-{% assign midnight_natural = all_products[section.settings.midnight_natural] %}
+<script src="{{ 'pdp-chuug-vessel.js' | asset_url }}" defer></script>
+
+{% comment %} Detect market based on currency {% endcomment %}
+{% assign current_currency = cart.currency.iso_code | default: 'GBP' %}
+
+{% comment %} Assign products based on market {% endcomment %}
+{% if current_currency == 'USD' %}
+  {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal_us] %}
+  {% assign dusk_natural = all_products[section.settings.dusk_natural_us] %}
+  {% assign dawn_charcoal = all_products[section.settings.dawn_charcoal_us] %}
+  {% assign dawn_natural = all_products[section.settings.dawn_natural_us] %}
+  {% assign midnight_charcoal = all_products[section.settings.midnight_charcoal_us] %}
+  {% assign midnight_natural = all_products[section.settings.midnight_natural_us] %}
+{% elsif current_currency == 'AUD' %}
+  {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal_aus] %}
+  {% assign dusk_natural = all_products[section.settings.dusk_natural_aus] %}
+  {% assign dawn_charcoal = all_products[section.settings.dawn_charcoal_aus] %}
+  {% assign dawn_natural = all_products[section.settings.dawn_natural_aus] %}
+  {% assign midnight_charcoal = all_products[section.settings.midnight_charcoal_aus] %}
+  {% assign midnight_natural = all_products[section.settings.midnight_natural_aus] %}
+{% else %}
+  {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
+  {% assign dusk_natural = all_products[section.settings.dusk_natural] %}
+  {% assign dawn_charcoal = all_products[section.settings.dawn_charcoal] %}
+  {% assign dawn_natural = all_products[section.settings.dawn_natural] %}
+  {% assign midnight_charcoal = all_products[section.settings.midnight_charcoal] %}
+  {% assign midnight_natural = all_products[section.settings.midnight_natural] %}
+{% endif %}
 
 <script>
   window.pdp_chuug_vessel = {
@@ -49,7 +76,7 @@
 
 <section
   id="hero-section"
-  class="tw-bg-chuug-dark-navy tw-pt-5 md:tw-pt-24 tw-pb-[3rem] md:tw-pb-[12rem] tw-overflow-hidden"
+  class="tw-bg-chuug-dark-navy tw-pt-5 md:tw-pt-24 tw-pb-[3rem] tw-overflow-hidden"
 >
   <div class="tw-flex tw-flex-col tw-gap-x-20 tw-container lg:tw-flex-row lg:tw-justify-center lg:tw-gap-x-[1rem] xl:tw-gap-x-20">
     <div class="tw-flex tw-flex-col tw-w-full lg:tw-w-[32.5em] tw-gap-y-[2rem]">
@@ -68,6 +95,11 @@
                       alt="{{ section.settings.hero_image_alt }}"
                       width="100%"
                       height="100%"
+                      {%- if forloop.first -%}
+                        fetchpriority="high"
+                      {%- else -%}
+                        loading="lazy"
+                      {%- endif -%}
                     >
                   </div>
               {%- endcase -%}
@@ -82,6 +114,7 @@
               width="100%"
               height="100%"
               class="tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]"
+              loading="lazy"
             >
             <p class="tw-absolute tw-text-center tw-text-black tw-top-[0.7rem] tw-leading-[1.8rem] tw-font-bold tw-text-[1.4rem] md:tw-mt-[0.8rem] md:tw-w-[6rem] ">
               UP TO <span class="discount">{{ section.settings.discount_number }}%</span> OFF
@@ -102,6 +135,7 @@
                     alt="{{ block.settings.image_alt }}"
                     width="100%"
                     height="100%"
+                    loading="lazy"
                   >
                 </div>
             {%- endcase -%}
@@ -126,6 +160,7 @@
             alt="Review logo"
             width="113"
             height="29"
+            loading="lazy"
           >
           <span class="tw-text-white tw-text-[1.4rem] tw-leading-[1] tw-whitespace-nowrap lg:tw-text-[1.6rem] lg:tw-leading-[1.5]">
             {{- section.settings.review_text -}}
@@ -146,71 +181,25 @@
         {% endfor %}
       </ul>
       <div class="tw-border-t-white tw-border-t-4 tw-border-dotted tw-h-0">&nbsp;</div>
-      <div class="tw-bg-chuug-yankees-blue tw-p-4 tw-rounded-[1.25em] tw-flex tw-flex-col tw-gap-y-4 ">
-        <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
-          <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
-            <span>{{ section.settings.vessel_question }}</span>
-            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.vessel_question_tooltip_text %}
-          </div>
+      <div class="pomc-wrapper tw-bg-chuug-yankees-blue tw-flex tw-flex-col tw-gap-y-4 ">
+        <!-- POMC System Integration -->
+        {% render 'pomc-system', product: product, section: section %}
+      </div>
 
-          <div class="tw-flex tw-flex-wrap tw-items-end tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-px-2 md:tw-flex-nowrap">
-            <div class="tw-w-full">
-              <label
-                class="tw-cursor-pointer"
-              >
-                <div
-                  onclick="setProductAmount('1')" class="product_amount_label_1 tw-h-[7rem] tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
-
-                >
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
-                    >1X</span
-                  >
-                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
-                    <span
-                      class="product_amount_label_1_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
-                      no_engraving_compare_at_price="{{ section.settings.one_chuug_product.compare_at_price | money }}"
-                      engraving_compare_at_price="{{  section.settings.one_chuug_product.variants[1].compare_at_price | money }}"
-                    >
-                      {{ section.settings.one_chuug_product.variants[0].compare_at_price | money }}
-                    </span>
-                    <span
-                      class="product_amount_label_1_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
-                      no_engraving_price="{{ section.settings.one_chuug_product.price | money }}"
-                      engraving_price="{{ section.settings.one_chuug_product.variants[1].price | money }}"
-                    >
-                      {{ section.settings.one_chuug_product.variants[0].price | money }}
-                    </span>
-                  </div>
-                </div>
-              </label>
+      <div class="flash-section">
+        <!-- Flash Sale Section - Using Global Countdown Timer -->
+        <div class="flash-sale-container">
+          <p class="flash-sale-text">Sale ends in</p>
+          <div class="flash-sale-divider"></div>
+          <div class="flash-countdown-timer chuug-countdown">
+            <div class="flash-timer-unit">
+              <span class="flash-timer-number" data-countdown-hours>00</span>
+              <span class="flash-timer-label">HOURS</span>
             </div>
-            <div class="tw-w-full">
-              <label
-                onclick="setProductAmount('2')"
-                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;
-              >
-                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
-                    >2X</span
-                  >
-                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
-                    <span
-                      class="product_amount_label_2_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
-                      no_engraving_compare_at_price="{{ section.settings.two_chuug_product.compare_at_price | money }}"
-                      engraving_compare_at_price="{{ section.settings.two_chuug_product.variants[1].compare_at_price | money }}"
-                    >
-                      {{ section.settings.two_chuug_product.variants[0].compare_at_price | money }}
-                    </span>
-                    <span
-                      class="product_amount_label_2_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
-                      no_engraving_price="{{ section.settings.two_chuug_product.price | money }}"
-                      engraving_price="{{ section.settings.two_chuug_product.variants[1].price | money }}"
-                    >
-                      {{- section.settings.two_chuug_product.variants[0].price | money -}}
-                    </span>
-                  </div>
-                </div>
-              </label>
+            <span class="flash-timer-separator">:</span>
+            <div class="flash-timer-unit">
+              <span class="flash-timer-number" data-countdown-minutes>00</span>
+              <span class="flash-timer-label">MINUTES</span>
             </div>
             <div class="tw-w-full">
               <label
@@ -243,39 +232,22 @@
             </div>
           </div>
         </div>
-        <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
-          <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
-            <span>{{ section.settings.engraving_question }}</span>
-            {% render 'icon-question-mark-tooltip', tooltip_text: section.settings.engraving_question_tooltip_text %}
-          </div>
 
-          <div class="tw-flex tw-items-center tw-gap-x-[0.62em] tw-px-2">
-            <div class="tw-w-full">
-              <label
-                class="tw-cursor-pointer"
-              >
-                <div
-                  class="product_variant_0 active tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
-                  onclick="setEngraving(0);"
-                >
-                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">NO</span>
+        <!-- USP Grid Section -->
+        <div class="usp-grid">
+          {% for block in section.blocks %}
+            {%- case block.type -%}
+              {%- when 'usp_item' -%}
+                <div class="usp-item">
+                  <div class="usp-icon">{{ block.settings.usp_icon }}</div>
+                  <div class="usp-text">{{ block.settings.usp_text }}</div>
                 </div>
-              </label>
-            </div>
-            <div class="tw-w-full">
-              <label
-                class="tw-cursor-pointer"
-              >
-                <div
-                  class="product_variant_1 tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
-                  onclick="setEngraving(1);"
-                >
-                  <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">YES</span>
-                </div>
-              </label>
-            </div>
-          </div>
-        </div>
+          {%- endcase -%}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
         <div class="customize-your-vessel tw-flex tw-flex-col tw-gap-y-2 tw-text-white tw-text-[1.6rem] tw-font-semibold">
           <div class="tw-flex tw-gap-[1rem]">
             <span>{{ section.settings.customise_vessel_question }}</span>
@@ -389,6 +361,17 @@
             </div>
           {% endfor %}
         </div>
+        <div>
+          <div class="your-selection tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
+            <p class="tw-text-white ">Your Selection</p>
+            <!-- Dynamic vessel count - class will be set by JavaScript -->
+            <div class="selection-result-wrap">
+
+              <p class="no-selection-text">Your selection will appear here</p>
+
+            </div>
+          </div>
+        </div>
         <div class="tw-flex tw-flex-col">
 
 <!-- Duties badge (hidden by default, only shows in US) -->
@@ -426,6 +409,9 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
       <!-- Flash Section -->
 <section class="tw-bg-chuug-dark-navy tw-py-[2rem] md:tw-py-[3rem]">
@@ -494,7 +480,7 @@
   </div>
 
   <div class="tw-flex tw-justify-center tw-items-center tw-w-full tw-mt-[3rem] tw-mb-[4rem] tw-container lg:tw-mt-[6rem]">
-    <div class="tw-bg-chuug-yankees-blue tw-rounded-3xl tw-w-full tw-max-w-[60em] tw-h-[10rem] tw-py-4 tw-px-7 tw-flex tw-items-center tw-gap-x-[3.5em]">
+    <div class="tw-bg-chuug-yankees-blue tw-rounded-3xl tw-w-full tw-max-w-full tw-h-[10rem] tw-py-4 tw-px-7 tw-flex tw-items-center tw-gap-x-[3.5em]">
       <div class="swiper bottom-autoplay-carousel tw-h-[10rem]">
         <div class="swiper-wrapper">
           {% for block in section.blocks %}
@@ -507,6 +493,7 @@
                     alt="{{ section.settings.botttom_image_alt }}"
                     width="100%"
                     height="100%"
+                    loading="lazy"
                   >
                 </div>
             {%- endcase -%}
@@ -840,21 +827,56 @@ function addEventListenerToMonogramInitialsInput() {
     hideInputs(productAmount);
     updateCarouselsImages();
     disableCTAbutton(productAmount);
+    
+    // Also validate button status with POMC system and update multiplier
+    if (window.pomcSystem) {
+      // Update multiplier to match product amount
+      window.pomcSystem.setMultiplier(parseInt(productAmount));
+      
+      // Update selected product amount data for mini ATC modal
+      window.pomcSystem.setSelectedProductAmount(parseInt(productAmount));
+      
+      const vesselValidation = window.pomcSystem.validateAllVesselsForAddToCart();
+      const cta_button = document.querySelector('.cta-button');
+      const incompletText = document.querySelector('.incompleted-inputs-text');
+      
+      if (!vesselValidation.isValid) {
+        if (cta_button) {
+          cta_button.setAttribute('disabled', true);
+        }
+        if (incompletText) {
+          incompletText.style.display = 'block';
+        }
+      } else {
+        // Only enable if other validations also pass
+        const originalValidation = thereAreNoIncompleteInputs(productAmount);
+        if (originalValidation && cta_button) {
+          cta_button.removeAttribute('disabled');
+          if (incompletText) {
+            incompletText.style.display = 'none';
+          }
+        }
+      }
+    }
   }
 
   function disableCTAbutton(productAmount) {
     const cta_button = document.querySelector('.cta-button');
-    const incompleted_inputs_text = document.querySelector('.incompleted-inputs-text');
+    const incompletText = document.querySelector('.incompleted-inputs-text');
 
-    if (!thereAreNoIncompleteInputs(productAmount)) {
+    // Check both the original validation and POMC vessel validation
+    const originalValidation = thereAreNoIncompleteInputs(productAmount);
+    const pomcValidation = window.pomcSystem ? window.pomcSystem.validateAllVesselsForAddToCart().isValid : false;
+    
+    if (!originalValidation || !pomcValidation) {
       cta_button.setAttribute('disabled', true);
-      if (incompleted_inputs_text && incompleted_inputs_text.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.remove('tw-hidden');
+      if (incompletText) {
+        incompletText.style.display = 'block';
       }
     } else {
       cta_button.removeAttribute('disabled');
-      if (incompleted_inputs_text && !incompleted_inputs_text.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.add('tw-hidden');
+      if (incompletText) {
+        incompletText.style.display = 'none';
       }
     }
   }
@@ -889,6 +911,184 @@ function addEventListenerToMonogramInitialsInput() {
     toggleClass('monogram_initials', 'tw-hidden', true);
     updateCarouselsImages();
     updatePrices(index);
+  }
+
+  function showVesselValidationError(message) {
+    // Use existing incompleted-inputs-text element
+    const errorElement = document.querySelector('.incompleted-inputs-text');
+    const addButton = document.getElementById('add-multiple-products');
+    
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.classList.remove('tw-hidden');
+    }
+    
+    // Disable the button when validation fails
+    if (addButton) {
+      addButton.setAttribute('disabled', true);
+    }
+  }
+
+  function hideVesselValidationError() {
+    // Enable the button and hide the error message
+    const addButton = document.getElementById('add-multiple-products');
+    const errorElement = document.querySelector('.incompleted-inputs-text');
+    
+    if (addButton) {
+      addButton.removeAttribute('disabled');
+    }
+    
+    if (errorElement) {
+      errorElement.style.display = 'none';
+    }
+  }
+
+  // Expose functions globally for POMC system to use
+  window.showVesselValidationError = showVesselValidationError;
+  window.hideVesselValidationError = hideVesselValidationError;
+  window.thereAreNoIncompleteInputs = thereAreNoIncompleteInputs;
+  
+  // Set current product ID and handle for POMC system
+  // POMC system loads synchronously with high priority, so it's available immediately
+  if (window.pomcSystem) {
+    window.pomcSystem.setCurrentProductId({{ product.id }});
+    window.pomcSystem.setCurrentProductHandle('{{ product.handle }}');
+  }
+
+  // Add event listener for the button when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const addMultipleProductsBtn = document.getElementById('add-multiple-products');
+    if (addMultipleProductsBtn) {
+      addMultipleProductsBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        handlePersonalizeVessel();
+      });
+    }
+  });
+
+  // Also listen for when the modal system is ready
+  document.addEventListener('miniATCModalReady', function() {
+    // Modal system ready
+  });
+
+  function handlePersonalizeVessel() {
+    if (window.pomcSystem) {
+      // Validate all vessels before proceeding
+      const validation = window.pomcSystem.validateAllVesselsForAddToCart();
+      if (!validation.isValid) {
+        showVesselValidationError(validation.message);
+        return;
+      }
+    } else {
+      return;
+    }
+    
+    // Find the mini ATC modal element on the page
+    const miniATCModal = document.querySelector('.mini-atc-modal');
+    
+    if (!miniATCModal) {
+      return;
+    }
+
+    const modalId = miniATCModal.id;
+    
+    // Try multiple approaches to open the modal
+    const tryOpenModal = () => {
+      // Method 1: Use the main MiniATCModal API
+      if (window.MiniATCModal && typeof window.MiniATCModal.getInstance === 'function') {
+        const instance = window.MiniATCModal.getInstance(modalId);
+        if (instance) {
+          instance.open('add-multiple-products');
+          return true;
+        }
+      }
+      
+      // Fallback: Use the openModal method
+      if (window.MiniATCModal && typeof window.MiniATCModal.openModal === 'function') {
+        window.MiniATCModal.openModal(modalId);
+        // Set context after opening
+        setTimeout(() => {
+          const instance = window.MiniATCModal.getInstance(modalId);
+          if (instance) {
+            instance.openingContext = 'add-multiple-products';
+          }
+        }, 10);
+        return true;
+      }
+      
+      // Method 2: Use the global helper function
+      if (window.openMiniATCModal && typeof window.openMiniATCModal === 'function') {
+        window.openMiniATCModal(modalId, 'add-multiple-products');
+        return true;
+      }
+      
+      return false;
+    };
+
+    // Try immediately
+    if (tryOpenModal()) {
+      return;
+    }
+
+    // If not available, wait for script to load with a more efficient approach
+    
+    // Listen for the modal ready event
+    document.addEventListener('miniATCModalReady', () => {
+      if (tryOpenModal()) {
+        return;
+      }
+    });
+    
+    // Method 3: Wait for the script to load by checking periodically (reduced retries)
+    let retryCount = 0;
+    const maxRetries = 10; // 1 second max (reduced from 2 seconds)
+    
+    const retryInterval = setInterval(() => {
+      retryCount++;
+      
+      if (tryOpenModal()) {
+        clearInterval(retryInterval);
+        return;
+      }
+      
+      if (retryCount >= maxRetries) {
+        clearInterval(retryInterval);
+        
+        // Method 4: Fallback - try to manually trigger the modal
+        if (miniATCModal) {
+          // Try to find the modal instance and call open() properly
+          const modalInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
+          if (modalInstance && typeof modalInstance.open === 'function') {
+            modalInstance.open();
+          } else {
+            miniATCModal.classList.add('mini-atc-modal--active');
+            miniATCModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Try to set isActive state on any available modal instance
+            setTimeout(() => {
+              const modalInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
+              if (modalInstance) {
+                modalInstance.isActive = true;
+                
+                // Manually trigger the fetchVesselSelectionsAndUpdateImages function
+                if (typeof modalInstance.fetchVesselSelectionsAndUpdateImages === 'function') {
+                  modalInstance.fetchVesselSelectionsAndUpdateImages();
+                }
+              } else {
+                // If still no instance, wait a bit more and try again
+                setTimeout(() => {
+                  const delayedInstance = window[`miniATCModal_${miniATCModal.dataset.modalId || miniATCModal.id}`];
+                  if (delayedInstance && typeof delayedInstance.fetchVesselSelectionsAndUpdateImages === 'function') {
+                    delayedInstance.fetchVesselSelectionsAndUpdateImages();
+                  }
+                }, 200);
+              }
+            }, 50); // Reduced timeout
+          }
+        }
+      }
+    }, 100);
   }
 
   function handleATCbutton() {
@@ -935,7 +1135,6 @@ function addEventListenerToMonogramInitialsInput() {
         window.location.href = '/cart';
       })
       .catch((error) => {
-        console.error('Error:', error);
         alert('There was a problem adding products to the cart.');
       });
   }
@@ -999,6 +1198,20 @@ function addEventListenerToMonogramInitialsInput() {
         changeProductAmountInputValue('3');
         document.querySelector('.product_amount_label_3').classList.add('active');
     }
+    
+    // Trigger charcoal price recalculation after product amount changes
+    if (window.pomcSystem) {
+      setTimeout(() => {
+        const upgradePrice = window.pomcSystem.getCharcoalUpgradePrice();
+        document.dispatchEvent(new CustomEvent("pomcCharcoalUpgradePrice", {
+          detail: {
+            upgradePrice: upgradePrice,
+            upgradePriceFormatted: window.pomcSystem.getCharcoalUpgradePriceFormatted(),
+            charcoalCount: Math.floor(upgradePrice / window.pomcSystem.CHARCOAL_UPGRADE_PRICE),
+          }
+        }));
+      }, 50);
+    }
   }
   
   function removeActiveClass() {
@@ -1039,12 +1252,16 @@ function addEventListenerToMonogramInitialsInput() {
       }
     });
 
-    if (thereAreNoIncompleteInputs(productAmount)){
+    // Check both the original validation and POMC vessel validation
+    const originalValidation = thereAreNoIncompleteInputs(productAmount);
+    const pomcValidation = window.pomcSystem ? window.pomcSystem.validateAllVesselsForAddToCart().isValid : false;
+    
+    if (originalValidation && pomcValidation){
       if (cta_button?.hasAttribute('disabled')) {
         cta_button.removeAttribute('disabled');
-        if (!incompleted_inputs_text?.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.add('tw-hidden');
-        }
+      }
+      if (incompleted_inputs_text) {
+        incompleted_inputs_text.style.display = 'none';
       }
     }
   }  
@@ -1181,14 +1398,23 @@ function addEventListenerToMonogramInitialsInput() {
     ];
   
     function getTextContentFromHTML(htmlString) {
+      // If the string doesn't contain HTML tags, return it wrapped in dualPrice
+      if (!htmlString || htmlString.indexOf('<') === -1) {
+        // Plain text price - wrap it in dualPrice span
+        return '<span class="dualPrice">' + htmlString + '</span>';
+      }
+      
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = htmlString;
       
       const dualPriceElement = tempDiv.querySelector('.dualPrice');
-      if (dualPriceElement && dualPriceElement.textContent) {
-        return dualPriceElement.textContent;
+      if (dualPriceElement) {
+        // Return the full HTML to preserve the dualPrice wrapper
+        return dualPriceElement.outerHTML;
       } else {
-        return htmlString;
+        // If no dualPrice element found but has HTML, wrap the text content
+        const textContent = tempDiv.textContent || htmlString;
+        return '<span class="dualPrice">' + textContent + '</span>';
       }
     }
   
@@ -1202,13 +1428,244 @@ function addEventListenerToMonogramInitialsInput() {
   
     const selectedLabel = product_amount === 1 ? labels[0] : product_amount === 2 ? labels[1] : labels[2];
     cta_product_price.innerHTML = selectedLabel.price.innerHTML;
+    
+    // Trigger charcoal price recalculation after engraving changes
+    if (window.pomcSystem) {
+      setTimeout(() => {
+        const upgradePrice = window.pomcSystem.getCharcoalUpgradePrice();
+        document.dispatchEvent(new CustomEvent("pomcCharcoalUpgradePrice", {
+          detail: {
+            upgradePrice: upgradePrice,
+            upgradePriceFormatted: window.pomcSystem.getCharcoalUpgradePriceFormatted(),
+            charcoalCount: Math.floor(upgradePrice / window.pomcSystem.CHARCOAL_UPGRADE_PRICE),
+          }
+        }));
+      }, 50);
+    }
+  }
+
+  // Store base prices (in cents) for charcoal upgrade calculations
+  // These prices are in the shop's default currency, but we need to handle currency conversion
+  const BASE_PRICES = {
+    one_no_engraving: {{ section.settings.one_chuug_product.price }},
+    one_engraving: {{ section.settings.one_chuug_product.variants[1].price }},
+    two_no_engraving: {{ section.settings.two_chuug_product.price }},
+    two_engraving: {{ section.settings.two_chuug_product.variants[1].price }},
+    three_no_engraving: {{ section.settings.three_chuug_product.price }},
+    three_engraving: {{ section.settings.three_chuug_product.variants[1].price }}
+  };
+  
+  // Get the shop's default currency (these prices are in this currency)
+  const SHOP_DEFAULT_CURRENCY = {{ shop.currency | json }};
+  const CURRENT_CURRENCY = window.CURRENT_CURRENCY || SHOP_DEFAULT_CURRENCY;
+
+  // Helper function to format money with fallback
+  function formatMoneyWithFallback(cents) {
+    // Try Shopify.formatMoney first
+    if (typeof Shopify !== 'undefined' && typeof Shopify.formatMoney === 'function') {
+      return Shopify.formatMoney(cents, "{{ shop.money_format }}");
+    }
+    
+    // Fallback: simple formatter
+    const dollars = (cents / 100).toFixed(2);
+    const moneyFormat = "{{ shop.money_format }}";
+    
+    // Replace {% raw %}{{amount}}{% endraw %} or {% raw %}{{ amount }}{% endraw %} with the dollar amount
+    if (moneyFormat.indexOf('{' + '{') !== -1) {
+      return moneyFormat.replace(/\{\{\s*amount\s*\}\}/g, dollars);
+    }
+    
+    // Default fallback
+    return '$' + dollars;
+  }
+
+  // Listen for charcoal upgrade price changes
+  document.addEventListener('pomcCharcoalUpgradePrice', function(e) {
+    
+    const upgradePrice = e.detail.upgradePrice; // in cents
+    const inputs = document.querySelector('.inputs');
+    if (!inputs) return;
+    
+    const variant_index = parseInt(inputs.getAttribute('variant_index'), 10);
+    const product_amount = parseInt(inputs.getAttribute('product_amount'), 10);
+    
+    // Determine which base prices to use
+    const isEngraving = variant_index === 1;
+    
+    // Check if we need currency conversion
+    const needsCurrencyConversion = CURRENT_CURRENCY !== SHOP_DEFAULT_CURRENCY;
+    
+    // Calculate new prices with upgrade
+    let newPriceForOne, newPriceForTwo, newPriceForThree;
+    
+    if (isEngraving) {
+      newPriceForOne = BASE_PRICES.one_engraving + upgradePrice;
+      newPriceForTwo = BASE_PRICES.two_engraving + upgradePrice;
+      newPriceForThree = BASE_PRICES.three_engraving + upgradePrice;
+    } else {
+      newPriceForOne = BASE_PRICES.one_no_engraving + upgradePrice;
+      newPriceForTwo = BASE_PRICES.two_no_engraving + upgradePrice;
+      newPriceForThree = BASE_PRICES.three_no_engraving + upgradePrice;
+    }
+    
+    // If currency conversion is needed, we need to get the correct prices for the current currency
+    if (needsCurrencyConversion) {
+      // Try to get current currency prices using CurrencyManager
+      if (window.CurrencyManager && window.CurrencyManager.fetchProductData) {
+        // Get the product IDs for the current amount
+        const productAmountData = window.pomcSystem?.getSelectedProductAmountData();
+        
+        if (productAmountData && productAmountData.id) {
+          
+          // Add timeout to prevent hanging
+          const fetchPromise = window.CurrencyManager.fetchProductData(productAmountData.id);
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Currency fetch timeout')), 3000)
+          );
+          
+          Promise.race([fetchPromise, timeoutPromise])
+            .then(productData => {
+              if (productData && productData.variants) {
+                const variants = productData.variants.edges.map(edge => edge.node);
+                const variantIndex = isEngraving ? 1 : 0;
+                const variant = variants[variantIndex];
+                
+                if (variant && variant.price) {
+                  const currentCurrencyBasePrice = Math.round(parseFloat(variant.price.amount) * 100); // Convert to cents
+                  
+                  // Update prices with current currency base price + upgrade price
+                  newPriceForOne = currentCurrencyBasePrice + upgradePrice;
+                  newPriceForTwo = currentCurrencyBasePrice + upgradePrice;
+                  newPriceForThree = currentCurrencyBasePrice + upgradePrice;
+                  
+                  // Update the CTA price with the converted price
+                  updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, e.detail);
+                } else {
+                  fallbackToSimpleCalculation();
+                }
+              } else {
+                fallbackToSimpleCalculation();
+              }
+            })
+            .catch(error => {
+              fallbackToSimpleCalculation();
+            });
+        } else {
+          fallbackToSimpleCalculation();
+        }
+      } else {
+        fallbackToSimpleCalculation();
+      }
+      
+      // Fallback function for when currency conversion fails
+      function fallbackToSimpleCalculation() {
+        // Try to extract current currency prices from existing price elements
+        const currentPrices = extractCurrentCurrencyPrices();
+        
+        if (currentPrices) {
+          // Use the extracted prices + upgrade price
+          newPriceForOne = currentPrices.one + upgradePrice;
+          newPriceForTwo = currentPrices.two + upgradePrice;
+          newPriceForThree = currentPrices.three + upgradePrice;
+        } else {
+          // Last resort: just use the upgrade price
+          newPriceForOne = upgradePrice;
+          newPriceForTwo = upgradePrice;
+          newPriceForThree = upgradePrice;
+        }
+        
+        updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, e.detail);
+      }
+      
+      // Helper function to extract current currency prices from page elements
+      function extractCurrentCurrencyPrices() {
+        try {
+          // Try to get prices from the vessel number labels (1x, 2x, 3x)
+          const onePriceEl = document.querySelector('.product_amount_label_1_price');
+          const twoPriceEl = document.querySelector('.product_amount_label_2_price');
+          const threePriceEl = document.querySelector('.product_amount_label_3_price');
+          
+          if (onePriceEl && twoPriceEl && threePriceEl) {
+            // Extract price text and convert to cents
+            const onePriceText = onePriceEl.textContent || onePriceEl.innerText;
+            const twoPriceText = twoPriceEl.textContent || twoPriceEl.innerText;
+            const threePriceText = threePriceEl.textContent || threePriceEl.innerText;
+            
+            // Parse prices (remove currency symbols and convert to cents)
+            const parsePrice = (priceText) => {
+              if (!priceText) return null;
+              
+              // Remove currency symbols and extract number
+              const cleanPrice = priceText.replace(/[^\d.,]/g, '');
+              const price = parseFloat(cleanPrice.replace(',', '.'));
+              
+              if (isNaN(price)) return null;
+              
+              // Convert to cents
+              return Math.round(price * 100);
+            };
+            
+            const onePrice = parsePrice(onePriceText);
+            const twoPrice = parsePrice(twoPriceText);
+            const threePrice = parsePrice(threePriceText);
+            
+            if (onePrice && twoPrice && threePrice) {
+              return {
+                one: onePrice,
+                two: twoPrice,
+                three: threePrice
+              };
+            }
+          }
+          
+          return null;
+        } catch (error) {
+          return null;
+        }
+      }
+      
+      return; // Exit early as we're handling the update asynchronously
+    }
+    
+    // For same currency, update normally
+    updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, e.detail);
+  });
+  
+  // Helper function to update CTA price with charcoal upgrade
+  function updateCTAPriceWithCharcoalUpgrade(product_amount, newPriceForOne, newPriceForTwo, newPriceForThree, eventDetail) {
+    // Determine engraving state from the inputs
+    const inputs = document.querySelector('.inputs');
+    const variant_index = inputs ? parseInt(inputs.getAttribute('variant_index'), 10) : 0;
+    const isEngraving = variant_index === 1;
+    
+    // Update CTA price based on current product amount
+    const cta_product_price = document.querySelector('.cta-product-price');
+    if (cta_product_price) {
+      let currentPrice;
+      if (product_amount === 1) {
+        currentPrice = newPriceForOne;
+      } else if (product_amount === 2) {
+        currentPrice = newPriceForTwo;
+      } else {
+        currentPrice = newPriceForThree;
+      }
+      cta_product_price.innerHTML = formatMoneyWithFallback(currentPrice);
+    }
+    
   }
 </script>
 
 <script>
   var bottom_autoplay_carousel;
 
-  document.addEventListener('DOMContentLoaded', (event) => {
+  // Function to initialize Swiper when library is ready
+  function initializeSwipers() {
+    if (typeof Swiper === 'undefined') {
+      // Swiper not loaded yet, wait and try again
+      setTimeout(initializeSwipers, 50);
+      return;
+    }
+
     const thumbs_swiper = new Swiper('.thumbsSlider', {
       slidesPerView: 5.5,
       freeMode: true,
@@ -1249,9 +1706,20 @@ function addEventListenerToMonogramInitialsInput() {
         1024: {
           slidesPerView: 4,
         },
+        1366: {
+          slidesPerView: 6,
+        },
       },
     });
-  });
+  }
+
+  // Start initialization when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSwipers);
+  } else {
+    // DOM already loaded
+    initializeSwipers();
+  }
 </script>
 
 <script>
@@ -1265,11 +1733,10 @@ function addEventListenerToMonogramInitialsInput() {
         }
       })
       .catch(err => {
-        console.error("Geo lookup failed:", err);
+        // Geo lookup failed silently
       });
   });
 </script>
-
 
 {% schema %}
 {
@@ -1347,10 +1814,24 @@ function addEventListenerToMonogramInitialsInput() {
       "info": "This is the product that we're going to use to display the two chuugs prices"
     },
     {
+      "type": "number",
+      "id": "discount_label_2x_amount",
+      "label": "Two Chuug Discount Amount",
+      "info": "The discount amount to show in the 2x discount label (will use same currency as product prices)",
+      "default": 39
+    },
+    {
       "type": "product",
       "id": "three_chuug_product",
       "label": "Three Chuug product",
       "info": "This is the product that we're going to use to display the three chuugs prices"
+    },
+    {
+      "type": "number",
+      "id": "discount_label_3x_amount",
+      "label": "Three Chuug Discount Amount",
+      "info": "The discount amount to show in the 3x discount label (will use same currency as product prices)",
+      "default": 45
     },
     {
       "type": "image_picker",
@@ -1414,40 +1895,124 @@ function addEventListenerToMonogramInitialsInput() {
       "label": "Natural rope image"
     },
     {
+      "type": "header",
+      "content": "Product Settings - Default Market (GBP, EUR, etc.)"
+    },
+    {
       "type": "product",
       "id": "dusk_charcoal",
-      "label": "Dusk Charcoal",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dusk Charcoal (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "dusk_natural",
-      "label": "Dusk Natural",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dusk Natural (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "dawn_charcoal",
-      "label": "Dawn Charcoal",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dawn Charcoal (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "dawn_natural",
-      "label": "Dawn Natural",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Dawn Natural (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "midnight_charcoal",
-      "label": "Midnight Charcoal",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Midnight Charcoal (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
     },
     {
       "type": "product",
       "id": "midnight_natural",
-      "label": "Midnight Natural",
-      "info": "This is the product from which we will retrieve the information."
+      "label": "Midnight Natural (Default)",
+      "info": "Product for default markets (GBP, EUR, etc.)"
+    },
+    {
+      "type": "header",
+      "content": "Product Settings - US Market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_charcoal_us",
+      "label": "Dusk Charcoal (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_natural_us",
+      "label": "Dusk Natural (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_charcoal_us",
+      "label": "Dawn Charcoal (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_natural_us",
+      "label": "Dawn Natural (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_charcoal_us",
+      "label": "Midnight Charcoal (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_natural_us",
+      "label": "Midnight Natural (US)",
+      "info": "Product for US market (USD)"
+    },
+    {
+      "type": "header",
+      "content": "Product Settings - Australia Market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_charcoal_aus",
+      "label": "Dusk Charcoal (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dusk_natural_aus",
+      "label": "Dusk Natural (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_charcoal_aus",
+      "label": "Dawn Charcoal (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "dawn_natural_aus",
+      "label": "Dawn Natural (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_charcoal_aus",
+      "label": "Midnight Charcoal (AUS)",
+      "info": "Product for Australia market (AUD)"
+    },
+    {
+      "type": "product",
+      "id": "midnight_natural_aus",
+      "label": "Midnight Natural (AUS)",
+      "info": "Product for Australia market (AUD)"
     },
       {
       "type": "text",

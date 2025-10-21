@@ -1,0 +1,148 @@
+/* Flash Sale Styles */
+.flash-section {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.flash-sale-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 20px;
+	background: #a43223;
+	border: 2px solid #ffffff;
+	border-radius: 20px;
+}
+
+@media (min-width: 768px) {
+	.flash-sale-container {
+		padding: 10px 84px;
+	}
+}
+
+.flash-sale-text {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 1.2;
+	color: #ffffff;
+	margin: 0;
+}
+
+.flash-sale-divider {
+	width: 100%;
+	max-width: 224px;
+	height: 1px;
+	background: #eac2bd;
+	display: block !important;
+}
+
+.flash-countdown-timer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0;
+}
+
+.flash-timer-unit {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+}
+
+.flash-timer-number {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 38px;
+	line-height: 1;
+	letter-spacing: -0.03em;
+	color: #ffffff;
+}
+
+.flash-timer-label {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 8px;
+	line-height: 1.2;
+	color: #ffffff;
+	text-align: center;
+}
+
+.flash-timer-separator {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 38px;
+	line-height: 1;
+	color: #ffffff;
+	margin: 0 6px;
+	padding-bottom: 12px;
+}
+
+/* USP Grid Styles */
+.usp-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 6px;
+	width: 100%;
+}
+
+@media (min-width: 768px) {
+	.usp-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.usp-item {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 12px 11px;
+	background: #1b333b;
+	border-radius: 20px;
+	min-height: 85px;
+}
+
+.usp-icon {
+	font-size: 50px;
+	line-height: 1;
+	text-align: center;
+	flex-shrink: 0;
+	width: 50px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.usp-text {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 400;
+	font-size: 20px;
+	line-height: 1;
+	letter-spacing: 0.0028em;
+	color: #ffffff;
+	margin: 0;
+	flex: 1;
+}
+
+.usp-text p {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 400;
+	font-size: 20px;
+	line-height: 1.2;
+	letter-spacing: 0.0028em;
+	color: #ffffff;
+	margin: 0;
+}
+
+.usp-text strong {
+	font-weight: 700;
+}
+
+.usp-text br {
+	line-height: 1.4;
+}
+

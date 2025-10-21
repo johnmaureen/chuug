@@ -30,7 +30,7 @@
       </defs>
     </svg>
   
-    <p class="icon-question-mark-tooltip-text tw-absolute tw-w-[25rem] tw-rounded-2xl tw-bg-chuug-dark-navy tw-left-1/2 tw-transform tw--translate-x-1/2">
+    <p class="icon-question-mark-tooltip-text tw-absolute  tw-rounded-2xl tw-bg-chuug-dark-navy tw-transform">
       {{ tooltip_text }}
     </p>
   </div>
@@ -44,6 +44,11 @@
       white-space: normal;
       z-index: 99;
       padding: 1rem;
+    }
+    .icon-question-mark-tooltip-text {
+      left: 50%;
+      transform: translateX(-50%);
+      width: 213px;
     }
   </style>
   
