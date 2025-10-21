@@ -1,94 +1,65 @@
 /**
- * Countdown Timer Component
- * Displays a countdown timer with localStorage persistence
+ * Countdown Timer Component - DEPRECATED
+ * 
+ * This component is deprecated. Countdown timer functionality
+ * is now handled by chuug-unified-countdown.js to ensure
+ * synchronization across all countdown displays.
+ * 
+ * @deprecated Use chuug-unified-countdown.js instead
  */
 
 import { StorageManager } from '../core/storage.js';
 
 export class CountdownTimer {
 	/**
+	 * @deprecated Use chuug-unified-countdown.js instead
 	 * @param {HTMLElement} element - Timer display element
 	 * @param {number} duration - Duration in seconds (default 24 hours)
 	 */
 	constructor(element, duration = 24 * 60 * 60) {
-		this.element = element;
-		this.duration = duration;
-		this.startTime = this.getStartTime();
-		this.timer = null;
-		this.init();
+		console.warn('⚠️ CountdownTimer is deprecated. Use chuug-unified-countdown.js for synchronized timers.');
+		
+		// Redirect to unified countdown system
+		if (window.chuugUnifiedCountdown) {
+			window.chuugUnifiedCountdown.reinit();
+		}
 	}
 
 	/**
-	 * Get or initialize start time from storage
-	 * @returns {number} Unix timestamp
+	 * @deprecated
 	 */
 	getStartTime() {
-		const storageKey = "chuug_countdown_start";
-		let startTime = StorageManager.load(storageKey);
-
-		if (!startTime) {
-			startTime = Math.floor(Date.now() / 1000);
-			StorageManager.save(storageKey, startTime);
-		}
-
-		return startTime;
+		return Math.floor(Date.now() / 1000);
 	}
 
 	/**
-	 * Initialize the countdown timer
+	 * @deprecated
 	 */
 	init() {
-		this.update();
-		this.timer = setInterval(() => this.update(), 1000);
+		// No-op - handled by unified system
 	}
 
 	/**
-	 * Update the timer display
+	 * @deprecated
 	 */
 	update() {
-		const currentTime = Math.floor(Date.now() / 1000);
-		const elapsed = currentTime - this.startTime;
-		const remaining = Math.max(0, this.duration - elapsed);
-
-		if (remaining <= 0) {
-			this.reset();
-			return;
-		}
-
-		const hours = Math.floor(remaining / 3600);
-		const minutes = Math.floor((remaining % 3600) / 60);
-		const seconds = remaining % 60;
-
-		const formattedTime =
-			String(hours).padStart(2, "0") +
-			":" +
-			String(minutes).padStart(2, "0") +
-			":" +
-			String(seconds).padStart(2, "0");
-
-		if (this.element) {
-			this.element.textContent = formattedTime;
-		}
+		// No-op - handled by unified system
 	}
 
 	/**
-	 * Reset the countdown timer
+	 * @deprecated
 	 */
 	reset() {
-		this.startTime = Math.floor(Date.now() / 1000);
-		StorageManager.save("chuug_countdown_start", this.startTime);
-		if (this.element) {
-			this.element.textContent = "24:00:00";
+		if (window.chuugUnifiedCountdown) {
+			window.chuugUnifiedCountdown.reset();
 		}
 	}
 
 	/**
-	 * Clean up the timer
+	 * @deprecated
 	 */
 	destroy() {
-		if (this.timer) {
-			clearInterval(this.timer);
-		}
+		// No-op - handled by unified system
 	}
 }
 

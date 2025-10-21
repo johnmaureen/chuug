@@ -1,6 +1,6 @@
 
-<!-- Global Countdown Timer Script -->
-<script src="{{ 'chuug-countdown-global.js' | asset_url }}" defer></script>
+<!-- Unified Countdown Timer Script -->
+<script src="{{ 'chuug-unified-countdown.js' | asset_url }}" defer></script>
 
 
 {% include 'shogun-content-handler' %}
@@ -40,77 +40,7 @@
     console.log('🎯 Flash Sale Config:', window.chuugFlashSale);
 </script>
 
-<script>
-/**
- * Global Countdown Timer System
- * Simple implementation that works with any countdown element
- * Usage: Add class 'chuug-countdown' to container with data attributes
- */
-(function() {
-  // Set the countdown time (2 hours 7 minutes) in seconds
-  const COUNTDOWN_DURATION = 2 * 60 * 60 + 7 * 60;
-  const STORAGE_KEY = 'chuugCountdownTimer';
-
-  function getTimeRemaining() {
-    const savedTime = localStorage.getItem(STORAGE_KEY);
-    const currentTime = Math.floor(Date.now() / 1000);
-
-    if (savedTime) {
-      const remainingTime = COUNTDOWN_DURATION - (currentTime - savedTime);
-      return remainingTime > 0 ? remainingTime : 0;
-    } else {
-      localStorage.setItem(STORAGE_KEY, currentTime);
-      return COUNTDOWN_DURATION;
-    }
-  }
-
-  function updateCountdown(container, timeRemaining) {
-    const hours = Math.floor(timeRemaining / 3600);
-    const minutes = Math.floor((timeRemaining % 3600) / 60);
-    const seconds = timeRemaining % 60;
-
-    const hoursEl = container.querySelector('[data-countdown-hours]');
-    const minutesEl = container.querySelector('[data-countdown-minutes]');
-    const secondsEl = container.querySelector('[data-countdown-seconds]');
-
-    if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
-    if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
-    if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
-  }
-
-  function initCountdown() {
-    const countdownElements = document.querySelectorAll('.chuug-countdown');
-    if (countdownElements.length === 0) return;
-
-    let timeRemaining = getTimeRemaining();
-
-    // Update all countdown elements
-    countdownElements.forEach(el => updateCountdown(el, timeRemaining));
-
-    // Start the interval
-    setInterval(function() {
-      if (timeRemaining > 0) {
-        timeRemaining--;
-        countdownElements.forEach(el => updateCountdown(el, timeRemaining));
-      } else {
-        // Reset timer
-        timeRemaining = COUNTDOWN_DURATION;
-        localStorage.setItem(STORAGE_KEY, Math.floor(Date.now() / 1000));
-      }
-    }, 1000);
-  }
-
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCountdown);
-  } else {
-    initCountdown();
-  }
-
-  // Expose for dynamic content
-  window.chuugCountdown = { init: initCountdown };
-})();
-</script>
+<!-- Countdown timer logic is now handled by chuug-unified-countdown.js -->
 
 
 <script>

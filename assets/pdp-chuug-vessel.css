@@ -1,6 +1,20 @@
-/* * {
+* {
 	font-family: "Gabarito" !important;
-} */
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h1 *,
+h2 *,
+h3 *,
+h4 *,
+h5 *,
+h6 * {
+	font-family: "Merriweather" !important;
+}
 
 .cta-button:not([disabled]) {
 	transition: transform 0.3s ease;
@@ -30,26 +44,18 @@
 	width: 100%;
 }
 
-.incompleted-inputs-text {
-	margin-top: 10px;
-}
-
-.refund-wrap {
-	margin-top: 30px;
-}
-
 .product_amount_label_1,
 .product_amount_label_2,
 .product_amount_label_3 {
 	color: white;
 }
-/* .product_amount_label_1.active,
+.product_amount_label_1.active,
 .product_amount_label_2.active div,
 .product_amount_label_3.active div {
-  background-color: #fdff96;
-  color: black;
-  opacity: 1;
-} */
+	background-color: #fdff96;
+	color: black;
+	opacity: 1;
+}
 
 .product_amount_label_2.active::before,
 .product_amount_label_3.active::before {

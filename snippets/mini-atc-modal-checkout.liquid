@@ -681,18 +681,23 @@
 
 <script>
   // Show countdown section when checkout view is active
-  // Countdown timer logic is handled by global system in theme.liquid
+  // Countdown timer logic is handled by chuug-unified-countdown.js
   (function() {
     const countdownSection = document.querySelector('[data-countdown-section]');
     
     if (countdownSection) {
       countdownSection.style.display = '';
+      
+      // Ensure unified countdown system updates this element
+      if (window.chuugUnifiedCountdown) {
+        window.chuugUnifiedCountdown.reinit();
+      }
     }
     
-    // Re-initialize global countdown when modal opens or view changes
+    // Re-initialize unified countdown when modal opens or view changes
     document.addEventListener('viewChanged', function(event) {
-      if (event.detail === 'checkout' && window.chuugCountdown) {
-        window.chuugCountdown.init();
+      if (event.detail === 'checkout' && window.chuugUnifiedCountdown) {
+        window.chuugUnifiedCountdown.reinit();
       }
     });
   })();
