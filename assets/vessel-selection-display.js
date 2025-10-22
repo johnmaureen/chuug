@@ -98,6 +98,7 @@
 			previousCount: displayState.currentVesselCount,
 			newCount: newCount,
 			timestamp: new Date().toISOString(),
+			callStack: new Error().stack
 		});
 		
 		displayState.currentVesselCount = newCount;
@@ -414,15 +415,34 @@
 			}
 		});
 
-		// Listen for product amount changes
-		document.addEventListener("click", function (e) {
-			if (e.target.onclick && e.target.onclick.toString().includes("setProductAmount")) {
-				const match = e.target.onclick.toString().match(/setProductAmount\('(\d+)'\)/);
-				if (match) {
-					updateVesselCount(match[1]);
-				}
+	// Listen for product amount changes
+	document.addEventListener("click", function (e) {
+		if (e.target.onclick && e.target.onclick.toString().includes("setProductAmount")) {
+			const match = e.target.onclick.toString().match(/setProductAmount\('(\d+)'\)/);
+			if (match) {
+				updateVesselCount(match[1]);
 			}
-		});
+		}
+	});
+
+	// Override the global setProductAmount function to notify our system
+	const originalSetProductAmount = window.setProductAmount;
+	if (originalSetProductAmount) {
+		window.setProductAmount = function(productAmount) {
+			console.log(`🔄 setProductAmount called directly:`, {
+				productAmount: productAmount,
+				timestamp: new Date().toISOString(),
+			});
+			
+			// Call the original function
+			const result = originalSetProductAmount.apply(this, arguments);
+			
+			// Notify our vessel selection display system
+			updateVesselCount(productAmount);
+			
+			return result;
+		};
+	}
 
 		// Listen for engraving changes
 		document.addEventListener("click", function (e) {
