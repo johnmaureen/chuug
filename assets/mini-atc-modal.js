@@ -4300,7 +4300,14 @@
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
 							"🛒 Item element created:", itemElement;
-							tempContainer.appendChild(itemElement);
+							// Handle case where renderCartItem returns an array (product + gift box)
+							if (Array.isArray(itemElement)) {
+								itemElement.forEach((element) => {
+									tempContainer.appendChild(element);
+								});
+							} else {
+								tempContainer.appendChild(itemElement);
+							}
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
 						}
@@ -4313,7 +4320,14 @@
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
 							"🛒 Item element created:", itemElement;
-							tempContainer.appendChild(itemElement);
+							// Handle case where renderCartItem returns an array (product + gift box)
+							if (Array.isArray(itemElement)) {
+								itemElement.forEach((element) => {
+									tempContainer.appendChild(element);
+								});
+							} else {
+								tempContainer.appendChild(itemElement);
+							}
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
 						}
@@ -4577,128 +4591,123 @@
 				itemElement.appendChild(container);
 				wrapper.appendChild(itemElement);
 
-				// Premium Gift Box section (matching Liquid logic)
-				// Look for gift box add-ons that belong to this specific vessel
-				const vesselNumber = this.extractVesselNumber(item);
-				`🎁 DEBUG: Item ${item.id} (${item.product_title}) has vessel number:`,
-					vesselNumber;
+				// Always render gift box section below each product item
+				// Fetch gift box product data from API
+				const giftBoxProductId = "15099649098107";
+				const giftBoxData = await this.fetchProductData(giftBoxProductId);
+				console.log("giftBoxData");
+				console.log(giftBoxData);
+				// Create a separate gift box cart item
+				const giftBoxWrapper = document.createElement("div");
+				giftBoxWrapper.className = "checkout-product-item-wrap";
 
-				if (vesselNumber) {
-					// Debug: Log all gift box items
-					const allGiftBoxes = allCartItems.filter(
-						(giftItem) =>
-							giftItem.properties &&
-							giftItem.properties["_Add-on"] === "Premium Gift Box"
-					);
-					`🎁 DEBUG: Found ${allGiftBoxes.length} gift box items:`,
-						allGiftBoxes.map((gb) => ({
-							id: gb.id,
-							title: gb.product_title,
-							vesselNumber: gb.properties["_Vessel Number"],
-						}));
+				const giftBoxItemElement = document.createElement("div");
+				giftBoxItemElement.className = "checkout-products-wrap";
+				giftBoxItemElement.setAttribute("data-item-id", giftBoxProductId);
 
-					const giftBoxForThisVessel = allCartItems.find(
-						(giftItem) =>
-							giftItem.properties &&
-							giftItem.properties["_Add-on"] === "Premium Gift Box" &&
-							String(giftItem.properties["_Vessel Number"]) ===
-								String(vesselNumber)
-					);
+				// Create the gift box container (similar to main product structure)
+				const giftBoxContainer = document.createElement("div");
+				giftBoxContainer.className = "checkout-products-wrap__container";
 
-					`🎁 DEBUG: Gift box for vessel ${vesselNumber}:`,
-						giftBoxForThisVessel
-							? {
-									id: giftBoxForThisVessel.id,
-									title: giftBoxForThisVessel.product_title,
-							  }
-							: "NOT FOUND";
+				// Create image section for gift box
+				const giftBoxImageSection = document.createElement("div");
+				giftBoxImageSection.className = "checkout-products-wrap__image";
 
-					if (giftBoxForThisVessel) {
-						const giftBoxSection = document.createElement("div");
-						giftBoxSection.className = "premium-gift-box";
+				const giftBoxImageContainer = document.createElement("div");
+				giftBoxImageContainer.className =
+					"checkout-products-wrap__image-container";
 
-						const giftBoxContainer = document.createElement("div");
-						giftBoxContainer.className = "premium-gift-box__container";
+				// Use API data for image or fallback
+				const img = document.createElement("img");
+				if (
+					giftBoxData &&
+					giftBoxData.images &&
+					giftBoxData.images.length > 0
+				) {
+					img.src = giftBoxData.images[0].src;
+					img.alt = giftBoxData.title || "Premium Gift Box & Wrap";
+				} else {
+					img.src = "/assets/premium-gift-box.png"; // Fallback image
+					img.alt = "Premium Gift Box & Wrap";
+				}
+				img.width = 128;
+				img.height = 128;
+				img.loading = "lazy";
+				img.className = "checkout-products-wrap__product-image";
+				giftBoxImageContainer.appendChild(img);
 
-						// Product Image
-						const giftBoxImage = document.createElement("div");
-						giftBoxImage.className = "premium-gift-box__image";
+				giftBoxImageSection.appendChild(giftBoxImageContainer);
 
-						if (giftBoxForThisVessel.image) {
-							const img = document.createElement("img");
-							img.src = giftBoxForThisVessel.image;
-							img.alt =
-								giftBoxForThisVessel.product_title || "Premium Gift Box & Wrap";
-							img.width = 71;
-							img.height = 89;
-							giftBoxImage.appendChild(img);
-						} else {
-							const img = document.createElement("img");
-							img.src = "/assets/premium-gift-box.png"; // Fallback image
-							img.alt = "Premium Gift Box & Wrap";
-							img.width = 71;
-							img.height = 89;
-							giftBoxImage.appendChild(img);
-						}
+				// Create details section for gift box
+				const giftBoxDetailsSection = document.createElement("div");
+				giftBoxDetailsSection.className = "checkout-products-wrap__details";
 
-						// Content Area
-						const giftBoxContent = document.createElement("div");
-						giftBoxContent.className = "premium-gift-box__content";
+				// Header with title and delete button
+				const giftBoxHeader = document.createElement("div");
+				giftBoxHeader.className = "checkout-products-wrap__header";
 
-						const giftBoxDetails = document.createElement("div");
-						giftBoxDetails.className = "premium-gift-box__details";
+				const giftBoxTitle = document.createElement("h3");
+				giftBoxTitle.className = "checkout-products-wrap__title";
+				giftBoxTitle.textContent = giftBoxData
+					? giftBoxData.title
+					: "Premium Gift Box & Wrap";
 
-						const giftBoxText = document.createElement("div");
-						giftBoxText.className = "premium-gift-box__text";
+				const giftBoxDelete = document.createElement("button");
+				giftBoxDelete.type = "button";
+				giftBoxDelete.className = "checkout-products-wrap__delete";
+				giftBoxDelete.setAttribute(
+					"aria-label",
+					"Remove Premium Gift Box from cart"
+				);
+				giftBoxDelete.innerHTML = `
+					<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				`;
 
-						const giftBoxTitle = document.createElement("h4");
-						giftBoxTitle.className = "premium-gift-box__title";
-						giftBoxTitle.textContent = giftBoxForThisVessel.product_title;
+				giftBoxHeader.appendChild(giftBoxTitle);
+				giftBoxHeader.appendChild(giftBoxDelete);
 
-						const giftBoxPrice = document.createElement("div");
-						giftBoxPrice.className = "premium-gift-box__price";
-						giftBoxPrice.textContent = this.formatMoney(
-							giftBoxForThisVessel.final_price || giftBoxForThisVessel.price
-						);
+				// Create pricing section for gift box
+				const giftBoxPricingSection = document.createElement("div");
+				giftBoxPricingSection.className = "checkout-products-wrap__pricing";
 
-						giftBoxText.appendChild(giftBoxTitle);
-						giftBoxDetails.appendChild(giftBoxText);
-						giftBoxDetails.appendChild(giftBoxPrice);
+				const giftBoxPrice = document.createElement("span");
+				giftBoxPrice.className = "checkout-products-wrap__current-price";
 
-						// Toggle Section
-						const giftBoxDelete = document.createElement("button");
-						giftBoxDelete.type = "button";
-						giftBoxDelete.className = "checkout-products-wrap__delete";
-						giftBoxDelete.setAttribute(
-							"data-remove-item",
-							giftBoxForThisVessel.key
-						);
-						giftBoxDelete.setAttribute(
-							"aria-label",
-							"Remove Premium Gift Box from cart"
-						);
-						giftBoxDelete.innerHTML = `
-							<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-								<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-								<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-								<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-							</svg>
-						`;
-
-						giftBoxContent.appendChild(giftBoxDetails);
-						giftBoxContent.appendChild(giftBoxDelete);
-
-						giftBoxContainer.appendChild(giftBoxImage);
-						giftBoxContainer.appendChild(giftBoxContent);
-						giftBoxSection.appendChild(giftBoxContainer);
-
-						// Add gift box section to wrapper
-						wrapper.appendChild(giftBoxSection);
-					}
+				// Use API data for price or fallback
+				if (
+					giftBoxData &&
+					giftBoxData.variants &&
+					giftBoxData.variants.length > 0
+				) {
+					const variant = giftBoxData.variants[0];
+					// Convert price from string to cents (multiply by 100)
+					const priceInCents = Math.round(parseFloat(variant.price) * 100);
+					giftBoxPrice.textContent = this.formatMoney(priceInCents);
+				} else {
+					giftBoxPrice.textContent = "$0.00";
 				}
 
-				return wrapper;
+				giftBoxPricingSection.appendChild(giftBoxPrice);
+
+				// Assemble the gift box details section
+				giftBoxDetailsSection.appendChild(giftBoxHeader);
+				giftBoxDetailsSection.appendChild(giftBoxPricingSection);
+
+				// Assemble the gift box container
+				giftBoxContainer.appendChild(giftBoxImageSection);
+				giftBoxContainer.appendChild(giftBoxDetailsSection);
+
+				// Assemble the gift box item element
+				giftBoxItemElement.appendChild(giftBoxContainer);
+				giftBoxWrapper.appendChild(giftBoxItemElement);
+
+				// Return both the main product and gift box as separate elements
+				return [wrapper, giftBoxWrapper];
 			} catch (error) {
 				console.error("Failed to render cart item:", error);
 				return null;
