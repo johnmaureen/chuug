@@ -3099,7 +3099,7 @@
 		/**
 		 * Create properties for a single vessel item
 		 */
-		createVesselProperties(
+		async createVesselProperties(
 			selection,
 			vesselNumber,
 			state,
@@ -3136,7 +3136,9 @@
 					properties["Choose Your Coins"] = variantData.title;
 				}
 
-				const hasGiftBox = state.giftBox?.enabled;
+				// Check if gift box is enabled for this specific vessel by checking cart
+				// Note: This will be updated when the cart is refreshed, so we'll check the current cart state
+				const hasGiftBox = await this.checkGiftBoxInCart(vesselNumber.toString());
 				properties["Gift Box"] = hasGiftBox ? "yes" : "no";
 
 				if (hasGiftBox) {
@@ -3309,7 +3311,7 @@
 					}
 
 					// Create properties for this specific vessel
-					const vesselProperties = this.createVesselProperties(
+					const vesselProperties = await this.createVesselProperties(
 						selection,
 						i,
 						state,
@@ -3383,8 +3385,8 @@
 				}
 			}
 
-			// Check if gift box is enabled
-			const hasGiftBox = state.giftBox?.enabled;
+			// Check if gift box is enabled for any vessel in this bundle by checking cart
+			const hasGiftBox = await this.checkAnyGiftBoxInCart();
 			properties["Gift Box"] = hasGiftBox ? "yes" : "no";
 
 			if (hasGiftBox) {
@@ -3512,42 +3514,7 @@
 				}
 			}
 
-			// 1. Gift Box - Add one per vessel
-			if (state.giftBox?.enabled) {
-				// Get vessel count from POMC system
-				const vesselCount = window.pomcSystem
-					? window.pomcSystem.getMultiplier() || 1
-					: 1;
-
-				// Get gift box variant ID from modal config or default
-				const giftBoxVariantId = this.getGiftBoxVariantId();
-
-				if (giftBoxVariantId) {
-					// Add one gift box per vessel
-					for (let i = 0; i < vesselCount; i++) {
-						// Add unique line identifier to prevent Shopify from consolidating gift boxes
-						const uniqueLineId = `${Date.now()}-GB${i + 1}-${Math.random()
-							.toString(36)
-							.substr(2, 9)}`;
-
-						const giftBoxItem = {
-							id: giftBoxVariantId,
-							quantity: 1,
-							properties: {
-								// VISIBLE PROPERTIES (for checkout display)
-								"Monogram Initials": "N/A",
-
-								// HIDDEN PROPERTIES (for backend use only)
-								"_Add-on": "Premium Gift Box",
-								"_Product Handle": "premium-gift-box-tissue-wrap",
-								"_Vessel Number": i + 1,
-								"_Unique Line ID": uniqueLineId,
-							},
-						};
-						items.push(giftBoxItem);
-					}
-				}
-			}
+			// Gift boxes are now added directly to cart via toggle, not through collectCartData
 
 			// 2. Mix & Match variants
 			if (state.mixMatch?.enabled && state.mixMatch.variants) {
@@ -3690,6 +3657,41 @@
 			return null;
 		}
 
+		async checkGiftBoxInCart(vesselNumber) {
+			try {
+				const cartResponse = await fetch('/cart.js');
+				const cart = await cartResponse.json();
+				
+				const giftBoxItem = cart.items.find(cartItem => 
+					cartItem.properties && 
+					cartItem.properties['_Add-on'] === 'Premium Gift Box' &&
+					cartItem.properties['_Vessel Number'] === vesselNumber
+				);
+				
+				return !!giftBoxItem;
+			} catch (error) {
+				console.error('🎁 Error checking gift box in cart:', error);
+				return false;
+			}
+		}
+
+		async checkAnyGiftBoxInCart() {
+			try {
+				const cartResponse = await fetch('/cart.js');
+				const cart = await cartResponse.json();
+				
+				const giftBoxItem = cart.items.find(cartItem => 
+					cartItem.properties && 
+					cartItem.properties['_Add-on'] === 'Premium Gift Box'
+				);
+				
+				return !!giftBoxItem;
+			} catch (error) {
+				console.error('🎁 Error checking any gift box in cart:', error);
+				return false;
+			}
+		}
+
 		getGiftBoxProductTitle() {
 			("🔍 Getting gift box product title...");
 
@@ -3805,6 +3807,146 @@
 			}
 
 			return result;
+		}
+
+		async restructureCartOrder() {
+			try {
+				// Get current cart data
+				const cartResponse = await fetch('/cart.js');
+				const cart = await cartResponse.json();
+				
+				// Separate products and gift boxes
+				const products = [];
+				const giftBoxes = [];
+				
+				cart.items.forEach(item => {
+					if (item.properties && item.properties['_Add-on'] === 'Premium Gift Box') {
+						giftBoxes.push(item);
+					} else {
+						products.push(item);
+					}
+				});
+				
+				// Create ordered structure: Product → Gift → Product → Gift
+				const orderedItems = [];
+				
+				products.forEach(product => {
+					// Add the product first
+					orderedItems.push(product);
+					
+					// Find associated gift box
+					const associatedGiftBox = giftBoxes.find(giftBox => 
+						giftBox.properties['_Vessel Number'] === product.id.toString()
+					);
+					
+					// Add gift box if it exists
+					if (associatedGiftBox) {
+						orderedItems.push(associatedGiftBox);
+					}
+				});
+				
+				console.log('🔄 Restructured cart order:', orderedItems.map(item => ({
+					id: item.id,
+					title: item.title,
+					isGiftBox: !!item.properties?.['_Add-on']
+				})));
+				
+				// Note: Cart order restructuring is handled by Shopify's natural cart order
+				// The gift box will appear after the product due to the order of addition
+				
+			} catch (error) {
+				console.error('❌ Error restructuring cart order:', error);
+			}
+		}
+
+		async updateProductGiftBoxProperties(vesselId, hasGiftBox) {
+			try {
+				// Wait a moment for cart to be updated
+				await new Promise(resolve => setTimeout(resolve, 200));
+				
+				// Get current cart data
+				const cartResponse = await fetch('/cart.js');
+				const cart = await cartResponse.json();
+				
+				console.log('🔍 Looking for product with vesselId:', vesselId);
+				console.log('🔍 Available cart items:', cart.items.map(item => ({
+					id: item.id,
+					hasAddon: !!item.properties?.['_Add-on'],
+					title: item.title
+				})));
+				
+				// Find the product item
+				const productItem = cart.items.find(item => 
+					item.id.toString() === vesselId && 
+					!item.properties?.['_Add-on']
+				);
+				
+				console.log('🔍 Found product item:', !!productItem);
+				
+				if (productItem) {
+					// Get current properties
+					const currentProperties = { ...productItem.properties };
+					
+					console.log('🔍 Current properties:', currentProperties);
+					
+					// Update gift box properties
+					if (hasGiftBox) {
+						currentProperties["Gift Box"] = "yes";
+						currentProperties["Gift Option"] = "Premium Gift Box and Tissue Wrap";
+					} else {
+						delete currentProperties["Gift Box"];
+						delete currentProperties["Gift Option"];
+					}
+					
+					console.log('🔍 Updated properties:', currentProperties);
+					
+					// Update the product item properties
+					const updateResponse = await fetch('/cart/change.js', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							id: productItem.key,
+							properties: currentProperties
+						})
+					});
+					
+					if (updateResponse.ok) {
+						console.log('✅ Product gift box properties updated:', hasGiftBox ? 'added' : 'removed');
+					} else {
+						console.warn('⚠️ Failed to update product gift box properties');
+					}
+				} else {
+					console.warn('⚠️ Product item not found for vesselId:', vesselId);
+				}
+			} catch (error) {
+				console.error('❌ Error updating product gift box properties:', error);
+			}
+		}
+
+		async updateCartIconBubbleWithSections() {
+			try {
+				// Fetch cart icon bubble section
+				const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
+				const sectionResponse = await fetch(sectionUrl);
+				
+				if (sectionResponse.ok) {
+					const sectionData = await sectionResponse.json();
+					
+					// Create response object with sections for updateCartIconBubble
+					const responseWithSections = {
+						sections: sectionData
+					};
+					
+					this.updateCartIconBubble(responseWithSections);
+					console.log('✅ Cart icon bubble updated with sections');
+				} else {
+					console.warn('⚠️ Failed to fetch cart icon bubble section');
+				}
+			} catch (error) {
+				console.error('❌ Error updating cart icon bubble:', error);
+			}
 		}
 
 		updateCartIconBubble(response) {
@@ -4583,42 +4725,42 @@
 				const giftBoxData = await this.fetchProductData(giftBoxProductId);
 				
 				// Create gift box section using the same structure as Liquid template
-				const giftBoxSection = document.createElement("div");
-				giftBoxSection.className = "premium-gift-box";
+						const giftBoxSection = document.createElement("div");
+						giftBoxSection.className = "premium-gift-box";
 
-				const giftBoxContainer = document.createElement("div");
-				giftBoxContainer.className = "premium-gift-box__container";
+						const giftBoxContainer = document.createElement("div");
+						giftBoxContainer.className = "premium-gift-box__container";
 
-				// Product Image
-				const giftBoxImage = document.createElement("div");
-				giftBoxImage.className = "premium-gift-box__image";
+						// Product Image
+						const giftBoxImage = document.createElement("div");
+						giftBoxImage.className = "premium-gift-box__image";
 
-				const img = document.createElement("img");
+							const img = document.createElement("img");
 				if (giftBoxData && giftBoxData.images && giftBoxData.images.length > 0) {
 					img.src = giftBoxData.images[0].src;
 					img.alt = giftBoxData.title || "Premium Gift Box & Wrap";
-				} else {
-					img.src = "/assets/premium-gift-box.png"; // Fallback image
-					img.alt = "Premium Gift Box & Wrap";
+						} else {
+							img.src = "/assets/premium-gift-box.png"; // Fallback image
+							img.alt = "Premium Gift Box & Wrap";
 				}
-				img.width = 71;
-				img.height = 89;
+							img.width = 71;
+							img.height = 89;
 				img.loading = "lazy";
 				img.setAttribute("data-gift-box-image", "");
-				giftBoxImage.appendChild(img);
+							giftBoxImage.appendChild(img);
 
-				// Content Area
-				const giftBoxContent = document.createElement("div");
-				giftBoxContent.className = "premium-gift-box__content";
+						// Content Area
+						const giftBoxContent = document.createElement("div");
+						giftBoxContent.className = "premium-gift-box__content";
 
-				const giftBoxDetails = document.createElement("div");
-				giftBoxDetails.className = "premium-gift-box__details";
+						const giftBoxDetails = document.createElement("div");
+						giftBoxDetails.className = "premium-gift-box__details";
 
-				const giftBoxText = document.createElement("div");
-				giftBoxText.className = "premium-gift-box__text";
+						const giftBoxText = document.createElement("div");
+						giftBoxText.className = "premium-gift-box__text";
 
 				const giftBoxTitle = document.createElement("h6");
-				giftBoxTitle.className = "premium-gift-box__title";
+						giftBoxTitle.className = "premium-gift-box__title";
 				giftBoxTitle.setAttribute("data-gift-box-title", "");
 				if (giftBoxData) {
 					giftBoxTitle.innerHTML = giftBoxData.title ;
@@ -4626,8 +4768,8 @@
 					giftBoxTitle.innerHTML = "Premium Gift Box & Tissue Wrap";
 				}
 
-				const giftBoxPrice = document.createElement("div");
-				giftBoxPrice.className = "premium-gift-box__price";
+						const giftBoxPrice = document.createElement("div");
+						giftBoxPrice.className = "premium-gift-box__price";
 				giftBoxPrice.setAttribute("aria-label", "Gift box price");
 				giftBoxPrice.setAttribute("data-gift-box-price", "");
 
@@ -4652,28 +4794,32 @@
 				giftBoxError.style.fontSize = "12px";
 				giftBoxError.style.marginTop = "5px";
 
-				giftBoxText.appendChild(giftBoxTitle);
-				giftBoxDetails.appendChild(giftBoxText);
-				giftBoxDetails.appendChild(giftBoxPrice);
+						giftBoxText.appendChild(giftBoxTitle);
+						giftBoxDetails.appendChild(giftBoxText);
+						giftBoxDetails.appendChild(giftBoxPrice);
 				giftBoxDetails.appendChild(giftBoxError);
 
-				// Toggle Section
+						// Toggle Section
 				const giftBoxToggleSection = document.createElement("div");
 				giftBoxToggleSection.className = "premium-gift-box__toggle-section";
 
 				const giftBoxToggleContainer = document.createElement("div");
 				giftBoxToggleContainer.className = "premium-gift-box__toggle-container";
 
+				// Create unique ID for this product's gift box toggle
+				const uniqueToggleId = `premium-gift-box-toggle-${item.id}`;
+				
 				const giftBoxToggleLabel = document.createElement("label");
 				giftBoxToggleLabel.className = "premium-gift-box__toggle";
-				giftBoxToggleLabel.setAttribute("for", "premium-gift-box-toggle");
+				giftBoxToggleLabel.setAttribute("for", uniqueToggleId);
 
 				const giftBoxToggleInput = document.createElement("input");
 				giftBoxToggleInput.type = "checkbox";
-				giftBoxToggleInput.id = "premium-gift-box-toggle";
+				giftBoxToggleInput.id = uniqueToggleId;
 				giftBoxToggleInput.className = "premium-gift-box__toggle-input";
 				giftBoxToggleInput.setAttribute("data-addon-toggle", "gift-box");
 				giftBoxToggleInput.setAttribute("data-property", "properties[Premium Gift Box]");
+				giftBoxToggleInput.setAttribute("data-vessel-id", item.id); // Link to the main product
 				
 				// Set variant data attributes
 				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
@@ -4682,8 +4828,10 @@
 					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", variant.id);
 					giftBoxToggleInput.setAttribute("data-gift-box-product-title", giftBoxData.title);
 				} else {
-					giftBoxToggleInput.setAttribute("data-variant-id", "");
-					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", "");
+					// Use hardcoded variant ID as fallback
+					const fallbackVariantId = "55511131455867"; // From the API data you provided
+					giftBoxToggleInput.setAttribute("data-variant-id", fallbackVariantId);
+					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", fallbackVariantId);
 					giftBoxToggleInput.setAttribute("data-gift-box-product-title", "Premium Gift Box and Tissue Wrap");
 				}
 
@@ -4705,13 +4853,153 @@
 				giftBoxContent.appendChild(giftBoxDetails);
 				giftBoxContent.appendChild(giftBoxToggleSection);
 
-				giftBoxContainer.appendChild(giftBoxImage);
-				giftBoxContainer.appendChild(giftBoxContent);
-				giftBoxSection.appendChild(giftBoxContainer);
+				// Check if gift box is already in cart for this vessel and set toggle state
+				// Use setTimeout to ensure this runs after the DOM is fully rendered
+				setTimeout(async () => {
+					try {
+						const cartResponse = await fetch('/cart.js');
+						const cart = await cartResponse.json();
+						
+						console.log('🔍 Checking cart for vessel:', item.id);
+						console.log('🔍 Cart items:', cart.items.map(cartItem => ({
+							id: cartItem.id,
+							vesselNumber: cartItem.properties?.['_Vessel Number'],
+							addon: cartItem.properties?.['_Add-on']
+						})));
+						
+						const existingGiftBox = cart.items.find(cartItem => 
+							cartItem.properties && 
+							cartItem.properties['_Add-on'] === 'Premium Gift Box' &&
+							cartItem.properties['_Vessel Number'] === item.id.toString()
+						);
+						
+						console.log('🔍 Found gift box for vessel:', item.id, ':', !!existingGiftBox);
+						
+						if (existingGiftBox) {
+							giftBoxToggleInput.checked = true;
+							console.log('🎁 Gift box already in cart for vessel:', item.id, '- toggle set to ON');
+						} else {
+							giftBoxToggleInput.checked = false;
+							console.log('🎁 No gift box in cart for vessel:', item.id, '- toggle set to OFF');
+						}
+					} catch (error) {
+						console.error('🎁 Error checking existing gift box:', error);
+						giftBoxToggleInput.checked = false;
+					}
+				}, 100); // Small delay to ensure DOM is ready
 
-				// Add gift box section to wrapper
-				wrapper.appendChild(giftBoxSection);
-				
+				// Add event listener for gift box toggle
+				giftBoxToggleInput.addEventListener('change', async (event) => {
+					const isChecked = event.target.checked;
+					const vesselId = event.target.getAttribute('data-vessel-id');
+					const variantId = event.target.getAttribute('data-variant-id');
+					
+					console.log('🎁 Gift box toggle changed for vessel:', vesselId, 'checked:', isChecked);
+					
+					try {
+						if (isChecked) {
+							// Add gift box to cart
+							console.log('🎁 Adding gift box to cart for vessel:', vesselId);
+							
+							// Create gift box data
+							const giftBoxData = {
+								id: variantId,
+								quantity: 1,
+								properties: {
+									// HIDDEN PROPERTIES (for backend use only)
+									"_Monogram Initials": "N/A",
+									"_Premium Gift Box & Tissue Wrap": "Premium Gift Box & Tissue Wrap",
+									"_Add-on": "Premium Gift Box",
+									"_Product Handle": "premium-gift-box-tissue-wrap",
+									"_Vessel Number": vesselId,
+									"_Unique Line ID": `${Date.now()}-GB${vesselId}-${Math.random().toString(36).substr(2, 9)}`,
+								}
+							};
+							
+							const response = await fetch('/cart/add.js', {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body: JSON.stringify(giftBoxData)
+							});
+							
+							if (response.ok) {
+								console.log('✅ Gift box added to cart');
+								// Update product properties to show gift box info
+								await this.updateProductGiftBoxProperties(vesselId, true);
+								// Update cart icon bubble and total price
+								await this.updateCartIconBubbleWithSections();
+								// Update checkout pricing to reflect new total
+								this.updateCheckoutPricing();
+							} else {
+								console.error('❌ Failed to add gift box to cart');
+								// Show error message
+								giftBoxError.textContent = 'Failed to add gift box. Please try again.';
+								giftBoxError.style.display = 'block';
+								// Uncheck the toggle
+								event.target.checked = false;
+							}
+						} else {
+							// Remove gift box from cart using change API
+							console.log('🎁 Removing gift box from cart for vessel:', vesselId);
+							
+							// Find and remove the gift box item
+							const cartResponse = await fetch('/cart.js');
+							const cart = await cartResponse.json();
+							
+							const giftBoxItem = cart.items.find(cartItem => 
+								cartItem.properties && 
+								cartItem.properties['_Add-on'] === 'Premium Gift Box' &&
+								cartItem.properties['_Vessel Number'] === vesselId
+							);
+							
+							if (giftBoxItem) {
+								const removeResponse = await fetch('/cart/change.js', {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify({
+										id: giftBoxItem.key,
+										quantity: 0
+									})
+								});
+								
+								if (removeResponse.ok) {
+									console.log('✅ Gift box removed from cart');
+									// Update product properties to remove gift box info
+									await this.updateProductGiftBoxProperties(vesselId, false);
+									// Update cart icon bubble and total price
+									await this.updateCartIconBubbleWithSections();
+									// Update checkout pricing to reflect new total
+									this.updateCheckoutPricing();
+								} else {
+									console.error('❌ Failed to remove gift box from cart');
+									// Show error message
+									giftBoxError.textContent = 'Failed to remove gift box. Please try again.';
+									giftBoxError.style.display = 'block';
+									// Re-check the toggle
+									event.target.checked = true;
+								}
+							}
+						}
+					} catch (error) {
+						console.error('🎁 Error handling gift box toggle:', error);
+						giftBoxError.textContent = 'An error occurred. Please try again.';
+						giftBoxError.style.display = 'block';
+						// Reset toggle state
+						event.target.checked = !isChecked;
+					}
+				});
+
+						giftBoxContainer.appendChild(giftBoxImage);
+						giftBoxContainer.appendChild(giftBoxContent);
+						giftBoxSection.appendChild(giftBoxContainer);
+
+						// Add gift box section to wrapper
+						wrapper.appendChild(giftBoxSection);
+
 				// Return the wrapper with gift box included
 				return wrapper;
 			} catch (error) {
