@@ -4300,14 +4300,7 @@
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
 							"🛒 Item element created:", itemElement;
-							// Handle case where renderCartItem returns an array (product + gift box)
-							if (Array.isArray(itemElement)) {
-								itemElement.forEach((element) => {
-									tempContainer.appendChild(element);
-								});
-							} else {
-								tempContainer.appendChild(itemElement);
-							}
+							tempContainer.appendChild(itemElement);
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
 						}
@@ -4320,14 +4313,7 @@
 						const itemElement = await this.renderCartItem(item, cartItems);
 						if (itemElement) {
 							"🛒 Item element created:", itemElement;
-							// Handle case where renderCartItem returns an array (product + gift box)
-							if (Array.isArray(itemElement)) {
-								itemElement.forEach((element) => {
-									tempContainer.appendChild(element);
-								});
-							} else {
-								tempContainer.appendChild(itemElement);
-							}
+							tempContainer.appendChild(itemElement);
 						} else {
 							console.warn("🛒 Item element was null for:", item.id);
 						}
@@ -4595,119 +4581,139 @@
 				// Fetch gift box product data from API
 				const giftBoxProductId = "15099649098107";
 				const giftBoxData = await this.fetchProductData(giftBoxProductId);
-				console.log("giftBoxData");
-				console.log(giftBoxData);
-				// Create a separate gift box cart item
-				const giftBoxWrapper = document.createElement("div");
-				giftBoxWrapper.className = "checkout-product-item-wrap";
+				
+				// Create gift box section using the same structure as Liquid template
+				const giftBoxSection = document.createElement("div");
+				giftBoxSection.className = "premium-gift-box";
 
-				const giftBoxItemElement = document.createElement("div");
-				giftBoxItemElement.className = "checkout-products-wrap";
-				giftBoxItemElement.setAttribute("data-item-id", giftBoxProductId);
-
-				// Create the gift box container (similar to main product structure)
 				const giftBoxContainer = document.createElement("div");
-				giftBoxContainer.className = "checkout-products-wrap__container";
+				giftBoxContainer.className = "premium-gift-box__container";
 
-				// Create image section for gift box
-				const giftBoxImageSection = document.createElement("div");
-				giftBoxImageSection.className = "checkout-products-wrap__image";
+				// Product Image
+				const giftBoxImage = document.createElement("div");
+				giftBoxImage.className = "premium-gift-box__image";
 
-				const giftBoxImageContainer = document.createElement("div");
-				giftBoxImageContainer.className =
-					"checkout-products-wrap__image-container";
-
-				// Use API data for image or fallback
 				const img = document.createElement("img");
-				if (
-					giftBoxData &&
-					giftBoxData.images &&
-					giftBoxData.images.length > 0
-				) {
+				if (giftBoxData && giftBoxData.images && giftBoxData.images.length > 0) {
 					img.src = giftBoxData.images[0].src;
 					img.alt = giftBoxData.title || "Premium Gift Box & Wrap";
 				} else {
 					img.src = "/assets/premium-gift-box.png"; // Fallback image
 					img.alt = "Premium Gift Box & Wrap";
 				}
-				img.width = 128;
-				img.height = 128;
+				img.width = 71;
+				img.height = 89;
 				img.loading = "lazy";
-				img.className = "checkout-products-wrap__product-image";
-				giftBoxImageContainer.appendChild(img);
+				img.setAttribute("data-gift-box-image", "");
+				giftBoxImage.appendChild(img);
 
-				giftBoxImageSection.appendChild(giftBoxImageContainer);
+				// Content Area
+				const giftBoxContent = document.createElement("div");
+				giftBoxContent.className = "premium-gift-box__content";
 
-				// Create details section for gift box
-				const giftBoxDetailsSection = document.createElement("div");
-				giftBoxDetailsSection.className = "checkout-products-wrap__details";
+				const giftBoxDetails = document.createElement("div");
+				giftBoxDetails.className = "premium-gift-box__details";
 
-				// Header with title and delete button
-				const giftBoxHeader = document.createElement("div");
-				giftBoxHeader.className = "checkout-products-wrap__header";
+				const giftBoxText = document.createElement("div");
+				giftBoxText.className = "premium-gift-box__text";
 
-				const giftBoxTitle = document.createElement("h3");
-				giftBoxTitle.className = "checkout-products-wrap__title";
-				giftBoxTitle.textContent = giftBoxData
-					? giftBoxData.title
-					: "Premium Gift Box & Wrap";
+				const giftBoxTitle = document.createElement("h6");
+				giftBoxTitle.className = "premium-gift-box__title";
+				giftBoxTitle.setAttribute("data-gift-box-title", "");
+				if (giftBoxData) {
+					giftBoxTitle.innerHTML = giftBoxData.title ;
+				} else {
+					giftBoxTitle.innerHTML = "Premium Gift Box & Tissue Wrap";
+				}
 
-				const giftBoxDelete = document.createElement("button");
-				giftBoxDelete.type = "button";
-				giftBoxDelete.className = "checkout-products-wrap__delete";
-				giftBoxDelete.setAttribute(
-					"aria-label",
-					"Remove Premium Gift Box from cart"
-				);
-				giftBoxDelete.innerHTML = `
-					<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M3 6H5H21" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-						<path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-						<path d="M10 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-						<path d="M14 11V17" stroke="#969393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-					</svg>
-				`;
-
-				giftBoxHeader.appendChild(giftBoxTitle);
-				giftBoxHeader.appendChild(giftBoxDelete);
-
-				// Create pricing section for gift box
-				const giftBoxPricingSection = document.createElement("div");
-				giftBoxPricingSection.className = "checkout-products-wrap__pricing";
-
-				const giftBoxPrice = document.createElement("span");
-				giftBoxPrice.className = "checkout-products-wrap__current-price";
+				const giftBoxPrice = document.createElement("div");
+				giftBoxPrice.className = "premium-gift-box__price";
+				giftBoxPrice.setAttribute("aria-label", "Gift box price");
+				giftBoxPrice.setAttribute("data-gift-box-price", "");
 
 				// Use API data for price or fallback
-				if (
-					giftBoxData &&
-					giftBoxData.variants &&
-					giftBoxData.variants.length > 0
-				) {
+				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
 					const variant = giftBoxData.variants[0];
+					giftBoxPrice.setAttribute("data-price", variant.price);
 					// Convert price from string to cents (multiply by 100)
 					const priceInCents = Math.round(parseFloat(variant.price) * 100);
 					giftBoxPrice.textContent = this.formatMoney(priceInCents);
 				} else {
-					giftBoxPrice.textContent = "$0.00";
+					giftBoxPrice.setAttribute("data-price", "200");
+					giftBoxPrice.textContent = this.formatMoney(200); // £2.00 fallback
 				}
 
-				giftBoxPricingSection.appendChild(giftBoxPrice);
+				// Error div
+				const giftBoxError = document.createElement("div");
+				giftBoxError.className = "premium-gift-box__error";
+				giftBoxError.setAttribute("data-gift-box-error", "");
+				giftBoxError.style.display = "none";
+				giftBoxError.style.color = "red";
+				giftBoxError.style.fontSize = "12px";
+				giftBoxError.style.marginTop = "5px";
 
-				// Assemble the gift box details section
-				giftBoxDetailsSection.appendChild(giftBoxHeader);
-				giftBoxDetailsSection.appendChild(giftBoxPricingSection);
+				giftBoxText.appendChild(giftBoxTitle);
+				giftBoxDetails.appendChild(giftBoxText);
+				giftBoxDetails.appendChild(giftBoxPrice);
+				giftBoxDetails.appendChild(giftBoxError);
 
-				// Assemble the gift box container
-				giftBoxContainer.appendChild(giftBoxImageSection);
-				giftBoxContainer.appendChild(giftBoxDetailsSection);
+				// Toggle Section
+				const giftBoxToggleSection = document.createElement("div");
+				giftBoxToggleSection.className = "premium-gift-box__toggle-section";
 
-				// Assemble the gift box item element
-				giftBoxItemElement.appendChild(giftBoxContainer);
-				giftBoxWrapper.appendChild(giftBoxItemElement);
+				const giftBoxToggleContainer = document.createElement("div");
+				giftBoxToggleContainer.className = "premium-gift-box__toggle-container";
 
-				// Return both the main product and gift box as separate elements
-				return [wrapper, giftBoxWrapper];
+				const giftBoxToggleLabel = document.createElement("label");
+				giftBoxToggleLabel.className = "premium-gift-box__toggle";
+				giftBoxToggleLabel.setAttribute("for", "premium-gift-box-toggle");
+
+				const giftBoxToggleInput = document.createElement("input");
+				giftBoxToggleInput.type = "checkbox";
+				giftBoxToggleInput.id = "premium-gift-box-toggle";
+				giftBoxToggleInput.className = "premium-gift-box__toggle-input";
+				giftBoxToggleInput.setAttribute("data-addon-toggle", "gift-box");
+				giftBoxToggleInput.setAttribute("data-property", "properties[Premium Gift Box]");
+				
+				// Set variant data attributes
+				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
+					const variant = giftBoxData.variants[0];
+					giftBoxToggleInput.setAttribute("data-variant-id", variant.id);
+					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", variant.id);
+					giftBoxToggleInput.setAttribute("data-gift-box-product-title", giftBoxData.title);
+				} else {
+					giftBoxToggleInput.setAttribute("data-variant-id", "");
+					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", "");
+					giftBoxToggleInput.setAttribute("data-gift-box-product-title", "Premium Gift Box and Tissue Wrap");
+				}
+
+				const giftBoxToggleSlider = document.createElement("span");
+				giftBoxToggleSlider.className = "premium-gift-box__toggle-slider";
+				giftBoxToggleSlider.setAttribute("aria-hidden", "true");
+
+				const giftBoxToggleHidden = document.createElement("span");
+				giftBoxToggleHidden.className = "visually-hidden";
+				giftBoxToggleHidden.textContent = "Add premium gift box to order";
+
+				giftBoxToggleLabel.appendChild(giftBoxToggleInput);
+				giftBoxToggleLabel.appendChild(giftBoxToggleSlider);
+				giftBoxToggleLabel.appendChild(giftBoxToggleHidden);
+
+				giftBoxToggleContainer.appendChild(giftBoxToggleLabel);
+				giftBoxToggleSection.appendChild(giftBoxToggleContainer);
+
+				giftBoxContent.appendChild(giftBoxDetails);
+				giftBoxContent.appendChild(giftBoxToggleSection);
+
+				giftBoxContainer.appendChild(giftBoxImage);
+				giftBoxContainer.appendChild(giftBoxContent);
+				giftBoxSection.appendChild(giftBoxContainer);
+
+				// Add gift box section to wrapper
+				wrapper.appendChild(giftBoxSection);
+				
+				// Return the wrapper with gift box included
+				return wrapper;
 			} catch (error) {
 				console.error("Failed to render cart item:", error);
 				return null;
