@@ -2735,10 +2735,7 @@
 			// Handle footer visibility based on view and context
 			const footer = this.modal.querySelector(".mini-atc-modal__footer");
 			if (footer) {
-				if (
-					viewName === "personalize" &&
-					this.openingContext === "add-multiple-products"
-				) {
+				if (viewName === "personalize") {
 					// Always show footer in personalize view for add-multiple-products
 					footer.style.display = "";
 					footer.style.opacity = "1";
@@ -2797,6 +2794,14 @@
 				this.switchView("checkout");
 				// Pre-hide sections for cart icon to prevent flash when cart is empty
 				this.hideCheckoutSections();
+			} else if (context === "add-to-cart") {
+				this.switchView("checkout");
+				// Ensure footer is visible for add-to-cart context
+				const footer = this.modal.querySelector(".mini-atc-modal__footer");
+				if (footer) {
+					footer.style.display = "";
+					footer.style.opacity = "1";
+				}
 			}
 
 			// Ensure modal is properly hidden before showing
@@ -3138,7 +3143,9 @@
 
 				// Check if gift box is enabled for this specific vessel by checking cart
 				// Note: This will be updated when the cart is refreshed, so we'll check the current cart state
-				const hasGiftBox = await this.checkGiftBoxInCart(vesselNumber.toString());
+				const hasGiftBox = await this.checkGiftBoxInCart(
+					vesselNumber.toString()
+				);
 				properties["Gift Box"] = hasGiftBox ? "yes" : "no";
 
 				if (hasGiftBox) {
@@ -3659,35 +3666,37 @@
 
 		async checkGiftBoxInCart(vesselNumber) {
 			try {
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
-				const giftBoxItem = cart.items.find(cartItem => 
-					cartItem.properties && 
-					cartItem.properties['_Add-on'] === 'Premium Gift Box' &&
-					cartItem.properties['_Vessel Number'] === vesselNumber
+
+				const giftBoxItem = cart.items.find(
+					(cartItem) =>
+						cartItem.properties &&
+						cartItem.properties["_Add-on"] === "Premium Gift Box" &&
+						cartItem.properties["_Vessel Number"] === vesselNumber
 				);
-				
+
 				return !!giftBoxItem;
 			} catch (error) {
-				console.error('🎁 Error checking gift box in cart:', error);
+				console.error("🎁 Error checking gift box in cart:", error);
 				return false;
 			}
 		}
 
 		async checkAnyGiftBoxInCart() {
 			try {
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
-				const giftBoxItem = cart.items.find(cartItem => 
-					cartItem.properties && 
-					cartItem.properties['_Add-on'] === 'Premium Gift Box'
+
+				const giftBoxItem = cart.items.find(
+					(cartItem) =>
+						cartItem.properties &&
+						cartItem.properties["_Add-on"] === "Premium Gift Box"
 				);
-				
+
 				return !!giftBoxItem;
 			} catch (error) {
-				console.error('🎁 Error checking any gift box in cart:', error);
+				console.error("🎁 Error checking any gift box in cart:", error);
 				return false;
 			}
 		}
@@ -3812,98 +3821,97 @@
 		async restructureCartOrder() {
 			try {
 				// Get current cart data
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
+
 				// Separate products and gift boxes
 				const products = [];
 				const giftBoxes = [];
-				
-				cart.items.forEach(item => {
-					if (item.properties && item.properties['_Add-on'] === 'Premium Gift Box') {
+
+				cart.items.forEach((item) => {
+					if (
+						item.properties &&
+						item.properties["_Add-on"] === "Premium Gift Box"
+					) {
 						giftBoxes.push(item);
 					} else {
 						products.push(item);
 					}
 				});
-				
+
 				// Create ordered structure: Product → Gift → Product → Gift
 				const orderedItems = [];
-				
-				products.forEach(product => {
+
+				products.forEach((product) => {
 					// Add the product first
 					orderedItems.push(product);
-					
+
 					// Find associated gift box
-					const associatedGiftBox = giftBoxes.find(giftBox => 
-						giftBox.properties['_Vessel Number'] === product.id.toString()
+					const associatedGiftBox = giftBoxes.find(
+						(giftBox) =>
+							giftBox.properties["_Vessel Number"] === product.id.toString()
 					);
-					
+
 					// Add gift box if it exists
 					if (associatedGiftBox) {
 						orderedItems.push(associatedGiftBox);
 					}
 				});
-				
+
 				// Note: Cart order restructuring is handled by Shopify's natural cart order
 				// The gift box will appear after the product due to the order of addition
-				
 			} catch (error) {
-				console.error('❌ Error restructuring cart order:', error);
+				console.error("❌ Error restructuring cart order:", error);
 			}
 		}
 
 		async updateProductGiftBoxProperties(vesselId, hasGiftBox) {
 			try {
 				// Wait a moment for cart to be updated
-				await new Promise(resolve => setTimeout(resolve, 200));
-				
+				await new Promise((resolve) => setTimeout(resolve, 200));
+
 				// Get current cart data
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
-				
+
 				// Find the product item
-				const productItem = cart.items.find(item => 
-					item.id.toString() === vesselId && 
-					!item.properties?.['_Add-on']
+				const productItem = cart.items.find(
+					(item) =>
+						item.id.toString() === vesselId && !item.properties?.["_Add-on"]
 				);
-				
-				
+
 				if (productItem) {
 					// Get current properties
 					const currentProperties = { ...productItem.properties };
-					
-					
+
 					// Update gift box properties
 					if (hasGiftBox) {
 						currentProperties["Gift Box"] = "yes";
-						currentProperties["Gift Option"] = "Premium Gift Box and Tissue Wrap";
+						currentProperties["Gift Option"] =
+							"Premium Gift Box and Tissue Wrap";
 					} else {
 						delete currentProperties["Gift Box"];
 						delete currentProperties["Gift Option"];
 					}
-					
-					
+
 					// Update the product item properties
-					const updateResponse = await fetch('/cart/change.js', {
-						method: 'POST',
+					const updateResponse = await fetch("/cart/change.js", {
+						method: "POST",
 						headers: {
-							'Content-Type': 'application/json',
+							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
 							id: productItem.key,
-							properties: currentProperties
-						})
+							properties: currentProperties,
+						}),
 					});
-					
+
 					if (updateResponse.ok) {
 					} else {
 					}
 				} else {
 				}
-			} catch (error) {
-			}
+			} catch (error) {}
 		}
 
 		async updateCartIconBubbleWithSections() {
@@ -3911,21 +3919,21 @@
 				// Fetch cart icon bubble section
 				const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
 				const sectionResponse = await fetch(sectionUrl);
-				
+
 				if (sectionResponse.ok) {
 					const sectionData = await sectionResponse.json();
-					
+
 					// Create response object with sections for updateCartIconBubble
 					const responseWithSections = {
-						sections: sectionData
+						sections: sectionData,
 					};
-					
+
 					this.updateCartIconBubble(responseWithSections);
 				} else {
-					console.warn('⚠️ Failed to fetch cart icon bubble section');
+					console.warn("⚠️ Failed to fetch cart icon bubble section");
 				}
 			} catch (error) {
-				console.error('❌ Error updating cart icon bubble:', error);
+				console.error("❌ Error updating cart icon bubble:", error);
 			}
 		}
 
@@ -4155,9 +4163,6 @@
 						emptyState.style.display = "none";
 					}
 
-					// Show checkout sections when cart has items
-					this.showCheckoutSections();
-
 					// Hide empty cart message
 					this.hideEmptyCartMessage();
 
@@ -4174,6 +4179,8 @@
 					// REMOVED: bindCheckoutItemEvents() - using event delegation instead (line 767)
 					// this.bindCheckoutItemEvents();
 
+					// Show checkout sections when cart has items
+					this.showCheckoutSections();
 					// Refresh pricing to reflect the updated cart totals
 					this.updateCheckoutPricing();
 
@@ -4703,58 +4710,66 @@
 				// Fetch gift box product data from API
 				const giftBoxProductId = "15099649098107";
 				const giftBoxData = await this.fetchProductData(giftBoxProductId);
-				
+
 				// Create gift box section using the same structure as Liquid template
-						const giftBoxSection = document.createElement("div");
-						giftBoxSection.className = "premium-gift-box";
+				const giftBoxSection = document.createElement("div");
+				giftBoxSection.className = "premium-gift-box";
 
-						const giftBoxContainer = document.createElement("div");
-						giftBoxContainer.className = "premium-gift-box__container";
+				const giftBoxContainer = document.createElement("div");
+				giftBoxContainer.className = "premium-gift-box__container";
 
-						// Product Image
-						const giftBoxImage = document.createElement("div");
-						giftBoxImage.className = "premium-gift-box__image";
+				// Product Image
+				const giftBoxImage = document.createElement("div");
+				giftBoxImage.className = "premium-gift-box__image";
 
-							const img = document.createElement("img");
-				if (giftBoxData && giftBoxData.images && giftBoxData.images.length > 0) {
+				const img = document.createElement("img");
+				if (
+					giftBoxData &&
+					giftBoxData.images &&
+					giftBoxData.images.length > 0
+				) {
 					img.src = giftBoxData.images[0].src;
 					img.alt = giftBoxData.title || "Premium Gift Box & Wrap";
-						} else {
-							img.src = "/assets/premium-gift-box.png"; // Fallback image
-							img.alt = "Premium Gift Box & Wrap";
+				} else {
+					img.src = "/assets/premium-gift-box.png"; // Fallback image
+					img.alt = "Premium Gift Box & Wrap";
 				}
-							img.width = 71;
-							img.height = 89;
+				img.width = 71;
+				img.height = 89;
 				img.loading = "lazy";
 				img.setAttribute("data-gift-box-image", "");
-							giftBoxImage.appendChild(img);
+				giftBoxImage.appendChild(img);
 
-						// Content Area
-						const giftBoxContent = document.createElement("div");
-						giftBoxContent.className = "premium-gift-box__content";
+				// Content Area
+				const giftBoxContent = document.createElement("div");
+				giftBoxContent.className = "premium-gift-box__content";
 
-						const giftBoxDetails = document.createElement("div");
-						giftBoxDetails.className = "premium-gift-box__details";
+				const giftBoxDetails = document.createElement("div");
+				giftBoxDetails.className = "premium-gift-box__details";
 
-						const giftBoxText = document.createElement("div");
-						giftBoxText.className = "premium-gift-box__text";
+				const giftBoxText = document.createElement("div");
+				giftBoxText.className = "premium-gift-box__text";
 
 				const giftBoxTitle = document.createElement("h6");
-						giftBoxTitle.className = "premium-gift-box__title";
+				giftBoxTitle.className = "premium-gift-box__title";
 				giftBoxTitle.setAttribute("data-gift-box-title", "");
 				if (giftBoxData) {
-					giftBoxTitle.innerHTML = giftBoxData.title ;
+					giftBoxTitle.innerHTML = giftBoxData.title;
 				} else {
 					giftBoxTitle.innerHTML = "Premium Gift Box & Tissue Wrap";
 				}
 
-						const giftBoxPrice = document.createElement("div");
-						giftBoxPrice.className = "premium-gift-box__price";
+				const giftBoxPrice = document.createElement("div");
+				giftBoxPrice.className = "premium-gift-box__price";
 				giftBoxPrice.setAttribute("aria-label", "Gift box price");
 				giftBoxPrice.setAttribute("data-gift-box-price", "");
 
 				// Use API data for price or fallback
-				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
+				if (
+					giftBoxData &&
+					giftBoxData.variants &&
+					giftBoxData.variants.length > 0
+				) {
 					const variant = giftBoxData.variants[0];
 					giftBoxPrice.setAttribute("data-price", variant.price);
 					// Convert price from string to cents (multiply by 100)
@@ -4774,12 +4789,12 @@
 				giftBoxError.style.fontSize = "12px";
 				giftBoxError.style.marginTop = "5px";
 
-						giftBoxText.appendChild(giftBoxTitle);
-						giftBoxDetails.appendChild(giftBoxText);
-						giftBoxDetails.appendChild(giftBoxPrice);
+				giftBoxText.appendChild(giftBoxTitle);
+				giftBoxDetails.appendChild(giftBoxText);
+				giftBoxDetails.appendChild(giftBoxPrice);
 				giftBoxDetails.appendChild(giftBoxError);
 
-						// Toggle Section
+				// Toggle Section
 				const giftBoxToggleSection = document.createElement("div");
 				giftBoxToggleSection.className = "premium-gift-box__toggle-section";
 
@@ -4788,7 +4803,7 @@
 
 				// Create unique ID for this product's gift box toggle
 				const uniqueToggleId = `premium-gift-box-toggle-${item.id}`;
-				
+
 				const giftBoxToggleLabel = document.createElement("label");
 				giftBoxToggleLabel.className = "premium-gift-box__toggle";
 				giftBoxToggleLabel.setAttribute("for", uniqueToggleId);
@@ -4798,21 +4813,40 @@
 				giftBoxToggleInput.id = uniqueToggleId;
 				giftBoxToggleInput.className = "premium-gift-box__toggle-input";
 				giftBoxToggleInput.setAttribute("data-addon-toggle", "gift-box");
-				giftBoxToggleInput.setAttribute("data-property", "properties[Premium Gift Box]");
+				giftBoxToggleInput.setAttribute(
+					"data-property",
+					"properties[Premium Gift Box]"
+				);
 				giftBoxToggleInput.setAttribute("data-vessel-id", item.id); // Link to the main product
-				
+
 				// Set variant data attributes
-				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
+				if (
+					giftBoxData &&
+					giftBoxData.variants &&
+					giftBoxData.variants.length > 0
+				) {
 					const variant = giftBoxData.variants[0];
 					giftBoxToggleInput.setAttribute("data-variant-id", variant.id);
-					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", variant.id);
-					giftBoxToggleInput.setAttribute("data-gift-box-product-title", giftBoxData.title);
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-variant-id",
+						variant.id
+					);
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-product-title",
+						giftBoxData.title
+					);
 				} else {
 					// Use hardcoded variant ID as fallback
 					const fallbackVariantId = "55511131455867"; // From the API data you provided
 					giftBoxToggleInput.setAttribute("data-variant-id", fallbackVariantId);
-					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", fallbackVariantId);
-					giftBoxToggleInput.setAttribute("data-gift-box-product-title", "Premium Gift Box and Tissue Wrap");
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-variant-id",
+						fallbackVariantId
+					);
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-product-title",
+						"Premium Gift Box and Tissue Wrap"
+					);
 				}
 
 				const giftBoxToggleSlider = document.createElement("span");
@@ -4837,15 +4871,16 @@
 				// Use setTimeout to ensure this runs after the DOM is fully rendered
 				setTimeout(async () => {
 					try {
-						const cartResponse = await fetch('/cart.js');
+						const cartResponse = await fetch("/cart.js");
 						const cart = await cartResponse.json();
-						
-						const existingGiftBox = cart.items.find(cartItem => 
-							cartItem.properties && 
-							cartItem.properties['_Add-on'] === 'Premium Gift Box' &&
-							cartItem.properties['_Vessel Number'] === item.id.toString()
+
+						const existingGiftBox = cart.items.find(
+							(cartItem) =>
+								cartItem.properties &&
+								cartItem.properties["_Add-on"] === "Premium Gift Box" &&
+								cartItem.properties["_Vessel Number"] === item.id.toString()
 						);
-						
+
 						if (existingGiftBox) {
 							giftBoxToggleInput.checked = true;
 						} else {
@@ -4857,16 +4892,15 @@
 				}, 100); // Small delay to ensure DOM is ready
 
 				// Add event listener for gift box toggle
-				giftBoxToggleInput.addEventListener('change', async (event) => {
+				giftBoxToggleInput.addEventListener("change", async (event) => {
 					const isChecked = event.target.checked;
-					const vesselId = event.target.getAttribute('data-vessel-id');
-					const variantId = event.target.getAttribute('data-variant-id');
-					
-					
+					const vesselId = event.target.getAttribute("data-vessel-id");
+					const variantId = event.target.getAttribute("data-variant-id");
+
 					try {
 						if (isChecked) {
 							// Add gift box to cart
-							
+
 							// Create gift box data
 							const giftBoxData = {
 								id: variantId,
@@ -4874,22 +4908,25 @@
 								properties: {
 									// HIDDEN PROPERTIES (for backend use only)
 									"_Monogram Initials": "N/A",
-									"_Premium Gift Box & Tissue Wrap": "Premium Gift Box & Tissue Wrap",
+									"_Premium Gift Box & Tissue Wrap":
+										"Premium Gift Box & Tissue Wrap",
 									"_Add-on": "Premium Gift Box",
 									"_Product Handle": "premium-gift-box-tissue-wrap",
 									"_Vessel Number": vesselId,
-									"_Unique Line ID": `${Date.now()}-GB${vesselId}-${Math.random().toString(36).substr(2, 9)}`,
-								}
-							};
-							
-							const response = await fetch('/cart/add.js', {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json',
+									"_Unique Line ID": `${Date.now()}-GB${vesselId}-${Math.random()
+										.toString(36)
+										.substr(2, 9)}`,
 								},
-								body: JSON.stringify(giftBoxData)
+							};
+
+							const response = await fetch("/cart/add.js", {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify(giftBoxData),
 							});
-							
+
 							if (response.ok) {
 								// Update product properties to show gift box info
 								await this.updateProductGiftBoxProperties(vesselId, true);
@@ -4899,36 +4936,38 @@
 								this.updateCheckoutPricing();
 							} else {
 								// Show error message
-								giftBoxError.textContent = 'Failed to add gift box. Please try again.';
-								giftBoxError.style.display = 'block';
+								giftBoxError.textContent =
+									"Failed to add gift box. Please try again.";
+								giftBoxError.style.display = "block";
 								// Uncheck the toggle
 								event.target.checked = false;
 							}
 						} else {
 							// Remove gift box from cart using change API
-							
+
 							// Find and remove the gift box item
-							const cartResponse = await fetch('/cart.js');
+							const cartResponse = await fetch("/cart.js");
 							const cart = await cartResponse.json();
-							
-							const giftBoxItem = cart.items.find(cartItem => 
-								cartItem.properties && 
-								cartItem.properties['_Add-on'] === 'Premium Gift Box' &&
-								cartItem.properties['_Vessel Number'] === vesselId
+
+							const giftBoxItem = cart.items.find(
+								(cartItem) =>
+									cartItem.properties &&
+									cartItem.properties["_Add-on"] === "Premium Gift Box" &&
+									cartItem.properties["_Vessel Number"] === vesselId
 							);
-							
+
 							if (giftBoxItem) {
-								const removeResponse = await fetch('/cart/change.js', {
-									method: 'POST',
+								const removeResponse = await fetch("/cart/change.js", {
+									method: "POST",
 									headers: {
-										'Content-Type': 'application/json',
+										"Content-Type": "application/json",
 									},
 									body: JSON.stringify({
 										id: giftBoxItem.key,
-										quantity: 0
-									})
+										quantity: 0,
+									}),
 								});
-								
+
 								if (removeResponse.ok) {
 									// Update product properties to remove gift box info
 									await this.updateProductGiftBoxProperties(vesselId, false);
@@ -4938,27 +4977,28 @@
 									this.updateCheckoutPricing();
 								} else {
 									// Show error message
-									giftBoxError.textContent = 'Failed to remove gift box. Please try again.';
-									giftBoxError.style.display = 'block';
+									giftBoxError.textContent =
+										"Failed to remove gift box. Please try again.";
+									giftBoxError.style.display = "block";
 									// Re-check the toggle
 									event.target.checked = true;
 								}
 							}
 						}
 					} catch (error) {
-						giftBoxError.textContent = 'An error occurred. Please try again.';
-						giftBoxError.style.display = 'block';
+						giftBoxError.textContent = "An error occurred. Please try again.";
+						giftBoxError.style.display = "block";
 						// Reset toggle state
 						event.target.checked = !isChecked;
 					}
 				});
 
-						giftBoxContainer.appendChild(giftBoxImage);
-						giftBoxContainer.appendChild(giftBoxContent);
-						giftBoxSection.appendChild(giftBoxContainer);
+				giftBoxContainer.appendChild(giftBoxImage);
+				giftBoxContainer.appendChild(giftBoxContent);
+				giftBoxSection.appendChild(giftBoxContainer);
 
-						// Add gift box section to wrapper
-						wrapper.appendChild(giftBoxSection);
+				// Add gift box section to wrapper
+				wrapper.appendChild(giftBoxSection);
 
 				// Return the wrapper with gift box included
 				return wrapper;
@@ -5672,8 +5712,14 @@
 			const footer = this.modal.querySelector(".mini-atc-modal__footer");
 			if (footer) {
 				if (this.currentView === "checkout") {
-					// In checkout view with empty cart, always hide the footer
-					footer.style.display = "none";
+					// In checkout view, use shouldShowFooter logic instead of always hiding
+					const shouldShowFooter = this.shouldShowFooter(false); // Assume empty cart when hiding sections
+					if (shouldShowFooter) {
+						footer.style.display = "";
+						footer.style.opacity = "1";
+					} else {
+						footer.style.display = "none";
+					}
 				} else if (
 					this.currentView === "personalize" &&
 					this.openingContext === "add-multiple-products"
@@ -5718,6 +5764,11 @@
 				if (footer) {
 					// Check if we should show the footer based on context and cart state
 					const shouldShowFooter = this.shouldShowFooter(true); // Cart has items if we're showing sections
+					console.log("Footer visibility check:", {
+						openingContext: this.openingContext,
+						shouldShowFooter: shouldShowFooter,
+						currentView: this.currentView,
+					});
 					if (shouldShowFooter) {
 						footer.style.display = "";
 						footer.style.opacity = "1";
@@ -5745,6 +5796,11 @@
 			// If opened via add-multiple-products, always show footer (in personalize view)
 			if (this.openingContext === "add-multiple-products") {
 				return true; // Always show footer for add-multiple-products context
+			}
+
+			// If opened via add-to-cart, always show footer (in checkout view)
+			if (this.openingContext === "add-to-cart") {
+				return true; // Always show footer for add-to-cart context
 			}
 
 			// If opened via cart icon, only show footer if cart has items (in checkout view)

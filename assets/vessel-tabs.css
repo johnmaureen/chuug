@@ -508,3 +508,14 @@
 .selection-result-wrap.result-3 .result-item p {
 	font-size: 12px;
 } */
+
+.selection-result-wrap .no-selection-text {
+	color: #fff;
+	opacity: 0.2;
+}
+
+.selection-result-wrap.result-1 .no-selection-text,
+.selection-result-wrap.result-2 .no-selection-text,
+.selection-result-wrap.result-3 .no-selection-text {
+	display: none !important;
+}

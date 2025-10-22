@@ -187,7 +187,7 @@
             <div class="tw-w-full">
               <label
                 onclick="setProductAmount('2')"
-                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;
+                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase" style="opacity: 0.85;"
               >
                 <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
                   <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
@@ -215,7 +215,7 @@
             <div class="tw-w-full">
               <label
                 onclick="setProductAmount('3')"
-                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;"
+                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase" style="opacity: 0.85;"
               >
                 <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
                   <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
@@ -929,6 +929,100 @@ function addEventListenerToMonogramInitialsInput() {
   addProductsToCart(products);
 }
 
+  function resetFormToDefaults() {
+    // Reset product amount to default (2)
+    setProductAmount('2');
+    
+    // Reset engraving to default (no engraving)
+    setEngraving(0);
+    
+    // Reset all vessel inputs to default state
+    for (let i = 1; i <= 3; i++) {
+      // Reset material dropdowns
+      const materialContainer = document.getElementById(`select_${i}_material`);
+      if (materialContainer) {
+        const selectedOption = materialContainer.querySelector('.js-selected-option');
+        if (selectedOption) {
+          selectedOption.textContent = 'WOOD FINISH';
+        }
+        // Reset radio inputs
+        const materialInputs = materialContainer.querySelectorAll('input[type="radio"]');
+        materialInputs.forEach(input => {
+          input.checked = false;
+        });
+      }
+      
+      // Reset rope dropdowns
+      const ropeContainer = document.getElementById(`select_${i}_rope`);
+      if (ropeContainer) {
+        const selectedOption = ropeContainer.querySelector('.js-selected-option');
+        if (selectedOption) {
+          selectedOption.textContent = 'ROPE TYPE';
+        }
+        // Reset radio inputs
+        const ropeInputs = ropeContainer.querySelectorAll('input[type="radio"]');
+        ropeInputs.forEach(input => {
+          input.checked = false;
+        });
+        // Re-disable rope dropdown
+        ropeContainer.setAttribute('disabled', 'true');
+      }
+      
+      // Reset monogram initials inputs
+      const monogramInput = document.querySelector(`.monogram_initials`);
+      if (monogramInput) {
+        monogramInput.value = '';
+        monogramInput.setAttribute('disabled', 'true');
+      }
+    }
+    
+    // Reset all inputs attributes
+    const inputs = document.querySelectorAll('.inputs');
+    inputs.forEach(input => {
+      input.setAttribute('variant_id', '');
+      input.setAttribute('variant_monogram_initials_id', '');
+      input.setAttribute('variant_index', '0');
+      input.setAttribute('product_amount', '2');
+      input.setAttribute('monogram_initials', '');
+    });
+    
+    // Reset vessel selection display
+    const selectionResultWrap = document.querySelector('.selection-result-wrap');
+    if (selectionResultWrap) {
+      // Clear all content first
+      selectionResultWrap.innerHTML = '';
+      
+      // Add back the default "no selection" text
+      const noSelectionText = document.createElement('p');
+      noSelectionText.className = 'no-selection-text';
+      noSelectionText.textContent = 'Your selection will appear here';
+      selectionResultWrap.appendChild(noSelectionText);
+    }
+    
+    // Clear vessel selection display system data
+    if (window.vesselSelectionDisplay && window.vesselSelectionDisplay.clearSelections) {
+      window.vesselSelectionDisplay.clearSelections();
+    }
+    
+    // Update carousel images to default
+    updateCarouselsImages();
+    
+    // Update prices to default
+    updatePrices(0);
+    
+    // Disable CTA button until new selections are made
+    const ctaButton = document.querySelector('.cta-button');
+    if (ctaButton) {
+      ctaButton.setAttribute('disabled', 'true');
+    }
+    
+    // Show incomplete inputs text
+    const incompletedInputsText = document.querySelector('.incompleted-inputs-text');
+    if (incompletedInputsText && incompletedInputsText.classList.contains('tw-hidden')) {
+      incompletedInputsText.classList.remove('tw-hidden');
+    }
+  }
+
   function addProductsToCart(products){
     fetch('/cart/add.js', {
       method: 'POST',
@@ -940,7 +1034,75 @@ function addEventListenerToMonogramInitialsInput() {
         return response.json();
       })
       .then((data) => {
-        window.location.href = '/cart';
+        // Reset form to default values after successful submission
+        resetFormToDefaults();
+        
+        // Open mini ATC modal in checkout view instead of redirecting to cart
+        const miniATCModal = document.querySelector(".mini-atc-modal");
+        
+        if (miniATCModal) {
+          const modalId = miniATCModal.id;
+          
+          if (window.MiniATCModal && window.MiniATCModal.getInstance) {
+            const modalInstance = window.MiniATCModal.getInstance(modalId);
+            if (modalInstance) {
+              // Show loading spinner
+              modalInstance.showCartLoadingSpinner();
+              
+              modalInstance.open("add-to-cart");
+              // Switch to checkout view immediately
+              setTimeout(async () => {
+                modalInstance.switchView("checkout");
+                try {
+                  // Force refresh of cart data and checkout view
+                  const freshCartData = await modalInstance.fetchUpdatedCartData();
+                  if (freshCartData) {
+                    await modalInstance.updateCheckoutViewWithCartData(freshCartData);
+                  } else {
+                    await modalInstance.updateCheckoutView();
+                  }
+                } finally {
+                  // Hide loading spinner
+                  modalInstance.hideCartLoadingSpinner();
+                }
+              }, 10); // Very fast response
+            }
+          } else if (window.openMiniATCModal) {
+            // Fallback to global function
+            window.openMiniATCModal(modalId);
+            // Try to switch to checkout view
+            setTimeout(async () => {
+              const instance = window.MiniATCModal?.getInstance(modalId);
+              if (instance) {
+                // Set opening context for fallback case
+                instance.openingContext = "add-to-cart";
+                
+                // Show loading spinner
+                instance.showCartLoadingSpinner();
+                
+                instance.switchView("checkout");
+                try {
+                  // Force refresh of cart data and checkout view
+                  const freshCartData = await instance.fetchUpdatedCartData();
+                  if (freshCartData) {
+                    await instance.updateCheckoutViewWithCartData(freshCartData);
+                  } else {
+                    await instance.updateCheckoutView();
+                  }
+                } finally {
+                  // Hide loading spinner
+                  instance.hideCartLoadingSpinner();
+                }
+              }
+            }, 1); // Very fast response
+          } else {
+            // Fallback to cart page if modal system is not available
+            window.location.href = '/cart';
+          }
+        } else {
+          // Fallback to cart page if modal is not found
+          window.location.href = '/cart';
+        }
       })
       .catch((error) => {
         console.error('Error:', error);
