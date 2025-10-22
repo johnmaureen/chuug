@@ -3845,12 +3845,6 @@
 					}
 				});
 				
-				console.log('🔄 Restructured cart order:', orderedItems.map(item => ({
-					id: item.id,
-					title: item.title,
-					isGiftBox: !!item.properties?.['_Add-on']
-				})));
-				
 				// Note: Cart order restructuring is handled by Shopify's natural cart order
 				// The gift box will appear after the product due to the order of addition
 				
@@ -3868,12 +3862,6 @@
 				const cartResponse = await fetch('/cart.js');
 				const cart = await cartResponse.json();
 				
-				console.log('🔍 Looking for product with vesselId:', vesselId);
-				console.log('🔍 Available cart items:', cart.items.map(item => ({
-					id: item.id,
-					hasAddon: !!item.properties?.['_Add-on'],
-					title: item.title
-				})));
 				
 				// Find the product item
 				const productItem = cart.items.find(item => 
@@ -3881,13 +3869,11 @@
 					!item.properties?.['_Add-on']
 				);
 				
-				console.log('🔍 Found product item:', !!productItem);
 				
 				if (productItem) {
 					// Get current properties
 					const currentProperties = { ...productItem.properties };
 					
-					console.log('🔍 Current properties:', currentProperties);
 					
 					// Update gift box properties
 					if (hasGiftBox) {
@@ -3898,7 +3884,6 @@
 						delete currentProperties["Gift Option"];
 					}
 					
-					console.log('🔍 Updated properties:', currentProperties);
 					
 					// Update the product item properties
 					const updateResponse = await fetch('/cart/change.js', {
@@ -3913,15 +3898,11 @@
 					});
 					
 					if (updateResponse.ok) {
-						console.log('✅ Product gift box properties updated:', hasGiftBox ? 'added' : 'removed');
 					} else {
-						console.warn('⚠️ Failed to update product gift box properties');
 					}
 				} else {
-					console.warn('⚠️ Product item not found for vesselId:', vesselId);
 				}
 			} catch (error) {
-				console.error('❌ Error updating product gift box properties:', error);
 			}
 		}
 
@@ -3940,7 +3921,6 @@
 					};
 					
 					this.updateCartIconBubble(responseWithSections);
-					console.log('✅ Cart icon bubble updated with sections');
 				} else {
 					console.warn('⚠️ Failed to fetch cart icon bubble section');
 				}
@@ -4860,30 +4840,18 @@
 						const cartResponse = await fetch('/cart.js');
 						const cart = await cartResponse.json();
 						
-						console.log('🔍 Checking cart for vessel:', item.id);
-						console.log('🔍 Cart items:', cart.items.map(cartItem => ({
-							id: cartItem.id,
-							vesselNumber: cartItem.properties?.['_Vessel Number'],
-							addon: cartItem.properties?.['_Add-on']
-						})));
-						
 						const existingGiftBox = cart.items.find(cartItem => 
 							cartItem.properties && 
 							cartItem.properties['_Add-on'] === 'Premium Gift Box' &&
 							cartItem.properties['_Vessel Number'] === item.id.toString()
 						);
 						
-						console.log('🔍 Found gift box for vessel:', item.id, ':', !!existingGiftBox);
-						
 						if (existingGiftBox) {
 							giftBoxToggleInput.checked = true;
-							console.log('🎁 Gift box already in cart for vessel:', item.id, '- toggle set to ON');
 						} else {
 							giftBoxToggleInput.checked = false;
-							console.log('🎁 No gift box in cart for vessel:', item.id, '- toggle set to OFF');
 						}
 					} catch (error) {
-						console.error('🎁 Error checking existing gift box:', error);
 						giftBoxToggleInput.checked = false;
 					}
 				}, 100); // Small delay to ensure DOM is ready
@@ -4894,12 +4862,10 @@
 					const vesselId = event.target.getAttribute('data-vessel-id');
 					const variantId = event.target.getAttribute('data-variant-id');
 					
-					console.log('🎁 Gift box toggle changed for vessel:', vesselId, 'checked:', isChecked);
 					
 					try {
 						if (isChecked) {
 							// Add gift box to cart
-							console.log('🎁 Adding gift box to cart for vessel:', vesselId);
 							
 							// Create gift box data
 							const giftBoxData = {
@@ -4925,7 +4891,6 @@
 							});
 							
 							if (response.ok) {
-								console.log('✅ Gift box added to cart');
 								// Update product properties to show gift box info
 								await this.updateProductGiftBoxProperties(vesselId, true);
 								// Update cart icon bubble and total price
@@ -4933,7 +4898,6 @@
 								// Update checkout pricing to reflect new total
 								this.updateCheckoutPricing();
 							} else {
-								console.error('❌ Failed to add gift box to cart');
 								// Show error message
 								giftBoxError.textContent = 'Failed to add gift box. Please try again.';
 								giftBoxError.style.display = 'block';
@@ -4942,7 +4906,6 @@
 							}
 						} else {
 							// Remove gift box from cart using change API
-							console.log('🎁 Removing gift box from cart for vessel:', vesselId);
 							
 							// Find and remove the gift box item
 							const cartResponse = await fetch('/cart.js');
@@ -4967,7 +4930,6 @@
 								});
 								
 								if (removeResponse.ok) {
-									console.log('✅ Gift box removed from cart');
 									// Update product properties to remove gift box info
 									await this.updateProductGiftBoxProperties(vesselId, false);
 									// Update cart icon bubble and total price
@@ -4975,7 +4937,6 @@
 									// Update checkout pricing to reflect new total
 									this.updateCheckoutPricing();
 								} else {
-									console.error('❌ Failed to remove gift box from cart');
 									// Show error message
 									giftBoxError.textContent = 'Failed to remove gift box. Please try again.';
 									giftBoxError.style.display = 'block';
@@ -4985,7 +4946,6 @@
 							}
 						}
 					} catch (error) {
-						console.error('🎁 Error handling gift box toggle:', error);
 						giftBoxError.textContent = 'An error occurred. Please try again.';
 						giftBoxError.style.display = 'block';
 						// Reset toggle state
