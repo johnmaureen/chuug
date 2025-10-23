@@ -2010,206 +2010,276 @@
 
 		async updateExistingVesselItemsWithWrappedBundleSafe() {
 			try {
-				console.log('🔍 DEBUG: Checking existing vessel items for _Wrapped_Bundle property');
-				const cartResponse = await fetch('/cart.js');
-				const cart = await cartResponse.json();
-				
-				// Find vessel items that don't have _Wrapped_Bundle property
-				const vesselItemsToUpdate = cart.items.filter(item => 
-					!item.properties?.["_Wrapped_Bundle"] && 
-					!item.title.toLowerCase().includes('gift box')
+				console.log(
+					"🔍 DEBUG: Checking existing vessel items for _Wrapped_Bundle property"
 				);
-				
-				console.log('🔍 DEBUG: Found vessel items that need _Wrapped_Bundle:', vesselItemsToUpdate.length);
-				
+				const cartResponse = await fetch("/cart.js");
+				const cart = await cartResponse.json();
+
+				// Find vessel items that don't have _Wrapped_Bundle property
+				const vesselItemsToUpdate = cart.items.filter(
+					(item) =>
+						!item.properties?.["_Wrapped_Bundle"] &&
+						!item.title.toLowerCase().includes("gift box")
+				);
+
+				console.log(
+					"🔍 DEBUG: Found vessel items that need _Wrapped_Bundle:",
+					vesselItemsToUpdate.length
+				);
+
 				// Only update if there are items that need updating
 				if (vesselItemsToUpdate.length === 0) {
-					console.log('✅ All vessel items already have _Wrapped_Bundle properties');
+					console.log(
+						"✅ All vessel items already have _Wrapped_Bundle properties"
+					);
 					return;
 				}
-				
+
 				// Update items one by one with delays to prevent conflicts
 				for (let i = 0; i < vesselItemsToUpdate.length; i++) {
 					const item = vesselItemsToUpdate[i];
 					const wrappedBundleId = Math.random().toString(36).substr(2, 8);
-					
+
 					// Update the item properties
 					const updatedProperties = {
 						...item.properties,
-						"_Wrapped_Bundle": wrappedBundleId
+						_Wrapped_Bundle: wrappedBundleId,
 					};
-					
-					console.log('🔍 DEBUG: Updating item', item.key, 'with wrapped bundle ID:', wrappedBundleId);
-					
+
+					console.log(
+						"🔍 DEBUG: Updating item",
+						item.key,
+						"with wrapped bundle ID:",
+						wrappedBundleId
+					);
+
 					try {
 						// Use cart/change.js to update the item properties
-						const response = await fetch('/cart/change.js', {
-							method: 'POST',
+						const response = await fetch("/cart/change.js", {
+							method: "POST",
 							headers: {
-								'Content-Type': 'application/json',
+								"Content-Type": "application/json",
 							},
 							body: JSON.stringify({
 								id: item.key,
 								quantity: item.quantity,
-								properties: updatedProperties
-							})
+								properties: updatedProperties,
+							}),
 						});
-						
+
 						if (response.ok) {
-							console.log('✅ Successfully updated item', item.key);
+							console.log("✅ Successfully updated item", item.key);
 						} else {
-							console.error('❌ Failed to update item', item.key, response.status);
+							console.error(
+								"❌ Failed to update item",
+								item.key,
+								response.status
+							);
 							// Don't throw error, just log it and continue
 						}
-						
+
 						// Add small delay between updates to prevent conflicts
 						if (i < vesselItemsToUpdate.length - 1) {
-							await new Promise(resolve => setTimeout(resolve, 100));
+							await new Promise((resolve) => setTimeout(resolve, 100));
 						}
-						
 					} catch (itemError) {
-						console.error('❌ Error updating individual item', item.key, itemError);
+						console.error(
+							"❌ Error updating individual item",
+							item.key,
+							itemError
+						);
 						// Continue with next item instead of stopping
 					}
 				}
-				
-				console.log('✅ Completed updating vessel items with _Wrapped_Bundle properties');
+
+				console.log(
+					"✅ Completed updating vessel items with _Wrapped_Bundle properties"
+				);
 			} catch (error) {
-				console.error('❌ Error in updateExistingVesselItemsWithWrappedBundleSafe:', error);
+				console.error(
+					"❌ Error in updateExistingVesselItemsWithWrappedBundleSafe:",
+					error
+				);
 				// Don't throw the error to prevent page refreshes
 			}
 		}
 
 		async updateExistingVesselItemsWithWrappedBundle() {
 			try {
-				console.log('🔍 DEBUG: Updating existing vessel items with _Wrapped_Bundle property');
-				const cartResponse = await fetch('/cart.js');
-				const cart = await cartResponse.json();
-				
-				// Find vessel items that don't have _Wrapped_Bundle property
-				const vesselItemsToUpdate = cart.items.filter(item => 
-					!item.properties?.["_Wrapped_Bundle"] && 
-					!item.title.toLowerCase().includes('gift box')
+				console.log(
+					"🔍 DEBUG: Updating existing vessel items with _Wrapped_Bundle property"
 				);
-				
-				console.log('🔍 DEBUG: Found vessel items to update:', vesselItemsToUpdate.length);
-				
+				const cartResponse = await fetch("/cart.js");
+				const cart = await cartResponse.json();
+
+				// Find vessel items that don't have _Wrapped_Bundle property
+				const vesselItemsToUpdate = cart.items.filter(
+					(item) =>
+						!item.properties?.["_Wrapped_Bundle"] &&
+						!item.title.toLowerCase().includes("gift box")
+				);
+
+				console.log(
+					"🔍 DEBUG: Found vessel items to update:",
+					vesselItemsToUpdate.length
+				);
+
 				for (const item of vesselItemsToUpdate) {
 					const wrappedBundleId = Math.random().toString(36).substr(2, 8);
-					
+
 					// Update the item properties
 					const updatedProperties = {
 						...item.properties,
-						"_Wrapped_Bundle": wrappedBundleId
+						_Wrapped_Bundle: wrappedBundleId,
 					};
-					
-					console.log('🔍 DEBUG: Updating item', item.key, 'with wrapped bundle ID:', wrappedBundleId);
-					
+
+					console.log(
+						"🔍 DEBUG: Updating item",
+						item.key,
+						"with wrapped bundle ID:",
+						wrappedBundleId
+					);
+
 					// Use cart/change.js to update the item properties
-					const response = await fetch('/cart/change.js', {
-						method: 'POST',
+					const response = await fetch("/cart/change.js", {
+						method: "POST",
 						headers: {
-							'Content-Type': 'application/json',
+							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
 							id: item.key,
 							quantity: item.quantity,
-							properties: updatedProperties
-						})
+							properties: updatedProperties,
+						}),
 					});
-					
+
 					if (response.ok) {
-						console.log('✅ Successfully updated item', item.key);
+						console.log("✅ Successfully updated item", item.key);
 					} else {
-						console.error('❌ Failed to update item', item.key, response.status);
+						console.error(
+							"❌ Failed to update item",
+							item.key,
+							response.status
+						);
 					}
 				}
 			} catch (error) {
-				console.error('❌ Error updating vessel items:', error);
+				console.error("❌ Error updating vessel items:", error);
 			}
 		}
 
 		async cleanupOrphanedGiftBoxes(cartData) {
 			try {
-				console.log('🔍 DEBUG: cleanupOrphanedGiftBoxes called with cartData:', cartData);
-				
-				// Find all product items (non-gift box items) and collect their wrapped bundle IDs
-				const productItems = cartData.items.filter(item => 
-					!item.title.toLowerCase().includes('gift box')
+				console.log(
+					"🔍 DEBUG: cleanupOrphanedGiftBoxes called with cartData:",
+					cartData
 				);
-				console.log('🔍 DEBUG: productItems found:', productItems.length);
-				
+
+				// Find all product items (non-gift box items) and collect their wrapped bundle IDs
+				const productItems = cartData.items.filter(
+					(item) => !item.title.toLowerCase().includes("gift box")
+				);
+				console.log("🔍 DEBUG: productItems found:", productItems.length);
+
 				// Get all wrapped bundle IDs from product items
 				const activeWrappedBundleIds = productItems
-					.map(item => item.properties?.["_Wrapped_Bundle"])
-					.filter(id => id); // Remove undefined/null values
-				console.log('🧹 Active wrapped bundle IDs:', activeWrappedBundleIds);
-				
+					.map((item) => item.properties?.["_Wrapped_Bundle"])
+					.filter((id) => id); // Remove undefined/null values
+				console.log("🧹 Active wrapped bundle IDs:", activeWrappedBundleIds);
+
 				// Find orphaned gift boxes (gift boxes without matching wrapped bundle IDs)
-				const orphanedGiftBoxes = cartData.items.filter(item => {
+				const orphanedGiftBoxes = cartData.items.filter((item) => {
 					// Only check items that are actually gift boxes
-					if (!item.title.toLowerCase().includes('gift box')) return false;
-					
+					if (!item.title.toLowerCase().includes("gift box")) return false;
+
 					const wrappedBundleId = item.properties?.["_Wrapped_Bundle"];
 					if (!wrappedBundleId) {
-						console.log('🧹 Found gift box without wrapped bundle ID:', item.key);
+						console.log(
+							"🧹 Found gift box without wrapped bundle ID:",
+							item.key
+						);
 						return true; // Remove gift boxes without wrapped bundle ID
 					}
-					
+
 					// Check if any vessel item has this wrapped bundle ID
-					const hasMatchingVessel = cartData.items.some(vesselItem => 
-						!vesselItem.title.toLowerCase().includes('gift box') &&
-						vesselItem.properties?.["_Wrapped_Bundle"] === wrappedBundleId
+					const hasMatchingVessel = cartData.items.some(
+						(vesselItem) =>
+							!vesselItem.title.toLowerCase().includes("gift box") &&
+							vesselItem.properties?.["_Wrapped_Bundle"] === wrappedBundleId
 					);
-					
+
 					// If no matching vessel found, check if this is a recent gift box (within last 5 minutes)
 					// This prevents removing gift boxes that were just added but vessel hasn't been updated yet
-					const isRecentGiftBox = item.properties?.["_Unique Line ID"] && 
-						item.properties["_Unique Line ID"].includes(Date.now().toString().substring(0, 8));
-					
+					const isRecentGiftBox =
+						item.properties?.["_Unique Line ID"] &&
+						item.properties["_Unique Line ID"].includes(
+							Date.now().toString().substring(0, 8)
+						);
+
 					const isOrphaned = !hasMatchingVessel && !isRecentGiftBox;
-					
+
 					if (isOrphaned) {
-						console.log('🧹 Found orphaned gift box:', item.key, 'wrapped bundle ID:', wrappedBundleId);
+						console.log(
+							"🧹 Found orphaned gift box:",
+							item.key,
+							"wrapped bundle ID:",
+							wrappedBundleId
+						);
 					} else if (isRecentGiftBox) {
-						console.log('🧹 Keeping recent gift box:', item.key, 'wrapped bundle ID:', wrappedBundleId);
+						console.log(
+							"🧹 Keeping recent gift box:",
+							item.key,
+							"wrapped bundle ID:",
+							wrappedBundleId
+						);
 					}
-					
+
 					return isOrphaned;
 				});
-				
+
 				// Remove orphaned gift boxes
 				if (orphanedGiftBoxes.length > 0) {
-					console.log(`🧹 Removing ${orphanedGiftBoxes.length} orphaned gift boxes`);
-					
+					console.log(
+						`🧹 Removing ${orphanedGiftBoxes.length} orphaned gift boxes`
+					);
+
 					for (const giftBox of orphanedGiftBoxes) {
 						try {
-							const response = await fetch('/cart/change.js', {
-								method: 'POST',
+							const response = await fetch("/cart/change.js", {
+								method: "POST",
 								headers: {
-									'Content-Type': 'application/json',
-									Accept: 'application/json',
+									"Content-Type": "application/json",
+									Accept: "application/json",
 								},
 								body: JSON.stringify({
 									id: giftBox.key,
 									quantity: 0,
-									sections: 'cart-icon-bubble',
+									sections: "cart-icon-bubble",
 									sections_url: window.location.pathname,
 								}),
 							});
-							
+
 							if (response.ok) {
-								console.log('✅ Removed orphaned gift box:', giftBox.key);
+								console.log("✅ Removed orphaned gift box:", giftBox.key);
 							} else {
-								console.warn('⚠️ Failed to remove orphaned gift box:', giftBox.key, response.status);
+								console.warn(
+									"⚠️ Failed to remove orphaned gift box:",
+									giftBox.key,
+									response.status
+								);
 							}
 						} catch (error) {
-							console.error('❌ Error removing orphaned gift box:', giftBox.key, error);
+							console.error(
+								"❌ Error removing orphaned gift box:",
+								giftBox.key,
+								error
+							);
 						}
 					}
 				}
 			} catch (error) {
-				console.error('❌ Error cleaning up orphaned gift boxes:', error);
+				console.error("❌ Error cleaning up orphaned gift boxes:", error);
 			}
 		}
 
@@ -2486,7 +2556,7 @@
 		async initializeGiftBoxPricing() {
 			try {
 				const response = await fetch(
-					"/products/premium-gift-box-tissue-wrap.js"
+					"/products/premium-gift-box-and-tissue-wrap.js"
 				);
 				if (response.ok) {
 					const productData = await response.json();
@@ -2957,11 +3027,11 @@
 				) {
 					// Set coordination flag to prevent conflicts with loading restoration
 					footer.dataset.beingManaged = "true";
-					
+
 					// Always show footer in personalize view for add-multiple-products
 					footer.style.display = "";
 					footer.style.opacity = "1";
-					
+
 					// Clear coordination flag after a short delay
 					setTimeout(() => {
 						delete footer.dataset.beingManaged;
@@ -3008,10 +3078,10 @@
 				if (footer) {
 					// Set coordination flag to prevent conflicts with loading restoration
 					footer.dataset.beingManaged = "true";
-					
+
 					footer.style.display = "";
 					footer.style.opacity = "1";
-					
+
 					// Clear coordination flag after a short delay
 					setTimeout(() => {
 						delete footer.dataset.beingManaged;
@@ -3040,10 +3110,10 @@
 				if (footer) {
 					// Set coordination flag to prevent conflicts with loading restoration
 					footer.dataset.beingManaged = "true";
-					
+
 					footer.style.display = "";
 					footer.style.opacity = "1";
-					
+
 					// Clear coordination flag after a short delay
 					setTimeout(() => {
 						delete footer.dataset.beingManaged;
@@ -3369,19 +3439,21 @@
 			const wrappedBundleId = Math.random().toString(36).substr(2, 8);
 
 			// VISIBLE PROPERTIES (for checkout display) - Match first image structure
-			
+
 			// Add personalization - use PERSONALISED INITIAL format
 			const vesselEngravingData =
 				state.engraving?.vessels?.[vesselNumber] || "";
 			const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
-			
+
 			// Always set PERSONALISED INITIAL property
 			if (
 				engravingEnabled &&
 				vesselEngraving &&
 				vesselEngraving.trim() !== ""
 			) {
-				properties["PERSONALISED INITIAL"] = vesselEngraving.trim().toUpperCase();
+				properties["PERSONALISED INITIAL"] = vesselEngraving
+					.trim()
+					.toUpperCase();
 			} else {
 				// Set to "NONE" when engraving is off or no engraving text
 				properties["PERSONALISED INITIAL"] = "NONE";
@@ -3389,7 +3461,9 @@
 
 			// Check if gift box is enabled for this specific vessel
 			if (selectedProductAmountData?.variants && variantIndex !== null) {
-				const hasGiftBox = await this.checkGiftBoxInCart(vesselNumber.toString());
+				const hasGiftBox = await this.checkGiftBoxInCart(
+					vesselNumber.toString()
+				);
 				properties["Gift Box"] = hasGiftBox ? "yes" : "no";
 
 				if (hasGiftBox) {
@@ -3400,7 +3474,7 @@
 			}
 
 			// HIDDEN PROPERTIES (with underscore - for backend use only)
-			
+
 			// Add wrapped bundle ID for relationship tracking
 			properties["_Wrapped_Bundle"] = wrappedBundleId;
 
@@ -3813,46 +3887,48 @@
 
 		async checkGiftBoxInCart(vesselNumber) {
 			try {
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
+
 				// Find the vessel item first to get its wrapped bundle ID
-				const vesselItem = cart.items.find(item => 
-					item.id.toString() === vesselNumber.toString()
+				const vesselItem = cart.items.find(
+					(item) => item.id.toString() === vesselNumber.toString()
 				);
-				
+
 				if (!vesselItem || !vesselItem.properties?.["_Wrapped_Bundle"]) {
 					return false;
 				}
-				
+
 				const wrappedBundleId = vesselItem.properties["_Wrapped_Bundle"];
-				
+
 				// Find gift box with matching wrapped bundle ID
-				const giftBoxItem = cart.items.find(cartItem => 
-					cartItem.properties && 
-					cartItem.properties['_Wrapped_Bundle'] === wrappedBundleId
+				const giftBoxItem = cart.items.find(
+					(cartItem) =>
+						cartItem.properties &&
+						cartItem.properties["_Wrapped_Bundle"] === wrappedBundleId
 				);
-				
+
 				return !!giftBoxItem;
 			} catch (error) {
-				console.error('🎁 Error checking gift box in cart:', error);
+				console.error("🎁 Error checking gift box in cart:", error);
 				return false;
 			}
 		}
 
 		async checkAnyGiftBoxInCart() {
 			try {
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
-				const giftBoxItem = cart.items.find(cartItem => 
-					cartItem.properties && 
-					cartItem.properties['_Add-on'] === 'Premium Gift Box'
+
+				const giftBoxItem = cart.items.find(
+					(cartItem) =>
+						cartItem.properties &&
+						cartItem.properties["_Add-on"] === "Premium Gift Box"
 				);
-				
+
 				return !!giftBoxItem;
 			} catch (error) {
-				console.error('🎁 Error checking any gift box in cart:', error);
+				console.error("🎁 Error checking any gift box in cart:", error);
 				return false;
 			}
 		}
@@ -3977,98 +4053,97 @@
 		async restructureCartOrder() {
 			try {
 				// Get current cart data
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
+
 				// Separate products and gift boxes
 				const products = [];
 				const giftBoxes = [];
-				
-				cart.items.forEach(item => {
-					if (item.properties && item.properties['_Add-on'] === 'Premium Gift Box') {
+
+				cart.items.forEach((item) => {
+					if (
+						item.properties &&
+						item.properties["_Add-on"] === "Premium Gift Box"
+					) {
 						giftBoxes.push(item);
 					} else {
 						products.push(item);
 					}
 				});
-				
+
 				// Create ordered structure: Product → Gift → Product → Gift
 				const orderedItems = [];
-				
-				products.forEach(product => {
+
+				products.forEach((product) => {
 					// Add the product first
 					orderedItems.push(product);
-					
+
 					// Find associated gift box
-					const associatedGiftBox = giftBoxes.find(giftBox => 
-						giftBox.properties['_Vessel Number'] === product.id.toString()
+					const associatedGiftBox = giftBoxes.find(
+						(giftBox) =>
+							giftBox.properties["_Vessel Number"] === product.id.toString()
 					);
-					
+
 					// Add gift box if it exists
 					if (associatedGiftBox) {
 						orderedItems.push(associatedGiftBox);
 					}
 				});
-				
+
 				// Note: Cart order restructuring is handled by Shopify's natural cart order
 				// The gift box will appear after the product due to the order of addition
-				
 			} catch (error) {
-				console.error('❌ Error restructuring cart order:', error);
+				console.error("❌ Error restructuring cart order:", error);
 			}
 		}
 
 		async updateProductGiftBoxProperties(vesselId, hasGiftBox) {
 			try {
 				// Wait a moment for cart to be updated
-				await new Promise(resolve => setTimeout(resolve, 200));
-				
+				await new Promise((resolve) => setTimeout(resolve, 200));
+
 				// Get current cart data
-				const cartResponse = await fetch('/cart.js');
+				const cartResponse = await fetch("/cart.js");
 				const cart = await cartResponse.json();
-				
-				
+
 				// Find the product item
-				const productItem = cart.items.find(item => 
-					item.id.toString() === vesselId && 
-					!item.properties?.['_Add-on']
+				const productItem = cart.items.find(
+					(item) =>
+						item.id.toString() === vesselId && !item.properties?.["_Add-on"]
 				);
-				
-				
+
 				if (productItem) {
 					// Get current properties
 					const currentProperties = { ...productItem.properties };
-					
-					
+
 					// Update gift box properties
 					if (hasGiftBox) {
 						currentProperties["Gift Box"] = "yes";
-						currentProperties["Gift Option"] = "Premium Gift Box and Tissue Wrap";
+						currentProperties["Gift Option"] =
+							"Premium Gift Box and Tissue Wrap";
 					} else {
 						delete currentProperties["Gift Box"];
 						delete currentProperties["Gift Option"];
 					}
-					
-					
+
 					// Update the product item properties
-					const updateResponse = await fetch('/cart/change.js', {
-						method: 'POST',
+					const updateResponse = await fetch("/cart/change.js", {
+						method: "POST",
 						headers: {
-							'Content-Type': 'application/json',
+							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
 							id: productItem.key,
-							properties: currentProperties
-						})
+							properties: currentProperties,
+						}),
 					});
-					
+
 					if (updateResponse.ok) {
 					} else {
 					}
 				} else {
 				}
-			} catch (error) {
-			}
+			} catch (error) {}
 		}
 
 		async updateCartIconBubbleWithSections() {
@@ -4076,32 +4151,35 @@
 				// Fetch cart icon bubble section
 				const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
 				const sectionResponse = await fetch(sectionUrl);
-				
+
 				if (sectionResponse.ok) {
 					const sectionData = await sectionResponse.json();
-					
+
 					// Create response object with sections for updateCartIconBubble
 					const responseWithSections = {
-						sections: sectionData
+						sections: sectionData,
 					};
-					
+
 					this.updateCartIconBubble(responseWithSections);
 				} else {
-					console.warn('⚠️ Failed to fetch cart icon bubble section');
+					console.warn("⚠️ Failed to fetch cart icon bubble section");
 				}
 			} catch (error) {
-				console.error('❌ Error updating cart icon bubble:', error);
+				console.error("❌ Error updating cart icon bubble:", error);
 			}
 		}
 
 		updateCartIconBubble(response) {
-			console.log('🔍 DEBUG: updateCartIconBubble called with response:', response);
-			
+			console.log(
+				"🔍 DEBUG: updateCartIconBubble called with response:",
+				response
+			);
+
 			// Update cart icon bubble with the returned section HTML
 			if (response.sections && response.sections["cart-icon-bubble"]) {
 				const cartIconBubble = document.getElementById("cart-icon-bubble");
-				console.log('🔍 DEBUG: cartIconBubble element:', cartIconBubble);
-				
+				console.log("🔍 DEBUG: cartIconBubble element:", cartIconBubble);
+
 				if (cartIconBubble) {
 					const parser = new DOMParser();
 					const doc = parser.parseFromString(
@@ -4111,15 +4189,19 @@
 					const newContent = doc.querySelector(".shopify-section");
 					if (newContent) {
 						cartIconBubble.innerHTML = newContent.innerHTML;
-						console.log('✅ Cart icon bubble updated successfully');
+						console.log("✅ Cart icon bubble updated successfully");
 					} else {
-						console.warn('⚠️ Could not find .shopify-section in cart-icon-bubble HTML');
+						console.warn(
+							"⚠️ Could not find .shopify-section in cart-icon-bubble HTML"
+						);
 					}
 				} else {
-					console.error('❌ Cart icon bubble element not found with ID: cart-icon-bubble');
+					console.error(
+						"❌ Cart icon bubble element not found with ID: cart-icon-bubble"
+					);
 				}
 			} else {
-				console.warn('⚠️ No cart-icon-bubble section in response:', response);
+				console.warn("⚠️ No cart-icon-bubble section in response:", response);
 			}
 
 			// Update cart drawer or cart notification if they exist
@@ -4270,10 +4352,10 @@
 
 		async updateCheckoutView(cartResponse) {
 			try {
-				console.log('🔍 DEBUG: updateCheckoutView called');
+				console.log("🔍 DEBUG: updateCheckoutView called");
 				// Fetch updated cart data from Shopify
 				const cartData = await this.fetchUpdatedCartData();
-				console.log('🔍 DEBUG: Fetched cart data:', cartData);
+				console.log("🔍 DEBUG: Fetched cart data:", cartData);
 
 				if (!cartData || !cartData.items) {
 					console.warn("No cart data available for checkout view update");
@@ -4292,18 +4374,21 @@
 
 		async updateCheckoutViewWithCartData(cartData) {
 			try {
-				console.log('🔍 DEBUG: updateCheckoutViewWithCartData called');
-				console.log('🔍 DEBUG: cartData.items.length:', cartData.items ? cartData.items.length : 'undefined');
-				console.log('🔍 DEBUG: cartData:', cartData);
-				
+				console.log("🔍 DEBUG: updateCheckoutViewWithCartData called");
+				console.log(
+					"🔍 DEBUG: cartData.items.length:",
+					cartData.items ? cartData.items.length : "undefined"
+				);
+				console.log("🔍 DEBUG: cartData:", cartData);
+
 				// Find the checkout items container and empty state
 				const checkoutContainer = this.modal.querySelector(
 					"[data-checkout-items]"
 				);
 				const emptyState = this.modal.querySelector("[data-empty-state]");
 
-				console.log('🔍 DEBUG: checkoutContainer found:', !!checkoutContainer);
-				console.log('🔍 DEBUG: emptyState found:', !!emptyState);
+				console.log("🔍 DEBUG: checkoutContainer found:", !!checkoutContainer);
+				console.log("🔍 DEBUG: emptyState found:", !!emptyState);
 
 				if (!checkoutContainer) {
 					console.warn("Checkout items container not found");
@@ -4311,8 +4396,8 @@
 				}
 
 				if (cartData.items.length === 0) {
-					console.log('🔍 DEBUG: Cart is empty, showing empty state');
-					console.log('🔍 DEBUG: cartData.items:', cartData.items);
+					console.log("🔍 DEBUG: Cart is empty, showing empty state");
+					console.log("🔍 DEBUG: cartData.items:", cartData.items);
 					// Clear all existing items first to ensure clean empty state
 					const allExistingItems = checkoutContainer.querySelectorAll(
 						".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]"
@@ -4328,9 +4413,9 @@
 					this.hideCheckoutSections();
 
 					// Show empty cart message
-					console.log('🔍 DEBUG: Calling showEmptyCartMessage');
+					console.log("🔍 DEBUG: Calling showEmptyCartMessage");
 					this.showEmptyCartMessage();
-					console.log('🔍 DEBUG: showEmptyCartMessage completed');
+					console.log("🔍 DEBUG: showEmptyCartMessage completed");
 
 					// Refresh pricing to show empty cart (£0.00)
 					this.updateCheckoutPricing();
@@ -4341,7 +4426,7 @@
 
 					// Stay in checkout view to show empty state - don't switch back to personalize
 				} else {
-					console.log('🔍 DEBUG: Cart has items, hiding empty state');
+					console.log("🔍 DEBUG: Cart has items, hiding empty state");
 					// Hide empty state
 					if (emptyState) {
 						emptyState.style.display = "none";
@@ -4351,7 +4436,7 @@
 					this.showCheckoutSections();
 
 					// Hide empty cart message
-					console.log('🔍 DEBUG: Hiding empty cart message');
+					console.log("🔍 DEBUG: Hiding empty cart message");
 					this.hideEmptyCartMessage();
 
 					// Clear existing items
@@ -4598,7 +4683,11 @@
 
 		async renderCartItems(cartItems, container) {
 			try {
-				console.log("🛒 renderCartItems called with:", cartItems.length, "items");
+				console.log(
+					"🛒 renderCartItems called with:",
+					cartItems.length,
+					"items"
+				);
 				console.log("🛒 Cart items data:", cartItems);
 
 				// Create a temporary container to hold the rendered items
@@ -4634,7 +4723,11 @@
 				}
 
 				// Append all items to the main container
-				console.log("🛒 Appending", tempContainer.children.length, "items to container");
+				console.log(
+					"🛒 Appending",
+					tempContainer.children.length,
+					"items to container"
+				);
 				while (tempContainer.firstChild) {
 					container.appendChild(tempContainer.firstChild);
 				}
@@ -4645,16 +4738,23 @@
 
 		async renderCartItem(item, allCartItems) {
 			try {
-				console.log("🛒 renderCartItem called for:", item.id, item.product_title);
+				console.log(
+					"🛒 renderCartItem called for:",
+					item.id,
+					item.product_title
+				);
 				console.log("🛒 Item properties:", item.properties);
 
 				// Check if this is an add-on item that should be grouped with a vessel
 				const isAddon =
+					item.id === 15086555496827 ||
 					item.id === 55511131455867 ||
+					item.handle === "premium-gift-box-and-tissue-wrap" ||
+					item.handle.search("premium-gift-box") > -1 ||
 					(item.properties &&
-					Object.entries(item.properties).some(
-						([key, value]) => key === "_Add-on"
-					));
+						Object.entries(item.properties).some(
+							([key, value]) => key === "_Add-on"
+						));
 				console.log("🛒 Is addon:", isAddon);
 
 				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
@@ -4895,70 +4995,82 @@
 
 				// Always render gift box section below each product item
 				// Fetch gift box product data from API
-				const giftBoxProductId = "15099649098107";
+				const giftBoxProductId = "15086555496827";
 				const giftBoxData = await this.fetchProductData(giftBoxProductId);
-				
+
 				// Create gift box section using the same structure as Liquid template
-						const giftBoxSection = document.createElement("div");
-						giftBoxSection.className = "premium-gift-box";
+				const giftBoxSection = document.createElement("div");
+				giftBoxSection.className = "premium-gift-box";
 
-						const giftBoxContainer = document.createElement("div");
-						giftBoxContainer.className = "premium-gift-box__container";
+				const giftBoxContainer = document.createElement("div");
+				giftBoxContainer.className = "premium-gift-box__container";
 
-						// Product Image
-						const giftBoxImage = document.createElement("div");
-						giftBoxImage.className = "premium-gift-box__image";
+				// Product Image
+				const giftBoxImage = document.createElement("div");
+				giftBoxImage.className = "premium-gift-box__image";
 
-							const img = document.createElement("img");
-				if (giftBoxData && giftBoxData.images && giftBoxData.images.length > 0) {
+				const img = document.createElement("img");
+				if (
+					giftBoxData &&
+					giftBoxData.images &&
+					giftBoxData.images.length > 0
+				) {
 					img.src = giftBoxData.images[0].src;
 					img.alt = giftBoxData.title || "Premium Gift Box & Wrap";
-						} else {
-							img.src = "/assets/premium-gift-box.png"; // Fallback image
-							img.alt = "Premium Gift Box & Wrap";
+				} else {
+					img.src = "/assets/premium-gift-box.png"; // Fallback image
+					img.alt = "Premium Gift Box & Wrap";
 				}
-							img.width = 71;
-							img.height = 89;
+				img.width = 71;
+				img.height = 89;
 				img.loading = "lazy";
 				img.setAttribute("data-gift-box-image", "");
-							giftBoxImage.appendChild(img);
+				giftBoxImage.appendChild(img);
 
-						// Content Area
-						const giftBoxContent = document.createElement("div");
-						giftBoxContent.className = "premium-gift-box__content";
+				// Content Area
+				const giftBoxContent = document.createElement("div");
+				giftBoxContent.className = "premium-gift-box__content";
 
-						const giftBoxDetails = document.createElement("div");
-						giftBoxDetails.className = "premium-gift-box__details";
+				const giftBoxDetails = document.createElement("div");
+				giftBoxDetails.className = "premium-gift-box__details";
 
-						const giftBoxText = document.createElement("div");
-						giftBoxText.className = "premium-gift-box__text";
+				const giftBoxText = document.createElement("div");
+				giftBoxText.className = "premium-gift-box__text";
 
 				const giftBoxTitle = document.createElement("h6");
-						giftBoxTitle.className = "premium-gift-box__title";
+				giftBoxTitle.className = "premium-gift-box__title";
 				giftBoxTitle.setAttribute("data-gift-box-title", "");
 				if (giftBoxData) {
-					giftBoxTitle.innerHTML = giftBoxData.title ;
+					giftBoxTitle.innerHTML = giftBoxData.title;
 				} else {
 					giftBoxTitle.innerHTML = "Premium Gift Box & Tissue Wrap";
 				}
 
-						const giftBoxPrice = document.createElement("div");
-						giftBoxPrice.className = "premium-gift-box__price";
+				const giftBoxPrice = document.createElement("div");
+				giftBoxPrice.className = "premium-gift-box__price";
 				giftBoxPrice.setAttribute("aria-label", "Gift box price");
 				giftBoxPrice.setAttribute("data-gift-box-price", "");
 
 				// Use API data for price or fallback
-				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
+				if (
+					giftBoxData &&
+					giftBoxData.variants &&
+					giftBoxData.variants.length > 0
+				) {
 					const variant = giftBoxData.variants[0];
 					// Price from Shopify API is already in cents
 					const priceInCents = variant.price;
 					giftBoxPrice.setAttribute("data-price", priceInCents.toString());
 					giftBoxPrice.textContent = this.formatMoney(priceInCents);
-					console.log('🔍 DEBUG: Set gift box price from API:', priceInCents, 'cents');
+					console.log(
+						"🔍 DEBUG: Set gift box price from API:",
+						priceInCents,
+						"cents"
+					);
 				} else {
 					giftBoxPrice.setAttribute("data-price", "200");
 					giftBoxPrice.textContent = this.formatMoney(200); // £2.00 fallback
-					console.log('🔍 DEBUG: Using fallback gift box price: 200 cents');
+					console.log("🔍 DEBUG: Using fallback gift box price: 200 cents");
 				}
 
 				// Error div
@@ -4970,12 +5082,12 @@
 				giftBoxError.style.fontSize = "12px";
 				giftBoxError.style.marginTop = "5px";
 
-						giftBoxText.appendChild(giftBoxTitle);
-						giftBoxDetails.appendChild(giftBoxText);
-						giftBoxDetails.appendChild(giftBoxPrice);
+				giftBoxText.appendChild(giftBoxTitle);
+				giftBoxDetails.appendChild(giftBoxText);
+				giftBoxDetails.appendChild(giftBoxPrice);
 				giftBoxDetails.appendChild(giftBoxError);
 
-						// Toggle Section
+				// Toggle Section
 				const giftBoxToggleSection = document.createElement("div");
 				giftBoxToggleSection.className = "premium-gift-box__toggle-section";
 
@@ -4984,7 +5096,7 @@
 
 				// Create unique ID for this product's gift box toggle
 				const uniqueToggleId = `premium-gift-box-toggle-${item.id}`;
-				
+
 				const giftBoxToggleLabel = document.createElement("label");
 				giftBoxToggleLabel.className = "premium-gift-box__toggle";
 				giftBoxToggleLabel.setAttribute("for", uniqueToggleId);
@@ -4994,26 +5106,54 @@
 				giftBoxToggleInput.id = uniqueToggleId;
 				giftBoxToggleInput.className = "premium-gift-box__toggle-input";
 				giftBoxToggleInput.setAttribute("data-addon-toggle", "gift-box");
-				giftBoxToggleInput.setAttribute("data-property", "properties[Premium Gift Box]");
+				giftBoxToggleInput.setAttribute(
+					"data-property",
+					"properties[Premium Gift Box]"
+				);
 				giftBoxToggleInput.setAttribute("data-vessel-id", item.id); // Link to the main product
-				
+
 				// Set variant data attributes
-				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
+				if (
+					giftBoxData &&
+					giftBoxData.variants &&
+					giftBoxData.variants.length > 0
+				) {
 					const variant = giftBoxData.variants[0];
 					giftBoxToggleInput.setAttribute("data-variant-id", variant.id);
-					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", variant.id);
-					giftBoxToggleInput.setAttribute("data-gift-box-product-title", giftBoxData.title);
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-variant-id",
+						variant.id
+					);
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-product-title",
+						giftBoxData.title
+					);
 					// Store the gift box price for easy access
-					giftBoxToggleInput.setAttribute("data-gift-box-price", variant.price.toString());
-					console.log('🔍 DEBUG: Set toggle input gift box price:', variant.price, 'cents');
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-price",
+						variant.price.toString()
+					);
+					console.log(
+						"🔍 DEBUG: Set toggle input gift box price:",
+						variant.price,
+						"cents"
+					);
 				} else {
 					// Use hardcoded variant ID as fallback
-					const fallbackVariantId = "55511131455867"; // From the API data you provided
+					const fallbackVariantId = "15086555496827"; // From the API data you provided
 					giftBoxToggleInput.setAttribute("data-variant-id", fallbackVariantId);
-					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", fallbackVariantId);
-					giftBoxToggleInput.setAttribute("data-gift-box-product-title", "Premium Gift Box and Tissue Wrap");
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-variant-id",
+						fallbackVariantId
+					);
+					giftBoxToggleInput.setAttribute(
+						"data-gift-box-product-title",
+						"Premium Gift Box and Tissue Wrap"
+					);
 					giftBoxToggleInput.setAttribute("data-gift-box-price", "200"); // Fallback price
-					console.log('🔍 DEBUG: Set toggle input fallback gift box price: 200 cents');
+					console.log(
+						"🔍 DEBUG: Set toggle input fallback gift box price: 200 cents"
+					);
 				}
 
 				const giftBoxToggleSlider = document.createElement("span");
@@ -5037,151 +5177,200 @@
 				// Add event listener for gift box toggle FIRST
 				let isInitializing = true; // Flag to prevent event handler during initialization
 				let isApiCallInProgress = false; // Flag to prevent race conditions during API calls
-				
-				giftBoxToggleInput.addEventListener('change', async (event) => {
-					console.log('🔍 DEBUG: Event handler triggered, isInitializing:', isInitializing, 'isApiCallInProgress:', isApiCallInProgress);
-					
+
+				giftBoxToggleInput.addEventListener("change", async (event) => {
+					console.log(
+						"🔍 DEBUG: Event handler triggered, isInitializing:",
+						isInitializing,
+						"isApiCallInProgress:",
+						isApiCallInProgress
+					);
+
 					// Skip event handler during initialization to prevent page refresh
 					if (isInitializing) {
-						console.log('🔍 DEBUG: Skipping event handler during initialization');
+						console.log(
+							"🔍 DEBUG: Skipping event handler during initialization"
+						);
 						return;
 					}
-					
+
 					// Skip event handler if API call is already in progress to prevent race conditions
 					if (isApiCallInProgress) {
-						console.log('🔍 DEBUG: Skipping event handler - API call already in progress');
+						console.log(
+							"🔍 DEBUG: Skipping event handler - API call already in progress"
+						);
 						// Revert the toggle state to prevent UI inconsistency
 						event.target.checked = !event.target.checked;
 						return;
 					}
-					
-					console.log('🔍 DEBUG: Event handler proceeding with gift box toggle');
-					
+
+					console.log(
+						"🔍 DEBUG: Event handler proceeding with gift box toggle"
+					);
+
 					// Prevent default form submission behavior
 					event.preventDefault();
 					event.stopPropagation();
-					
+
 					const isChecked = event.target.checked;
-					const vesselId = event.target.getAttribute('data-vessel-id');
-					const variantId = event.target.getAttribute('data-variant-id');
-					
-					console.log('🔍 DEBUG: Gift box toggle changed:', { isChecked, vesselId, variantId });
-					
+					const vesselId = event.target.getAttribute("data-vessel-id");
+					const variantId = event.target.getAttribute("data-variant-id");
+
+					console.log("🔍 DEBUG: Gift box toggle changed:", {
+						isChecked,
+						vesselId,
+						variantId,
+					});
+
 					// IMMEDIATE PRICE UPDATE - Update total price without waiting for API calls
 					this.updateTotalPriceImmediately(isChecked, variantId);
-					
+
 					// Disable toggle to prevent race conditions during API calls
 					isApiCallInProgress = true;
 					this.setGiftBoxToggleState(false, giftBoxToggleInput);
-					
+
 					try {
 						if (isChecked) {
 							// Add gift box to cart
-							
+
 							// Get the wrapped bundle ID from the associated vessel
-							const cartResponse = await fetch('/cart.js');
+							const cartResponse = await fetch("/cart.js");
 							const cart = await cartResponse.json();
-							console.log('🔍 DEBUG: Looking for vessel with ID:', vesselId);
-							console.log('🔍 DEBUG: Available cart items:', cart.items.map(item => ({ id: item.id, variant_id: item.variant_id, title: item.title })));
-							
-							const vesselItem = cart.items.find(item => 
-								item.id.toString() === vesselId.toString()
+							console.log("🔍 DEBUG: Looking for vessel with ID:", vesselId);
+							console.log(
+								"🔍 DEBUG: Available cart items:",
+								cart.items.map((item) => ({
+									id: item.id,
+									variant_id: item.variant_id,
+									title: item.title,
+								}))
 							);
-							
+
+							const vesselItem = cart.items.find(
+								(item) => item.id.toString() === vesselId.toString()
+							);
+
 							if (!vesselItem) {
-								console.error('🎁 Could not find vessel item with ID:', vesselId);
+								console.error(
+									"🎁 Could not find vessel item with ID:",
+									vesselId
+								);
 								event.target.checked = false;
 								return;
 							}
-							
-							console.log('🔍 DEBUG: Found vessel item:', vesselItem);
-							console.log('🔍 DEBUG: Vessel properties:', vesselItem.properties);
-							
+
+							console.log("🔍 DEBUG: Found vessel item:", vesselItem);
+							console.log(
+								"🔍 DEBUG: Vessel properties:",
+								vesselItem.properties
+							);
+
 							// Use existing wrapped bundle ID or generate new one
 							let wrappedBundleId = vesselItem?.properties?.["_Wrapped_Bundle"];
 							if (!wrappedBundleId) {
 								wrappedBundleId = Math.random().toString(36).substr(2, 8);
-								console.log('🔍 DEBUG: Generated new wrapped bundle ID:', wrappedBundleId);
-								
+								console.log(
+									"🔍 DEBUG: Generated new wrapped bundle ID:",
+									wrappedBundleId
+								);
+
 								// CRITICAL: Update the vessel item with gift box properties BEFORE adding gift box
-								console.log('🔍 DEBUG: Updating vessel item with gift box properties');
+								console.log(
+									"🔍 DEBUG: Updating vessel item with gift box properties"
+								);
 								const updatedVesselProperties = {
 									...vesselItem.properties,
-									"_Wrapped_Bundle": wrappedBundleId,
+									_Wrapped_Bundle: wrappedBundleId,
 									"Gift Box": "yes",
 									"Gift Option": "Premium Gift Box & Tissue Wrap",
-									"_Gift Option ID": "55468959531387"
+									"_Gift Option ID": "55468959531387",
 								};
-								
+
 								try {
-									const updateResponse = await fetch('/cart/change.js', {
-										method: 'POST',
+									const updateResponse = await fetch("/cart/change.js", {
+										method: "POST",
 										headers: {
-											'Content-Type': 'application/json',
+											"Content-Type": "application/json",
 										},
 										body: JSON.stringify({
 											id: vesselItem.key,
 											quantity: vesselItem.quantity,
-											properties: updatedVesselProperties
-										})
+											properties: updatedVesselProperties,
+										}),
 									});
-									
+
 									if (updateResponse.ok) {
-										console.log('✅ Successfully added _Wrapped_Bundle to vessel item');
+										console.log(
+											"✅ Successfully added _Wrapped_Bundle to vessel item"
+										);
 										// Wait for cart to be updated before proceeding
-										await new Promise(resolve => setTimeout(resolve, 300));
+										await new Promise((resolve) => setTimeout(resolve, 300));
 									} else {
-										console.error('❌ Failed to add _Wrapped_Bundle to vessel item');
+										console.error(
+											"❌ Failed to add _Wrapped_Bundle to vessel item"
+										);
 										event.target.checked = false;
 										return;
 									}
 								} catch (error) {
-									console.error('❌ Error updating vessel item:', error);
+									console.error("❌ Error updating vessel item:", error);
 									event.target.checked = false;
 									return;
 								}
 							} else {
-								console.log('🔍 DEBUG: Using existing wrapped bundle ID:', wrappedBundleId);
-								
+								console.log(
+									"🔍 DEBUG: Using existing wrapped bundle ID:",
+									wrappedBundleId
+								);
+
 								// Check if vessel item has all gift box properties, if not, update them
-								const hasAllGiftBoxProperties = vesselItem.properties?.["Gift Box"] === "yes" &&
-																vesselItem.properties?.["Gift Option"] === "Premium Gift Box & Tissue Wrap" &&
-																vesselItem.properties?.["_Gift Option ID"] === "55468959531387";
-								
+								const hasAllGiftBoxProperties =
+									vesselItem.properties?.["Gift Box"] === "yes" &&
+									vesselItem.properties?.["Gift Option"] ===
+										"Premium Gift Box & Tissue Wrap" &&
+									vesselItem.properties?.["_Gift Option ID"] ===
+										"55468959531387";
+
 								if (!hasAllGiftBoxProperties) {
-									console.log('🔍 DEBUG: Updating vessel item with missing gift box properties');
+									console.log(
+										"🔍 DEBUG: Updating vessel item with missing gift box properties"
+									);
 									const updatedVesselProperties = {
 										...vesselItem.properties,
-										"_Wrapped_Bundle": wrappedBundleId,
+										_Wrapped_Bundle: wrappedBundleId,
 										"Gift Box": "yes",
 										"Gift Option": "Premium Gift Box & Tissue Wrap",
-										"_Gift Option ID": "55468959531387"
+										"_Gift Option ID": "55468959531387",
 									};
-									
+
 									try {
-										const updateResponse = await fetch('/cart/change.js', {
-											method: 'POST',
+										const updateResponse = await fetch("/cart/change.js", {
+											method: "POST",
 											headers: {
-												'Content-Type': 'application/json',
+												"Content-Type": "application/json",
 											},
 											body: JSON.stringify({
 												id: vesselItem.key,
 												quantity: vesselItem.quantity,
-												properties: updatedVesselProperties
-											})
+												properties: updatedVesselProperties,
+											}),
 										});
-										
+
 										if (updateResponse.ok) {
-											console.log('✅ Successfully updated vessel item with gift box properties');
+											console.log(
+												"✅ Successfully updated vessel item with gift box properties"
+											);
 											// Wait for cart to be updated before proceeding
-											await new Promise(resolve => setTimeout(resolve, 300));
+											await new Promise((resolve) => setTimeout(resolve, 300));
 										} else {
-											console.error('❌ Failed to update vessel item with gift box properties');
+											console.error(
+												"❌ Failed to update vessel item with gift box properties"
+											);
 											event.target.checked = false;
 											return;
 										}
 									} catch (error) {
-										console.error('❌ Error updating vessel item:', error);
+										console.error("❌ Error updating vessel item:", error);
 										event.target.checked = false;
 										return;
 									}
@@ -5189,189 +5378,239 @@
 							}
 
 							// Create gift box data
-						// Add a small delay to prevent conflicts with other processes
-						await new Promise(resolve => setTimeout(resolve, 500));
-						
-						const giftBoxData = {
-							id: variantId,
-							quantity: 1,
-							properties: {
-								"_Wrapped_Bundle": wrappedBundleId
-							}
-						};
-							
-						// Try adding gift box using a different approach to bypass external interference
-						let giftBoxAdded = false;
-						let attempts = 0;
-						const maxAttempts = 5;  // Increased attempts
-						
-						while (!giftBoxAdded && attempts < maxAttempts) {
-							attempts++;
-							console.log(`🔍 DEBUG: Attempt ${attempts} to add gift box`);
-							
-							// Try using a different approach - add with minimal properties first
-							const minimalGiftBoxData = {
+							// Add a small delay to prevent conflicts with other processes
+							await new Promise((resolve) => setTimeout(resolve, 500));
+
+							const giftBoxData = {
 								id: variantId,
 								quantity: 1,
 								properties: {
-									"_Wrapped_Bundle": wrappedBundleId
-								}
-							};
-							
-							const response = await fetch('/cart/add.js', {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json',
+									_Wrapped_Bundle: wrappedBundleId,
 								},
-								body: JSON.stringify(minimalGiftBoxData)
-							});
-							
-							console.log('🔍 DEBUG: Gift box add response:', response.status, response.statusText);
-							
-							if (response.ok) {
-								const responseData = await response.json();
-								console.log('🔍 DEBUG: Gift box added successfully:', responseData);
-								
-								// Wait longer and check multiple times if gift box is still there
-								let stillExists = false;
-								for (let check = 0; check < 3; check++) {
-									await new Promise(resolve => setTimeout(resolve, 1000));
-									
-									const verifyResponse = await fetch('/cart.js');
-									const verifyCart = await verifyResponse.json();
-									const giftBoxStillExists = verifyCart.items.find(item => 
-										item.properties?.["_Wrapped_Bundle"] === wrappedBundleId &&
-										item.title.toLowerCase().includes('gift box')
+							};
+
+							// Try adding gift box using a different approach to bypass external interference
+							let giftBoxAdded = false;
+							let attempts = 0;
+							const maxAttempts = 5; // Increased attempts
+
+							while (!giftBoxAdded && attempts < maxAttempts) {
+								attempts++;
+								console.log(`🔍 DEBUG: Attempt ${attempts} to add gift box`);
+
+								// Try using a different approach - add with minimal properties first
+								const minimalGiftBoxData = {
+									id: variantId,
+									quantity: 1,
+									properties: {
+										_Wrapped_Bundle: wrappedBundleId,
+									},
+								};
+
+								const response = await fetch("/cart/add.js", {
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json",
+									},
+									body: JSON.stringify(minimalGiftBoxData),
+								});
+
+								console.log(
+									"🔍 DEBUG: Gift box add response:",
+									response.status,
+									response.statusText
+								);
+
+								if (response.ok) {
+									const responseData = await response.json();
+									console.log(
+										"🔍 DEBUG: Gift box added successfully:",
+										responseData
 									);
-									
-									if (giftBoxStillExists) {
-										console.log(`✅ Gift box verified in cart after check ${check + 1}`);
-										stillExists = true;
-										break;
+
+									// Wait longer and check multiple times if gift box is still there
+									let stillExists = false;
+									for (let check = 0; check < 3; check++) {
+										await new Promise((resolve) => setTimeout(resolve, 1000));
+
+										const verifyResponse = await fetch("/cart.js");
+										const verifyCart = await verifyResponse.json();
+										const giftBoxStillExists = verifyCart.items.find(
+											(item) =>
+												item.properties?.["_Wrapped_Bundle"] ===
+													wrappedBundleId &&
+												item.title.toLowerCase().includes("gift box")
+										);
+
+										if (giftBoxStillExists) {
+											console.log(
+												`✅ Gift box verified in cart after check ${check + 1}`
+											);
+											stillExists = true;
+											break;
+										} else {
+											console.log(
+												`❌ Gift box removed after check ${check + 1}`
+											);
+										}
+									}
+
+									if (stillExists) {
+										console.log(
+											"✅ Gift box verified in cart after attempt",
+											attempts
+										);
+										giftBoxAdded = true;
 									} else {
-										console.log(`❌ Gift box removed after check ${check + 1}`);
+										console.log(
+											"❌ Gift box removed after attempt",
+											attempts,
+											"- retrying..."
+										);
+										if (attempts < maxAttempts) {
+											await new Promise((resolve) => setTimeout(resolve, 1000));
+										}
 									}
-								}
-								
-								if (stillExists) {
-									console.log('✅ Gift box verified in cart after attempt', attempts);
-									giftBoxAdded = true;
 								} else {
-									console.log('❌ Gift box removed after attempt', attempts, '- retrying...');
-									if (attempts < maxAttempts) {
-										await new Promise(resolve => setTimeout(resolve, 1000));
-									}
+									const errorData = await response.text();
+									console.error(
+										"🎁 Failed to add gift box:",
+										response.status,
+										errorData
+									);
+									break;
 								}
-							} else {
-								const errorData = await response.text();
-								console.error('🎁 Failed to add gift box:', response.status, errorData);
-								break;
 							}
-						}
-						
-						if (giftBoxAdded) {
-							console.log('✅ Gift box successfully added after', attempts, 'attempts');
-							// Update cart count bubble after successful gift box addition
-							await this.updateCartIconBubbleWithSections();
-						} else {
-							console.error('❌ Failed to add gift box after', maxAttempts, 'attempts');
-							// Show error message
-							giftBoxError.textContent = 'Failed to add gift box. Please try again.';
-							giftBoxError.style.display = 'block';
-							event.target.checked = false;
-						}
+
+							if (giftBoxAdded) {
+								console.log(
+									"✅ Gift box successfully added after",
+									attempts,
+									"attempts"
+								);
+								// Update cart count bubble after successful gift box addition
+								await this.updateCartIconBubbleWithSections();
+							} else {
+								console.error(
+									"❌ Failed to add gift box after",
+									maxAttempts,
+									"attempts"
+								);
+								// Show error message
+								giftBoxError.textContent =
+									"Failed to add gift box. Please try again.";
+								giftBoxError.style.display = "block";
+								event.target.checked = false;
+							}
 						} else {
 							// Remove gift box from cart using change API
-							
+
 							// Find and remove the gift box item
-							const cartResponse = await fetch('/cart.js');
+							const cartResponse = await fetch("/cart.js");
 							const cart = await cartResponse.json();
-							
+
 							// Find the vessel item to get its wrapped bundle ID
-							const vesselItem = cart.items.find(item => 
-								item.id.toString() === vesselId.toString()
+							const vesselItem = cart.items.find(
+								(item) => item.id.toString() === vesselId.toString()
 							);
-							
+
 							if (!vesselItem || !vesselItem.properties?.["_Wrapped_Bundle"]) {
-								console.error('🎁 Could not find vessel item or wrapped bundle ID');
+								console.error(
+									"🎁 Could not find vessel item or wrapped bundle ID"
+								);
 								return;
 							}
-							
+
 							const wrappedBundleId = vesselItem.properties["_Wrapped_Bundle"];
-							
+
 							// Find gift box with matching wrapped bundle ID
-							const giftBoxItem = cart.items.find(cartItem => 
-								cartItem.properties && 
-								cartItem.properties['_Wrapped_Bundle'] === wrappedBundleId
+							const giftBoxItem = cart.items.find(
+								(cartItem) =>
+									cartItem.properties &&
+									cartItem.properties["_Wrapped_Bundle"] === wrappedBundleId
 							);
-							
+
 							if (giftBoxItem) {
-								const removeResponse = await fetch('/cart/change.js', {
-									method: 'POST',
+								const removeResponse = await fetch("/cart/change.js", {
+									method: "POST",
 									headers: {
-										'Content-Type': 'application/json',
+										"Content-Type": "application/json",
 									},
 									body: JSON.stringify({
 										id: giftBoxItem.key,
-										quantity: 0
-									})
+										quantity: 0,
+									}),
 								});
-								
+
 								if (removeResponse.ok) {
-									console.log('✅ Gift box removed successfully');
-									
+									console.log("✅ Gift box removed successfully");
+
 									// CRITICAL: Remove all gift box properties from vessel item after gift box removal
-									console.log('🔍 DEBUG: Removing gift box properties from vessel item');
+									console.log(
+										"🔍 DEBUG: Removing gift box properties from vessel item"
+									);
 									const updatedVesselProperties = { ...vesselItem.properties };
 									delete updatedVesselProperties["_Wrapped_Bundle"];
 									delete updatedVesselProperties["Gift Box"];
 									delete updatedVesselProperties["Gift Option"];
 									delete updatedVesselProperties["_Gift Option ID"];
-									
+
 									try {
-										const vesselUpdateResponse = await fetch('/cart/change.js', {
-											method: 'POST',
-											headers: {
-												'Content-Type': 'application/json',
-											},
-											body: JSON.stringify({
-												id: vesselItem.key,
-												quantity: vesselItem.quantity,
-												properties: updatedVesselProperties
-											})
-										});
-										
+										const vesselUpdateResponse = await fetch(
+											"/cart/change.js",
+											{
+												method: "POST",
+												headers: {
+													"Content-Type": "application/json",
+												},
+												body: JSON.stringify({
+													id: vesselItem.key,
+													quantity: vesselItem.quantity,
+													properties: updatedVesselProperties,
+												}),
+											}
+										);
+
 										if (vesselUpdateResponse.ok) {
-											console.log('✅ Successfully removed all gift box properties from vessel item');
+											console.log(
+												"✅ Successfully removed all gift box properties from vessel item"
+											);
 										} else {
-											console.warn('⚠️ Failed to remove gift box properties from vessel item');
+											console.warn(
+												"⚠️ Failed to remove gift box properties from vessel item"
+											);
 										}
 									} catch (error) {
-										console.error('❌ Error removing gift box properties from vessel item:', error);
+										console.error(
+											"❌ Error removing gift box properties from vessel item:",
+											error
+										);
 									}
-									
+
 									// Simple success - just log and let the toggle stay off
 									// Don't update UI immediately to prevent page refreshes
 									// Update cart count bubble after successful gift box removal
 									await this.updateCartIconBubbleWithSections();
 								} else {
 									// Show error message
-									giftBoxError.textContent = 'Failed to remove gift box. Please try again.';
-									giftBoxError.style.display = 'block';
+									giftBoxError.textContent =
+										"Failed to remove gift box. Please try again.";
+									giftBoxError.style.display = "block";
 									// Re-check the toggle
 									event.target.checked = true;
 								}
 							}
 						}
 					} catch (error) {
-						console.error('❌ Error in gift box toggle:', error);
+						console.error("❌ Error in gift box toggle:", error);
 						// Reset toggle state on error
 						event.target.checked = false;
 						// Show error message if available
-						const giftBoxError = document.querySelector('.gift-box-error');
+						const giftBoxError = document.querySelector(".gift-box-error");
 						if (giftBoxError) {
-							giftBoxError.textContent = 'Error updating gift box. Please try again.';
-							giftBoxError.style.display = 'block';
+							giftBoxError.textContent =
+								"Error updating gift box. Please try again.";
+							giftBoxError.style.display = "block";
 						}
 						// Prevent any further execution that might cause page refresh
 						return;
@@ -5379,48 +5618,60 @@
 						// Re-enable toggle after API call completes (success or error)
 						isApiCallInProgress = false;
 						this.setGiftBoxToggleState(true, giftBoxToggleInput);
-						console.log('🔍 DEBUG: Gift box toggle re-enabled after API call completion');
+						console.log(
+							"🔍 DEBUG: Gift box toggle re-enabled after API call completion"
+						);
 					}
 				});
 
 				// Initialize toggle state after event listener is added
 				setTimeout(async () => {
 					try {
-						console.log('🔍 DEBUG: Initializing gift box toggle for vessel:', item.id);
-						const cartResponse = await fetch('/cart.js');
-						const cart = await cartResponse.json();
-						
-						const vesselItem = cart.items.find(cartItem => 
-							cartItem.id.toString() === item.id.toString()
+						console.log(
+							"🔍 DEBUG: Initializing gift box toggle for vessel:",
+							item.id
 						);
-						
+						const cartResponse = await fetch("/cart.js");
+						const cart = await cartResponse.json();
+
+						const vesselItem = cart.items.find(
+							(cartItem) => cartItem.id.toString() === item.id.toString()
+						);
+
 						if (vesselItem && vesselItem.properties?.["_Wrapped_Bundle"]) {
 							const wrappedBundleId = vesselItem.properties["_Wrapped_Bundle"];
-							const existingGiftBox = cart.items.find(cartItem => 
-								cartItem.properties?.["_Wrapped_Bundle"] === wrappedBundleId &&
-								cartItem.title.toLowerCase().includes('gift box')
+							const existingGiftBox = cart.items.find(
+								(cartItem) =>
+									cartItem.properties?.["_Wrapped_Bundle"] ===
+										wrappedBundleId &&
+									cartItem.title.toLowerCase().includes("gift box")
 							);
-							
+
 							giftBoxToggleInput.checked = !!existingGiftBox;
 						} else {
 							giftBoxToggleInput.checked = false;
 						}
 					} catch (error) {
-						console.error('❌ Error initializing gift box toggle:', error);
+						console.error("❌ Error initializing gift box toggle:", error);
 						giftBoxToggleInput.checked = false;
 					} finally {
 						isInitializing = false;
-						console.log('🔍 DEBUG: Initialization complete, event handler enabled');
-						console.log('🔍 DEBUG: isInitializing flag set to:', isInitializing);
+						console.log(
+							"🔍 DEBUG: Initialization complete, event handler enabled"
+						);
+						console.log(
+							"🔍 DEBUG: isInitializing flag set to:",
+							isInitializing
+						);
 					}
 				}, 100);
 
-					giftBoxContainer.appendChild(giftBoxImage);
-					giftBoxContainer.appendChild(giftBoxContent);
-					giftBoxSection.appendChild(giftBoxContainer);
+				giftBoxContainer.appendChild(giftBoxImage);
+				giftBoxContainer.appendChild(giftBoxContent);
+				giftBoxSection.appendChild(giftBoxContainer);
 
-					// Add gift box section to wrapper
-					wrapper.appendChild(giftBoxSection);
+				// Add gift box section to wrapper
+				wrapper.appendChild(giftBoxSection);
 
 				// Return the wrapper with gift box included
 				console.log("🛒 Successfully created wrapper for item:", item.id);
@@ -5443,72 +5694,101 @@
 
 		updateTotalPriceImmediately(isGiftBoxEnabled, variantId) {
 			try {
-				console.log('🔍 DEBUG: updateTotalPriceImmediately called', { isGiftBoxEnabled, variantId });
-				
+				console.log("🔍 DEBUG: updateTotalPriceImmediately called", {
+					isGiftBoxEnabled,
+					variantId,
+				});
+
 				// Get current cart total from the displayed price
-				const currentPriceEl = this.modal.querySelector(".mini-atc-modal__current-price") ||
-									  this.modal.querySelector("[data-current-price]") ||
-									  this.modal.querySelector(".pricing-placeholder");
-				
+				const currentPriceEl =
+					this.modal.querySelector(".mini-atc-modal__current-price") ||
+					this.modal.querySelector("[data-current-price]") ||
+					this.modal.querySelector(".pricing-placeholder");
+
 				if (!currentPriceEl) {
-					console.warn('Could not find current price element for immediate update');
+					console.warn(
+						"Could not find current price element for immediate update"
+					);
 					return;
 				}
-				
+
 				// Extract current total price from the displayed text
-				const currentPriceText = currentPriceEl.textContent || currentPriceEl.innerText;
+				const currentPriceText =
+					currentPriceEl.textContent || currentPriceEl.innerText;
 				const priceMatch = currentPriceText.match(/[\d,]+\.?\d*/);
-				
+
 				if (!priceMatch) {
-					console.warn('Could not extract price from current price element');
+					console.warn("Could not extract price from current price element");
 					return;
 				}
-				
+
 				// Convert displayed price back to cents
 				const numericValue = parseFloat(priceMatch[0].replace(/,/g, ""));
 				let currentTotalInCents = Math.round(numericValue * 100);
-				
+
 				// Get gift box price dynamically from multiple sources
 				let giftBoxPriceInCents = null;
-				
+
 				// Method 1: Try to get price from the gift box price element
-				const giftBoxPriceEl = this.modal.querySelector("[data-gift-box-price]");
+				const giftBoxPriceEl = this.modal.querySelector(
+					"[data-gift-box-price]"
+				);
 				if (giftBoxPriceEl) {
 					const giftBoxPriceAttr = giftBoxPriceEl.getAttribute("data-price");
 					if (giftBoxPriceAttr) {
 						// Price from API is already in cents
 						giftBoxPriceInCents = parseInt(giftBoxPriceAttr);
-						console.log('🔍 DEBUG: Got gift box price from data-price attribute:', giftBoxPriceInCents);
+						console.log(
+							"🔍 DEBUG: Got gift box price from data-price attribute:",
+							giftBoxPriceInCents
+						);
 					}
 				}
-				
+
 				// Method 2: If we have variantId, try to get price from the toggle input's data attributes
 				if (!giftBoxPriceInCents && variantId) {
-					const toggleInput = this.modal.querySelector(`[data-variant-id="${variantId}"]`);
+					const toggleInput = this.modal.querySelector(
+						`[data-variant-id="${variantId}"]`
+					);
 					if (toggleInput) {
-						const togglePriceAttr = toggleInput.getAttribute("data-gift-box-price");
+						const togglePriceAttr = toggleInput.getAttribute(
+							"data-gift-box-price"
+						);
 						if (togglePriceAttr) {
 							giftBoxPriceInCents = parseInt(togglePriceAttr);
-							console.log('🔍 DEBUG: Got gift box price from toggle input:', giftBoxPriceInCents);
+							console.log(
+								"🔍 DEBUG: Got gift box price from toggle input:",
+								giftBoxPriceInCents
+							);
 						}
 					}
 				}
-				
+
 				// Method 3: Try to get price from dynamicPrices if available
-				if (!giftBoxPriceInCents && this.dynamicPrices && this.dynamicPrices.giftBox) {
+				if (
+					!giftBoxPriceInCents &&
+					this.dynamicPrices &&
+					this.dynamicPrices.giftBox
+				) {
 					giftBoxPriceInCents = this.dynamicPrices.giftBox;
-					console.log('🔍 DEBUG: Got gift box price from dynamicPrices:', giftBoxPriceInCents);
+					console.log(
+						"🔍 DEBUG: Got gift box price from dynamicPrices:",
+						giftBoxPriceInCents
+					);
 				}
-				
+
 				// Method 4: Fallback to default price if all else fails
 				if (!giftBoxPriceInCents) {
 					giftBoxPriceInCents = 200; // £2.00 fallback
-					console.log('🔍 DEBUG: Using fallback gift box price:', giftBoxPriceInCents);
+					console.log(
+						"🔍 DEBUG: Using fallback gift box price:",
+						giftBoxPriceInCents
+					);
 				}
-				
-				console.log('🔍 DEBUG: Current total:', currentTotalInCents, 'cents');
-				console.log('🔍 DEBUG: Gift box price:', giftBoxPriceInCents, 'cents');
-				
+
+				console.log("🔍 DEBUG: Current total:", currentTotalInCents, "cents");
+				console.log("🔍 DEBUG: Gift box price:", giftBoxPriceInCents, "cents");
+
 				// Calculate new total
 				let newTotalInCents = currentTotalInCents;
 				if (isGiftBoxEnabled) {
@@ -5516,23 +5796,23 @@
 				} else {
 					newTotalInCents -= giftBoxPriceInCents;
 				}
-				
-				console.log('🔍 DEBUG: New total:', newTotalInCents, 'cents');
-				
+
+				console.log("🔍 DEBUG: New total:", newTotalInCents, "cents");
+
 				// Update the displayed price immediately
 				const formattedPrice = this.formatMoney(newTotalInCents);
-				
+
 				// Update the price element
 				if (currentPriceEl.querySelector(".pricing-placeholder")) {
-					currentPriceEl.querySelector(".pricing-placeholder").textContent = formattedPrice;
+					currentPriceEl.querySelector(".pricing-placeholder").textContent =
+						formattedPrice;
 				} else {
 					currentPriceEl.textContent = formattedPrice;
 				}
-				
-				console.log('✅ Updated total price immediately to:', formattedPrice);
-				
+
+				console.log("✅ Updated total price immediately to:", formattedPrice);
 			} catch (error) {
-				console.error('❌ Error updating total price immediately:', error);
+				console.error("❌ Error updating total price immediately:", error);
 			}
 		}
 
@@ -5540,14 +5820,14 @@
 			// Helper function to enable/disable gift box toggle with visual feedback
 			if (enabled) {
 				toggleInput.disabled = false;
-				toggleInput.style.opacity = '1';
-				toggleInput.style.cursor = 'pointer';
-				console.log('🔍 DEBUG: Gift box toggle enabled');
+				toggleInput.style.opacity = "1";
+				toggleInput.style.cursor = "pointer";
+				console.log("🔍 DEBUG: Gift box toggle enabled");
 			} else {
 				toggleInput.disabled = true;
-				toggleInput.style.opacity = '0.6';
-				toggleInput.style.cursor = 'not-allowed';
-				console.log('🔍 DEBUG: Gift box toggle disabled');
+				toggleInput.style.opacity = "0.6";
+				toggleInput.style.cursor = "not-allowed";
+				console.log("🔍 DEBUG: Gift box toggle disabled");
 			}
 		}
 
@@ -5596,7 +5876,12 @@
 		extractVesselNumber(item) {
 			// Extract vessel number from item properties
 			// Look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc.
-			console.log("🔍 DEBUG: Extracting vessel number for item", item.id, ":", item.properties);
+			console.log(
+				"🔍 DEBUG: Extracting vessel number for item",
+				item.id,
+				":",
+				item.properties
+			);
 
 			if (item.properties) {
 				for (const [key, value] of Object.entries(item.properties)) {
@@ -5614,20 +5899,29 @@
 						console.log("🔍 DEBUG: Found vessel property, parts:", parts);
 						if (parts.length >= 2) {
 							const vesselNum = parts[1];
-							console.log("🔍 DEBUG: Extracted vessel number from product property:", vesselNum);
+							console.log(
+								"🔍 DEBUG: Extracted vessel number from product property:",
+								vesselNum
+							);
 							return vesselNum; // Return the vessel number
 						}
 					}
 				}
 			}
-			console.log("🔍 DEBUG: No vessel number found for item", item.id, "- using item ID as fallback");
+			console.log(
+				"🔍 DEBUG: No vessel number found for item",
+				item.id,
+				"- using item ID as fallback"
+			);
 			// Return item ID as fallback for items without vessel number properties
 			return item.id.toString();
 		}
 
 		async findAssociatedGiftBoxesFromCartData(vesselItemKey, cartData) {
 			try {
-				console.log(`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`);
+				console.log(
+					`🔍 DEBUG: Starting cleanup for vessel item with key ${vesselItemKey}`
+				);
 
 				if (!cartData || !cartData.items) {
 					console.log(`🔍 DEBUG: No cart data or items found`);
@@ -5635,20 +5929,28 @@
 				}
 
 				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-				console.log(`🔍 DEBUG: All cart items:`, cartData.items.map((item) => ({
-					key: item.key,
-					id: item.id,
-					title: item.product_title,
-					properties: item.properties,
-				})));
+				console.log(
+					`🔍 DEBUG: All cart items:`,
+					cartData.items.map((item) => ({
+						key: item.key,
+						id: item.id,
+						title: item.product_title,
+						properties: item.properties,
+					}))
+				);
 
 				// Find the vessel item to get its wrapped bundle ID
 				const vesselItem = cartData.items.find(
 					(item) => item.key === vesselItemKey
 				);
 				if (!vesselItem) {
-					console.log(`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`);
-					console.log(`🔍 DEBUG: Available item keys:`, cartData.items.map((item) => item.key));
+					console.log(
+						`🔍 DEBUG: Vessel item with key ${vesselItemKey} not found in cart`
+					);
+					console.log(
+						`🔍 DEBUG: Available item keys:`,
+						cartData.items.map((item) => item.key)
+					);
 					return [];
 				}
 
@@ -5662,12 +5964,16 @@
 				// Get wrapped bundle ID from vessel item
 				const wrappedBundleId = vesselItem.properties?.["_Wrapped_Bundle"];
 				if (!wrappedBundleId) {
-					console.log(`🔍 DEBUG: No wrapped bundle ID found for item with key ${vesselItemKey}`);
+					console.log(
+						`🔍 DEBUG: No wrapped bundle ID found for item with key ${vesselItemKey}`
+					);
 					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Looking for gift boxes associated with wrapped bundle ID ${wrappedBundleId}`);
+				console.log(
+					`🔍 DEBUG: Looking for gift boxes associated with wrapped bundle ID ${wrappedBundleId}`
+				);
 
 				// Find gift boxes with matching wrapped bundle ID
 				const associatedGiftBoxKeys = [];
@@ -5684,11 +5990,16 @@
 					// Check if this item has the matching wrapped bundle ID
 					if (item.properties?.["_Wrapped_Bundle"] === wrappedBundleId) {
 						associatedGiftBoxKeys.push(item.key);
-						console.log(`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for wrapped bundle ${wrappedBundleId}`);
+						console.log(
+							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for wrapped bundle ${wrappedBundleId}`
+						);
 					}
 				}
 
-				console.log(`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`, associatedGiftBoxKeys);
+				console.log(
+					`🔍 DEBUG: Found ${associatedGiftBoxKeys.length} associated gift boxes:`,
+					associatedGiftBoxKeys
+				);
 				return associatedGiftBoxKeys;
 			} catch (error) {
 				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
@@ -5698,7 +6009,9 @@
 
 		async findAssociatedGiftBoxes(vesselItemId) {
 			try {
-				console.log(`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`);
+				console.log(
+					`🔍 DEBUG: Starting cleanup for vessel item ${vesselItemId}`
+				);
 
 				// Fetch current cart data
 				const cartData = await this.fetchUpdatedCartData();
@@ -5708,19 +6021,27 @@
 				}
 
 				console.log(`🔍 DEBUG: Cart has ${cartData.items.length} items`);
-				console.log(`🔍 DEBUG: All cart items:`, cartData.items.map((item) => ({
-					id: item.id,
-					title: item.product_title,
-					properties: item.properties,
-				})));
+				console.log(
+					`🔍 DEBUG: All cart items:`,
+					cartData.items.map((item) => ({
+						id: item.id,
+						title: item.product_title,
+						properties: item.properties,
+					}))
+				);
 
 				// Find the vessel item to get its vessel number
 				const vesselItem = cartData.items.find(
 					(item) => item.id.toString() === vesselItemId.toString()
 				);
 				if (!vesselItem) {
-					console.log(`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`);
-					console.log(`🔍 DEBUG: Available item IDs:`, cartData.items.map((item) => item.id));
+					console.log(
+						`🔍 DEBUG: Vessel item ${vesselItemId} not found in cart`
+					);
+					console.log(
+						`🔍 DEBUG: Available item IDs:`,
+						cartData.items.map((item) => item.id)
+					);
 					return [];
 				}
 
@@ -5733,15 +6054,21 @@
 				// Extract vessel number from the vessel item
 				// For main products, use the variant_id as the vessel number since gift boxes reference this
 				let vesselNumber = vesselItem.variant_id.toString();
-				console.log(`🔍 DEBUG: Using variant_id as vessel number: ${vesselNumber}`);
+				console.log(
+					`🔍 DEBUG: Using variant_id as vessel number: ${vesselNumber}`
+				);
 
 				if (!vesselNumber) {
-					console.log(`🔍 DEBUG: No vessel number found for item ${vesselItemId}`);
+					console.log(
+						`🔍 DEBUG: No vessel number found for item ${vesselItemId}`
+					);
 					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
-				console.log(`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`);
+				console.log(
+					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
+				);
 
 				// Find gift boxes with matching vessel number AND timestamp prefix
 				const associatedGiftBoxIds = [];
@@ -5761,7 +6088,9 @@
 
 					// Properties are stored as an object, not an array
 					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`);
+						console.log(
+							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
+						);
 
 						// Check if it's a gift box
 						if (key === "_Add-on" && value === "Premium Gift Box") {
@@ -5775,7 +6104,9 @@
 							value.toString() === vesselNumber.toString()
 						) {
 							hasMatchingVesselNumber = true;
-							console.log(`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`);
+							console.log(
+								`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
+							);
 						}
 					}
 
@@ -5783,11 +6114,16 @@
 					if (isGiftBox && hasMatchingVesselNumber) {
 						// Use the key instead of id for cart API
 						associatedGiftBoxIds.push(item.key);
-						console.log(`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`);
+						console.log(
+							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`
+						);
 					}
 				}
 
-				console.log(`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`, associatedGiftBoxIds);
+				console.log(
+					`🔍 DEBUG: Found ${associatedGiftBoxIds.length} associated gift boxes:`,
+					associatedGiftBoxIds
+				);
 				return associatedGiftBoxIds;
 			} catch (error) {
 				console.error("🔍 DEBUG: Failed to find associated gift boxes:", error);
@@ -5817,7 +6153,7 @@
 		// REMOVED: isGiftBoxItem, renderCheckoutItem, renderItemProperties, renderGiftBoxItem - using Liquid templates instead
 
 		async removeCartItem(itemKey) {
-			console.log('🗑️ REMOVE ITEM: Starting removal of item with key', itemKey);
+			console.log("🗑️ REMOVE ITEM: Starting removal of item with key", itemKey);
 
 			// Prevent multiple simultaneous removal attempts
 			if (this.isRemovingItem) {
@@ -5873,31 +6209,37 @@
 
 					// Get current cart data to check if this is a gift box item
 					const currentCartData = await this.fetchUpdatedCartData();
-					
+
 					// Debug: Log all available item keys
-					console.log('🗑️ Available cart item keys:', currentCartData.items.map(item => ({
-						key: item.key,
-						title: item.product_title,
-						variant_id: item.variant_id
-					})));
-					
-					// Extract variant ID from the itemKey (format: "variantId:hash")
-					const variantId = itemKey.split(':')[0];
-					console.log('🔍 Looking for item with variant ID:', variantId);
-					
-					let itemToRemove = currentCartData.items.find(item => 
-						item.variant_id.toString() === variantId
+					console.log(
+						"🗑️ Available cart item keys:",
+						currentCartData.items.map((item) => ({
+							key: item.key,
+							title: item.product_title,
+							variant_id: item.variant_id,
+						}))
 					);
-					
+
+					// Extract variant ID from the itemKey (format: "variantId:hash")
+					const variantId = itemKey.split(":")[0];
+					console.log("🔍 Looking for item with variant ID:", variantId);
+
+					let itemToRemove = currentCartData.items.find(
+						(item) => item.variant_id.toString() === variantId
+					);
+
 					if (!itemToRemove) {
-						console.error('❌ Item not found with variant ID:', variantId);
-						console.error('❌ Available variant IDs:', currentCartData.items.map(item => item.variant_id));
+						console.error("❌ Item not found with variant ID:", variantId);
+						console.error(
+							"❌ Available variant IDs:",
+							currentCartData.items.map((item) => item.variant_id)
+						);
 						return;
 					}
-					
+
 					// Update itemKey to use the current key for removal
 					itemKey = itemToRemove.key;
-					console.log('✅ Found item, using current key:', itemKey);
+					console.log("✅ Found item, using current key:", itemKey);
 
 					// Check if this is a gift box item
 					const isGiftBoxItem =
@@ -5940,7 +6282,9 @@
 						await this.updateCheckoutViewWithCartData(cartData);
 						cartData.checkoutViewAlreadyUpdated = true;
 					} else {
-						console.log(`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`);
+						console.log(
+							`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`
+						);
 
 						// Remove the main item first using the key as id
 						const requestBody = {
@@ -5949,9 +6293,9 @@
 							sections: "cart-icon-bubble",
 							sections_url: window.location.pathname,
 						};
-						
-						console.log('🗑️ Removing main item with request:', requestBody);
-						
+
+						console.log("🗑️ Removing main item with request:", requestBody);
+
 						const response = await fetch("/cart/change.js", {
 							method: "POST",
 							headers: {
@@ -5963,36 +6307,60 @@
 
 						if (!response.ok) {
 							const errorText = await response.text();
-							console.error('❌ Failed to remove main item:', response.status, errorText);
-							throw new Error(`Failed to remove item: ${response.status} - ${errorText}`);
+							console.error(
+								"❌ Failed to remove main item:",
+								response.status,
+								errorText
+							);
+							throw new Error(
+								`Failed to remove item: ${response.status} - ${errorText}`
+							);
 						}
 
 						cartData = await response.json();
 
 						// Check if any product items were removed in the response
 						if (cartData.items_removed && cartData.items_removed.length > 0) {
-							console.log('🔍 DEBUG: items_removed found:', cartData.items_removed);
-							
-							// Check if any of the removed items were product items (not gift boxes)
-							const removedProductItems = cartData.items_removed.filter(item => 
-								!item.properties || !item.properties['_Add-on'] || item.properties['_Add-on'] !== 'Premium Gift Box'
+							console.log(
+								"🔍 DEBUG: items_removed found:",
+								cartData.items_removed
 							);
-							console.log('🔍 DEBUG: removedProductItems:', removedProductItems);
-							
+
+							// Check if any of the removed items were product items (not gift boxes)
+							const removedProductItems = cartData.items_removed.filter(
+								(item) =>
+									!item.properties ||
+									!item.properties["_Add-on"] ||
+									item.properties["_Add-on"] !== "Premium Gift Box"
+							);
+							console.log(
+								"🔍 DEBUG: removedProductItems:",
+								removedProductItems
+							);
+
 							if (removedProductItems.length > 0) {
-								
 								// Now we need to remove associated gift boxes for these product items
 								// Get the variant IDs of the removed product items
-								const removedVariantIds = removedProductItems.map(item => item.variant_id.toString());
-								
+								const removedVariantIds = removedProductItems.map((item) =>
+									item.variant_id.toString()
+								);
+
 								// Find and remove gift boxes that reference these variant IDs
-								console.log('🔍 DEBUG: Calling removeGiftBoxesForRemovedProducts with:', removedVariantIds);
+								console.log(
+									"🔍 DEBUG: Calling removeGiftBoxesForRemovedProducts with:",
+									removedVariantIds
+								);
 								await this.removeGiftBoxesForRemovedProducts(removedVariantIds);
-								
+
 								// Fetch updated cart data after removing gift boxes
-								console.log('🔍 DEBUG: Fetching updated cart data after gift box removal');
+								console.log(
+									"🔍 DEBUG: Fetching updated cart data after gift box removal"
+								);
 								cartData = await this.fetchUpdatedCartData();
-								console.log('🔍 DEBUG: Updated cart data after gift box removal:', cartData);
+								console.log(
+									"🔍 DEBUG: Updated cart data after gift box removal:",
+									cartData
+								);
 							}
 						}
 
@@ -6001,7 +6369,9 @@
 							this.updateCartIconBubble(cartData);
 						} else {
 							// If cartData doesn't have sections, fetch them separately
-							console.log('🔍 DEBUG: cartData missing sections, fetching separately for cart bubble update');
+							console.log(
+								"🔍 DEBUG: cartData missing sections, fetching separately for cart bubble update"
+							);
 							await this.updateCartIconBubbleWithSections();
 						}
 					}
@@ -6031,49 +6401,70 @@
 
 		async removeGiftBoxesForRemovedProducts(removedVariantIds) {
 			try {
-				console.log('🔍 DEBUG: removeGiftBoxesForRemovedProducts called with:', removedVariantIds);
-				
+				console.log(
+					"🔍 DEBUG: removeGiftBoxesForRemovedProducts called with:",
+					removedVariantIds
+				);
+
 				// Get current cart data to find gift boxes
 				const currentCartData = await this.fetchUpdatedCartData();
 				if (!currentCartData || !currentCartData.items) {
 					return;
 				}
-				
+
 				// Find gift boxes that reference the removed variant IDs using _Wrapped_Bundle
-				const giftBoxesToRemove = currentCartData.items.filter(item => {
+				const giftBoxesToRemove = currentCartData.items.filter((item) => {
 					// Check if it's a gift box (has _Wrapped_Bundle property and title contains 'gift box')
-					const isGiftBox = item.title.toLowerCase().includes('gift box') && 
-									 item.properties && 
-									 item.properties['_Wrapped_Bundle'];
-					
+					const isGiftBox =
+						item.title.toLowerCase().includes("gift box") &&
+						item.properties &&
+						item.properties["_Wrapped_Bundle"];
+
 					if (!isGiftBox) return false;
-					
+
 					// Find the vessel item that has this wrapped bundle ID
-					const wrappedBundleId = item.properties['_Wrapped_Bundle'];
-					const vesselItem = currentCartData.items.find(vesselItem => 
-						vesselItem.properties && 
-						vesselItem.properties['_Wrapped_Bundle'] === wrappedBundleId &&
-						!vesselItem.title.toLowerCase().includes('gift box')
+					const wrappedBundleId = item.properties["_Wrapped_Bundle"];
+					const vesselItem = currentCartData.items.find(
+						(vesselItem) =>
+							vesselItem.properties &&
+							vesselItem.properties["_Wrapped_Bundle"] === wrappedBundleId &&
+							!vesselItem.title.toLowerCase().includes("gift box")
 					);
-					
+
 					// Check if the vessel item's variant ID is in the removed list
-					const matches = vesselItem && removedVariantIds.includes(vesselItem.variant_id.toString());
-					console.log('🔍 DEBUG: Checking gift box:', item.key, 'wrappedBundleId:', wrappedBundleId, 'vesselItem:', vesselItem?.variant_id, 'removedVariantIds:', removedVariantIds, 'matches:', matches);
+					const matches =
+						vesselItem &&
+						removedVariantIds.includes(vesselItem.variant_id.toString());
+					console.log(
+						"🔍 DEBUG: Checking gift box:",
+						item.key,
+						"wrappedBundleId:",
+						wrappedBundleId,
+						"vesselItem:",
+						vesselItem?.variant_id,
+						"removedVariantIds:",
+						removedVariantIds,
+						"matches:",
+						matches
+					);
 					return matches;
 				});
-				
+
 				if (giftBoxesToRemove.length === 0) {
-					console.log('🔍 DEBUG: No gift boxes to remove');
+					console.log("🔍 DEBUG: No gift boxes to remove");
 					return;
 				}
-				
-				console.log('🔍 DEBUG: Found gift boxes to remove:', giftBoxesToRemove.length);
-				
+
+				console.log(
+					"🔍 DEBUG: Found gift boxes to remove:",
+					giftBoxesToRemove.length
+				);
+
 				// Remove each gift box
 				for (const giftBox of giftBoxesToRemove) {
 					try {
-						console.log('🔍 DEBUG: Removing gift box:', giftBox.key);
-						
+						console.log("🔍 DEBUG: Removing gift box:", giftBox.key);
+
 						const response = await fetch("/cart/change.js", {
 							method: "POST",
 							headers: {
@@ -6087,24 +6478,26 @@
 								sections_url: window.location.pathname,
 							}),
 						});
-						
+
 						if (response.ok) {
 							const responseData = await response.json();
-							console.log('✅ Successfully removed gift box:', giftBox.key);
-							
+							console.log("✅ Successfully removed gift box:", giftBox.key);
+
 							// Update cart icon bubble with the latest response
 							this.updateCartIconBubble(responseData);
 						} else {
 							const errorText = await response.text();
-							console.error(`❌ Failed to remove gift box ${giftBox.key}: ${response.status}`, errorText);
+							console.error(
+								`❌ Failed to remove gift box ${giftBox.key}: ${response.status}`,
+								errorText
+							);
 						}
 					} catch (error) {
 						console.error(`❌ Error removing gift box ${giftBox.key}:`, error);
 					}
 				}
-				
 			} catch (error) {
-				console.error('❌ Error in removeGiftBoxesForRemovedProducts:', error);
+				console.error("❌ Error in removeGiftBoxesForRemovedProducts:", error);
 			}
 		}
 
@@ -6129,16 +6522,15 @@
 				additionalRecommendationsSection.style.display = "none";
 			}
 
-
 			// Handle footer based on current view and context
 			const footer = this.modal.querySelector(".mini-atc-modal__footer");
 			if (footer) {
 				// Set coordination flag to prevent conflicts with loading restoration
 				footer.dataset.beingManaged = "true";
-				
+
 				// When hiding sections (empty cart), always hide the footer
 				footer.style.display = "none";
-				
+
 				// Clear coordination flag after a short delay to allow restoration if needed
 				setTimeout(() => {
 					delete footer.dataset.beingManaged;
@@ -6149,7 +6541,7 @@
 		showCheckoutSections() {
 			// Reset footer state to ensure clean start
 			this.resetFooterState();
-			
+
 			// Only show checkout-specific sections when in checkout view
 			if (this.currentView === "checkout") {
 				// Show step process section
@@ -6177,17 +6569,16 @@
 					additionalRecommendationsSection.style.opacity = "1";
 				}
 
-
 				// Show footer (pricing and add to cart button) - context-aware
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
 					// Clear any existing coordination flags and stored data to ensure clean state
 					delete footer.dataset.beingManaged;
 					delete footer.dataset.originalDisplay;
-					
+
 					// Set coordination flag to prevent conflicts with loading restoration
 					footer.dataset.beingManaged = "true";
-					
+
 					// Check if we should show the footer based on context and cart state
 					const shouldShowFooter = this.shouldShowFooter(true); // Cart has items if we're showing sections
 					console.log("Footer visibility check:", {
@@ -6195,7 +6586,7 @@
 						shouldShowFooter: shouldShowFooter,
 						currentView: this.currentView,
 						footerDisplay: footer.style.display,
-						footerOpacity: footer.style.opacity
+						footerOpacity: footer.style.opacity,
 					});
 					if (shouldShowFooter) {
 						footer.style.display = "";
@@ -6204,7 +6595,7 @@
 						footer.style.display = "none";
 						footer.style.opacity = "0";
 					}
-					
+
 					// Clear coordination flag after a short delay to allow restoration if needed
 					setTimeout(() => {
 						delete footer.dataset.beingManaged;
@@ -6218,10 +6609,10 @@
 					// Clear any existing coordination flags and stored data to ensure clean state
 					delete footer.dataset.beingManaged;
 					delete footer.dataset.originalDisplay;
-					
+
 					// Set coordination flag to prevent conflicts with loading restoration
 					footer.dataset.beingManaged = "true";
-					
+
 					const shouldShowFooter = this.shouldShowFooter();
 					if (shouldShowFooter) {
 						footer.style.display = "";
@@ -6230,7 +6621,7 @@
 						footer.style.display = "none";
 						footer.style.opacity = "0";
 					}
-					
+
 					// Clear coordination flag after a short delay to allow restoration if needed
 					setTimeout(() => {
 						delete footer.dataset.beingManaged;
@@ -6246,11 +6637,11 @@
 				// Clear all coordination flags and stored data
 				delete footer.dataset.beingManaged;
 				delete footer.dataset.originalDisplay;
-				
+
 				// Reset to default state
 				footer.style.display = "";
 				footer.style.opacity = "1";
-				
+
 				console.log("Footer state reset to clean state");
 			}
 		}
@@ -6292,10 +6683,10 @@
 		}
 
 		showEmptyCartMessage() {
-			console.log('🔍 DEBUG: showEmptyCartMessage called');
+			console.log("🔍 DEBUG: showEmptyCartMessage called");
 			// Find or create empty cart message
 			let emptyMessage = this.modal.querySelector(".empty-cart-message");
-			console.log('🔍 DEBUG: existing emptyMessage found:', !!emptyMessage);
+			console.log("🔍 DEBUG: existing emptyMessage found:", !!emptyMessage);
 
 			if (!emptyMessage) {
 				emptyMessage = document.createElement("div");
@@ -6393,9 +6784,12 @@
 			}
 
 			emptyMessage.style.display = "block";
-			console.log('🔍 DEBUG: emptyMessage displayed');
-			console.log('🔍 DEBUG: emptyMessage element:', emptyMessage);
-			console.log('🔍 DEBUG: emptyMessage computed style:', window.getComputedStyle(emptyMessage).display);
+			console.log("🔍 DEBUG: emptyMessage displayed");
+			console.log("🔍 DEBUG: emptyMessage element:", emptyMessage);
+			console.log(
+				"🔍 DEBUG: emptyMessage computed style:",
+				window.getComputedStyle(emptyMessage).display
+			);
 		}
 
 		hideEmptyCartMessage() {
@@ -6593,7 +6987,7 @@
 						originalDisplay: footer.dataset.originalDisplay,
 						beingManaged: footer.dataset.beingManaged,
 						currentDisplay: footer.style.display,
-						currentOpacity: footer.style.opacity
+						currentOpacity: footer.style.opacity,
 					});
 					// Check if other methods are currently managing footer
 					if (!footer.dataset.beingManaged) {

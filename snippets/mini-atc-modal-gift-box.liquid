@@ -6,7 +6,7 @@
 {% endcomment %}
 
 {%- liquid
-  assign gift_box_handle = 'premium-gift-box-tissue-wrap'
+  assign gift_box_handle = 'premium-gift-box-and-tissue-wrap'
   assign gift_box_product = all_products[gift_box_handle]
   assign gift_box_variant = gift_box_product.variants.first
   assign gift_box_image = gift_box_product.featured_image | default: gift_box_product.images.first
