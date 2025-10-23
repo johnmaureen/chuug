@@ -914,6 +914,7 @@
 			this.currentView = "personalize";
 			this.focusTrap = null;
 			this.openingContext = null; // Track how modal was opened: 'cart-icon' or 'add-multiple-products'
+			this.actionDebounceTimeout = null; // For debouncing button clicks
 
 			// Initialize components
 			this.state = new PersonalizationState();
@@ -1305,21 +1306,31 @@
 		}
 
 		handleAction(actionType) {
-			switch (actionType) {
-				case "add-to-cart":
-					this.addToCart();
-					break;
-				case "back-to-personalize":
-					this.switchView("personalize");
-					break;
-				case "proceed-to-checkout":
-					this.proceedToCheckout();
-					break;
-				case "close-modal":
-					this.close();
-					break;
-				default:
+			// Clear any existing debounce timeout
+			if (this.actionDebounceTimeout) {
+				clearTimeout(this.actionDebounceTimeout);
 			}
+
+			// Debounce the action to prevent multiple rapid clicks
+			this.actionDebounceTimeout = setTimeout(() => {
+				switch (actionType) {
+					case "add-to-cart":
+						this.addToCart();
+						break;
+					case "back-to-personalize":
+						this.switchView("personalize");
+						break;
+					case "proceed-to-checkout":
+						this.proceedToCheckout();
+						break;
+					case "close-modal":
+						this.close();
+						break;
+					default:
+				}
+				// Clear the timeout reference after execution
+				this.actionDebounceTimeout = null;
+			}, 300); // 300ms debounce delay
 		}
 
 		handlePersonalizationChange(data) {
@@ -1999,12 +2010,14 @@
 
 		async cleanupOrphanedGiftBoxes(cartData) {
 			try {
+				console.log('🔍 DEBUG: cleanupOrphanedGiftBoxes called with cartData:', cartData);
 				// Find all product items (non-gift box items)
 				const productItems = cartData.items.filter(item => 
 					!item.properties || 
 					!item.properties['_Add-on'] || 
 					item.properties['_Add-on'] !== 'Premium Gift Box'
 				);
+				console.log('🔍 DEBUG: productItems found:', productItems.length);
 				
 				// Get all product variant IDs
 				const productVariantIds = productItems.map(item => item.variant_id.toString());
@@ -2803,9 +2816,17 @@
 					viewName === "personalize" &&
 					this.openingContext === "add-multiple-products"
 				) {
+					// Set coordination flag to prevent conflicts with loading restoration
+					footer.dataset.beingManaged = "true";
+					
 					// Always show footer in personalize view for add-multiple-products
 					footer.style.display = "";
 					footer.style.opacity = "1";
+					
+					// Clear coordination flag after a short delay
+					setTimeout(() => {
+						delete footer.dataset.beingManaged;
+					}, 100);
 				}
 				// For checkout view, footer visibility is handled by showCheckoutSections/hideCheckoutSections
 			}
@@ -2842,8 +2863,16 @@
 				// Ensure footer is visible for add-multiple-products context
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
+					// Set coordination flag to prevent conflicts with loading restoration
+					footer.dataset.beingManaged = "true";
+					
 					footer.style.display = "";
 					footer.style.opacity = "1";
+					
+					// Clear coordination flag after a short delay
+					setTimeout(() => {
+						delete footer.dataset.beingManaged;
+					}, 100);
 				}
 
 				// Console log state after clicking add-multiple-products
@@ -2866,8 +2895,16 @@
 				// Ensure footer is visible for add-to-cart context
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
+					// Set coordination flag to prevent conflicts with loading restoration
+					footer.dataset.beingManaged = "true";
+					
 					footer.style.display = "";
 					footer.style.opacity = "1";
+					
+					// Clear coordination flag after a short delay
+					setTimeout(() => {
+						delete footer.dataset.beingManaged;
+					}, 100);
 				}
 			}
 
@@ -3053,8 +3090,10 @@
 					await this.updateCheckoutViewWithCartData(freshCartData);
 				}
 
-				// Hide cart loading spinner
-				this.hideCartLoadingSpinner();
+				// Add delay to allow coordination flags to clear before restoring footer
+				setTimeout(() => {
+					this.hideCartLoadingSpinner();
+				}, 150); // Wait for coordination flags to clear
 
 				// Ensure checkout container is visible
 				const checkoutContainer = this.modal.querySelector(
@@ -3091,8 +3130,10 @@
 				// }, 2000);
 			} catch (error) {
 				this.handleAddToCartError(error.message);
-				// Hide cart loading spinner on error
-				this.hideCartLoadingSpinner();
+				// Add delay to allow coordination flags to clear before restoring footer
+				setTimeout(() => {
+					this.hideCartLoadingSpinner();
+				}, 150); // Wait for coordination flags to clear
 			} finally {
 				this.setLoadingState(false);
 				// Reset the flag
@@ -4166,8 +4207,10 @@
 
 		async updateCheckoutView(cartResponse) {
 			try {
+				console.log('🔍 DEBUG: updateCheckoutView called');
 				// Fetch updated cart data from Shopify
 				const cartData = await this.fetchUpdatedCartData();
+				console.log('🔍 DEBUG: Fetched cart data:', cartData);
 
 				if (!cartData || !cartData.items) {
 					console.warn("No cart data available for checkout view update");
@@ -4185,6 +4228,9 @@
 
 		async updateCheckoutViewWithCartData(cartData) {
 			try {
+				console.log('🔍 DEBUG: updateCheckoutViewWithCartData called');
+				console.log('🔍 DEBUG: cartData.items.length:', cartData.items ? cartData.items.length : 'undefined');
+				console.log('🔍 DEBUG: cartData:', cartData);
 				
 				// Find the checkout items container and empty state
 				const checkoutContainer = this.modal.querySelector(
@@ -4192,12 +4238,17 @@
 				);
 				const emptyState = this.modal.querySelector("[data-empty-state]");
 
+				console.log('🔍 DEBUG: checkoutContainer found:', !!checkoutContainer);
+				console.log('🔍 DEBUG: emptyState found:', !!emptyState);
+
 				if (!checkoutContainer) {
 					console.warn("Checkout items container not found");
 					return;
 				}
 
 				if (cartData.items.length === 0) {
+					console.log('🔍 DEBUG: Cart is empty, showing empty state');
+					console.log('🔍 DEBUG: cartData.items:', cartData.items);
 					// Clear all existing items first to ensure clean empty state
 					const allExistingItems = checkoutContainer.querySelectorAll(
 						".checkout-product-item-wrap, .checkout-products-wrap, .premium-gift-box, [data-item-id]"
@@ -4213,7 +4264,9 @@
 					this.hideCheckoutSections();
 
 					// Show empty cart message
+					console.log('🔍 DEBUG: Calling showEmptyCartMessage');
 					this.showEmptyCartMessage();
+					console.log('🔍 DEBUG: showEmptyCartMessage completed');
 
 					// Refresh pricing to show empty cart (£0.00)
 					this.updateCheckoutPricing();
@@ -4224,6 +4277,7 @@
 
 					// Stay in checkout view to show empty state - don't switch back to personalize
 				} else {
+					console.log('🔍 DEBUG: Cart has items, hiding empty state');
 					// Hide empty state
 					if (emptyState) {
 						emptyState.style.display = "none";
@@ -4233,6 +4287,7 @@
 					this.showCheckoutSections();
 
 					// Hide empty cart message
+					console.log('🔍 DEBUG: Hiding empty cart message');
 					this.hideEmptyCartMessage();
 
 					// Clear existing items
@@ -5501,11 +5556,13 @@
 
 						// Check if any product items were removed in the response
 						if (cartData.items_removed && cartData.items_removed.length > 0) {
+							console.log('🔍 DEBUG: items_removed found:', cartData.items_removed);
 							
 							// Check if any of the removed items were product items (not gift boxes)
 							const removedProductItems = cartData.items_removed.filter(item => 
 								!item.properties || !item.properties['_Add-on'] || item.properties['_Add-on'] !== 'Premium Gift Box'
 							);
+							console.log('🔍 DEBUG: removedProductItems:', removedProductItems);
 							
 							if (removedProductItems.length > 0) {
 								
@@ -5514,7 +5571,13 @@
 								const removedVariantIds = removedProductItems.map(item => item.variant_id.toString());
 								
 								// Find and remove gift boxes that reference these variant IDs
+								console.log('🔍 DEBUG: Calling removeGiftBoxesForRemovedProducts with:', removedVariantIds);
 								await this.removeGiftBoxesForRemovedProducts(removedVariantIds);
+								
+								// Fetch updated cart data after removing gift boxes
+								console.log('🔍 DEBUG: Fetching updated cart data after gift box removal');
+								cartData = await this.fetchUpdatedCartData();
+								console.log('🔍 DEBUG: Updated cart data after gift box removal:', cartData);
 							}
 						}
 
@@ -5562,7 +5625,9 @@
 					
 					// Check if its vessel number matches any of the removed variant IDs
 					const vesselNumber = item.properties['_Vessel Number'];
-					return vesselNumber && removedVariantIds.includes(vesselNumber);
+					const matches = vesselNumber && removedVariantIds.includes(vesselNumber);
+					console.log('🔍 DEBUG: Checking gift box:', item.key, 'vesselNumber:', vesselNumber, 'removedVariantIds:', removedVariantIds, 'matches:', matches);
+					return matches;
 				});
 				
 				if (giftBoxesToRemove.length === 0) {
@@ -5628,30 +5693,27 @@
 				additionalRecommendationsSection.style.display = "none";
 			}
 
+
 			// Handle footer based on current view and context
 			const footer = this.modal.querySelector(".mini-atc-modal__footer");
 			if (footer) {
-				if (this.currentView === "checkout") {
-					// In checkout view, use shouldShowFooter logic instead of always hiding
-					const shouldShowFooter = this.shouldShowFooter(false); // Assume empty cart when hiding sections
-					if (shouldShowFooter) {
-						footer.style.display = "";
-						footer.style.opacity = "1";
-					} else {
-						footer.style.display = "none";
-					}
-				} else if (
-					this.currentView === "personalize" &&
-					this.openingContext === "add-multiple-products"
-				) {
-					// In personalize view with add-multiple-products, keep footer visible
-					footer.style.display = "";
-					footer.style.opacity = "1";
-				}
+				// Set coordination flag to prevent conflicts with loading restoration
+				footer.dataset.beingManaged = "true";
+				
+				// When hiding sections (empty cart), always hide the footer
+				footer.style.display = "none";
+				
+				// Clear coordination flag after a short delay to allow restoration if needed
+				setTimeout(() => {
+					delete footer.dataset.beingManaged;
+				}, 100);
 			}
 		}
 
 		showCheckoutSections() {
+			// Reset footer state to ensure clean start
+			this.resetFooterState();
+			
 			// Only show checkout-specific sections when in checkout view
 			if (this.currentView === "checkout") {
 				// Show step process section
@@ -5679,36 +5741,81 @@
 					additionalRecommendationsSection.style.opacity = "1";
 				}
 
+
 				// Show footer (pricing and add to cart button) - context-aware
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
+					// Clear any existing coordination flags and stored data to ensure clean state
+					delete footer.dataset.beingManaged;
+					delete footer.dataset.originalDisplay;
+					
+					// Set coordination flag to prevent conflicts with loading restoration
+					footer.dataset.beingManaged = "true";
+					
 					// Check if we should show the footer based on context and cart state
 					const shouldShowFooter = this.shouldShowFooter(true); // Cart has items if we're showing sections
 					console.log("Footer visibility check:", {
 						openingContext: this.openingContext,
 						shouldShowFooter: shouldShowFooter,
-						currentView: this.currentView
+						currentView: this.currentView,
+						footerDisplay: footer.style.display,
+						footerOpacity: footer.style.opacity
 					});
 					if (shouldShowFooter) {
 						footer.style.display = "";
 						footer.style.opacity = "1";
 					} else {
 						footer.style.display = "none";
+						footer.style.opacity = "0";
 					}
+					
+					// Clear coordination flag after a short delay to allow restoration if needed
+					setTimeout(() => {
+						delete footer.dataset.beingManaged;
+					}, 100);
 				}
 			}
 			// In personalize view, always show footer for add-multiple-products context
 			else if (this.currentView === "personalize") {
 				const footer = this.modal.querySelector(".mini-atc-modal__footer");
 				if (footer) {
+					// Clear any existing coordination flags and stored data to ensure clean state
+					delete footer.dataset.beingManaged;
+					delete footer.dataset.originalDisplay;
+					
+					// Set coordination flag to prevent conflicts with loading restoration
+					footer.dataset.beingManaged = "true";
+					
 					const shouldShowFooter = this.shouldShowFooter();
 					if (shouldShowFooter) {
 						footer.style.display = "";
 						footer.style.opacity = "1";
 					} else {
 						footer.style.display = "none";
+						footer.style.opacity = "0";
 					}
+					
+					// Clear coordination flag after a short delay to allow restoration if needed
+					setTimeout(() => {
+						delete footer.dataset.beingManaged;
+					}, 100);
 				}
+			}
+		}
+
+		// Force reset footer to clean state
+		resetFooterState() {
+			const footer = this.modal.querySelector(".mini-atc-modal__footer");
+			if (footer) {
+				// Clear all coordination flags and stored data
+				delete footer.dataset.beingManaged;
+				delete footer.dataset.originalDisplay;
+				
+				// Reset to default state
+				footer.style.display = "";
+				footer.style.opacity = "1";
+				
+				console.log("Footer state reset to clean state");
 			}
 		}
 
@@ -5749,8 +5856,10 @@
 		}
 
 		showEmptyCartMessage() {
+			console.log('🔍 DEBUG: showEmptyCartMessage called');
 			// Find or create empty cart message
 			let emptyMessage = this.modal.querySelector(".empty-cart-message");
+			console.log('🔍 DEBUG: existing emptyMessage found:', !!emptyMessage);
 
 			if (!emptyMessage) {
 				emptyMessage = document.createElement("div");
@@ -5773,12 +5882,12 @@
 					</div>
 				`;
 
-				// Insert after the checkout summary heading
-				const checkoutSummarySection = this.modal.querySelector(
-					".checkout-summary-section"
+				// Insert into the checkout items container
+				const checkoutItemsContainer = this.modal.querySelector(
+					"[data-checkout-items]"
 				);
-				if (checkoutSummarySection) {
-					checkoutSummarySection.appendChild(emptyMessage);
+				if (checkoutItemsContainer) {
+					checkoutItemsContainer.appendChild(emptyMessage);
 				}
 			}
 
@@ -5848,6 +5957,9 @@
 			}
 
 			emptyMessage.style.display = "block";
+			console.log('🔍 DEBUG: emptyMessage displayed');
+			console.log('🔍 DEBUG: emptyMessage element:', emptyMessage);
+			console.log('🔍 DEBUG: emptyMessage computed style:', window.getComputedStyle(emptyMessage).display);
 		}
 
 		hideEmptyCartMessage() {
@@ -6039,11 +6151,21 @@
 					delete recommendations.dataset.originalDisplay;
 				}
 
-				// Restore footer only if it should be visible
+				// Restore footer to its original state and let other methods handle visibility logic
 				if (footer && footer.dataset.originalDisplay !== undefined) {
-					const shouldShowFooter = this.shouldShowFooter();
-					if (shouldShowFooter) {
+					console.log("Footer restoration check:", {
+						originalDisplay: footer.dataset.originalDisplay,
+						beingManaged: footer.dataset.beingManaged,
+						currentDisplay: footer.style.display,
+						currentOpacity: footer.style.opacity
+					});
+					// Check if other methods are currently managing footer
+					if (!footer.dataset.beingManaged) {
+						// Always restore to original display state
 						footer.style.display = footer.dataset.originalDisplay;
+						console.log("Footer restored to:", footer.dataset.originalDisplay);
+					} else {
+						console.log("Footer restoration blocked by beingManaged flag");
 					}
 					delete footer.dataset.originalDisplay;
 				}
@@ -6297,6 +6419,12 @@
 			// if (this.countdown) {
 			// 	this.countdown.destroy();
 			// }
+
+			// Clear debounce timeout
+			if (this.actionDebounceTimeout) {
+				clearTimeout(this.actionDebounceTimeout);
+				this.actionDebounceTimeout = null;
+			}
 
 			// Remove event listeners
 			document.removeEventListener("keydown", this.handleKeydown.bind(this));

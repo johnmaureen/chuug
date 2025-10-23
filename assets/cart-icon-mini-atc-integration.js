@@ -53,8 +53,10 @@
 							// Update checkout view with current cart items (this will handle empty cart state)
 							await modalInstance.updateCheckoutView();
 						} finally {
-							// Hide loading spinner
-							modalInstance.hideCartLoadingSpinner();
+							// Add delay to allow coordination flags to clear before restoring footer
+							setTimeout(() => {
+								modalInstance.hideCartLoadingSpinner();
+							}, 150); // Wait for coordination flags to clear
 						}
 					}, 10); // Very fast response
 				} else {
@@ -77,8 +79,10 @@
 							// Update checkout view with current cart items
 							await instance.updateCheckoutView();
 						} finally {
-							// Hide loading spinner
-							instance.hideCartLoadingSpinner();
+							// Add delay to allow coordination flags to clear before restoring footer
+							setTimeout(() => {
+								instance.hideCartLoadingSpinner();
+							}, 150); // Wait for coordination flags to clear
 						}
 					}
 				}, 10); // Very fast response
