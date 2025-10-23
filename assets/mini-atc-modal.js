@@ -4751,6 +4751,7 @@
 					item.id === 55511131455867 ||
 					item.handle === "premium-gift-box-and-tissue-wrap" ||
 					item.handle.search("premium-gift-box") > -1 ||
+					item.sku === "CHUUG-GIFTBOX" ||
 					(item.properties &&
 						Object.entries(item.properties).some(
 							([key, value]) => key === "_Add-on"
@@ -5140,7 +5141,7 @@
 					);
 				} else {
 					// Use hardcoded variant ID as fallback
-					const fallbackVariantId = "15086555496827"; // From the API data you provided
+					const fallbackVariantId = "55468959531387"; // Updated variant ID from new gift box data
 					giftBoxToggleInput.setAttribute("data-variant-id", fallbackVariantId);
 					giftBoxToggleInput.setAttribute(
 						"data-gift-box-variant-id",
@@ -6244,11 +6245,13 @@
 					// Check if this is a gift box item
 					const isGiftBoxItem =
 						itemToRemove &&
-						itemToRemove.properties &&
-						Object.entries(itemToRemove.properties).some(
-							([key, value]) =>
-								key === "_Add-on" && value === "Premium Gift Box"
-						);
+						(itemToRemove.title.toLowerCase().includes("gift box") ||
+							itemToRemove.sku === "CHUUG-GIFTBOX" ||
+							(itemToRemove.properties &&
+								Object.entries(itemToRemove.properties).some(
+									([key, value]) =>
+										key === "_Add-on" && value === "Premium Gift Box"
+								)));
 
 					if (isGiftBoxItem) {
 						`🎁 Removing gift box item with key ${itemKey} directly`;
@@ -6286,6 +6289,59 @@
 							`🗑️ REMOVE ITEM: Processing vessel item removal for key ${itemKey}`
 						);
 
+						// CRITICAL: Check if this product item has an associated gift box BEFORE removing it
+						const hasGiftBox = itemToRemove.properties && 
+							itemToRemove.properties["_Wrapped_Bundle"] &&
+							itemToRemove.properties["Gift Box"] === "yes";
+
+						if (hasGiftBox) {
+							console.log(
+								"🎁 Product item has gift box - removing gift box first"
+							);
+							
+							// Find the associated gift box using the _Wrapped_Bundle ID
+							const wrappedBundleId = itemToRemove.properties["_Wrapped_Bundle"];
+							const giftBoxItem = currentCartData.items.find(
+								(item) =>
+									item.properties &&
+									item.properties["_Wrapped_Bundle"] === wrappedBundleId &&
+									(item.title.toLowerCase().includes("gift box") ||
+										item.sku === "CHUUG-GIFTBOX" ||
+										item.product_id === 15086555496827)
+							);
+
+							if (giftBoxItem) {
+								console.log(
+									"🎁 Found associated gift box, removing it first:",
+									giftBoxItem.key
+								);
+
+								// Remove the gift box first
+								const giftBoxResponse = await fetch("/cart/change.js", {
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json",
+										Accept: "application/json",
+									},
+									body: JSON.stringify({
+										id: giftBoxItem.key,
+										quantity: 0,
+										sections: "cart-icon-bubble",
+										sections_url: window.location.pathname,
+									}),
+								});
+
+								if (giftBoxResponse.ok) {
+									console.log("✅ Gift box removed successfully");
+									// Update cart icon bubble after gift box removal
+									const giftBoxCartData = await giftBoxResponse.json();
+									this.updateCartIconBubble(giftBoxCartData);
+								} else {
+									console.warn("⚠️ Failed to remove gift box, continuing with product removal");
+								}
+							}
+						}
+
 						// Remove the main item first using the key as id
 						const requestBody = {
 							id: itemKey,
@@ -6318,51 +6374,6 @@
 						}
 
 						cartData = await response.json();
-
-						// Check if any product items were removed in the response
-						if (cartData.items_removed && cartData.items_removed.length > 0) {
-							console.log(
-								"🔍 DEBUG: items_removed found:",
-								cartData.items_removed
-							);
-
-							// Check if any of the removed items were product items (not gift boxes)
-							const removedProductItems = cartData.items_removed.filter(
-								(item) =>
-									!item.properties ||
-									!item.properties["_Add-on"] ||
-									item.properties["_Add-on"] !== "Premium Gift Box"
-							);
-							console.log(
-								"🔍 DEBUG: removedProductItems:",
-								removedProductItems
-							);
-
-							if (removedProductItems.length > 0) {
-								// Now we need to remove associated gift boxes for these product items
-								// Get the variant IDs of the removed product items
-								const removedVariantIds = removedProductItems.map((item) =>
-									item.variant_id.toString()
-								);
-
-								// Find and remove gift boxes that reference these variant IDs
-								console.log(
-									"🔍 DEBUG: Calling removeGiftBoxesForRemovedProducts with:",
-									removedVariantIds
-								);
-								await this.removeGiftBoxesForRemovedProducts(removedVariantIds);
-
-								// Fetch updated cart data after removing gift boxes
-								console.log(
-									"🔍 DEBUG: Fetching updated cart data after gift box removal"
-								);
-								cartData = await this.fetchUpdatedCartData();
-								console.log(
-									"🔍 DEBUG: Updated cart data after gift box removal:",
-									cartData
-								);
-							}
-						}
 
 						// Update cart icon bubble immediately with the response that has sections
 						if (cartData.sections && cartData.sections["cart-icon-bubble"]) {
