@@ -4639,10 +4639,11 @@
 
 				// Check if this is an add-on item that should be grouped with a vessel
 				const isAddon =
-					item.properties &&
+					item.id === 55511131455867 ||
+					(item.properties &&
 					Object.entries(item.properties).some(
 						([key, value]) => key === "_Add-on"
-					);
+					));
 				console.log("🛒 Is addon:", isAddon);
 
 				// Only render main vessel items, not add-ons (they'll be rendered within vessel items)
