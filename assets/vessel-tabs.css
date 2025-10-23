@@ -440,6 +440,11 @@
 	.selection-result-wrap .result-item .img-wrap {
 		width: 100%;
 		min-height: auto;
+		max-height: 140px;
+	}
+
+	.selection-result-wrap.result-3 .result-item .img-wrap {
+		max-height: 125px;
 	}
 
 	.selection-result-wrap .result-item {
@@ -518,4 +523,10 @@
 .selection-result-wrap.result-2 .no-selection-text,
 .selection-result-wrap.result-3 .no-selection-text {
 	display: none !important;
+}
+
+@media screen and (max-width: 767px) {
+	.selection-result-wrap {
+		max-height: 230px;
+	}
 }
