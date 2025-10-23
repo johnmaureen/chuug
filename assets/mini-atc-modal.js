@@ -4095,9 +4095,13 @@
 		}
 
 		updateCartIconBubble(response) {
+			console.log('🔍 DEBUG: updateCartIconBubble called with response:', response);
+			
 			// Update cart icon bubble with the returned section HTML
 			if (response.sections && response.sections["cart-icon-bubble"]) {
 				const cartIconBubble = document.getElementById("cart-icon-bubble");
+				console.log('🔍 DEBUG: cartIconBubble element:', cartIconBubble);
+				
 				if (cartIconBubble) {
 					const parser = new DOMParser();
 					const doc = parser.parseFromString(
@@ -4107,8 +4111,15 @@
 					const newContent = doc.querySelector(".shopify-section");
 					if (newContent) {
 						cartIconBubble.innerHTML = newContent.innerHTML;
+						console.log('✅ Cart icon bubble updated successfully');
+					} else {
+						console.warn('⚠️ Could not find .shopify-section in cart-icon-bubble HTML');
 					}
+				} else {
+					console.error('❌ Cart icon bubble element not found with ID: cart-icon-bubble');
 				}
+			} else {
+				console.warn('⚠️ No cart-icon-bubble section in response:', response);
 			}
 
 			// Update cart drawer or cart notification if they exist
@@ -5986,7 +5997,13 @@
 						}
 
 						// Update cart icon bubble immediately with the response that has sections
-						this.updateCartIconBubble(cartData);
+						if (cartData.sections && cartData.sections["cart-icon-bubble"]) {
+							this.updateCartIconBubble(cartData);
+						} else {
+							// If cartData doesn't have sections, fetch them separately
+							console.log('🔍 DEBUG: cartData missing sections, fetching separately for cart bubble update');
+							await this.updateCartIconBubbleWithSections();
+						}
 					}
 				}
 
@@ -6808,8 +6825,13 @@
 			const state = this.state.getState();
 			this.emit("checkoutInitiated", state);
 
-			// Redirect to checkout
-			window.location.href = window.routes?.checkout_url || "/checkout";
+			// Close the modal first for better UX
+			this.close();
+
+			// Redirect to checkout after a brief delay to allow modal close animation
+			setTimeout(() => {
+				window.location.href = window.routes?.checkout_url || "/checkout";
+			}, 10); // Match modal close animation duration
 		}
 
 		// Public API methods

@@ -1035,9 +1035,31 @@ function addEventListenerToMonogramInitialsInput() {
         if (!response.ok) throw new Error('Error adding products');
         return response.json();
       })
-      .then((data) => {
+      .then(async (data) => {
         // Reset form to default values after successful submission
         resetFormToDefaults();
+        
+        // Update cart count bubble immediately after successful add to cart
+        try {
+          const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
+          const sectionResponse = await fetch(sectionUrl);
+          if (sectionResponse.ok) {
+            const sectionData = await sectionResponse.json();
+            const responseWithSections = {
+              ...data,
+              sections: sectionData,
+            };
+            
+            // Update cart icon bubble
+            const cartIconBubble = document.getElementById("cart-icon-bubble");
+            if (cartIconBubble && responseWithSections.sections && responseWithSections.sections["cart-icon-bubble"]) {
+              cartIconBubble.innerHTML = responseWithSections.sections["cart-icon-bubble"];
+              console.log('✅ Cart count bubble updated after add to cart');
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error updating cart count bubble:', error);
+        }
         
         // Open mini ATC modal in checkout view instead of redirecting to cart
         const miniATCModal = document.querySelector(".mini-atc-modal");
