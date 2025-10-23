@@ -969,11 +969,13 @@ function addEventListenerToMonogramInitialsInput() {
       }
       
       // Reset monogram initials inputs
-      const monogramInput = document.querySelector(`.monogram_initials`);
-      if (monogramInput) {
-        monogramInput.value = '';
-        monogramInput.setAttribute('disabled', 'true');
-      }
+      const monogramInputs = document.querySelectorAll(`.monogram_initials`);
+      monogramInputs.forEach(monogramInput => {
+        if (monogramInput) {
+          monogramInput.value = '';
+          monogramInput.setAttribute('disabled', 'true');
+        }
+      });
     }
     
     // Reset all inputs attributes
