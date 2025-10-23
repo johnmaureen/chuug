@@ -3669,76 +3669,13 @@
 		}
 
 		collectOrderNote(state) {
-			const notes = [];
-
-			// Add personalization summary
-			if (state.engraving?.enabled) {
-				const vesselCount = Object.keys(state.engraving.vessels || {}).length;
-				if (vesselCount > 0) {
-					notes.push(`Personalized ${vesselCount} vessel(s) with engraving`);
-				}
-			}
-
-			// Add charcoal rope selection summary
-			if (window.pomcSystem) {
-				const vesselSelections = window.pomcSystem.getAllVesselSelections();
-				let charcoalCount = 0;
-				Object.values(vesselSelections).forEach((selection) => {
-					if (
-						selection.ropeType &&
-						selection.ropeType.toLowerCase() === "charcoal"
-					) {
-						charcoalCount++;
-					}
-				});
-				if (charcoalCount > 0) {
-					notes.push(`${charcoalCount} Charcoal Rope Upgrade(s)`);
-				}
-			}
-
-			// Add add-on summary
-			const addons = [];
-			if (state.giftBox?.enabled) addons.push("Premium Gift Box");
-			if (state.mixMatch?.enabled) addons.push("Mix & Match");
-			if (state.extraCups?.enabled) addons.push("Extra Cups");
-
-			if (addons.length > 0) {
-				notes.push(`Add-ons: ${addons.join(", ")}`);
-			}
-
-			return notes.join(" | ");
+			// Return empty string to remove custom notes
+			return "";
 		}
 
 		collectOrderAttributes(state) {
-			const attributes = {};
-
-			// Add modal source
-			attributes["Order Source"] = "Mini ATC Modal";
-
-			// Add personalization details
-			if (state.engraving?.enabled) {
-				attributes["Engraving Enabled"] = "Yes";
-
-				// Add individual vessel engravings
-				Object.entries(state.engraving.vessels || {}).forEach(
-					([vesselId, vesselData]) => {
-						const text = this.getVesselEngravingText(vesselData);
-						if (text && text.trim() !== "") {
-							attributes[`Vessel ${vesselId} Text`] = text.trim().toUpperCase();
-						}
-					}
-				);
-			}
-
-			// Add POMC system data
-			if (window.pomcSystem) {
-				const multiplier = window.pomcSystem.getMultiplier();
-				if (multiplier) {
-					attributes["Vessel Count"] = multiplier.toString();
-				}
-			}
-
-			return attributes;
+			// Return empty object to remove custom attributes
+			return {};
 		}
 
 		getGiftBoxVariantId() {

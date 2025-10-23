@@ -525,8 +525,13 @@
 	display: none !important;
 }
 
-@media screen and (max-width: 767px) {
-	.selection-result-wrap {
-		max-height: 230px;
-	}
+.selection-result-wrap .result-item .img-wrap {
+	max-height: 140px;
+}
+
+.selection-result-wrap.result-3 .result-item .img-wrap {
+	max-height: 125px;
+}
+.selection-result-wrap {
+	max-height: 230px;
 }
