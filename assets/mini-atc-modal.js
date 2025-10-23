@@ -3374,12 +3374,17 @@
 			const vesselEngravingData =
 				state.engraving?.vessels?.[vesselNumber] || "";
 			const vesselEngraving = this.getVesselEngravingText(vesselEngravingData);
+			
+			// Always set PERSONALISED INITIAL property
 			if (
 				engravingEnabled &&
 				vesselEngraving &&
 				vesselEngraving.trim() !== ""
 			) {
 				properties["PERSONALISED INITIAL"] = vesselEngraving.trim().toUpperCase();
+			} else {
+				// Set to "NONE" when engraving is off or no engraving text
+				properties["PERSONALISED INITIAL"] = "NONE";
 			}
 
 			// Check if gift box is enabled for this specific vessel
@@ -5063,11 +5068,14 @@
 								wrappedBundleId = Math.random().toString(36).substr(2, 8);
 								console.log('🔍 DEBUG: Generated new wrapped bundle ID:', wrappedBundleId);
 								
-								// CRITICAL: Update the vessel item with the wrapped bundle ID BEFORE adding gift box
-								console.log('🔍 DEBUG: Updating vessel item with _Wrapped_Bundle property');
+								// CRITICAL: Update the vessel item with gift box properties BEFORE adding gift box
+								console.log('🔍 DEBUG: Updating vessel item with gift box properties');
 								const updatedVesselProperties = {
 									...vesselItem.properties,
-									"_Wrapped_Bundle": wrappedBundleId
+									"_Wrapped_Bundle": wrappedBundleId,
+									"Gift Box": "yes",
+									"Gift Option": "Premium Gift Box & Tissue Wrap",
+									"_Gift Option ID": "55468959531387"
 								};
 								
 								try {
@@ -5099,6 +5107,50 @@
 								}
 							} else {
 								console.log('🔍 DEBUG: Using existing wrapped bundle ID:', wrappedBundleId);
+								
+								// Check if vessel item has all gift box properties, if not, update them
+								const hasAllGiftBoxProperties = vesselItem.properties?.["Gift Box"] === "yes" &&
+																vesselItem.properties?.["Gift Option"] === "Premium Gift Box & Tissue Wrap" &&
+																vesselItem.properties?.["_Gift Option ID"] === "55468959531387";
+								
+								if (!hasAllGiftBoxProperties) {
+									console.log('🔍 DEBUG: Updating vessel item with missing gift box properties');
+									const updatedVesselProperties = {
+										...vesselItem.properties,
+										"_Wrapped_Bundle": wrappedBundleId,
+										"Gift Box": "yes",
+										"Gift Option": "Premium Gift Box & Tissue Wrap",
+										"_Gift Option ID": "55468959531387"
+									};
+									
+									try {
+										const updateResponse = await fetch('/cart/change.js', {
+											method: 'POST',
+											headers: {
+												'Content-Type': 'application/json',
+											},
+											body: JSON.stringify({
+												id: vesselItem.key,
+												quantity: vesselItem.quantity,
+												properties: updatedVesselProperties
+											})
+										});
+										
+										if (updateResponse.ok) {
+											console.log('✅ Successfully updated vessel item with gift box properties');
+											// Wait for cart to be updated before proceeding
+											await new Promise(resolve => setTimeout(resolve, 300));
+										} else {
+											console.error('❌ Failed to update vessel item with gift box properties');
+											event.target.checked = false;
+											return;
+										}
+									} catch (error) {
+										console.error('❌ Error updating vessel item:', error);
+										event.target.checked = false;
+										return;
+									}
+								}
 							}
 
 							// Create gift box data
@@ -5231,10 +5283,13 @@
 								if (removeResponse.ok) {
 									console.log('✅ Gift box removed successfully');
 									
-									// CRITICAL: Remove _Wrapped_Bundle property from vessel item after gift box removal
-									console.log('🔍 DEBUG: Removing _Wrapped_Bundle from vessel item');
+									// CRITICAL: Remove all gift box properties from vessel item after gift box removal
+									console.log('🔍 DEBUG: Removing gift box properties from vessel item');
 									const updatedVesselProperties = { ...vesselItem.properties };
 									delete updatedVesselProperties["_Wrapped_Bundle"];
+									delete updatedVesselProperties["Gift Box"];
+									delete updatedVesselProperties["Gift Option"];
+									delete updatedVesselProperties["_Gift Option ID"];
 									
 									try {
 										const vesselUpdateResponse = await fetch('/cart/change.js', {
@@ -5250,12 +5305,12 @@
 										});
 										
 										if (vesselUpdateResponse.ok) {
-											console.log('✅ Successfully removed _Wrapped_Bundle from vessel item');
+											console.log('✅ Successfully removed all gift box properties from vessel item');
 										} else {
-											console.warn('⚠️ Failed to remove _Wrapped_Bundle from vessel item');
+											console.warn('⚠️ Failed to remove gift box properties from vessel item');
 										}
 									} catch (error) {
-										console.error('❌ Error removing _Wrapped_Bundle from vessel item:', error);
+										console.error('❌ Error removing gift box properties from vessel item:', error);
 									}
 									
 									// Simple success - just log and let the toggle stay off
@@ -5778,8 +5833,7 @@
 								
 								// Find and remove gift boxes that reference these variant IDs
 								console.log('🔍 DEBUG: Calling removeGiftBoxesForRemovedProducts with:', removedVariantIds);
-								// TEMPORARILY DISABLED: This might be removing newly added gift boxes
-								// await this.removeGiftBoxesForRemovedProducts(removedVariantIds);
+								await this.removeGiftBoxesForRemovedProducts(removedVariantIds);
 								
 								// Fetch updated cart data after removing gift boxes
 								console.log('🔍 DEBUG: Fetching updated cart data after gift box removal');
@@ -5817,6 +5871,7 @@
 
 		async removeGiftBoxesForRemovedProducts(removedVariantIds) {
 			try {
+				console.log('🔍 DEBUG: removeGiftBoxesForRemovedProducts called with:', removedVariantIds);
 				
 				// Get current cart data to find gift boxes
 				const currentCartData = await this.fetchUpdatedCartData();
@@ -5824,27 +5879,40 @@
 					return;
 				}
 				
-				// Find gift boxes that reference the removed variant IDs
+				// Find gift boxes that reference the removed variant IDs using _Wrapped_Bundle
 				const giftBoxesToRemove = currentCartData.items.filter(item => {
-					// Check if it's a gift box
-					const isGiftBox = item.properties && item.properties['_Add-on'] === 'Premium Gift Box';
+					// Check if it's a gift box (has _Wrapped_Bundle property and title contains 'gift box')
+					const isGiftBox = item.title.toLowerCase().includes('gift box') && 
+									 item.properties && 
+									 item.properties['_Wrapped_Bundle'];
+					
 					if (!isGiftBox) return false;
 					
-					// Check if its vessel number matches any of the removed variant IDs
-					const vesselNumber = item.properties['_Vessel Number'];
-					const matches = vesselNumber && removedVariantIds.includes(vesselNumber);
-					console.log('🔍 DEBUG: Checking gift box:', item.key, 'vesselNumber:', vesselNumber, 'removedVariantIds:', removedVariantIds, 'matches:', matches);
+					// Find the vessel item that has this wrapped bundle ID
+					const wrappedBundleId = item.properties['_Wrapped_Bundle'];
+					const vesselItem = currentCartData.items.find(vesselItem => 
+						vesselItem.properties && 
+						vesselItem.properties['_Wrapped_Bundle'] === wrappedBundleId &&
+						!vesselItem.title.toLowerCase().includes('gift box')
+					);
+					
+					// Check if the vessel item's variant ID is in the removed list
+					const matches = vesselItem && removedVariantIds.includes(vesselItem.variant_id.toString());
+					console.log('🔍 DEBUG: Checking gift box:', item.key, 'wrappedBundleId:', wrappedBundleId, 'vesselItem:', vesselItem?.variant_id, 'removedVariantIds:', removedVariantIds, 'matches:', matches);
 					return matches;
 				});
 				
 				if (giftBoxesToRemove.length === 0) {
+					console.log('🔍 DEBUG: No gift boxes to remove');
 					return;
 				}
 				
+				console.log('🔍 DEBUG: Found gift boxes to remove:', giftBoxesToRemove.length);
 				
 				// Remove each gift box
 				for (const giftBox of giftBoxesToRemove) {
 					try {
+						console.log('🔍 DEBUG: Removing gift box:', giftBox.key);
 						
 						const response = await fetch("/cart/change.js", {
 							method: "POST",
@@ -5862,6 +5930,7 @@
 						
 						if (response.ok) {
 							const responseData = await response.json();
+							console.log('✅ Successfully removed gift box:', giftBox.key);
 							
 							// Update cart icon bubble with the latest response
 							this.updateCartIconBubble(responseData);
