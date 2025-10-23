@@ -8,21 +8,15 @@
  * ------------------------------------------------------------
  */
 {
-	"markets": {
-		"usa": {
-			"parent": "@default"
-		},
-		"australia": {
-			"parent": "@default"
-		},
-		"eu": {
-			"parent": "@default"
-		},
-		"international": {
-			"parent": "@default"
-		},
-		"gb": {
-			"parent": "@default"
-		}
-	}
+  "markets": {
+    "usa": {
+      "parent": "@default"
+    },
+    "australia": {
+      "parent": "@default"
+    },
+    "gb": {
+      "parent": "@default"
+    }
+  }
 }
