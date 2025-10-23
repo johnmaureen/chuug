@@ -4939,13 +4939,15 @@
 				// Use API data for price or fallback
 				if (giftBoxData && giftBoxData.variants && giftBoxData.variants.length > 0) {
 					const variant = giftBoxData.variants[0];
-					giftBoxPrice.setAttribute("data-price", variant.price);
-					// Convert price from string to cents (multiply by 100)
-					const priceInCents = Math.round(parseFloat(variant.price) * 100);
+					// Price from Shopify API is already in cents
+					const priceInCents = variant.price;
+					giftBoxPrice.setAttribute("data-price", priceInCents.toString());
 					giftBoxPrice.textContent = this.formatMoney(priceInCents);
+					console.log('🔍 DEBUG: Set gift box price from API:', priceInCents, 'cents');
 				} else {
 					giftBoxPrice.setAttribute("data-price", "200");
 					giftBoxPrice.textContent = this.formatMoney(200); // £2.00 fallback
+					console.log('🔍 DEBUG: Using fallback gift box price: 200 cents');
 				}
 
 				// Error div
@@ -4990,12 +4992,17 @@
 					giftBoxToggleInput.setAttribute("data-variant-id", variant.id);
 					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", variant.id);
 					giftBoxToggleInput.setAttribute("data-gift-box-product-title", giftBoxData.title);
+					// Store the gift box price for easy access
+					giftBoxToggleInput.setAttribute("data-gift-box-price", variant.price.toString());
+					console.log('🔍 DEBUG: Set toggle input gift box price:', variant.price, 'cents');
 				} else {
 					// Use hardcoded variant ID as fallback
 					const fallbackVariantId = "55511131455867"; // From the API data you provided
 					giftBoxToggleInput.setAttribute("data-variant-id", fallbackVariantId);
 					giftBoxToggleInput.setAttribute("data-gift-box-variant-id", fallbackVariantId);
 					giftBoxToggleInput.setAttribute("data-gift-box-product-title", "Premium Gift Box and Tissue Wrap");
+					giftBoxToggleInput.setAttribute("data-gift-box-price", "200"); // Fallback price
+					console.log('🔍 DEBUG: Set toggle input fallback gift box price: 200 cents');
 				}
 
 				const giftBoxToggleSlider = document.createElement("span");
@@ -5018,13 +5025,22 @@
 
 				// Add event listener for gift box toggle FIRST
 				let isInitializing = true; // Flag to prevent event handler during initialization
+				let isApiCallInProgress = false; // Flag to prevent race conditions during API calls
 				
 				giftBoxToggleInput.addEventListener('change', async (event) => {
-					console.log('🔍 DEBUG: Event handler triggered, isInitializing:', isInitializing);
+					console.log('🔍 DEBUG: Event handler triggered, isInitializing:', isInitializing, 'isApiCallInProgress:', isApiCallInProgress);
 					
 					// Skip event handler during initialization to prevent page refresh
 					if (isInitializing) {
 						console.log('🔍 DEBUG: Skipping event handler during initialization');
+						return;
+					}
+					
+					// Skip event handler if API call is already in progress to prevent race conditions
+					if (isApiCallInProgress) {
+						console.log('🔍 DEBUG: Skipping event handler - API call already in progress');
+						// Revert the toggle state to prevent UI inconsistency
+						event.target.checked = !event.target.checked;
 						return;
 					}
 					
@@ -5039,6 +5055,13 @@
 					const variantId = event.target.getAttribute('data-variant-id');
 					
 					console.log('🔍 DEBUG: Gift box toggle changed:', { isChecked, vesselId, variantId });
+					
+					// IMMEDIATE PRICE UPDATE - Update total price without waiting for API calls
+					this.updateTotalPriceImmediately(isChecked, variantId);
+					
+					// Disable toggle to prevent race conditions during API calls
+					isApiCallInProgress = true;
+					this.setGiftBoxToggleState(false, giftBoxToggleInput);
 					
 					try {
 						if (isChecked) {
@@ -5237,6 +5260,8 @@
 						
 						if (giftBoxAdded) {
 							console.log('✅ Gift box successfully added after', attempts, 'attempts');
+							// Update cart count bubble after successful gift box addition
+							await this.updateCartIconBubbleWithSections();
 						} else {
 							console.error('❌ Failed to add gift box after', maxAttempts, 'attempts');
 							// Show error message
@@ -5316,6 +5341,8 @@
 									
 									// Simple success - just log and let the toggle stay off
 									// Don't update UI immediately to prevent page refreshes
+									// Update cart count bubble after successful gift box removal
+									await this.updateCartIconBubbleWithSections();
 								} else {
 									// Show error message
 									giftBoxError.textContent = 'Failed to remove gift box. Please try again.';
@@ -5337,6 +5364,11 @@
 						}
 						// Prevent any further execution that might cause page refresh
 						return;
+					} finally {
+						// Re-enable toggle after API call completes (success or error)
+						isApiCallInProgress = false;
+						this.setGiftBoxToggleState(true, giftBoxToggleInput);
+						console.log('🔍 DEBUG: Gift box toggle re-enabled after API call completion');
 					}
 				});
 
@@ -5396,6 +5428,116 @@
 			// Fallback to hardcoded GBP if CurrencyManager not available
 			const amount = (cents / 100).toFixed(2);
 			return `£${amount}`;
+		}
+
+		updateTotalPriceImmediately(isGiftBoxEnabled, variantId) {
+			try {
+				console.log('🔍 DEBUG: updateTotalPriceImmediately called', { isGiftBoxEnabled, variantId });
+				
+				// Get current cart total from the displayed price
+				const currentPriceEl = this.modal.querySelector(".mini-atc-modal__current-price") ||
+									  this.modal.querySelector("[data-current-price]") ||
+									  this.modal.querySelector(".pricing-placeholder");
+				
+				if (!currentPriceEl) {
+					console.warn('Could not find current price element for immediate update');
+					return;
+				}
+				
+				// Extract current total price from the displayed text
+				const currentPriceText = currentPriceEl.textContent || currentPriceEl.innerText;
+				const priceMatch = currentPriceText.match(/[\d,]+\.?\d*/);
+				
+				if (!priceMatch) {
+					console.warn('Could not extract price from current price element');
+					return;
+				}
+				
+				// Convert displayed price back to cents
+				const numericValue = parseFloat(priceMatch[0].replace(/,/g, ""));
+				let currentTotalInCents = Math.round(numericValue * 100);
+				
+				// Get gift box price dynamically from multiple sources
+				let giftBoxPriceInCents = null;
+				
+				// Method 1: Try to get price from the gift box price element
+				const giftBoxPriceEl = this.modal.querySelector("[data-gift-box-price]");
+				if (giftBoxPriceEl) {
+					const giftBoxPriceAttr = giftBoxPriceEl.getAttribute("data-price");
+					if (giftBoxPriceAttr) {
+						// Price from API is already in cents
+						giftBoxPriceInCents = parseInt(giftBoxPriceAttr);
+						console.log('🔍 DEBUG: Got gift box price from data-price attribute:', giftBoxPriceInCents);
+					}
+				}
+				
+				// Method 2: If we have variantId, try to get price from the toggle input's data attributes
+				if (!giftBoxPriceInCents && variantId) {
+					const toggleInput = this.modal.querySelector(`[data-variant-id="${variantId}"]`);
+					if (toggleInput) {
+						const togglePriceAttr = toggleInput.getAttribute("data-gift-box-price");
+						if (togglePriceAttr) {
+							giftBoxPriceInCents = parseInt(togglePriceAttr);
+							console.log('🔍 DEBUG: Got gift box price from toggle input:', giftBoxPriceInCents);
+						}
+					}
+				}
+				
+				// Method 3: Try to get price from dynamicPrices if available
+				if (!giftBoxPriceInCents && this.dynamicPrices && this.dynamicPrices.giftBox) {
+					giftBoxPriceInCents = this.dynamicPrices.giftBox;
+					console.log('🔍 DEBUG: Got gift box price from dynamicPrices:', giftBoxPriceInCents);
+				}
+				
+				// Method 4: Fallback to default price if all else fails
+				if (!giftBoxPriceInCents) {
+					giftBoxPriceInCents = 200; // £2.00 fallback
+					console.log('🔍 DEBUG: Using fallback gift box price:', giftBoxPriceInCents);
+				}
+				
+				console.log('🔍 DEBUG: Current total:', currentTotalInCents, 'cents');
+				console.log('🔍 DEBUG: Gift box price:', giftBoxPriceInCents, 'cents');
+				
+				// Calculate new total
+				let newTotalInCents = currentTotalInCents;
+				if (isGiftBoxEnabled) {
+					newTotalInCents += giftBoxPriceInCents;
+				} else {
+					newTotalInCents -= giftBoxPriceInCents;
+				}
+				
+				console.log('🔍 DEBUG: New total:', newTotalInCents, 'cents');
+				
+				// Update the displayed price immediately
+				const formattedPrice = this.formatMoney(newTotalInCents);
+				
+				// Update the price element
+				if (currentPriceEl.querySelector(".pricing-placeholder")) {
+					currentPriceEl.querySelector(".pricing-placeholder").textContent = formattedPrice;
+				} else {
+					currentPriceEl.textContent = formattedPrice;
+				}
+				
+				console.log('✅ Updated total price immediately to:', formattedPrice);
+				
+			} catch (error) {
+				console.error('❌ Error updating total price immediately:', error);
+			}
+		}
+
+		setGiftBoxToggleState(enabled, toggleInput) {
+			// Helper function to enable/disable gift box toggle with visual feedback
+			if (enabled) {
+				toggleInput.disabled = false;
+				toggleInput.style.opacity = '1';
+				toggleInput.style.cursor = 'pointer';
+				console.log('🔍 DEBUG: Gift box toggle enabled');
+			} else {
+				toggleInput.disabled = true;
+				toggleInput.style.opacity = '0.6';
+				toggleInput.style.cursor = 'not-allowed';
+				console.log('🔍 DEBUG: Gift box toggle disabled');
+			}
 		}
 
 		resetPersonalizationToggles() {
