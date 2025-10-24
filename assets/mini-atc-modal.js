@@ -4109,7 +4109,7 @@
 				// Find the product item
 				const productItem = cart.items.find(
 					(item) =>
-						item.id.toString() === vesselId && !item.properties?.["_Add-on"]
+						item.key === vesselId && !item.properties?.["_Add-on"]
 				);
 
 				if (productItem) {
@@ -5097,8 +5097,8 @@
 				const giftBoxToggleContainer = document.createElement("div");
 				giftBoxToggleContainer.className = "premium-gift-box__toggle-container";
 
-				// Create unique ID for this product's gift box toggle
-				const uniqueToggleId = `premium-gift-box-toggle-${item.id}`;
+				// Create unique ID for this product's gift box toggle using item.key for uniqueness
+				const uniqueToggleId = `premium-gift-box-toggle-${item.key}`;
 
 				const giftBoxToggleLabel = document.createElement("label");
 				giftBoxToggleLabel.className = "premium-gift-box__toggle";
@@ -5113,7 +5113,7 @@
 					"data-property",
 					"properties[Premium Gift Box]"
 				);
-				giftBoxToggleInput.setAttribute("data-vessel-id", item.id); // Link to the main product
+				giftBoxToggleInput.setAttribute("data-vessel-id", item.key); // Link to the main product using unique key
 
 				// Set variant data attributes
 				if (
@@ -5250,7 +5250,7 @@
 							);
 
 							const vesselItem = cart.items.find(
-								(item) => item.id.toString() === vesselId.toString()
+								(item) => item.key === vesselId
 							);
 
 							if (!vesselItem) {
@@ -5514,7 +5514,7 @@
 
 							// Find the vessel item to get its wrapped bundle ID
 							const vesselItem = cart.items.find(
-								(item) => item.id.toString() === vesselId.toString()
+								(item) => item.key === vesselId
 							);
 
 							if (!vesselItem || !vesselItem.properties?.["_Wrapped_Bundle"]) {
