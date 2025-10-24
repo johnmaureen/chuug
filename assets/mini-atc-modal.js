@@ -5059,12 +5059,14 @@
 					giftBoxData.variants.length > 0
 				) {
 					const variant = giftBoxData.variants[0];
-					// Price from Shopify API is already in cents
-					const priceInCents = variant.price;
+					// Convert decimal price to cents for consistent handling
+					const priceInCents = Math.round(parseFloat(variant.price) * 100);
 					giftBoxPrice.setAttribute("data-price", priceInCents.toString());
 					giftBoxPrice.textContent = this.formatMoney(priceInCents);
 					console.log(
 						"🔍 DEBUG: Set gift box price from API:",
+						variant.price,
+						"decimal ->",
 						priceInCents,
 						"cents"
 					);
