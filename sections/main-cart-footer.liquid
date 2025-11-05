@@ -313,28 +313,34 @@ document.addEventListener("DOMContentLoaded", function () {
   fetch('/cart.js')
     .then(res => res.json())
     .then(cart => {
-      // Check if cart needs fixing - look for BOTH old and new property names
+      // Check if cart needs fixing - look for items with old property OR missing new property
+      // This will catch: items with old property only, items with both properties, or items with neither
       const needsFix = cart.items.some(item => {
         if (!item.properties) return true;
         // Check for both old and new property names
         const hasOldProperty = item.properties["Monogram Initials"];
         const hasNewProperty = item.properties["PERSONALISED INITIAL"];
-        // If neither exists, we need to fix it
-        return !hasOldProperty && !hasNewProperty;
+        // Fix if: has old property (need to migrate/clean up) OR missing new property
+        return hasOldProperty || !hasNewProperty;
       });
 
       if (!needsFix) {
         return;
       }
 
-      // Rebuild cart items - migrate old property to new one
+      // Rebuild cart items - migrate old property to new one and remove duplicates
       const rebuiltItems = cart.items.map(item => {
         const props = { ...(item.properties || {}) };
         
-        // MIGRATION: If old property exists, copy it to new property name
+        // MIGRATION: If old property exists, copy it to new property name (if new doesn't exist)
+        // OR if both exist, prefer the new one and remove the old one
         if (props["Monogram Initials"]) {
-          props["PERSONALISED INITIAL"] = props["Monogram Initials"];
-          delete props["Monogram Initials"];  // Remove old property
+          // If new property doesn't exist, use old property value
+          if (!props["PERSONALISED INITIAL"]) {
+            props["PERSONALISED INITIAL"] = props["Monogram Initials"];
+          }
+          // Always remove old property to prevent duplicates
+          delete props["Monogram Initials"];
         }
         
         // Ensure new property exists (default to "NONE" if missing)
