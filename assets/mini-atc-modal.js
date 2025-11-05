@@ -3647,7 +3647,7 @@
 
 			// VISIBLE PROPERTIES (for checkout display)
 
-			// Add Monogram Initials (visible on checkout) - collect all vessel engravings
+			// Add PERSONALISED INITIAL (visible on checkout) - collect all vessel engravings
 			const allEngravings = [];
 			for (let i = 1; i <= multiplier; i++) {
 				const vesselEngravingData = state.engraving?.vessels?.[i] || "";
@@ -3663,9 +3663,9 @@
 			}
 
 			if (allEngravings.length > 0) {
-				properties["Monogram Initials"] = allEngravings.join(", ");
+				properties["PERSONALISED INITIAL"] = allEngravings.join(", ");
 			} else {
-				properties["Monogram Initials"] = "N/A";
+				properties["PERSONALISED INITIAL"] = "NONE";
 			}
 
 			// Add Choose Your Coins info (visible on checkout)
@@ -3789,7 +3789,7 @@
 									quantity: 1,
 									properties: {
 										// VISIBLE PROPERTIES (for checkout display)
-										"Monogram Initials": "N/A",
+										"PERSONALISED INITIAL": "N/A",
 
 										// HIDDEN PROPERTIES (for backend use only)
 										"_Add-on": "Charcoal Rope Upgrade",

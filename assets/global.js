@@ -986,7 +986,7 @@ class VariantSelects extends HTMLElement {
     mes.innerHTML = `<form><p class="line-item-property__field">
   <label class="form__label" for="monogram-initials">PERSONALISED INITIAL (Max 1 Characters, no numbers or symbols)<span style="color:red;">*</span></label>
  
-  <input id="monogram" form="product-form-${this.dataset.section}" style="padding-top: 8px;padding-right: 10px;border: 1px solid;background-color: white;" required class="required search__input field__input" maxlength="3" id="monogram-initials" type="text" name="properties[PERSONALISED INITIAL]" oninput="lettersOnly(this)">
+  <input id="monogram-initials" form="product-form-${this.dataset.section}" style="padding-top: 8px;padding-right: 10px;border: 1px solid;background-color: white;" required class="required search__input field__input" maxlength="1" type="text" name="properties[PERSONALISED INITIAL]" oninput="lettersOnly(this)" autocapitalize="characters">
 </p></form>`;
     }else{ 
       mes.innerHTML = '';

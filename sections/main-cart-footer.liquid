@@ -313,22 +313,41 @@ document.addEventListener("DOMContentLoaded", function () {
   fetch('/cart.js')
     .then(res => res.json())
     .then(cart => {
-      const needsFix = cart.items.some(item =>
-        !item.properties || !item.properties["PERSONALISED INITIAL"]
-      );
+      // Check if cart needs fixing - look for BOTH old and new property names
+      const needsFix = cart.items.some(item => {
+        if (!item.properties) return true;
+        // Check for both old and new property names
+        const hasOldProperty = item.properties["Monogram Initials"];
+        const hasNewProperty = item.properties["PERSONALISED INITIAL"];
+        // If neither exists, we need to fix it
+        return !hasOldProperty && !hasNewProperty;
+      });
 
       if (!needsFix) {
         return;
       }
 
-      const rebuiltItems = cart.items.map(item => ({
-        id: item.variant_id,
-        quantity: item.quantity,
-        properties: {
-          ...(item.properties || {}),
-          "PERSONALISED INITIAL": item.properties && item.properties["PERSONALISED INITIAL"] ? item.properties["PERSONALISED INITIAL"] : "NONE"
+      // Rebuild cart items - migrate old property to new one
+      const rebuiltItems = cart.items.map(item => {
+        const props = { ...(item.properties || {}) };
+        
+        // MIGRATION: If old property exists, copy it to new property name
+        if (props["Monogram Initials"]) {
+          props["PERSONALISED INITIAL"] = props["Monogram Initials"];
+          delete props["Monogram Initials"];  // Remove old property
         }
-      }));
+        
+        // Ensure new property exists (default to "NONE" if missing)
+        if (!props["PERSONALISED INITIAL"]) {
+          props["PERSONALISED INITIAL"] = "NONE";
+        }
+        
+        return {
+          id: item.variant_id,
+          quantity: item.quantity,
+          properties: props
+        };
+      });
 
       return fetch('/cart/clear.js', { method: 'POST' })
         .then(() =>
