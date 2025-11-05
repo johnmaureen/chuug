@@ -381,15 +381,81 @@ class CartManager {
   }
 
   /**
-   * Format money value
+   * Format money value with dynamic currency support
    * @param {number} cents - Money value in cents
    * @returns {string} - Formatted money string
    */
   formatMoney(cents) {
-    return new Intl.NumberFormat('en-GB', {
-      style: 'currency',
-      currency: 'GBP'
-    }).format(cents / 100);
+    // Use CurrencyManager if available (preferred method)
+    if (window.CurrencyManager) {
+      return window.CurrencyManager.formatPrice(cents);
+    }
+
+    // Format cents to money string with proper currency symbol
+    const amount = (cents / 100).toFixed(2);
+    
+    // Try to detect currency with multiple fallbacks
+    let currency = 'GBP'; // Default fallback
+    
+    if (window.CURRENT_CURRENCY) {
+      currency = window.CURRENT_CURRENCY;
+    } else if (window.Shopify?.currency?.active) {
+      currency = window.Shopify.currency.active;
+    } else if (window.Shopify?.shop?.currency) {
+      currency = window.Shopify.shop.currency;
+    }
+
+    // Expanded currency symbol mapping (matching pomc-system.js and CurrencyManager)
+    const currencySymbols = {
+      USD: "$",
+      GBP: "£",
+      EUR: "€",
+      CAD: "$",
+      AUD: "$",
+      JPY: "¥",
+      CHF: "CHF",
+      SEK: "kr",
+      DKK: "kr.",
+      NOK: "kr",
+      PLN: "zł",
+      CZK: "Kč",
+      HUF: "Ft",
+      RON: "Lei",
+      BGN: "лв.",
+      HRK: "kn",
+      RSD: "дин.",
+      TRY: "₺",
+      RUB: "₽",
+      UAH: "₴",
+      ILS: "₪",
+      AED: "د.إ",
+      SAR: "﷼",
+      QAR: "﷼",
+      KWD: "د.ك",
+      BHD: "د.ب",
+      OMR: "﷼",
+      JOD: "د.ا",
+      EGP: "£",
+      ZAR: "R",
+      NGN: "₦",
+      KES: "KSh",
+      KRW: "₩",
+      THB: "฿",
+      VND: "₫",
+      IDR: "Rp",
+      MYR: "RM",
+      SGD: "$",
+      PHP: "₱",
+      INR: "₹",
+      PKR: "₨",
+      NZD: "$",
+      BRL: "R$",
+      MXN: "$",
+      DEFAULT: "£" // Default to £ for other currencies
+    };
+
+    const symbol = currencySymbols[currency] || currencySymbols.DEFAULT;
+    return `${symbol}${amount}`;
   }
 }
 

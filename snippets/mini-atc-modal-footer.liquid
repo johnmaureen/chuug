@@ -19,8 +19,12 @@
           data-current-price="true"
           aria-label="Current total price"
         >
-          {% comment %} Dynamic pricing integration point {% endcomment %}
-          <span class="pricing-placeholder">£78.00</span>
+          {% comment %} Dynamic pricing integration point - will be updated by JavaScript {% endcomment %}
+          {%- if cart.total_price -%}
+            <span class="pricing-placeholder">{{ cart.total_price | money }}</span>
+          {%- else -%}
+            <span class="pricing-placeholder">...</span>
+          {%- endif -%}
         </span>
         <span 
           class="mini-atc-modal__original-price" 

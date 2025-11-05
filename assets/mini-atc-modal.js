@@ -60,12 +60,84 @@
 		},
 
 		formatPrice(cents, currencyCode = null) {
-			// Use CurrencyManager if available, otherwise fallback to GBP
+			// Use CurrencyManager if available (preferred method)
 			if (window.CurrencyManager) {
 				return window.CurrencyManager.formatPrice(cents, currencyCode);
 			}
-			// Fallback to hardcoded GBP if CurrencyManager not available
-			return `£${(cents / 100).toFixed(2)}`;
+			// Fallback to dynamic currency detection if CurrencyManager not available
+			return this._formatPriceFallback(cents, currencyCode);
+		},
+
+		/**
+		 * Fallback currency formatting when CurrencyManager is not available
+		 * @private
+		 */
+		_formatPriceFallback(cents, currencyCode = null) {
+			// Try to detect currency
+			let currency = currencyCode || 'GBP'; // Default fallback
+			
+			if (!currencyCode) {
+				if (window.CURRENT_CURRENCY) {
+					currency = window.CURRENT_CURRENCY;
+				} else if (window.Shopify?.currency?.active) {
+					currency = window.Shopify.currency.active;
+				} else if (window.Shopify?.shop?.currency) {
+					currency = window.Shopify.shop.currency;
+				}
+			}
+
+			// Currency symbol mapping
+			const currencySymbols = {
+				USD: "$",
+				GBP: "£",
+				EUR: "€",
+				CAD: "$",
+				AUD: "$",
+				JPY: "¥",
+				CHF: "CHF",
+				SEK: "kr",
+				DKK: "kr.",
+				NOK: "kr",
+				PLN: "zł",
+				CZK: "Kč",
+				HUF: "Ft",
+				RON: "Lei",
+				BGN: "лв.",
+				HRK: "kn",
+				RSD: "дин.",
+				TRY: "₺",
+				RUB: "₽",
+				UAH: "₴",
+				ILS: "₪",
+				AED: "د.إ",
+				SAR: "﷼",
+				QAR: "﷼",
+				KWD: "د.ك",
+				BHD: "د.ب",
+				OMR: "﷼",
+				JOD: "د.ا",
+				EGP: "£",
+				ZAR: "R",
+				NGN: "₦",
+				KES: "KSh",
+				KRW: "₩",
+				THB: "฿",
+				VND: "₫",
+				IDR: "Rp",
+				MYR: "RM",
+				SGD: "$",
+				PHP: "₱",
+				INR: "₹",
+				PKR: "₨",
+				NZD: "$",
+				BRL: "R$",
+				MXN: "$",
+				DEFAULT: "£"
+			};
+
+			const symbol = currencySymbols[currency] || currencySymbols.DEFAULT;
+			const amount = (parseFloat(cents) / 100).toFixed(2);
+			return `${symbol}${amount}`;
 		},
 
 		sanitizeInput(input) {
@@ -2985,23 +3057,13 @@
 			if (btnTextEl && addToCartBtn) {
 				switch (viewName) {
 					case "checkout":
-						// Check if cart is empty to show appropriate button
-						// For now, we'll check if we're in an empty state by looking for the empty message
-						const emptyMessage = this.modal.querySelector(
-							".empty-cart-message"
+						// Default to "PROCEED TO CHECKOUT" - will be updated after cart data is loaded
+						// Button text will be updated in updateCheckoutViewWithCartData based on actual cart state
+						btnTextEl.textContent = "PROCEED TO CHECKOUT";
+						addToCartBtn.setAttribute(
+							"data-modal-action",
+							"proceed-to-checkout"
 						);
-						if (emptyMessage && emptyMessage.style.display !== "none") {
-							btnTextEl.textContent = "CONTINUE SHOPPING";
-							addToCartBtn.setAttribute("data-modal-action", "close-modal");
-							("✅ Button updated for empty checkout view: CONTINUE SHOPPING");
-						} else {
-							btnTextEl.textContent = "PROCEED TO CHECKOUT";
-							addToCartBtn.setAttribute(
-								"data-modal-action",
-								"proceed-to-checkout"
-							);
-							("✅ Button updated for checkout view: PROCEED TO CHECKOUT");
-						}
 						break;
 					case "personalize":
 					default:
@@ -4417,6 +4479,9 @@
 					this.showEmptyCartMessage();
 					console.log("🔍 DEBUG: showEmptyCartMessage completed");
 
+					// Update button to "CONTINUE SHOPPING" when cart is empty
+					this.updateCheckoutButtonText(true);
+
 					// Refresh pricing to show empty cart (£0.00)
 					this.updateCheckoutPricing();
 
@@ -4438,6 +4503,9 @@
 					// Hide empty cart message
 					console.log("🔍 DEBUG: Hiding empty cart message");
 					this.hideEmptyCartMessage();
+
+					// Update button to "PROCEED TO CHECKOUT" when cart has items
+					this.updateCheckoutButtonText(false);
 
 					// Clear existing items
 					const allExistingItems = checkoutContainer.querySelectorAll(
@@ -5686,13 +5754,12 @@
 		}
 
 		formatMoney(cents) {
-			// Use CurrencyManager if available, otherwise fallback to GBP
+			// Use CurrencyManager if available (preferred method)
 			if (window.CurrencyManager) {
 				return window.CurrencyManager.formatPrice(cents);
 			}
-			// Fallback to hardcoded GBP if CurrencyManager not available
-			const amount = (cents / 100).toFixed(2);
-			return `£${amount}`;
+			// Fallback to dynamic currency detection if CurrencyManager not available
+			return Utils.formatPrice(cents);
 		}
 
 		updateTotalPriceImmediately(isGiftBoxEnabled, variantId) {
@@ -6809,6 +6876,32 @@
 			const emptyMessage = this.modal.querySelector(".empty-cart-message");
 			if (emptyMessage) {
 				emptyMessage.style.display = "none";
+			}
+		}
+
+		/**
+		 * Update checkout button text based on cart state
+		 * @param {boolean} isCartEmpty - Whether the cart is empty
+		 */
+		updateCheckoutButtonText(isCartEmpty) {
+			const addToCartBtn = this.modal.querySelector(
+				".mini-atc-modal__add-to-cart-btn"
+			);
+			const btnTextEl = addToCartBtn?.querySelector(
+				".mini-atc-modal__btn-text"
+			);
+			
+			if (btnTextEl && addToCartBtn && this.currentView === "checkout") {
+				if (isCartEmpty) {
+					btnTextEl.textContent = "CONTINUE SHOPPING";
+					addToCartBtn.setAttribute("data-modal-action", "close-modal");
+				} else {
+					btnTextEl.textContent = "PROCEED TO CHECKOUT";
+					addToCartBtn.setAttribute(
+						"data-modal-action",
+						"proceed-to-checkout"
+					);
+				}
 			}
 		}
 
