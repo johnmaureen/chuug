@@ -7087,22 +7087,11 @@
 					delete recommendations.dataset.originalDisplay;
 				}
 
-				// Restore footer to its original state and let other methods handle visibility logic
+				// Don't restore footer - let updateCheckoutViewWithCartData handle visibility based on actual cart state
+				// This prevents footer from showing when cart is empty
 				if (footer && footer.dataset.originalDisplay !== undefined) {
-					console.log("Footer restoration check:", {
-						originalDisplay: footer.dataset.originalDisplay,
-						beingManaged: footer.dataset.beingManaged,
-						currentDisplay: footer.style.display,
-						currentOpacity: footer.style.opacity,
-					});
-					// Check if other methods are currently managing footer
-					if (!footer.dataset.beingManaged) {
-						// Always restore to original display state
-						footer.style.display = footer.dataset.originalDisplay;
-						console.log("Footer restored to:", footer.dataset.originalDisplay);
-					} else {
-						console.log("Footer restoration blocked by beingManaged flag");
-					}
+					console.log("Footer restoration skipped - letting updateCheckoutViewWithCartData handle visibility");
+					// Just clean up the stored data, don't restore
 					delete footer.dataset.originalDisplay;
 				}
 			}
