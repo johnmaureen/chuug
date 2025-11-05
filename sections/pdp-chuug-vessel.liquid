@@ -18,6 +18,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 {{ 'pdp-chuug-vessel.css' | asset_url | stylesheet_tag }}
+{{ 'flash-section.css' | asset_url | stylesheet_tag }}
 
 {% assign dusk_charcoal = all_products[section.settings.dusk_charcoal] %}
 {% assign dusk_natural = all_products[section.settings.dusk_natural] %}
@@ -145,7 +146,7 @@
         {% endfor %}
       </ul>
       <div class="tw-border-t-white tw-border-t-4 tw-border-dotted tw-h-0">&nbsp;</div>
-      <div class="tw-bg-chuug-yankees-blue tw-p-4 tw-rounded-[1.25em] tw-flex tw-flex-col tw-gap-y-4 ">
+      <div class="personalisation-vessel tw-bg-chuug-yankees-blue tw-p-4 tw-rounded-[1.25em] tw-flex tw-flex-col tw-gap-y-4 ">
         <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
           <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
             <span>{{ section.settings.vessel_question }}</span>
@@ -186,7 +187,7 @@
             <div class="tw-w-full">
               <label
                 onclick="setProductAmount('2')"
-                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;
+                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase" style="opacity: 0.85;"
               >
                 <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
                   <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
@@ -214,7 +215,7 @@
             <div class="tw-w-full">
               <label
                 onclick="setProductAmount('3')"
-                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;"
+                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase" style="opacity: 0.85;"
               >
                 <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
                   <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
@@ -301,7 +302,7 @@
                   variant_id=""
                   variant_monogram_initials_id=""
                   variant_index="0"
-                  product_amount="3"
+                  product_amount="1"
                   monogram_initials=""
                 >
                   <div
@@ -374,19 +375,41 @@
                   </div>
                 </div>
 
-                <input
-                  class="monogram_initials tw-hidden tw-w-full tw-h-[4.8rem] tw-text-center input tw-uppercase tw-bg-chuug-rackley tw-mx-auto tw-rounded-2xl tw-px-4 tw-py-2 tw-border tw-border-white tw-appearance-none tw-placeholder-white hover:tw-cursor-pointer focus:tw-outline-none focus:tw-ring-0 active:tw-outline-none active:tw-ring-0 md:tw-w-1/3 lg:!tw-w-[15.5rem] xl:!tw-w-[18.5rem]"
-                  type="text"
-                  maxlength="3"
-                  placeholder="ENTER Initials"
-                  name="properties[Monogram Initials]"
-                  disabled
-                >
+<input
+  class="monogram_initials tw-hidden tw-w-full tw-h-[4.8rem] tw-text-center input tw-uppercase tw-bg-chuug-rackley tw-mx-auto tw-rounded-2xl tw-px-4 tw-py-2 tw-border tw-border-white tw-appearance-none tw-placeholder-white hover:tw-cursor-pointer focus:tw-outline-none focus:tw-ring-0 active:tw-outline-none active:tw-ring-0 md:tw-w-1/3 lg:!tw-w-[15.5rem] xl:!tw-w-[18.5rem]"
+  type="text"
+  maxlength="1"
+  placeholder="ENTER Initial"
+  name="properties[PERSONALISED INITIAL]"
+  disabled
+  autocapitalize="characters"
+/>
               </div>
             </div>
           {% endfor %}
         </div>
         <div class="tw-flex tw-flex-col">
+
+<!-- Duties badge (hidden by default, only shows in US) -->
+{% if cart.currency.iso_code == "USD" %}
+  <div class="tw-flex tw-justify-center tw-mt-[0.5rem]">
+    <div class="duties-box" role="status" aria-label="Duties and Taxes Paid">
+      <span class="duties-box__dot"></span>
+      <span>Duties and Taxes Paid</span>
+    </div>
+  </div>
+{% endif %}
+
+<div class="your-selection tw-flex tw-flex-col tw-items-center tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-py-2 md:tw-flex-row">
+        <p class="tw-text-white ">Your Selection</p>
+        <!-- Dynamic vessel count - class will be set by JavaScript -->
+        <div class="selection-result-wrap">
+
+          <p class="no-selection-text">Your selection will appear here</p>
+
+        </div>
+      </div>
+
           <button
             id="add-multiple-products"
             onclick="handleATCbutton()"
@@ -412,6 +435,62 @@
           </div>
         </div>
       </div>
+
+
+<section class="tw-bg-chuug-dark-navy tw-py-[2rem] md:tw-py-[3rem]">
+  <div class="tw-container">
+    <div class="flash-section">
+      <!-- Flash Sale Section with Countdown Timer -->
+      <div class="flash-sale-container">
+        <p class="flash-sale-text">{{ section.settings.flash_sale_text | default: 'Sale ends in' }}</p>
+        <div class="flash-sale-divider"></div>
+        <div class="flash-countdown-timer chuug-countdown">
+          <div class="flash-timer-unit">
+            <span class="flash-timer-number" data-countdown-hours>00</span>
+            <span class="flash-timer-label">HOURS</span>
+          </div>
+          <span class="flash-timer-separator">:</span>
+          <div class="flash-timer-unit">
+            <span class="flash-timer-number" data-countdown-minutes>00</span>
+            <span class="flash-timer-label">MINUTES</span>
+          </div>
+          <span class="flash-timer-separator">:</span>
+          <div class="flash-timer-unit">
+            <span class="flash-timer-number" data-countdown-seconds>00</span>
+            <span class="flash-timer-label">SECONDS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- USP Grid Section -->
+      <div class="usp-grid">
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when 'usp_item' -%}
+              <div class="usp-item">
+                <div class="usp-icon">
+                  {% if block.settings.usp_icon_image != blank %}
+                    <img 
+                      src="{{ block.settings.usp_icon_image | image_url: width: 50 }}" 
+                      alt="{{ block.settings.usp_icon_alt | default: 'Icon' }}"
+                      width="50"
+                      height="50"
+                    >
+                  {% elsif block.settings.usp_icon_emoji != blank %}
+                    {{ block.settings.usp_icon_emoji }}
+                  {% endif %}
+                </div>
+                <div class="usp-text">
+                  {{ block.settings.usp_text }}
+                </div>
+              </div>
+          {%- endcase -%}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {% for block in section.blocks %}
         {%- case block.type -%}
@@ -530,6 +609,43 @@
     content: "{{ section.settings.third_product_label_text }}";
   }
 </style>
+
+<!-- Badge styles -->
+<style>
+  .duties-box{
+    display:inline-flex;align-items:center;justify-content:center;
+    background-color:#e6f4ea;
+    color:#137333;
+    font-size:.9rem;font-weight:600;
+    padding:.4em .8em;border-radius:.5em;
+    border:1px solid #c3e6cb;max-width:100%;
+    box-sizing:border-box;gap:.5em
+  }
+  .duties-box__dot{
+    width:.45em;height:.45em;border-radius:9999px;background:#137333;flex:0 0 auto
+  }
+</style>
+
+<style>
+  /* Make badge + text bigger */
+  .duties-box{
+    font-size: 1.05rem;     /* was .9rem */
+    padding: .55em 1em;     /* a touch more breathing room */
+    border-radius: .6em;
+    font-weight: 700;       /* slightly bolder (optional) */
+  }
+  .duties-box__dot{
+    width: .6em;            /* was .45em */
+    height: .6em;
+  }
+
+  /* Optional: scale up even more on desktop */
+  @media (min-width: 1024px){
+    .duties-box{ font-size: 1.15rem; padding: .6em 1.1em; }
+    .duties-box__dot{ width: .65em; height: .65em; }
+  }
+</style>
+
 
 <script>
   document.querySelectorAll('.js-dropdown-container').forEach((container) => {
@@ -669,12 +785,61 @@
     }
   }  
 
-  function addEventListenerToMonogramInitialsInput() {
-    const monogram_initials = document.querySelectorAll('.monogram_initials');
-    for (let i = 0; i < monogram_initials.length && i < 3; i++) {
-      monogram_initials[i].addEventListener('change', updateMonogramInitials);
+function addEventListenerToMonogramInitialsInput() {
+  const fields = document.querySelectorAll('.monogram_initials');
+
+  const enforceUppercaseLettersOnly = (el) => {
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+
+    // Remove non-letters, force uppercase
+    const clean = el.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+
+    if (el.value !== clean) {
+      el.value = clean;
+      try { el.setSelectionRange(start, end); } catch (e) {}
     }
-  }
+  };
+
+  fields.forEach((field, i) => {
+    if (i >= 3) return;
+
+    // As-you-type: block non-letters, force uppercase
+    field.addEventListener('input', () => {
+      enforceUppercaseLettersOnly(field);
+      updateMonogramInitials();
+    });
+
+    // Clean paste: allow only letters, uppercase, respect maxlength
+    field.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+      const insert = text.replace(/[^A-Za-z]/g, '').toUpperCase();
+
+      const start = field.selectionStart;
+      const end = field.selectionEnd;
+      const before = field.value.slice(0, start);
+      const after = field.value.slice(end);
+
+      const max = field.maxLength && field.maxLength > 0 ? field.maxLength : Infinity;
+      const spaceLeft = Math.max(0, max - before.length - after.length);
+      const clipped = insert.slice(0, spaceLeft);
+
+      field.value = before + clipped + after;
+      const caret = before.length + clipped.length;
+      try { field.setSelectionRange(caret, caret); } catch (err) {}
+
+      updateMonogramInitials();
+    });
+
+    // Final check on blur
+    field.addEventListener('blur', () => {
+      enforceUppercaseLettersOnly(field);
+      updateMonogramInitials();
+    });
+  });
+}
+
 
   function setProductAmount(productAmount) {
     const cta_product_price = document.querySelector('.cta-product-price');
@@ -754,7 +919,7 @@
       id: initials === 'NONE' ? variant_ids[i].variant_id : variant_ids[i].variant_monogram_initials_id,
       quantity: 1,
       properties: {
-        "Monogram Initials": initials
+        "PERSONALISED INITIAL": initials
       }
     };
 
@@ -763,6 +928,102 @@
 
   addProductsToCart(products);
 }
+
+  function resetFormToDefaults() {
+    // Reset product amount to default (2)
+    setProductAmount('2');
+    
+    // Reset engraving to default (no engraving)
+    setEngraving(0);
+    
+    // Reset all vessel inputs to default state
+    for (let i = 1; i <= 3; i++) {
+      // Reset material dropdowns
+      const materialContainer = document.getElementById(`select_${i}_material`);
+      if (materialContainer) {
+        const selectedOption = materialContainer.querySelector('.js-selected-option');
+        if (selectedOption) {
+          selectedOption.textContent = 'WOOD FINISH';
+        }
+        // Reset radio inputs
+        const materialInputs = materialContainer.querySelectorAll('input[type="radio"]');
+        materialInputs.forEach(input => {
+          input.checked = false;
+        });
+      }
+      
+      // Reset rope dropdowns
+      const ropeContainer = document.getElementById(`select_${i}_rope`);
+      if (ropeContainer) {
+        const selectedOption = ropeContainer.querySelector('.js-selected-option');
+        if (selectedOption) {
+          selectedOption.textContent = 'ROPE TYPE';
+        }
+        // Reset radio inputs
+        const ropeInputs = ropeContainer.querySelectorAll('input[type="radio"]');
+        ropeInputs.forEach(input => {
+          input.checked = false;
+        });
+        // Re-disable rope dropdown
+        ropeContainer.setAttribute('disabled', 'true');
+      }
+      
+      // Reset monogram initials inputs
+      const monogramInputs = document.querySelectorAll(`.monogram_initials`);
+      monogramInputs.forEach(monogramInput => {
+        if (monogramInput) {
+          monogramInput.value = '';
+          monogramInput.setAttribute('disabled', 'true');
+        }
+      });
+    }
+    
+    // Reset all inputs attributes
+    const inputs = document.querySelectorAll('.inputs');
+    inputs.forEach(input => {
+      input.setAttribute('variant_id', '');
+      input.setAttribute('variant_monogram_initials_id', '');
+      input.setAttribute('variant_index', '0');
+      input.setAttribute('product_amount', '2');
+      input.setAttribute('monogram_initials', '');
+    });
+    
+    // Reset vessel selection display
+    const selectionResultWrap = document.querySelector('.selection-result-wrap');
+    if (selectionResultWrap) {
+      // Clear all content first
+      selectionResultWrap.innerHTML = '';
+      
+      // Add back the default "no selection" text
+      const noSelectionText = document.createElement('p');
+      noSelectionText.className = 'no-selection-text';
+      noSelectionText.textContent = 'Your selection will appear here';
+      selectionResultWrap.appendChild(noSelectionText);
+    }
+    
+    // Clear vessel selection display system data
+    if (window.vesselSelectionDisplay && window.vesselSelectionDisplay.clearSelections) {
+      window.vesselSelectionDisplay.clearSelections();
+    }
+    
+    // Update carousel images to default
+    updateCarouselsImages();
+    
+    // Update prices to default
+    updatePrices(0);
+    
+    // Disable CTA button until new selections are made
+    const ctaButton = document.querySelector('.cta-button');
+    if (ctaButton) {
+      ctaButton.setAttribute('disabled', 'true');
+    }
+    
+    // Show incomplete inputs text
+    const incompletedInputsText = document.querySelector('.incompleted-inputs-text');
+    if (incompletedInputsText && incompletedInputsText.classList.contains('tw-hidden')) {
+      incompletedInputsText.classList.remove('tw-hidden');
+    }
+  }
 
   function addProductsToCart(products){
     fetch('/cart/add.js', {
@@ -774,8 +1035,98 @@
         if (!response.ok) throw new Error('Error adding products');
         return response.json();
       })
-      .then((data) => {
-        window.location.href = '/cart';
+      .then(async (data) => {
+        // Reset form to default values after successful submission
+        resetFormToDefaults();
+        
+        // Update cart count bubble immediately after successful add to cart
+        try {
+          const sectionUrl = `${window.location.pathname}?sections=cart-icon-bubble`;
+          const sectionResponse = await fetch(sectionUrl);
+          if (sectionResponse.ok) {
+            const sectionData = await sectionResponse.json();
+            const responseWithSections = {
+              ...data,
+              sections: sectionData,
+            };
+            
+            // Update cart icon bubble
+            const cartIconBubble = document.getElementById("cart-icon-bubble");
+            if (cartIconBubble && responseWithSections.sections && responseWithSections.sections["cart-icon-bubble"]) {
+              cartIconBubble.innerHTML = responseWithSections.sections["cart-icon-bubble"];
+              console.log('✅ Cart count bubble updated after add to cart');
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error updating cart count bubble:', error);
+        }
+        
+        // Open mini ATC modal in checkout view instead of redirecting to cart
+        const miniATCModal = document.querySelector(".mini-atc-modal");
+        
+        if (miniATCModal) {
+          const modalId = miniATCModal.id;
+          
+          if (window.MiniATCModal && window.MiniATCModal.getInstance) {
+            const modalInstance = window.MiniATCModal.getInstance(modalId);
+            if (modalInstance) {
+              // Show loading spinner
+              modalInstance.showCartLoadingSpinner();
+              
+              modalInstance.open("add-to-cart");
+              // Switch to checkout view immediately
+              setTimeout(async () => {
+                modalInstance.switchView("checkout");
+                try {
+                  // Force refresh of cart data and checkout view
+                  const freshCartData = await modalInstance.fetchUpdatedCartData();
+                  if (freshCartData) {
+                    await modalInstance.updateCheckoutViewWithCartData(freshCartData);
+                  } else {
+                    await modalInstance.updateCheckoutView();
+                  }
+                } finally {
+                  // Hide loading spinner
+                  modalInstance.hideCartLoadingSpinner();
+                }
+              }, 10); // Very fast response
+            }
+          } else if (window.openMiniATCModal) {
+            // Fallback to global function
+            window.openMiniATCModal(modalId);
+            // Try to switch to checkout view
+            setTimeout(async () => {
+              const instance = window.MiniATCModal?.getInstance(modalId);
+              if (instance) {
+                // Set opening context for fallback case
+                instance.openingContext = "add-to-cart";
+                
+                // Show loading spinner
+                instance.showCartLoadingSpinner();
+                
+                instance.switchView("checkout");
+                try {
+                  // Force refresh of cart data and checkout view
+                  const freshCartData = await instance.fetchUpdatedCartData();
+                  if (freshCartData) {
+                    await instance.updateCheckoutViewWithCartData(freshCartData);
+                  } else {
+                    await instance.updateCheckoutView();
+                  }
+                } finally {
+                  // Hide loading spinner
+                  instance.hideCartLoadingSpinner();
+                }
+              }
+            }, 1); // Very fast response
+          } else {
+            // Fallback to cart page if modal system is not available
+            window.location.href = '/cart';
+          }
+        } else {
+          // Fallback to cart page if modal is not found
+          window.location.href = '/cart';
+        }
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -1096,6 +1447,29 @@
     });
   });
 </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    fetch("https://ipapi.co/json/")
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.country_code === "US") {
+          const badge = document.getElementById("duties-badge");
+          if (badge) badge.style.display = "flex";
+        }
+      })
+      .catch(err => {
+        console.error("Geo lookup failed:", err);
+      });
+  });
+</script>
+
+<!-- Vessel Selection Display System -->
+<script>
+  // Provide asset URL template for vessel selection display
+  window.SHOPIFY_ASSET_URL_TEMPLATE = "{{ 'dusk_natural.png' | asset_url }}";
+</script>
+{{ 'vessel-selection-display.js' | asset_url | script_tag }}
 
 {% schema %}
 {

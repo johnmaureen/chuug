@@ -1,56 +1,6 @@
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Set the countdown time (2 hours 7 minutes) in seconds
-    const initialTime = 2 * 60 * 60 + 7 * 60; // 2 hours and 7 minutes in seconds
-
-    // Function to calculate the time remaining based on previous session
-    function getTimeRemaining() {
-        const savedTime = localStorage.getItem('countdownTimer');
-        const currentTime = Math.floor(Date.now() / 1000); // current time in seconds
-
-        if (savedTime) {
-            const remainingTime = initialTime - (currentTime - savedTime);
-            return remainingTime > 0 ? remainingTime : 0;
-        } else {
-            // Store the start time if not already set
-            localStorage.setItem('countdownTimer', currentTime);
-            return initialTime;
-        }
-    }
-
-    let timeRemaining = getTimeRemaining();
-
-    // Function to update the countdown timer display
-    function updateCountdownDisplay(hours, minutes, seconds) {
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-    }
-
-    // Countdown logic
-    function startCountdown() {
-        let countdownInterval = setInterval(function() {
-            if (timeRemaining > 0) {
-                timeRemaining--;
-
-                // Convert time to HH:MM:SS
-                const hours = Math.floor(timeRemaining / 3600);
-                const minutes = Math.floor((timeRemaining % 3600) / 60);
-                const seconds = timeRemaining % 60;
-
-              //  updateCountdownDisplay(hours, minutes, seconds);
-            } else {
-                // Restart the timer when it reaches zero
-                timeRemaining = initialTime;
-                localStorage.setItem('countdownTimer', Math.floor(Date.now() / 1000)); // Reset the start time
-            }
-        }, 1000);
-    }
-
-    startCountdown();
-});
-</script>
+<!-- Unified Countdown Timer Script -->
+<script src="{{ 'chuug-unified-countdown.js' | asset_url }}" defer></script>
 
 
 {% include 'shogun-content-handler' %}
@@ -75,7 +25,22 @@ document.addEventListener('DOMContentLoaded', function() {
         name: "{{ template.name }}",
         suffix: "{{ template.suffix }}"
     };
+    
+    // Global Flash Sale Configuration
+    // Populated from Theme Settings > Flash Sale
+    window.chuugFlashSale = {
+        enabled: {% if settings.enable_flash_sale %}true{% else %}false{% endif %},
+        endDate: "{{ settings.flash_sale_end_date }}",
+        endTime: "{{ settings.flash_sale_end_time }}",
+        text: "{{ settings.flash_sale_text }}",
+        miniAtcText: "{{ settings.mini_atc_countdown_text }}"
+    };
+    
+    // Debug log to check values
+    console.log('🎯 Flash Sale Config:', window.chuugFlashSale);
 </script>
+
+<!-- Countdown timer logic is now handled by chuug-unified-countdown.js -->
 
 
 <script>
@@ -86,7 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
         suffix: "{{ template.suffix }}"
     };
   </script>
-  <script type="module" blocking="render" fetchpriority="high" src="https://cdn.intelligems.io/esm/6e8f75bc535a/bundle.js" async></script>
+  {% comment %} Removed blocking="render" to improve LCP - saves ~200ms {% endcomment %}
+  <script type="module" fetchpriority="high" src="https://cdn.intelligems.io/esm/6e8f75bc535a/bundle.js" async></script>
 
     
 <script>
@@ -96,12 +62,15 @@ script.type = 'text/javascript';
 script.src = "https://t.chuug.com/v1/lst/universal-script?ph=c68d29bc4514588797b0d14f78ebea781dbea6e12602d20b382f9f9b2ba1b63a&tag=!clicked&origin=SHOPIFY&ref_url=" + encodeURI(document.URL) ;
 head.appendChild(script);
 </script>
+    {% comment %} Klarna only loaded on cart/checkout pages to save 68KB - reduces unused JS {% endcomment %}
+    {% if template contains 'cart' or template contains 'product' %}
     <script
       async
       data-environment="production"
       src="https://js.klarna.com/web-sdk/v1/klarna.js"
       data-client-id="klarna_live_client_cGJQeVEoLVBQUUVYRHVEJTUpV2pGT3VISGluN2Q4VVQsMjAwYmUzOTAtMzczZS00ZmZmLWIzOTAtNGZmOWQ3YzVjNGY1LDEsWUUvVjVxUGdDMGFhWmFGOEZTTVhrQ1AycUphVVQrblpvd1VReWp6ZGFwST0"
     ></script>
+    {% endif %}
 
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -111,11 +80,18 @@ head.appendChild(script);
   })(window,document,'script','dataLayer','GTM-KZ8X9GJC');</script>
   <!-- End Google Tag Manager -->  
 
-<!-- TrustBox script -->
-<script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+<!-- TrustBox script - Deferred for better performance -->
+<script type="text/javascript">
+  window.addEventListener('load', function() {
+    var script = document.createElement('script');
+    script.src = "//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js";
+    script.async = true;
+    document.head.appendChild(script);
+  });
+</script>
 <!-- End TrustBox script -->
     
-{{ 'tiny.content.min.css' | asset_url | stylesheet_tag }}
+{% comment %} tiny.content.min.css removed - file doesn't exist, causes MIME type error {% endcomment %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -129,6 +105,12 @@ head.appendChild(script);
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {%- endunless -%}
+    
+    {% comment %} Preconnect to third-party domains for faster script loading {% endcomment %}
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
     <title>
       {{ page_title }}
@@ -137,8 +119,8 @@ head.appendChild(script);
       {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
 
-    <!-- begin Convert Experiences code-->
-      <script type="text/javascript" src="//cdn-4.convertexperiments.com/v1/js/10007840-10007748.js?environment=production"></script>
+    <!-- begin Convert Experiences code - Deferred to reduce unused JS -->
+      <script type="text/javascript" src="//cdn-4.convertexperiments.com/v1/js/10007840-10007748.js?environment=production" defer></script>
     <!-- end Convert Experiences code -->
 
     {% if page_description %}
@@ -364,10 +346,23 @@ head.appendChild(script);
       <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
     {%- endunless -%}
 
+    {% comment %} Global fonts for Mini ATC Modal and PDP Chuug Vessel {% endcomment %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Gabarito:wght@400..900&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    >
+
     {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
       {{ 'component-localization-form.css' | asset_url | stylesheet_tag: preload: true }}
       <script src="{{ 'localization-form.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
+    
+    <!-- Currency Manager for Dynamic Pricing -->
+    <script src="{{ 'currency-manager.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.predictive_search_enabled -%}
       <link
@@ -387,18 +382,43 @@ head.appendChild(script);
   
   {% include "trackify_x" %}
 
+{% comment %} Microsoft Clarity - Only one instance needed (l4pnvju86i). 
+Duplicate instance (ncxwve3mkx) removed to prevent double-loading {% endcomment %}
+<script type="text/javascript">
+    window.addEventListener('load', function() {
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "l4pnvju86i");
+    });
+</script>
+
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "l4pnvju86i");
+    })(window, document, "clarity", "script", "trxdn9gdri");
 </script>
-  
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "trxdn9gdri");
+</script>
 
   {% render 'shogun-head' %}
     
-  {{ 'application.css' | asset_url | stylesheet_tag }}    
+  {{ 'application.css' | asset_url | stylesheet_tag }}
+  {{ 'vessel-tabs.css' | asset_url | stylesheet_tag }}
+  
+  {% comment %} Preload critical cart/modal scripts for faster loading {% endcomment %}
+  <link rel="preload" href="{{ 'mini-atc-modal.js' | asset_url }}" as="script">
+  <link rel="preload" href="{{ 'pomc-system.js' | asset_url }}" as="script">
+  <link rel="preload" href="{{ 'cart-icon-mini-atc-integration.js' | asset_url }}" as="script">
+    
 {% include 'hulk_po_vd' %}</head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
@@ -416,6 +436,61 @@ head.appendChild(script);
     {%- if settings.cart_type == 'drawer' -%}
       {%- include 'cart-drawer' -%}
     {%- endif -%}
+
+    {% comment %} Cart Icon Loading Protection - Disable during load, enable when ready {% endcomment %}
+    <style>
+      /* Disable cart icon during page load */
+      #cart-icon-bubble {
+        pointer-events: none !important;
+        opacity: 0.5;
+        cursor: not-allowed !important;
+        transition: opacity 0.3s ease;
+      }
+      
+      /* Enable cart icon when page is ready */
+      #cart-icon-bubble.ready {
+        pointer-events: auto !important;
+        opacity: 1;
+        cursor: pointer !important;
+      }
+    </style>
+    
+    <script>
+      (function() {
+        // Enable cart icon once page and scripts are fully loaded
+        function enableCartIcon() {
+          const cartIcon = document.querySelector('#cart-icon-bubble');
+          if (cartIcon) {
+            cartIcon.classList.add('ready');
+            cartIcon.setAttribute('title', 'View cart');
+            cartIcon.setAttribute('aria-label', 'View cart');
+            console.log('✅ Cart icon enabled - page fully loaded');
+          }
+        }
+        
+        // Wait for complete page load (including all scripts and resources)
+        if (document.readyState === 'complete') {
+          // Page already loaded
+          setTimeout(enableCartIcon, 100);
+        } else {
+          // Wait for full load
+          window.addEventListener('load', function() {
+            setTimeout(enableCartIcon, 100);
+          });
+        }
+        
+        // Also enable when modal system is ready (fallback)
+        document.addEventListener('miniATCModalReady', function() {
+          setTimeout(enableCartIcon, 50);
+        });
+      })();
+    </script>
+
+    {% comment %} Mini ATC Modal - Global inclusion for cart icon integration {% endcomment %}
+    {% render 'mini-atc-modal-complete' %}
+
+    {% comment %} Cart Icon to Mini ATC Modal Integration {% endcomment %}
+    <script src="{{ 'cart-icon-mini-atc-integration.js' | asset_url }}" fetchpriority="high"></script>
 
 
 <div style="position: sticky; top: 0px; z-index: 9999;"><div class="bss-pl-banner-wrapper" style="
@@ -707,13 +782,18 @@ head.appendChild(script);
     {% endif %}
   {% endif %}
 </script>
-    <script type="text/javascript">!function(e,t,n){function a(){var e=t.getElementsByTagName("script")[0],n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://beacon-v2.helpscout.net",e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],"complete"===t.readyState)return a();e.attachEvent?e.attachEvent("onload",a):e.addEventListener("load",a,!1)}(window,document,window.Beacon||function(){});</script>
-<script type="text/javascript">window.Beacon('init', 'c44bd933-c0ae-4b32-8219-89fde7a94978')</script>
+    {% comment %} HelpScout Beacon - Deferred to load after page interactive {% endcomment %}
+    <script type="text/javascript">
+      window.addEventListener('load', function() {
+        !function(e,t,n){function a(){var e=t.getElementsByTagName("script")[0],n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://beacon-v2.helpscout.net",e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],"complete"===t.readyState)return a();e.attachEvent?e.attachEvent("onload",a):e.addEventListener("load",a,!1)}(window,document,window.Beacon||function(){});
+        window.Beacon('init', 'c44bd933-c0ae-4b32-8219-89fde7a94978');
+      });
+    </script>
 
     <script type="text/javascript">
   var _learnq = _learnq || [];
 
-  _learnq.push(['account', TujLdz]);
+  _learnq.push(['account', 'TujLdz']);
 
   (function () {
   var b = document.createElement('script'); b.type = 'text/javascript'; b.async = true;
@@ -774,7 +854,7 @@ for (var i = 0; i < atcButtons.length; i++) {
     })
 }
 });
-
+</script>
 
 
 

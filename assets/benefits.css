@@ -1,0 +1,366 @@
+/* Benefits Section - Pixel Perfect Implementation */
+
+/* Import Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&family=Merriweather:wght@700&display=swap");
+
+/* Font Face for Merge One */
+@font-face {
+	font-family: "Merge One";
+	font-style: normal;
+	font-weight: 400;
+	src: url("https://fonts.gstatic.com/s/mergeone/v1/mergeone.woff2")
+		format("woff2");
+}
+
+/* Root Variables */
+:root {
+	--color-gainsboro: #dfdfd8;
+	--color-dark-navy: #0d2026;
+	--color-yankees-blue: #1b333b;
+	--color-pastel-yellow: #dbe188;
+	--color-rackley: #568594;
+	--color-white: #ffffff;
+	--color-black: #000000;
+}
+
+/* Benefits Section Container */
+.benefits-section {
+	background-color: var(--color-gainsboro);
+	border-radius: 40px 40px 0px 0px;
+	padding: 50px 0px 80px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+	min-height: 761px;
+	width: 100%;
+}
+
+/* Article Container */
+.benefits-article {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+	width: 970px;
+	max-width: 100%;
+}
+
+/* Article Header */
+.benefits-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+
+.benefits-title {
+	font-family: "Merriweather", serif;
+	font-weight: 700;
+	font-size: 45px;
+	line-height: normal;
+	text-align: center;
+	color: #0d2026;
+	margin: 0;
+}
+
+.benefits-subtitle {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 1.2em;
+	text-align: center;
+	color: var(--color-dark-navy);
+	margin: 0;
+}
+
+/* Article Content Container */
+.benefits-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 14px;
+	padding: 10px;
+	background-color: var(--color-yankees-blue);
+	border-radius: 10px;
+}
+
+/* Article Details */
+.benefits-details {
+	display: flex;
+	gap: 10px;
+}
+
+.detail-item {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 7px 0px;
+	width: 300px;
+	height: 60px;
+	border-radius: 10px;
+	border: 1px solid var(--color-white);
+}
+
+.detail-item.active {
+	background-color: var(--color-pastel-yellow);
+}
+
+.detail-item.inactive {
+	background-color: var(--color-rackley);
+	opacity: 0.4;
+}
+
+.detail-title {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 20px;
+	line-height: 1.2em;
+	text-align: center;
+	color: var(--color-black);
+	width: 100%;
+}
+
+.detail-item.inactive .detail-title {
+	color: var(--color-white);
+}
+
+/* Comparison Section */
+.comparison-section {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+
+.comparison-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 40px;
+	padding: 20px 30px;
+	background-color: var(--color-white);
+	border: 2px solid var(--color-dark-navy);
+	border-radius: 20px;
+	height: 287px;
+	width: fit-content;
+}
+
+.comparison-item {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	width: 315px;
+}
+
+.comparison-title {
+	font-family: "Merriweather", serif;
+	font-weight: 700;
+	font-size: 25px;
+	line-height: 1.257em;
+	text-align: center;
+	color: var(--color-dark-navy);
+	margin: 0;
+}
+
+.comparison-detail {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.detail-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+	width: 35px;
+	height: 35px;
+	border-radius: 17.5px;
+	flex-shrink: 0;
+}
+
+.detail-icon.negative {
+	background-color: var(--color-dark-navy);
+}
+
+.detail-icon.positive {
+	background-color: var(--color-pastel-yellow);
+}
+
+.detail-text {
+	font-family: "Gabarito", sans-serif;
+	font-weight: 400;
+	font-size: 21px;
+	line-height: 1.2em;
+	text-align: left;
+	color: var(--color-dark-navy);
+	flex: 1;
+}
+
+/* Vertical Divider */
+.comparison-divider {
+	display: block !important;
+	width: 2px;
+	height: 249px;
+	background: var(--color-gainsboro);
+}
+
+/* Add to Cart Button - Using customize-button styles */
+.add-to-cart-button {
+	/* Reusing customize-button styles */
+	width: 100%;
+	max-width: 522px;
+	height: 4.375em;
+	font-family: "Gabarito", sans-serif;
+	font-weight: 700;
+	font-size: 2rem;
+	line-height: 1;
+	color: #ffffff;
+	text-transform: uppercase;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border-radius: 1.25em;
+	background-image: url("https://cdn.shopify.com/s/files/1/0799/4307/4111/files/cta-button2.png?v=1729102728");
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	border: none;
+	box-sizing: border-box;
+	text-decoration: none;
+
+	/* Transitions */
+	transition: transform 0.3s ease;
+}
+
+.add-to-cart-button:hover {
+	transform: scale(1.05);
+}
+
+.add-to-cart-button:active {
+	transform: scale(1);
+}
+
+.add-to-cart-button:focus {
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+.add-to-cart-text {
+	/* Text styling is now handled by the button itself */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+	.benefits-article {
+		width: 90%;
+		max-width: 800px;
+	}
+
+	.comparison-container {
+		flex-direction: column;
+		gap: 20px;
+		height: auto;
+		padding: 30px 20px;
+	}
+
+	.comparison-divider {
+		width: 100%;
+		height: 2px;
+		border-radius: 1px;
+	}
+
+	.comparison-item {
+		width: 100%;
+	}
+
+	.benefits-title {
+		font-size: 38px;
+	}
+
+	.benefits-subtitle {
+		font-size: 20px;
+	}
+}
+
+@media (max-width: 768px) {
+	.benefits-section {
+		padding: 40px 20px 60px;
+		border-radius: 30px 30px 0px 0px;
+	}
+
+	.benefits-article {
+		width: 95%;
+	}
+
+	.benefits-title {
+		font-size: 32px;
+	}
+
+	.benefits-subtitle {
+		font-size: 18px;
+	}
+
+	.benefits-details {
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.detail-item {
+		width: 100%;
+		max-width: 280px;
+	}
+
+	.comparison-container {
+		padding: 20px 15px;
+	}
+
+	.comparison-title {
+		font-size: 22px;
+	}
+
+	.detail-text {
+		font-size: 18px;
+	}
+
+	.add-to-cart-button {
+		width: 100%;
+		max-width: 36rem;
+		height: 4.375em;
+		font-size: 1.5rem;
+		margin-top: 0;
+		padding: 0;
+	}
+}
+
+@media (max-width: 480px) {
+	.benefits-title {
+		font-size: 28px;
+	}
+
+	.benefits-subtitle {
+		font-size: 16px;
+	}
+
+	.comparison-title {
+		font-size: 20px;
+	}
+
+	.detail-text {
+		font-size: 16px;
+	}
+
+	.detail-title {
+		font-size: 18px;
+	}
+
+	.add-to-cart-button {
+		font-size: 1.25rem;
+		height: 3.5em;
+		max-width: 32rem;
+	}
+}

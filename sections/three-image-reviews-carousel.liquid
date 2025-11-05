@@ -61,7 +61,13 @@
 </section>
 
 <script>
-  const threeImageReviewsCarousel = new Swiper('#three-image-reviews-carousel', {
+  function initThreeImageReviewsCarousel() {
+    if (typeof Swiper === 'undefined') {
+      setTimeout(initThreeImageReviewsCarousel, 50);
+      return;
+    }
+    
+    const threeImageReviewsCarousel = new Swiper('#three-image-reviews-carousel', {
     slidesPerView: 1.4,
     spaceBetween: 15,
     initialSlide: 0,
@@ -93,6 +99,14 @@
       },
     },
   });
+  }
+  
+  // Initialize when ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThreeImageReviewsCarousel);
+  } else {
+    initThreeImageReviewsCarousel();
+  }
 </script>
 
 <style>

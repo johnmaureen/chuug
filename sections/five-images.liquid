@@ -2,7 +2,7 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 >
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
 
 <section class="five-images tw-bg-chuug-dark-navy tw-text-white tw-overflow-hidden tw-px-[1rem] tw-py-[4rem] tw-rounded-ss-[2em] tw-rounded-se-[2em] -tw-mt-8 md:tw-pt-24 tw-pb-[6rem] md:tw-pb-[12rem]">
   <div class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-[1rem] md:tw-gap-y-20">
@@ -162,12 +162,27 @@
 </section>
 
 <script>
-  var swiper = new Swiper('.five-images-swiper', {
-    pagination: {
-      clickable: true,
-      el: '.swiper-pagination',
-    },
-  });
+  function initFiveImagesSwiper() {
+    if (typeof Swiper === 'undefined') {
+      setTimeout(initFiveImagesSwiper, 50);
+      return;
+    }
+    
+    var swiper = new Swiper('.five-images-swiper', {
+      pagination: {
+        clickable: true,
+        el: '.swiper-pagination',
+      },
+    });
+  }
+  
+  // Initialize when ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFiveImagesSwiper);
+  } else {
+    initFiveImagesSwiper();
+  }
+  
   document.addEventListener('DOMContentLoaded', function () {
     setTimeout(function () {
       const elements = document.querySelectorAll('.five-images .bss_pl_img');

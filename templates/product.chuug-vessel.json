@@ -15,70 +15,70 @@
         "main_carousel_image_nEV9T7": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/CHUU5126-Chuug0333-1.jpg",
+            "carousel_image": "shopify://shop_images/CHUU5684-Chugg5256-1.jpg",
             "image_alt": "The Chuug V2+ 660ml"
           }
         },
         "main_carousel_image_dGxYrd": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/chuug_insulated_rope_handle_mug_tankard.jpg",
+            "carousel_image": "shopify://shop_images/dishwasher-safe.jpg",
             "image_alt": "Beer warm is beer wasted"
           }
         },
         "main_carousel_image_Lmngit": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/chuug_engraved_option.jpg",
+            "carousel_image": "shopify://shop_images/V3-personalised-coin-new-crunched_04c9d67a-6e9b-41c3-82d3-42e0ee57a2d9.jpg",
             "image_alt": "Boring beer | The coolest vessel"
           }
         },
         "main_carousel_image_bGEDdV": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/pdp-chuug-vessel-6.png",
+            "carousel_image": "shopify://shop_images/V3-personalised-coin-new-letters.jpg",
             "image_alt": "Nature's gift forged into perfect"
           }
         },
         "main_carousel_image_bmLUD9": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/chuug_dusk_charcoal_labelled_2.jpg",
+            "carousel_image": "shopify://shop_images/CHUU5684-Chugg5281-1_copy_2.jpg",
             "image_alt": "I'm gonna drink a beer"
-          }
-        },
-        "main_carousel_image_hLa47R": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/chuug_dusk_natural_labelled_2.jpg",
-            "image_alt": "A little bit of special"
           }
         },
         "main_carousel_image_nU76hM": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/chuug_midnight_charcoal_labelled_2.jpg",
+            "carousel_image": "shopify://shop_images/midnight-charcoal-words.jpg",
             "image_alt": "Top 3 reasons to enjoy a cold one"
-          }
-        },
-        "main_carousel_image_igcP88": {
-          "type": "main_carousel_image",
-          "settings": {
-            "carousel_image": "shopify://shop_images/chuug_midnight_natural_labelled_2.jpg",
-            "image_alt": "Bundle and save"
           }
         },
         "main_carousel_image_FbDCEg": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/chuug_dawn_charcoal_labelled_2.jpg",
+            "carousel_image": "shopify://shop_images/dawn-charcoal_words.jpg",
             "image_alt": "Drinking beer just got cooler"
+          }
+        },
+        "main_carousel_image_hLa47R": {
+          "type": "main_carousel_image",
+          "settings": {
+            "carousel_image": "shopify://shop_images/dusk-natural-words.jpg",
+            "image_alt": "A little bit of special"
+          }
+        },
+        "main_carousel_image_igcP88": {
+          "type": "main_carousel_image",
+          "settings": {
+            "carousel_image": "shopify://shop_images/midnight-natural-words_1_08a6fbf9-0dbd-48e9-b15f-c0e18cdb67ab.jpg",
+            "image_alt": "Bundle and save"
           }
         },
         "main_carousel_image_NGqe3P": {
           "type": "main_carousel_image",
           "settings": {
-            "carousel_image": "shopify://shop_images/chuug_dawn_natural_labelled_2.jpg",
+            "carousel_image": "shopify://shop_images/dawn-natural-words.jpg",
             "image_alt": "Free cotton bag included with each purchase"
           }
         },
@@ -138,7 +138,7 @@
           "type": "accordion",
           "settings": {
             "accordion_title": "Shipping & returns",
-            "accordion_text": "<p>Free express shipping on orders over £75, otherwise just £3.49</p><ul><li>For all UK orders, shipping is 1-3 business days</li><li>Free replacements, no questions asked.</li></ul>"
+            "accordion_text": "<p>Free express shipping on orders over £75, otherwise just £3.49</p><ul><li>For all UK orders, shipping is 1-3 business days</li></ul>"
           }
         },
         "bottom_carousel_image_ckekXn": {
@@ -221,10 +221,10 @@
         "main_carousel_image_Lmngit",
         "main_carousel_image_bGEDdV",
         "main_carousel_image_bmLUD9",
-        "main_carousel_image_hLa47R",
         "main_carousel_image_nU76hM",
-        "main_carousel_image_igcP88",
         "main_carousel_image_FbDCEg",
+        "main_carousel_image_hLa47R",
+        "main_carousel_image_igcP88",
         "main_carousel_image_NGqe3P",
         "image_title_text_cnaKqG",
         "image_title_text_riVwLm",
@@ -245,7 +245,7 @@
         "modal_aBWkVF"
       ],
       "settings": {
-        "product_title": "The Chuug V2+ 660ml",
+        "product_title": "The Chuug V3 660ml",
         "review_text": "4.9 - 12,690 Vessel Vikings",
         "review_url": "https://uk.trustpilot.com/review/chuug.com?utm_medium=trustbox&utm_source=MicroStar",
         "discount_number": "56",
@@ -258,12 +258,12 @@
         "one_chuug_product": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag",
         "two_chuug_product": "set-of-2-chuug®-v2-660ml-with-gift-bags",
         "three_chuug_product": "set-of-3-chuug®-v2-660ml-with-gift-bags",
-        "one_chuug_no_initials": "shopify://shop_images/CHUU5126-Chuug0333-1.jpg",
-        "one_chuug_initials": "shopify://shop_images/dad-pers-dusk-chuug.jpg",
-        "two_chuug_no_initials": "shopify://shop_images/two_chuugs_no_initials.jpg",
-        "two_chuug_initials": "shopify://shop_images/two_chuugs_initials.jpg",
-        "three_chuug_no_initials": "shopify://shop_images/chuug_set_3_muz.jpg",
-        "three_chuug_initials": "shopify://shop_images/chuug_set_2_muz_PERS.jpg",
+        "one_chuug_no_initials": "shopify://shop_images/CHUU5684-Chugg5256-1.jpg",
+        "one_chuug_initials": "shopify://shop_images/V3-personalised-coin-new-crunched_04c9d67a-6e9b-41c3-82d3-42e0ee57a2d9.jpg",
+        "two_chuug_no_initials": "shopify://shop_images/pair-of-v3s_2859910f-385b-4acc-acc2-08f4d32f3f39.png",
+        "two_chuug_initials": "shopify://shop_images/pair-of-v3s_2859910f-385b-4acc-acc2-08f4d32f3f39.png",
+        "three_chuug_no_initials": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
+        "three_chuug_initials": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
         "wood_finish_midnight_wood": "shopify://shop_images/midnight-wood.png",
         "wood_finish_dawn_wood": "shopify://shop_images/dawn-wood.png",
         "wood_finish_dusk_wood": "shopify://shop_images/dusk-wood.png",
@@ -371,7 +371,7 @@
       "settings": {
         "section_title": "<p>Drinking Beer Just Got <em>Cooler</em></p>",
         "section_subtitle": "Out-do your neighbour at the next awkward BBQ that you’d rather not attend",
-        "main_image": "shopify://shop_images/chuug_dusk_natural_invisible_bg_small_9f3be21e-7509-464a-bdd4-6c793783f235.png",
+        "main_image": "shopify://shop_images/giftboxed-chuug-invis.png",
         "discount_number": "56",
         "button_text": "Customise Now"
       }
@@ -727,7 +727,7 @@
       "settings": {
         "section_title": "<h1>You Deserve Cold Beer</h1>",
         "section_description": "Every guy needs his personalised beer tankard. If you’re a confused woman reading this, just trust us.",
-        "image_one": "shopify://shop_images/fading-text-carousel-image.png",
+        "image_one": "shopify://shop_images/CHUU5684-Chugg5283-3_af5ca6a4-f7a7-4eb9-9b52-e6d6fbd165bb.jpg",
         "feature_one_title": "Craft Your Perfect Tankard",
         "feature_one_description": "Select from our range of premium wood finishes, each with its own character and charm. Sustainable, durable, and ready to become your new favourite drinking companion.",
         "feature_two_title": "Select Your Grip",
@@ -752,7 +752,7 @@
           "type": "accordion_tab_1",
           "settings": {
             "accordion_title_tab_1": "is it dishwasher safe?",
-            "accordion_text_tab_1": "No, hand wash only. Your Chuug tankard deserves a bit of personal attention. A quick handwash will keep it in top shape and ready for your next adventure."
+            "accordion_text_tab_1": "YES! Just unscrew the stainless steel core and put in the dishwasher as normal. For the wooden outer, wipe clean with a damp cloth - HANDWASH ONLY."
           }
         },
         "accordion_tab_1_mF3ELh": {
@@ -766,7 +766,7 @@
           "type": "accordion_tab_1",
           "settings": {
             "accordion_title_tab_1": "How do I look after my Chuug tankard?",
-            "accordion_text_tab_1": "Hand wash and towel dry. Keep your Chuug in prime condition with a simple care routine. Wash it gently with warm water and mild soap, then dry with a soft towel. For wooden parts, an occasional rub with food-grade mineral oil will keep them looking great"
+            "accordion_text_tab_1": "Hand wash the exterior wood and SmartRope handle. Unscrew the inner metal core and wash how you like! This part is dishwasher-safe.\n\nThe wood might like an occasional rub with food-grade mineral oil to keep it looking sharp."
           }
         },
         "accordion_tab_2_mWMj93": {
@@ -815,6 +815,17 @@
         "tab_2_title": "Delivery & Returns",
         "button_text": "Add to cart"
       }
+    },
+    "content_video_section_DwemtG": {
+      "type": "content-video-section",
+      "name": "Content Video Section",
+      "settings": {
+        "video_url": "https://youtu.be/dQUzWtOcuoc",
+        "video_file": "",
+        "video_poster": "shopify://shop_images/CHUU5126-Chuug0459-1.jpg",
+        "article_title": "Wood Becomes Art",
+        "article_content": "<p>Indulge in the artistry of our handcrafted rope handle tankards, where raw materials are elevated to create exceptional pieces for the discerning connoisseur.</p><p>You have never had a drink like this before.</p>"
+      }
     }
   },
   "order": [
@@ -826,6 +837,7 @@
     "text_and_image_carousel_TjCMqW",
     "three_image_reviews_carousel_KxatHt",
     "fading_text_carousel_9VgpBp",
-    "accordions_M9ze79"
+    "accordions_M9ze79",
+    "content_video_section_DwemtG"
   ]
 }

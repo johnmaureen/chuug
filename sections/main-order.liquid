@@ -79,19 +79,29 @@
                         </span>
                       {%- endunless -%}
                       {%- if property_size != 0 -%}
-                        {%- for property in line_item.properties -%}
-                          {% assign property_first_char = property.first | slice: 0 %}
-                          {%- if property.last != blank and property_first_char != '_' -%}
-                            <span>{{ property.first }}:</span>
-                            <span>
-                              {%- if property.last contains '/uploads/' -%}
-                                <a href="{{ property.last }}">{{ property.last | split: '/' | last }}</a>
-                              {%- else -%}
-                                {{ property.last }}
-                              {%- endif -%}
-                            </span>
-                          {%- endif -%}
-                        {%- endfor -%}
+                        {% comment %} Show only essential details like in reference images {% endcomment %}
+                        {% if line_item.product.title contains 'CHUUG' or line_item.product.title contains 'Chuug' %}
+                          {% comment %} Find engraving text from properties {% endcomment %}
+                          {% assign engraving_text = '' %}
+                          {% for property in line_item.properties %}
+                            {% if property.first contains 'Engraving' %}
+                              {% assign engraving_text = property.last %}
+                              {% break %}
+                            {% endif %}
+                          {% endfor %}
+                          
+                          <span>Monogram Initials:</span>
+                          <span>{{ engraving_text | default: 'N/A' }}</span>
+                        {% else %}
+                          {% comment %} For non-CHUUG products, show minimal properties {% endcomment %}
+                          {%- for property in line_item.properties -%}
+                            {% assign property_first_char = property.first | slice: 0 %}
+                            {%- if property.last != blank and property_first_char != '_' -%}
+                              <span>{{ property.first }}:</span>
+                              <span>{{ property.last }}</span>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        {% endif %}
                       {%- endif -%}
                     </div>
                   {%- endunless -%}
