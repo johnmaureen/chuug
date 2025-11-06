@@ -303,15 +303,15 @@ checkCartItems();
                           {% comment %} Find engraving text from properties {% endcomment %}
                           {% assign engraving_text = '' %}
                           {% for property in item.properties %}
-                            {% if property.first contains 'Engraving' %}
+                            {% if property.first contains 'PERSONALISED INITIAL' %}
                               {% assign engraving_text = property.last %}
                               {% break %}
                             {% endif %}
                           {% endfor %}
                           
                           <div class="product-option">
-                            <dt>Monogram Initials:</dt>
-                            <dd>{{ engraving_text | default: 'N/A' }}</dd>
+                            <dt>PERSONALISED INITIAL:</dt>
+                            <dd>{{ engraving_text | default: 'NONE' }}</dd>
                           </div>
                         {% else %}
                           {% comment %} For non-CHUUG products, show minimal properties {% endcomment %}
