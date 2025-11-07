@@ -729,15 +729,6 @@
 			let totalOriginalPrice =
 				baseVariant.compare_at_price || baseVariant.price;
 
-			// Add charcoal upgrade charges (only if not all charcoal)
-			let charcoalCharges = 0;
-			if (charcoalCount > 0 && !allCharcoal) {
-				// Get charcoal upgrade price from POMC system (e.g., $4.00 = 400 cents)
-				const charcoalUpgradePrice =
-					window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 400;
-				charcoalCharges = charcoalUpgradePrice * charcoalCount;
-			}
-
 			// Calculate engraving charges
 			let engravingCharges = 0;
 			if (masterEngravingEnabled && engravingCount > 0) {
@@ -768,8 +759,8 @@
 			}
 
 			// Calculate final total
-			totalPrice += charcoalCharges + engravingCharges;
-			totalOriginalPrice += charcoalCharges + engravingCharges;
+			totalPrice += engravingCharges;
+			totalOriginalPrice += engravingCharges;
 
 			// Store the pricing for reference
 			this.dynamicPrices.vessel = {
@@ -836,28 +827,17 @@
 			`🪢 Vessel breakdown: ${charcoalCount} charcoal, ${naturalCount} natural`;
 
 			// For mixed configurations, use the charcoal rope variant pricing as the base
-			// This ensures we get the higher pricing that includes charcoal upgrade costs
+			// The variant price already includes the charcoal rope pricing
 			const charcoalVariantIndex = engravingEnabled ? 3 : 2;
 			const variant = selectedProductAmountData.variants[charcoalVariantIndex];
 
 			if (variant) {
-				// Get charcoal upgrade price from POMC system or use default (299 cents = £2.99)
-				const charcoalUpgradePrice =
-					window.pomcSystem?.CHARCOAL_UPGRADE_PRICE || 299;
-
-				// Add charcoal upgrade price for each charcoal vessel
-				const totalCharcoalUpgradePrice = charcoalUpgradePrice * charcoalCount;
-
-				// Calculate total price: bundle base price + charcoal upgrade costs
-				const totalPrice = variant.price + totalCharcoalUpgradePrice;
-				const totalOriginalPrice =
-					variant.compare_at_price + totalCharcoalUpgradePrice;
+				// Use variant price directly (charcoal rope pricing is included in variant price)
+				const totalPrice = variant.price;
+				const totalOriginalPrice = variant.compare_at_price || variant.price;
 
 				`🪢 Using charcoal rope variant ${charcoalVariantIndex} for mixed bundle pricing`;
-				`🪢 Bundle base price: ${variant.price}`;
-				`🪢 Charcoal upgrade price per vessel: ${charcoalUpgradePrice}`;
-				`🪢 Total charcoal upgrade cost (${charcoalCount} vessels): ${totalCharcoalUpgradePrice}`;
-				`🪢 Final total price: ${totalPrice} (${variant.price} + ${totalCharcoalUpgradePrice})`;
+				`🪢 Bundle price: ${totalPrice}`;
 				`🪢 Final original price: ${totalOriginalPrice}`;
 
 				// Store the pricing for reference
@@ -2032,14 +2012,6 @@
 					updatePricingFromPOMC
 				);
 
-				// Listen for charcoal upgrade price changes
-				document.addEventListener("pomcCharcoalUpgradePrice", (event) => {
-					"🪢 Charcoal upgrade price changed, updating pricing:", event.detail;
-					// Small delay to ensure POMC system has fully updated
-					setTimeout(() => {
-						this.calculatePricing().catch(() => {});
-					}, 50);
-				});
 
 				// Also listen for the modal opening to ensure pricing is current
 				this.modal.addEventListener("modalOpened", () => {
@@ -2050,14 +2022,7 @@
 				("🔍 POMC system not ready, setting up delayed event listener");
 				const setupDelayedListener = () => {
 					if (window.pomcSystem) {
-						("🔍 POMC system now available, setting up charcoal upgrade listener");
-						document.addEventListener("pomcCharcoalUpgradePrice", (event) => {
-							"🪢 Charcoal upgrade price changed (delayed setup), updating pricing:",
-								event.detail;
-							setTimeout(() => {
-								this.calculatePricing().catch(() => {});
-							}, 50);
-						});
+						("🔍 POMC system now available");
 					} else {
 						setTimeout(setupDelayedListener, 100);
 					}
@@ -2281,26 +2246,12 @@
 							vesselItem.properties?.["_Wrapped_Bundle"] === wrappedBundleId
 					);
 
-					// If no matching vessel found, check if this is a recent gift box (within last 5 minutes)
-					// This prevents removing gift boxes that were just added but vessel hasn't been updated yet
-					const isRecentGiftBox =
-						item.properties?.["_Unique Line ID"] &&
-						item.properties["_Unique Line ID"].includes(
-							Date.now().toString().substring(0, 8)
-						);
-
-					const isOrphaned = !hasMatchingVessel && !isRecentGiftBox;
+					// Check if gift box has matching wrapped bundle ID
+					const isOrphaned = !hasMatchingVessel;
 
 					if (isOrphaned) {
 						console.log(
 							"🧹 Found orphaned gift box:",
-							item.key,
-							"wrapped bundle ID:",
-							wrappedBundleId
-						);
-					} else if (isRecentGiftBox) {
-						console.log(
-							"🧹 Keeping recent gift box:",
 							item.key,
 							"wrapped bundle ID:",
 							wrappedBundleId
@@ -3425,15 +3376,15 @@
 			const vesselItems = await this.collectVesselProducts(state);
 			const addonItems = this.collectAddonProducts(state);
 
-			// Group add-ons by vessel number for easier lookup
-			const addonsByVessel = {};
+			// Group add-ons by wrapped bundle ID for easier lookup
+			const addonsByBundle = {};
 			addonItems.forEach((addon) => {
-				const vesselNumber = addon.properties["_Vessel Number"];
-				if (vesselNumber) {
-					if (!addonsByVessel[vesselNumber]) {
-						addonsByVessel[vesselNumber] = [];
+				const wrappedBundleId = addon.properties["_Wrapped_Bundle"];
+				if (wrappedBundleId) {
+					if (!addonsByBundle[wrappedBundleId]) {
+						addonsByBundle[wrappedBundleId] = [];
 					}
-					addonsByVessel[vesselNumber].push(addon);
+					addonsByBundle[wrappedBundleId].push(addon);
 				}
 			});
 
@@ -3442,30 +3393,18 @@
 				// Add the vessel first
 				items.push(vessel);
 
-				// Find vessel number from properties
-				let vesselNumber = null;
-				for (const [key, value] of Object.entries(vessel.properties)) {
-					if (key.includes("Vessel") && key.includes("Product")) {
-						// Extract the number from property name like "_Vessel 2 Product"
-						const parts = key.split(" ");
-						// Handle both "_Vessel" (split creates ["_Vessel"]) and old "Vessel" format
-						const numberIndex = parts[0].startsWith("_") ? 1 : 1;
-						if (parts.length >= 2) {
-							vesselNumber = parts[numberIndex];
-							break;
-						}
-					}
-				}
+				// Find wrapped bundle ID from vessel properties
+				const wrappedBundleId = vessel.properties?.["_Wrapped_Bundle"];
 
 				// Add associated add-ons immediately after the vessel
-				if (vesselNumber && addonsByVessel[vesselNumber]) {
-					items.push(...addonsByVessel[vesselNumber]);
+				if (wrappedBundleId && addonsByBundle[wrappedBundleId]) {
+					items.push(...addonsByBundle[wrappedBundleId]);
 				}
 			});
 
-			// Add any remaining add-ons that don't have a specific vessel number
+			// Add any remaining add-ons that don't have a wrapped bundle ID
 			addonItems.forEach((addon) => {
-				if (!addon.properties["_Vessel Number"]) {
+				if (!addon.properties["_Wrapped_Bundle"]) {
 					items.push(addon);
 				}
 			});
@@ -3750,38 +3689,6 @@
 
 			// HIDDEN PROPERTIES (with underscore - for backend use only)
 
-			// Add vessel engravings (hidden) - one per vessel
-			for (let i = 1; i <= multiplier; i++) {
-				const vesselEngravingData = state.engraving?.vessels?.[i] || "";
-				const vesselEngraving =
-					this.getVesselEngravingText(vesselEngravingData);
-				if (
-					engravingEnabled &&
-					vesselEngraving &&
-					vesselEngraving.trim() !== ""
-				) {
-					properties[`_Vessel ${i} Engraving`] = vesselEngraving
-						.trim()
-						.toUpperCase();
-				}
-			}
-
-			// Add vessel selection details (hidden) - collect all vessel selections
-			for (let i = 1; i <= multiplier; i++) {
-				const selection = vesselSelections[i];
-				if (selection) {
-					if (selection.productHandle) {
-						properties[`_Vessel ${i} Product`] = selection.productHandle;
-					}
-					if (selection.woodType) {
-						properties[`_Vessel ${i} Wood Type`] = selection.woodType;
-					}
-					if (selection.ropeType) {
-						properties[`_Vessel ${i} Rope Type`] = selection.ropeType;
-					}
-				}
-			}
-
 			// Add compare-at price (hidden)
 			if (selectedProductAmountData?.variants) {
 				const variantData = selectedProductAmountData.variants[variantIndex];
@@ -3794,18 +3701,9 @@
 				}
 			}
 
-			// Add unique line identifier to prevent Shopify from consolidating items
-			// Use a consistent ID based on the bundle configuration to prevent duplicates
-			const ropeConfig = hasMixedConfig
-				? "mixed"
-				: this.hasAnyCharcoalRopeSelected()
-				? "charcoal"
-				: "natural";
-			const bundleConfig = `${multiplier}-${ropeConfig}-${
-				engravingEnabled ? "engraved" : "plain"
-			}`;
-			const uniqueLineId = `BUNDLE-${bundleConfig}-${Date.now()}`;
-			properties["_Unique Line ID"] = uniqueLineId;
+			// Add wrapped bundle ID for relationship tracking
+			const wrappedBundleId = Math.random().toString(36).substr(2, 8);
+			properties["_Wrapped_Bundle"] = wrappedBundleId;
 
 			// Create ONE bundle item with quantity = multiplier
 			const bundleItem = {
@@ -3825,47 +3723,6 @@
 
 		collectAddonProducts(state) {
 			const items = [];
-
-			// 0. Charcoal Rope Upgrade - Add one per vessel with charcoal rope
-			if (window.pomcSystem) {
-				const vesselSelections = window.pomcSystem.getAllVesselSelections();
-				const charcoalUpgradeVariantId = this.getCharcoalUpgradeVariantId();
-
-				// Only add charcoal upgrades if the variant ID is available
-				// If not available, skip charcoal upgrades (they might be included in the vessel price)
-				if (charcoalUpgradeVariantId) {
-					let charcoalVesselNumber = 0;
-					Object.entries(vesselSelections).forEach(
-						([vesselIndex, selection]) => {
-							if (
-								selection.ropeType &&
-								selection.ropeType.toLowerCase() === "charcoal"
-							) {
-								charcoalVesselNumber++;
-								const uniqueLineId = `${Date.now()}-CHARCOAL${charcoalVesselNumber}-${Math.random()
-									.toString(36)
-									.substr(2, 9)}`;
-
-								const charcoalUpgradeItem = {
-									id: charcoalUpgradeVariantId,
-									quantity: 1,
-									properties: {
-										// VISIBLE PROPERTIES (for checkout display)
-										"PERSONALISED INITIAL": "N/A",
-
-										// HIDDEN PROPERTIES (for backend use only)
-										"_Add-on": "Charcoal Rope Upgrade",
-										"_Product Handle": "charcoal-rope-upgrade",
-										"_Vessel Number": vesselIndex,
-										"_Unique Line ID": uniqueLineId,
-									},
-								};
-								items.push(charcoalUpgradeItem);
-							}
-						}
-					);
-				}
-			}
 
 			// Gift boxes are now added directly to cart via toggle, not through collectCartData
 
@@ -4022,44 +3879,10 @@
 			return "Premium Gift Box and Tissue Wrap";
 		}
 
-		getCharcoalUpgradeVariantId() {
-			("🔍 Getting charcoal upgrade variant ID...");
-
-			// Try to get from modal config first
-			const config = this.config;
-			if (config.charcoalUpgrade?.variantId) {
-				"✅ Found charcoal upgrade variant ID in config:",
-					config.charcoalUpgrade.variantId;
-				return config.charcoalUpgrade.variantId;
-			}
-
-			// Try to get from DOM
-			const charcoalUpgradeElement = this.modal.querySelector(
-				"[data-charcoal-upgrade-variant-id]"
-			);
-			if (charcoalUpgradeElement) {
-				const variantId = charcoalUpgradeElement.getAttribute(
-					"data-charcoal-upgrade-variant-id"
-				);
-				"✅ Found charcoal upgrade variant ID in DOM:", variantId;
-				return variantId;
-			}
-
-			// Try to get from global config
-			if (window.CHARCOAL_UPGRADE_VARIANT_ID) {
-				"✅ Found charcoal upgrade variant ID in global config:",
-					window.CHARCOAL_UPGRADE_VARIANT_ID;
-				return window.CHARCOAL_UPGRADE_VARIANT_ID;
-			}
-
-			// Fallback - needs to be set in Shopify theme settings
-			("❌ No charcoal upgrade variant ID found in config or DOM");
-			return null;
-		}
 
 		async addItemsToShopifyCart(cartData) {
 			// Add items to cart without clearing existing items
-			// Each item has a unique _Unique Line ID property to prevent Shopify from consolidating
+			// Items are associated via _Wrapped_Bundle ID for relationship tracking
 
 			const config = {
 				method: "POST",
@@ -4140,15 +3963,18 @@
 					// Add the product first
 					orderedItems.push(product);
 
-					// Find associated gift box
+					// Find associated gift box by wrapped bundle ID
+					const wrappedBundleId = product.properties?.["_Wrapped_Bundle"];
+					if (wrappedBundleId) {
 					const associatedGiftBox = giftBoxes.find(
 						(giftBox) =>
-							giftBox.properties["_Vessel Number"] === product.id.toString()
+								giftBox.properties?.["_Wrapped_Bundle"] === wrappedBundleId
 					);
 
 					// Add gift box if it exists
 					if (associatedGiftBox) {
 						orderedItems.push(associatedGiftBox);
+						}
 					}
 				});
 
@@ -4949,10 +4775,10 @@
 				}
 
 				// Add-on Products Section (matching Liquid logic)
-				const currentVesselNumber = this.extractVesselNumber(item);
+				const wrappedBundleId = item.properties?.["_Wrapped_Bundle"];
 
 				// Find add-on for this vessel
-				if (currentVesselNumber) {
+				if (wrappedBundleId) {
 					const currentItemIndex = allCartItems.findIndex(
 						(cartItem) => cartItem.id === item.id
 					);
@@ -4967,10 +4793,7 @@
 									([key, value]) =>
 										key === "_Add-on" && value === "Premium Gift Box"
 								) &&
-								Object.entries(nextItem.properties).some(
-									([key, value]) =>
-										key === "_Vessel Number" && value === currentVesselNumber
-								);
+								nextItem.properties?.["_Wrapped_Bundle"] === wrappedBundleId;
 
 							if (isAddonForVessel) {
 								const addonSection = document.createElement("div");
@@ -5944,47 +5767,10 @@
 		}
 
 		extractVesselNumber(item) {
-			// Extract vessel number from item properties
-			// Look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc.
-			console.log(
-				"🔍 DEBUG: Extracting vessel number for item",
-				item.id,
-				":",
-				item.properties
-			);
-
-			if (item.properties) {
-				for (const [key, value] of Object.entries(item.properties)) {
-					console.log("🔍 DEBUG: Checking property:", key, "=", value);
-
-					// First, check for direct "_Vessel Number" property (used by gift boxes and some items)
-					if (key === "_Vessel Number") {
-						const vesselNum = value.toString();
-						console.log("🔍 DEBUG: Found direct vessel number:", vesselNum);
-						return vesselNum;
-					}
-					// Then look for properties like "_Vessel 1 Product", "_Vessel 2 Product", etc. (used by main products)
-					else if (key.includes("Vessel") && key.includes("Product")) {
-						const parts = key.split(" ");
-						console.log("🔍 DEBUG: Found vessel property, parts:", parts);
-						if (parts.length >= 2) {
-							const vesselNum = parts[1];
-							console.log(
-								"🔍 DEBUG: Extracted vessel number from product property:",
-								vesselNum
-							);
-							return vesselNum; // Return the vessel number
-						}
-					}
-				}
-			}
-			console.log(
-				"🔍 DEBUG: No vessel number found for item",
-				item.id,
-				"- using item ID as fallback"
-			);
-			// Return item ID as fallback for items without vessel number properties
-			return item.id.toString();
+			// This method is deprecated - vessel association now uses _Wrapped_Bundle
+			// Keeping for backward compatibility but returning null
+			// Items should be associated via _Wrapped_Bundle ID instead
+			return null;
 		}
 
 		async findAssociatedGiftBoxesFromCartData(vesselItemKey, cartData) {
@@ -6100,7 +5886,7 @@
 					}))
 				);
 
-				// Find the vessel item to get its vessel number
+				// Find the vessel item to get its wrapped bundle ID
 				const vesselItem = cartData.items.find(
 					(item) => item.id.toString() === vesselItemId.toString()
 				);
@@ -6121,26 +5907,21 @@
 					properties: vesselItem.properties,
 				});
 
-				// Extract vessel number from the vessel item
-				// For main products, use the variant_id as the vessel number since gift boxes reference this
-				let vesselNumber = vesselItem.variant_id.toString();
+				// Get wrapped bundle ID from the vessel item
+				const wrappedBundleId = vesselItem.properties?.["_Wrapped_Bundle"];
+				if (!wrappedBundleId) {
 				console.log(
-					`🔍 DEBUG: Using variant_id as vessel number: ${vesselNumber}`
-				);
-
-				if (!vesselNumber) {
-					console.log(
-						`🔍 DEBUG: No vessel number found for item ${vesselItemId}`
+						`🔍 DEBUG: No wrapped bundle ID found for item ${vesselItemId}`
 					);
 					console.log(`🔍 DEBUG: Available properties:`, vesselItem.properties);
 					return [];
 				}
 
 				console.log(
-					`🔍 DEBUG: Looking for gift boxes associated with vessel number ${vesselNumber}`
+					`🔍 DEBUG: Looking for gift boxes associated with wrapped bundle ID ${wrappedBundleId}`
 				);
 
-				// Find gift boxes with matching vessel number AND timestamp prefix
+				// Find gift boxes with matching wrapped bundle ID
 				const associatedGiftBoxIds = [];
 				for (const item of cartData.items) {
 					if (item.id.toString() === vesselItemId.toString()) {
@@ -6152,40 +5933,17 @@
 						properties: item.properties,
 					});
 
-					// Check if this item is a gift box
-					let isGiftBox = false;
-					let hasMatchingVesselNumber = false;
+					// Check if this item is a gift box with matching wrapped bundle ID
+					const isGiftBox =
+						item.properties?.["_Add-on"] === "Premium Gift Box";
+					const hasMatchingBundleId =
+						item.properties?.["_Wrapped_Bundle"] === wrappedBundleId;
 
-					// Properties are stored as an object, not an array
-					for (const [key, value] of Object.entries(item.properties || {})) {
-						console.log(
-							`🔍 DEBUG: Checking gift box property key: ${key}, value: ${value}`
-						);
-
-						// Check if it's a gift box
-						if (key === "_Add-on" && value === "Premium Gift Box") {
-							isGiftBox = true;
-							console.log(`🔍 DEBUG: Item ${item.id} is a gift box`);
-						}
-
-						// Check if it has the matching vessel number
-						if (
-							key === "_Vessel Number" &&
-							value.toString() === vesselNumber.toString()
-						) {
-							hasMatchingVesselNumber = true;
-							console.log(
-								`🔍 DEBUG: Item ${item.id} has matching vessel number ${vesselNumber}`
-							);
-						}
-					}
-
-					// If it's a gift box with matching vessel number, add to removal list
-					if (isGiftBox && hasMatchingVesselNumber) {
+					if (isGiftBox && hasMatchingBundleId) {
 						// Use the key instead of id for cart API
 						associatedGiftBoxIds.push(item.key);
 						console.log(
-							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for vessel ${vesselNumber}`
+							`🔍 DEBUG: Found associated gift box with key ${item.key} (id: ${item.id}) for wrapped bundle ${wrappedBundleId}`
 						);
 					}
 				}
