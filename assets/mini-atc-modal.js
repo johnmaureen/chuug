@@ -1579,7 +1579,6 @@
           pattern="[A-Za-z]{0,1}"
           
           data-vessel-input="${vesselNumber}"
-          data-property="properties[_Vessel ${vesselNumber} Engraving]"
           aria-describedby="${modalId}-vessel-${vesselNumber}-description"
         >
         </div>
