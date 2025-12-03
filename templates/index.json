@@ -15,10 +15,10 @@
         "c8adf973-3e98-476c-91e2-ce302354a7ce": {
           "type": "shopify://apps/video-loop-hero/blocks/np-video-loop/ab55e635-6e5a-41b3-9b52-60d8fe169f32",
           "settings": {
-            "video": "https://youtu.be/WNOCtxs-aFs",
+            "video": "https://youtu.be/dQUzWtOcuoc",
             "ratio": "four-three",
             "ratio-mobile": "mobile_four-three",
-            "poster_img": "shopify://shop_images/CHUU5126-Chuug0459-1.jpg",
+            "poster_img": "shopify://shop_images/CHUU5684-Chugg6406-1.jpg",
             "title": "",
             "subheader": "",
             "header_tag": "h1",
@@ -413,8 +413,16 @@
           "settings": {
             "title": "",
             "title_color": "",
+            "title_size_v2": 0,
             "alignment": "center",
+            "instafeed_margin_top": 0,
+            "instafeed_margin_bottom": 0,
+            "instafeed_margin_sides": 0,
+            "show_instagram_link": false,
+            "link_alignment": "left",
+            "link_color": "#000000",
             "background_color": "",
+            "feed_id": "",
             "html_area": ""
           }
         }
