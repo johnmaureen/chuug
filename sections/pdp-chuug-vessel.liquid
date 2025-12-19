@@ -725,8 +725,8 @@ function addEventListenerToMonogramInitialsInput() {
     const start = el.selectionStart;
     const end = el.selectionEnd;
 
-    // Remove non-letters, force uppercase
-    const clean = el.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+    // Remove non-letters, force uppercase, enforce maxlength of 1
+    const clean = el.value.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 1);
 
     if (el.value !== clean) {
       el.value = clean;
@@ -846,7 +846,7 @@ function addEventListenerToMonogramInitialsInput() {
   const products = [];
 
   for (let i = 0; i < product_amount; i++) {
-    const initials = monogram_initials[i] && monogram_initials[i].trim() !== '' ? monogram_initials[i].trim() : 'NONE';
+    const initials = monogram_initials[i] && monogram_initials[i].trim() !== '' ? monogram_initials[i].trim().slice(0, 1) : 'NONE';
 
     const product = {
       id: initials === 'NONE' ? variant_ids[i].variant_id : variant_ids[i].variant_monogram_initials_id,
