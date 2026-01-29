@@ -26,8 +26,12 @@ function ReviewBlockExtension() {
   return (
     <View padding="base" border="base" cornerRadius="base">
       <BlockStack spacing="tight">
-        <Image source="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/quote.svg?v=1760006842" />
-        
+        <View inlineSize={150}>
+          <Image 
+            source="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/quote.svg?v=1760006842"
+            fit="contain"
+          />
+        </View>
 
         {/* Title */}
         <Text size="large" emphasis="bold">
