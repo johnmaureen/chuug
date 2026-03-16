@@ -46,20 +46,46 @@ h6 * {
 
 .product_amount_label_1,
 .product_amount_label_2,
-.product_amount_label_3 {
+.product_amount_label_3,
+.product_amount_label_4,
+.product_amount_label_5,
+.product_amount_label_6,
+.product_amount_label_7,
+.product_amount_label_8,
+.product_amount_label_9,
+.product_amount_label_10 {
   color: white;
 }
 .product_amount_label_1.active,
 .product_amount_label_2.active div,
-.product_amount_label_3.active div {
+.product_amount_label_3.active div,
+.product_amount_label_4.active div,
+.product_amount_label_5.active div,
+.product_amount_label_6.active div,
+.product_amount_label_7.active div,
+.product_amount_label_8.active div,
+.product_amount_label_9.active div,
+.product_amount_label_10.active div {
   background-color: #fdff96;
   color: black;
   opacity: 1;
 }
 
 .product_amount_label_2.active::before,
-.product_amount_label_3.active::before {
+.product_amount_label_3.active::before,
+.product_amount_label_4.active[data-badge-text]::before,
+.product_amount_label_5.active[data-badge-text]::before,
+.product_amount_label_6.active[data-badge-text]::before,
+.product_amount_label_7.active[data-badge-text]::before,
+.product_amount_label_8.active[data-badge-text]::before,
+.product_amount_label_9.active[data-badge-text]::before,
+.product_amount_label_10.active[data-badge-text]::before {
   opacity: 1;
+}
+
+/* Optional badges for bundle options 4–10 (content from data-badge-text) */
+[class^="product_amount_label_"][data-badge-text]::before {
+  content: attr(data-badge-text);
 }
 
 .product_variant_0.active,
@@ -69,13 +95,36 @@ h6 * {
   opacity: 1;
 }
 
+/* Vessel amount options: 2 cols on mobile, 3 cols on desktop */
+.vessel-amount-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: end;
+  row-gap: 1rem;
+  column-gap: 0.62em;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+@media (min-width: 768px) {
+  .vessel-amount-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 #hero-section .badge-container {
   left: -0.5rem;
 }
 
 #select_1_rope[disabled] + svg,
 #select_2_rope[disabled] + svg,
-#select_3_rope[disabled] + svg {
+#select_3_rope[disabled] + svg,
+#select_4_rope[disabled] + svg,
+#select_5_rope[disabled] + svg,
+#select_6_rope[disabled] + svg,
+#select_7_rope[disabled] + svg,
+#select_8_rope[disabled] + svg,
+#select_9_rope[disabled] + svg,
+#select_10_rope[disabled] + svg {
   opacity: 0.5;
 }
 
