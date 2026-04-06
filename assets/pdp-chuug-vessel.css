@@ -111,6 +111,109 @@ h6 * {
   }
 }
 
+.bulk-quantity-box {
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-width: 1px;
+  border-radius: 10px;
+  padding: 30px;
+  background: #0d2026;
+  color: #fff;
+}
+
+.bulk-quantity-title {
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0 0 2rem;
+}
+
+.bulk-quantity-label {
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-weight: 400;
+  margin: 0 0 0.75rem;
+}
+
+.bulk-quantity-select-wrap {
+  position: relative;
+}
+
+.bulk-quantity-select-arrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.bulk-quantity-select {
+  width: 100%;
+  border: 1px solid #fff;
+  border-radius: 1rem;
+  background: #fff;
+  color: #000;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  padding: 1.5rem 5rem 1.5rem 1.4rem;
+  appearance: none;
+}
+
+.bulk-quantity-price-row {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.bulk-quantity-price-label {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.bulk-quantity-prices {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.bulk-quantity-compare-price {
+  font-size: 2rem;
+  font-weight: 700;
+  text-decoration: line-through;
+  opacity: 0.4;
+}
+
+.bulk-quantity-price {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.bulk-quantity-save {
+  background: #A43223;
+  color: #fff;
+  height: 44px;
+  opacity: 1;
+  gap: 10.07px;
+  border-radius: 5px;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 #hero-section .badge-container {
   left: -0.5rem;
 }
@@ -276,5 +379,31 @@ h6 * {
   .wood-type-modal,
   .rope-type-modal {
     width: 365px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bulk-quantity-title {
+    font-size: 1.6rem;
+  }
+
+  .bulk-quantity-select {
+    font-size: 1.8rem;
+  }
+
+  .bulk-quantity-prices {
+    gap: 0.5rem;
+  }
+
+  .bulk-quantity-compare-price {
+    font-size: 1.6rem;
+  }
+
+  .bulk-quantity-price {
+    font-size: 2.4rem;
+  }
+
+  .bulk-quantity-save {
+    margin-left: 0;
   }
 }

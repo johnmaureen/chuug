@@ -252,49 +252,74 @@
                 </div>
               </label>
             </div>
-            {% comment %} 4X–10X: £39/unit (derived from three_chuug_product) {% endcomment %}
-            {% if max_bundle_qty >= 4 %}
-            {% assign three_unit_price = section.settings.three_chuug_product.price | divided_by: 3 %}
-            {% assign three_unit_compare = section.settings.three_chuug_product.compare_at_price | divided_by: 3 %}
-            {% assign three_unit_price_engraving = section.settings.three_chuug_product.variants[1].price | divided_by: 3 %}
-            {% assign three_unit_compare_engraving = section.settings.three_chuug_product.variants[1].compare_at_price | divided_by: 3 %}
+          </div>
+          {% comment %} 4X–10X: dropdown offers (derived from three_chuug_product) {% endcomment %}
+          {% if max_bundle_qty >= 4 %}
+          {% assign three_unit_price = section.settings.three_chuug_product.price | divided_by: 3 %}
+          {% assign three_unit_compare = section.settings.three_chuug_product.compare_at_price | divided_by: 3 %}
+          {% assign three_unit_price_engraving = section.settings.three_chuug_product.variants[1].price | divided_by: 3 %}
+          {% assign three_unit_compare_engraving = section.settings.three_chuug_product.variants[1].compare_at_price | divided_by: 3 %}
+          <div class="bulk-quantity-box">
+            <p class="bulk-quantity-title">Buying in bulk? Save more with 4–10 vessels</p>
+            <p class="bulk-quantity-label">Select Quantity:</p>
+            <div class="bulk-quantity-select-wrap">
+              <select id="bulk-quantity-select" class="bulk-quantity-select" onchange="handleBulkQuantityChange(this.value)">
+                {% for qty in (4..max_bundle_qty) %}
+                  {% assign bundle_price = three_unit_price | times: qty %}
+                  {% assign bundle_compare = three_unit_compare | times: qty %}
+                  {% assign bundle_price_engraving = three_unit_price_engraving | times: qty %}
+                  {% assign bundle_compare_engraving = three_unit_compare_engraving | times: qty %}
+                  {% assign bundle_save = bundle_compare | minus: bundle_price %}
+                  {% assign bundle_save_engraving = bundle_compare_engraving | minus: bundle_price_engraving %}
+                  <option
+                    value="{{ qty }}"
+                    no_engraving_price="{{ bundle_price | money }}"
+                    engraving_price="{{ bundle_price_engraving | money }}"
+                    no_engraving_compare_at_price="{{ bundle_compare | money }}"
+                    engraving_compare_at_price="{{ bundle_compare_engraving | money }}"
+                    no_engraving_save="{{ bundle_save | money }}"
+                    engraving_save="{{ bundle_save_engraving | money }}"
+                  >
+                    {{ qty }}x Vessels
+                  </option>
+                {% endfor %}
+              </select>
+              <img class="bulk-quantity-select-arrow" src="{{ 'icon-dropdown-arrow.svg' | asset_url }}" alt="" aria-hidden="true">
+            </div>
+            <div class="bulk-quantity-price-row">
+              <span class="bulk-quantity-price-label">Price:</span>
+              <div class="bulk-quantity-prices">
+                <span id="bulk-quantity-compare-price" class="bulk-quantity-compare-price"></span>
+                <span id="bulk-quantity-price" class="bulk-quantity-price"></span>
+              </div>
+              <span id="bulk-quantity-save" class="bulk-quantity-save"></span>
+            </div>
+          </div>
+
+          <div class="tw-hidden">
             {% for qty in (4..max_bundle_qty) %}
               {% assign bundle_price = three_unit_price | times: qty %}
               {% assign bundle_compare = three_unit_compare | times: qty %}
               {% assign bundle_price_engraving = three_unit_price_engraving | times: qty %}
               {% assign bundle_compare_engraving = three_unit_compare_engraving | times: qty %}
-              {% assign badge_setting = 'product_label_' | append: qty | append: '_text' %}
-              {% assign badge_content = section.settings[badge_setting] | default: '' | strip %}
-            <div class="tw-w-full">
-              <label
-                onclick="setProductAmount('{{ qty }}')"
-                class="product_amount_label_{{ qty }} tw-cursor-pointer tw-transition-opacity tw-min-h-12 {% if badge_content != '' %}before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase{% endif %}"
-                {% if badge_content != '' %}data-badge-text="{{ badge_content }}"{% endif %}
+              <span
+                class="product_amount_label_{{ qty }}_compare_at_price"
+                no_engraving_compare_at_price="{{ bundle_compare | money }}"
+                engraving_compare_at_price="{{ bundle_compare_engraving | money }}"
               >
-                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase">{{ qty }}X</span>
-                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
-                    <span
-                      class="product_amount_label_{{ qty }}_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
-                      no_engraving_compare_at_price="{{ bundle_compare | money }}"
-                      engraving_compare_at_price="{{ bundle_compare_engraving | money }}"
-                    >
-                      {{ bundle_compare | money }}
-                    </span>
-                    <span
-                      class="product_amount_label_{{ qty }}_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
-                      no_engraving_price="{{ bundle_price | money }}"
-                      engraving_price="{{ bundle_price_engraving | money }}"
-                    >
-                      {{ bundle_price | money }}
-                    </span>
-                  </div>
-                </div>
-              </label>
-            </div>
+                {{ bundle_compare | money }}
+              </span>
+              <span
+                class="product_amount_label_{{ qty }}_price"
+                no_engraving_price="{{ bundle_price | money }}"
+                engraving_price="{{ bundle_price_engraving | money }}"
+              >
+                {{ bundle_price | money }}
+              </span>
+              <span class="product_amount_label_{{ qty }}"></span>
             {% endfor %}
-            {% endif %}
           </div>
+          {% endif %}
         </div>
         <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-white">
           <div class="tw-flex tw-whitespace-nowrap tw-gap-x-[1rem] tw-text-[1.6rem] tw-font-semibold">
@@ -693,6 +718,7 @@
     disableUnavailableMaterials();
     reorderWoodOptions();
     setEngraving('0');
+    updateBulkQuantitySummary();
 
     setTimeout(function () {
       const elements = document.querySelectorAll('.bottom-autoplay-carousel .bss_pl_img');
@@ -931,9 +957,42 @@
   function setProductAmount(productAmount) {
     const cta_product_price = document.querySelector('.cta-product-price');
     changeProductAmount(productAmount, cta_product_price);
+    syncBulkQuantitySelect(productAmount);
     hideInputs(productAmount);
     updateCarouselsImages();
     disableCTAbutton(productAmount);
+  }
+
+  function handleBulkQuantityChange(value) {
+    if (!value) return;
+    setProductAmount(String(value));
+  }
+
+  function syncBulkQuantitySelect(productAmount) {
+    const bulkSelect = document.getElementById('bulk-quantity-select');
+    if (!bulkSelect) return;
+    const amount = parseInt(productAmount, 10);
+    if (amount >= 4 && amount <= 10) {
+      bulkSelect.value = String(amount);
+    }
+  }
+
+  function updateBulkQuantitySummary() {
+    const bulkSelect = document.getElementById('bulk-quantity-select');
+    const compareEl = document.getElementById('bulk-quantity-compare-price');
+    const priceEl = document.getElementById('bulk-quantity-price');
+    const saveEl = document.getElementById('bulk-quantity-save');
+    if (!bulkSelect || !compareEl || !priceEl || !saveEl) return;
+
+    const selectedOption = bulkSelect.options[bulkSelect.selectedIndex];
+    if (!selectedOption) return;
+
+    const variantIndex = parseInt(document.querySelector('.inputs').getAttribute('variant_index'), 10);
+    const engravingType = variantIndex === 0 ? 'no_engraving' : 'engraving';
+
+    compareEl.textContent = selectedOption.getAttribute(engravingType + '_compare_at_price') || '';
+    priceEl.textContent = selectedOption.getAttribute(engravingType + '_price') || '';
+    saveEl.textContent = 'SAVE ' + (selectedOption.getAttribute(engravingType + '_save') || '');
   }
 
   function disableCTAbutton(productAmount) {
@@ -1099,6 +1158,7 @@
         const labelEl = document.querySelector('.product_amount_label_' + amt);
         if (labelEl) labelEl.classList.add('active');
     }
+    updateBulkQuantitySummary();
   }
 
   function removeActiveClass() {
@@ -1299,6 +1359,7 @@
     if (selectedLabel && selectedLabel.price) {
       cta_product_price.innerHTML = selectedLabel.price.innerHTML;
     }
+    updateBulkQuantitySummary();
   }
 </script>
 
