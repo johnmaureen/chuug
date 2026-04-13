@@ -98,7 +98,7 @@ h6 * {
 /* Vessel amount options: 2 cols on mobile, 3 cols on desktop */
 .vessel-amount-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   align-items: end;
   row-gap: 1rem;
   column-gap: 0.62em;
