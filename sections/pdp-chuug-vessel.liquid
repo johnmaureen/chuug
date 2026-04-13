@@ -284,41 +284,68 @@
           {% assign three_unit_compare = section.settings.three_chuug_product.compare_at_price | divided_by: 3 %}
           {% assign three_unit_price_engraving = section.settings.three_chuug_product.variants[1].price | divided_by: 3 %}
           {% assign three_unit_compare_engraving = section.settings.three_chuug_product.variants[1].compare_at_price | divided_by: 3 %}
-          <div class="bulk-quantity-box">
-            <p class="bulk-quantity-title">Buying in bulk? Save more with 4–10 vessels</p>
-            <p class="bulk-quantity-label">Select Quantity:</p>
-            <div class="bulk-quantity-select-wrap">
-              <select id="bulk-quantity-select" class="bulk-quantity-select" onchange="handleBulkQuantityChange(this.value)">
+          <div id="bulk-quantity-box" class="bulk-quantity-box" data-expanded="false" data-has-selection="false">
+            <button
+              type="button"
+              class="bulk-quantity-toggle"
+              aria-expanded="false"
+              aria-controls="bulk-quantity-panel"
+              onclick="toggleBulkQuantityBox()"
+            >
+              <span class="bulk-quantity-title">Buying in bulk? <br> Save more with 4-10 vessels</span>
+              <span class="bulk-quantity-summary">
+                <span id="bulk-quantity-selected-label" class="bulk-quantity-selected-label"></span>
+                <span class="bulk-quantity-price-row">
+                  <span class="bulk-quantity-price-label">Price:</span>
+                  <span id="bulk-quantity-compare-price" class="bulk-quantity-compare-price"></span>
+                  <span id="bulk-quantity-price" class="bulk-quantity-price"></span>
+                  <span id="bulk-quantity-save" class="bulk-quantity-save"></span>
+                </span>
+              </span>
+              <span class="bulk-quantity-toggle-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M6 9.5L12 15.5L18 9.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </button>
+
+            <div id="bulk-quantity-panel" class="bulk-quantity-panel" hidden>
+              <p class="bulk-quantity-label">SELECT QUANTITY:</p>
+              <div class="bulk-quantity-options">
                 {% for qty in (4..max_bundle_qty) %}
-                  {% assign bundle_price = three_unit_price | times: qty %}
-                  {% assign bundle_compare = three_unit_compare | times: qty %}
-                  {% assign bundle_price_engraving = three_unit_price_engraving | times: qty %}
-                  {% assign bundle_compare_engraving = three_unit_compare_engraving | times: qty %}
-                  {% assign bundle_save = bundle_compare | minus: bundle_price %}
-                  {% assign bundle_save_engraving = bundle_compare_engraving | minus: bundle_price_engraving %}
-                  <option
-                    value="{{ qty }}"
-                    no_engraving_price="{{ bundle_price | money }}"
-                    engraving_price="{{ bundle_price_engraving | money }}"
-                    no_engraving_compare_at_price="{{ bundle_compare | money }}"
-                    engraving_compare_at_price="{{ bundle_compare_engraving | money }}"
-                    no_engraving_save="{{ bundle_save | money }}"
-                    engraving_save="{{ bundle_save_engraving | money }}"
+                  <button
+                    type="button"
+                    class="bulk-quantity-option"
+                    data-qty="{{ qty }}"
+                    onclick="handleBulkQuantityOptionClick('{{ qty }}')"
                   >
                     {{ qty }}x Vessels
-                  </option>
+                  </button>
                 {% endfor %}
-              </select>
-              <img class="bulk-quantity-select-arrow" src="{{ 'icon-dropdown-arrow.svg' | asset_url }}" alt="" aria-hidden="true">
-            </div>
-            <div class="bulk-quantity-price-row">
-              <span class="bulk-quantity-price-label">Price:</span>
-              <div class="bulk-quantity-prices">
-                <span id="bulk-quantity-compare-price" class="bulk-quantity-compare-price"></span>
-                <span id="bulk-quantity-price" class="bulk-quantity-price"></span>
               </div>
-              <span id="bulk-quantity-save" class="bulk-quantity-save"></span>
             </div>
+
+            <select id="bulk-quantity-select" class="bulk-quantity-select tw-hidden" onchange="handleBulkQuantityChange(this.value)">
+              {% for qty in (4..max_bundle_qty) %}
+                {% assign bundle_price = three_unit_price | times: qty %}
+                {% assign bundle_compare = three_unit_compare | times: qty %}
+                {% assign bundle_price_engraving = three_unit_price_engraving | times: qty %}
+                {% assign bundle_compare_engraving = three_unit_compare_engraving | times: qty %}
+                {% assign bundle_save = bundle_compare | minus: bundle_price %}
+                {% assign bundle_save_engraving = bundle_compare_engraving | minus: bundle_price_engraving %}
+                <option
+                  value="{{ qty }}"
+                  no_engraving_price="{{ bundle_price | money }}"
+                  engraving_price="{{ bundle_price_engraving | money }}"
+                  no_engraving_compare_at_price="{{ bundle_compare | money }}"
+                  engraving_compare_at_price="{{ bundle_compare_engraving | money }}"
+                  no_engraving_save="{{ bundle_save | money }}"
+                  engraving_save="{{ bundle_save_engraving | money }}"
+                >
+                  {{ qty }}x Vessels
+                </option>
+              {% endfor %}
+            </select>
           </div>
 
           <div class="tw-hidden">
@@ -993,21 +1020,61 @@
     setProductAmount(String(value));
   }
 
-  function syncBulkQuantitySelect(productAmount) {
+  function toggleBulkQuantityBox(forceExpanded) {
+    const box = document.getElementById('bulk-quantity-box');
+    const toggle = box ? box.querySelector('.bulk-quantity-toggle') : null;
+    const panel = document.getElementById('bulk-quantity-panel');
+    if (!box || !toggle || !panel) return;
+
+    const shouldExpand = typeof forceExpanded === 'boolean'
+      ? forceExpanded
+      : box.getAttribute('data-expanded') !== 'true';
+
+    box.setAttribute('data-expanded', shouldExpand ? 'true' : 'false');
+    toggle.setAttribute('aria-expanded', shouldExpand ? 'true' : 'false');
+    panel.hidden = !shouldExpand;
+  }
+
+  function handleBulkQuantityOptionClick(value) {
     const bulkSelect = document.getElementById('bulk-quantity-select');
     if (!bulkSelect) return;
+    bulkSelect.value = String(value);
+    handleBulkQuantityChange(String(value));
+  }
+
+  function syncBulkQuantitySelect(productAmount) {
+    const box = document.getElementById('bulk-quantity-box');
+    const bulkSelect = document.getElementById('bulk-quantity-select');
+    if (!bulkSelect || !box) return;
     const amount = parseInt(productAmount, 10);
     if (amount >= 4 && amount <= 10) {
       bulkSelect.value = String(amount);
+      box.setAttribute('data-has-selection', 'true');
+      toggleBulkQuantityBox(false);
+    } else {
+      box.setAttribute('data-has-selection', 'false');
+      toggleBulkQuantityBox(false);
     }
+    updateBulkQuantityOptionState(amount);
+    updateBulkQuantitySummary();
+  }
+
+  function updateBulkQuantityOptionState(productAmount) {
+    const optionButtons = document.querySelectorAll('.bulk-quantity-option');
+    const selectedQty = String(productAmount);
+    optionButtons.forEach((button) => {
+      const isActive = button.getAttribute('data-qty') === selectedQty;
+      button.classList.toggle('active', isActive);
+    });
   }
 
   function updateBulkQuantitySummary() {
     const bulkSelect = document.getElementById('bulk-quantity-select');
+    const selectedQtyEl = document.getElementById('bulk-quantity-selected-label');
     const compareEl = document.getElementById('bulk-quantity-compare-price');
     const priceEl = document.getElementById('bulk-quantity-price');
     const saveEl = document.getElementById('bulk-quantity-save');
-    if (!bulkSelect || !compareEl || !priceEl || !saveEl) return;
+    if (!bulkSelect || !selectedQtyEl || !compareEl || !priceEl || !saveEl) return;
 
     const selectedOption = bulkSelect.options[bulkSelect.selectedIndex];
     if (!selectedOption) return;
@@ -1027,6 +1094,7 @@
     const priceValue = selectedOption.getAttribute(engravingType + '_price') || '';
     const saveValue = selectedOption.getAttribute(engravingType + '_save') || '';
 
+    selectedQtyEl.textContent = 'SELECTED QTY: ' + selectedOption.textContent.trim();
     compareEl.textContent = getTextContentFromHTML(compareValue);
     priceEl.textContent = getTextContentFromHTML(priceValue);
     saveEl.textContent = 'SAVE ' + getTextContentFromHTML(saveValue);
