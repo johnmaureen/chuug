@@ -177,20 +177,21 @@
             <div class="tw-w-full">
               <label class="tw-cursor-pointer">
                 <div
-                  onclick="setProductAmount('1')" class="product_amount_label_1 tw-h-[7rem] tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+                  onclick="setProductAmount('1')" class="quantity-option-container tw-px-2 product_amount_label_1 tw-flex tw-flex-col tw-gap-y-2 tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+
                 >
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
-                    >1X</span>
-                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5"
+                    >1x</span>
+                  <div class="price-option-container tw-whitespace-nowrap tw-flex tw-items-center">
                     <span
-                      class="product_amount_label_1_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      class="product_amount_label_1_compare_at_price compare-at-price-text tw-opacity-40 tw-line-through tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
                       no_engraving_compare_at_price="{{ section.settings.one_chuug_product.compare_at_price | money }}"
                       engraving_compare_at_price="{{  section.settings.one_chuug_product.variants[1].compare_at_price | money }}"
                     >
                       {{ section.settings.one_chuug_product.variants[0].compare_at_price | money }}
                     </span>
                     <span
-                      class="product_amount_label_1_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      class="product_amount_label_1_price price-text tw-font-bold tw-leading-4"
                       no_engraving_price="{{ section.settings.one_chuug_product.price | money }}"
                       engraving_price="{{ section.settings.one_chuug_product.variants[1].price | money }}"
                     >
@@ -205,24 +206,34 @@
                 onclick="setProductAmount('2')"
                 class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase"
               >
-                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase">2X</span>
-                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                <div class="quantity-option-container tw-px-2 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-flex tw-flex-col tw-gap-y-2 tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5"
+                    >2x</span
+                  >
+                  <div class="price-option-container tw-whitespace-nowrap tw-flex tw-items-center">
                     <span
-                      class="product_amount_label_2_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      class="product_amount_label_2_compare_at_price compare-at-price-text tw-opacity-40 tw-line-through tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
                       no_engraving_compare_at_price="{{ section.settings.two_chuug_product.compare_at_price | money }}"
                       engraving_compare_at_price="{{ section.settings.two_chuug_product.variants[1].compare_at_price | money }}"
                     >
                       {{ section.settings.two_chuug_product.variants[0].compare_at_price | money }}
                     </span>
                     <span
-                      class="product_amount_label_2_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      class="product_amount_label_2_price price-text tw-font-bold tw-leading-4"
                       no_engraving_price="{{ section.settings.two_chuug_product.price | money }}"
                       engraving_price="{{ section.settings.two_chuug_product.variants[1].price | money }}"
                     >
                       {{- section.settings.two_chuug_product.variants[0].price | money -}}
                     </span>
                   </div>
+
+                  {% assign two_chuug_price = section.settings.two_chuug_product.variants[0].price | divided_by: 2 %}
+                  <span class="price__badge">
+                    <span class="price__badge__icon" aria-hidden="true">
+                      {{ 'icon-price-badge.svg' | inline_asset_content }}
+                    </span>
+                    <span class="price__badge__text">Only {{ two_chuug_price | money_without_trailing_zeros }} each!</span>
+                  </span>
                 </div>
               </label>
             </div>
@@ -231,24 +242,38 @@
                 onclick="setProductAmount('3')"
                 class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase"
               >
-                <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase">3X</span>
-                  <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
+                <div class="quantity-option-container tw-px-2 peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-flex tw-flex-col tw-gap-y-2 tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5"
+                    >3x</span
+                  >
+                  <div class="price-option-container tw-whitespace-nowrap tw-flex tw-items-center">
                     <span
-                      class="product_amount_label_3_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
+                      class="product_amount_label_3_compare_at_price compare-at-price-text tw-opacity-40 tw-line-through tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
                       no_engraving_compare_at_price="{{ section.settings.three_chuug_product.compare_at_price | money }}"
                       engraving_compare_at_price="{{ section.settings.three_chuug_product.variants[1].compare_at_price | money }}"
                     >
                       {{ section.settings.three_chuug_product.variants[0].compare_at_price | money }}
                     </span>
+
+                  
                     <span
-                      class="product_amount_label_3_price tw-text-[1.6rem] tw-font-bold tw-leading-4"
+                      class="product_amount_label_3_price price-text tw-font-bold tw-leading-4"
                       no_engraving_price="{{ section.settings.three_chuug_product.price | money }}"
                       engraving_price="{{ section.settings.three_chuug_product.variants[1].price | money }}"
                     >
                       {{- section.settings.three_chuug_product.variants[0].price | money -}}
                     </span>
+                    
                   </div>
+
+                  <span class="price__badge">
+                    <span class="price__badge__icon" aria-hidden="true">
+                      {{ 'icon-price-badge.svg' | inline_asset_content }}
+                    </span>
+
+                    {% assign three_chuug_discount = section.settings.three_chuug_product.variants[0].compare_at_price | minus: section.settings.three_chuug_product.variants[0].price %}
+                    <span class="price__badge__text">EXTRA {{ three_chuug_discount | money_without_trailing_zeros }} OFF!</span>
+                  </span>
                 </div>
               </label>
             </div>
@@ -990,9 +1015,21 @@
     const variantIndex = parseInt(document.querySelector('.inputs').getAttribute('variant_index'), 10);
     const engravingType = variantIndex === 0 ? 'no_engraving' : 'engraving';
 
-    compareEl.textContent = selectedOption.getAttribute(engravingType + '_compare_at_price') || '';
-    priceEl.textContent = selectedOption.getAttribute(engravingType + '_price') || '';
-    saveEl.textContent = 'SAVE ' + (selectedOption.getAttribute(engravingType + '_save') || '');
+    const getTextContentFromHTML = (htmlString) => {
+      if (!htmlString) return '';
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlString;
+      const dualPriceElement = tempDiv.querySelector('.dualPrice');
+      return dualPriceElement && dualPriceElement.textContent ? dualPriceElement.textContent : tempDiv.textContent;
+    };
+
+    const compareValue = selectedOption.getAttribute(engravingType + '_compare_at_price') || '';
+    const priceValue = selectedOption.getAttribute(engravingType + '_price') || '';
+    const saveValue = selectedOption.getAttribute(engravingType + '_save') || '';
+
+    compareEl.textContent = getTextContentFromHTML(compareValue);
+    priceEl.textContent = getTextContentFromHTML(priceValue);
+    saveEl.textContent = 'SAVE ' + getTextContentFromHTML(saveValue);
   }
 
   function disableCTAbutton(productAmount) {
@@ -1645,48 +1682,6 @@
       "id": "third_product_label_text",
       "label": "Third product label text",
       "default": "Best value"
-    },
-    {
-      "type": "text",
-      "id": "product_label_4_text",
-      "label": "Bundle 4X badge (e.g. Save X%, Best Value)",
-      "default": "Best Value"
-    },
-    {
-      "type": "text",
-      "id": "product_label_5_text",
-      "label": "Bundle 5X badge",
-      "default": "Best Value"
-    },
-    {
-      "type": "text",
-      "id": "product_label_6_text",
-      "label": "Bundle 6X badge",
-      "default": "Best Value"
-    },
-    {
-      "type": "text",
-      "id": "product_label_7_text",
-      "label": "Bundle 7X badge",
-      "default": "Best Value"
-    },
-    {
-      "type": "text",
-      "id": "product_label_8_text",
-      "label": "Bundle 8X badge",
-      "default": "Best Value"
-    },
-    {
-      "type": "text",
-      "id": "product_label_9_text",
-      "label": "Bundle 9X badge",
-      "default": "Best Value"
-    },
-    {
-      "type": "text",
-      "id": "product_label_10_text",
-      "label": "Bundle 10X badge",
-      "default": "Best Value"
     }
   ],
   "blocks": [

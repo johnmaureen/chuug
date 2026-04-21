@@ -111,6 +111,56 @@ h6 * {
   }
 }
 
+.vessel-amount-grid .price-text {
+  font-size: 28px;
+}
+
+.vessel-amount-grid .compare-at-price-text {
+  font-size: 20px;
+}
+
+.vessel-amount-grid .price-option-container {
+  gap: 0.5rem;
+}
+
+.vessel-amount-grid .quantity-option-container {
+  min-height: 11.2rem;
+}
+
+.price__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  margin-top: 0.1em;
+  padding: 0.42em 1.1em 0.38em;
+  border-radius: 999px;
+  border: 2px solid #a3412d;
+  background-color: #ffffff61;
+  color: #a3412d;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-sizing: border-box;
+}
+
+.price__badge__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.price__badge__icon svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.price__badge__text {
+  white-space: nowrap;
+}
+
 .bulk-quantity-box {
   margin-top: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.8);
