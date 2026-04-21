@@ -26,6 +26,10 @@
 {% assign midnight_charcoal = all_products[section.settings.midnight_charcoal] %}
 {% assign midnight_natural = all_products[section.settings.midnight_natural] %}
 
+{% assign dusk_manual_oos = section.settings.wood_finish_dusk_out_of_stock %}
+{% assign dawn_manual_oos = section.settings.wood_finish_dawn_out_of_stock %}
+{% assign midnight_manual_oos = section.settings.wood_finish_midnight_out_of_stock %}
+
 <script>
   window.pdp_chuug_vessel = {
     src: [
@@ -44,6 +48,10 @@
   const dawnNaturalAvailable = {{ dawn_natural.available | json }};
   const midnightCharcoalAvailable = {{ midnight_charcoal.available | json }};
   const midnightNaturalAvailable = {{ midnight_natural.available | json }};
+
+  const duskManualOutOfStock = {{ dusk_manual_oos | json }};
+  const dawnManualOutOfStock = {{ dawn_manual_oos | json }};
+  const midnightManualOutOfStock = {{ midnight_manual_oos | json }};
 </script>
 
 <section
@@ -57,30 +65,40 @@
           class="swiper pdp-chuug-vessel-main-swiper tw-w-[35.5rem] tw-h-[37.5rem] md:tw-w-[52rem] md:tw-h-[52rem]"
         >
           <div class="swiper-wrapper">
-            {% for block in section.blocks %}
-              {%- case block.type -%}
-                {%- when 'main_carousel_image' -%}
-                  <div class="swiper-slide tw-cursor-pointer tw-rounded-2xl">
-                    <img
-                      src="{{ block.settings.carousel_image | image_url}}"
-                      class="{%- if forloop.first -%}main_carousel_first_image{% endif %} tw-w-full tw-h-full tw-rounded-2xl"
-                      alt="{{ section.settings.hero_image_alt }}"
-                      width="100%"
-                      height="100%"
-                    >
-                  </div>
-              {%- endcase -%}
-            {% endfor %}
+{% for block in section.blocks %}
+  {%- case block.type -%}
+    {%- when 'main_carousel_image' -%}
+      <div class="swiper-slide tw-cursor-pointer tw-rounded-2xl">
+        {% if forloop.first %}
+          <img
+            src="{{ block.settings.carousel_image | image_url }}"
+            class="main_carousel_first_image tw-w-full tw-h-full tw-rounded-2xl"
+            alt="{{ section.settings.hero_image_alt }}"
+            width="100%"
+            height="100%"
+          >
+        {% else %}
+          <img
+            data-src="{{ block.settings.carousel_image | image_url }}"
+            class="lazyload tw-w-full tw-h-full tw-rounded-2xl"
+            alt="{{ section.settings.hero_image_alt }}"
+            width="100%"
+            height="100%"
+          >
+        {% endif %}
+      </div>
+  {%- endcase -%}
+{% endfor %}
           </div>
         </div>
         <div class="badge-container tw-z-50 tw-absolute tw-top-[-1.5rem] tw-left-[-2.5rem] tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]">
           <div class="tw-relative md:!tw-flex md:tw-justify-center md:tw-items-center">
             <img
-              src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/badge.png?v=1729107293"
+              data-src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/badge.png?v=1729107293"
               alt="Badge"
               width="100%"
               height="100%"
-              class="tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]"
+              class="lazyload tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]"
             >
             <p class="tw-absolute tw-text-center tw-text-black tw-top-[0.7rem] tw-leading-[1.8rem] tw-font-bold tw-text-[1.4rem] md:tw-mt-[0.8rem] md:tw-w-[6rem] ">
               UP TO <span class="discount">{{ section.settings.discount_number }}%</span> OFF
@@ -96,8 +114,8 @@
               {%- when 'main_carousel_image' -%}
                 <div class="swiper-slide tw-cursor-pointer tw-rounded">
                   <img
-                    src="{{ block.settings.carousel_image | image_url }}"
-                    class="{%- if forloop.first -%}thumbnails_carousel_first_image{% endif %} tw-cursor-pointer tw-w-[5rem] tw-h-[5rem] tw-rounded md:tw-w-[7rem] md:tw-h-[7rem]"
+                    data-src="{{ block.settings.carousel_image | image_url }}"
+                    class="{%- if forloop.first -%}thumbnails_carousel_first_image{% endif %} lazyload  tw-cursor-pointer tw-w-[5rem] tw-h-[5rem] tw-rounded md:tw-w-[7rem] md:tw-h-[7rem]"
                     alt="{{ block.settings.image_alt }}"
                     width="100%"
                     height="100%"
@@ -120,8 +138,8 @@
           target="_blank"
         >
           <img
-            class="tw-w-[18rem] tw-h-[3rem] tw-object-contain md:tw-w-[24rem]"
-            src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/pdp-chuug-vessel-trustpilot.png?v=1729625666"
+            class="lazyload tw-w-[18rem] tw-h-[3rem] tw-object-contain md:tw-w-[24rem]"
+            data-src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/pdp-chuug-vessel-trustpilot.png?v=1729625666"
             alt="Review logo"
             width="113"
             height="29"
@@ -154,16 +172,11 @@
 
           <div class="tw-flex tw-flex-wrap tw-items-end tw-gap-y-[1rem] tw-gap-x-[0.62em] tw-px-2 md:tw-flex-nowrap">
             <div class="tw-w-full">
-              <label
-                class="tw-cursor-pointer"
-              >
+              <label class="tw-cursor-pointer">
                 <div
                   onclick="setProductAmount('1')" class="product_amount_label_1 tw-h-[7rem] tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
-
                 >
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
-                    >1X</span
-                  >
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase">1X</span>
                   <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
                     <span
                       class="product_amount_label_1_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
@@ -186,12 +199,11 @@
             <div class="tw-w-full">
               <label
                 onclick="setProductAmount('2')"
-                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;
+                class="product_amount_label_2 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Most_Popular'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase"
+                style="opacity: 0.85;"
               >
                 <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
-                    >2X</span
-                  >
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase">2X</span>
                   <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
                     <span
                       class="product_amount_label_2_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
@@ -214,12 +226,11 @@
             <div class="tw-w-full">
               <label
                 onclick="setProductAmount('3')"
-                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase before:style="opacity: 0.85;"
+                class="product_amount_label_3 tw-cursor-pointer tw-transition-opacity before:tw-bottom-0 before:tw-bg-[#ECC78C] before:tw-text-black before:tw-rounded-ss-lg before:tw-rounded-se-lg before:tw-text-xs before:tw-font-bold before:tw-tracking-[0.075em] before:tw-w-fit before:tw-inline-block before:tw-mx-[50%] before:-tw-translate-x-1/2 before:tw-text-center before:tw-text-nowrap before:tw-content-['Best_value'] before:tw-top-0 before:tw-px-2 before:tw-py-1 before:tw-uppercase"
+                style="opacity: 0.85;"
               >
                 <div class="peer-checked:tw-bg-chuug-pastel-yellow peer-checked:tw-text-black peer-checked:tw-opacity-100 tw-min-h-12 tw-flex tw-flex-col tw-gap-y-[1.2rem] tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;">
-                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase"
-                    >3X</span
-                  >
+                  <span class="tw-text-center tw-text-[2rem] tw-leading-[1] tw-font-bold tw-tracking-[0.0625em] tw-leading-5 tw-uppercase">3X</span>
                   <div class="tw-whitespace-nowrap tw-flex tw-items-center tw-gap-x-[1rem]">
                     <span
                       class="product_amount_label_3_compare_at_price tw-opacity-40 tw-line-through tw-text-[1.6rem] tw-font-bold tw-leading-4 tw-tracking-tighter tw-flex tw-gap-x-[1rem]"
@@ -249,11 +260,10 @@
 
           <div class="tw-flex tw-items-center tw-gap-x-[0.62em] tw-px-2">
             <div class="tw-w-full">
-              <label
-                class="tw-cursor-pointer"
-              >
+              <label class="tw-cursor-pointer">
                 <div
-                  class="product_variant_0 active tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+                  class="product_variant_0 active tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity"
+                  style="opacity: 0.85;"
                   onclick="setEngraving(0);"
                 >
                   <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">NO</span>
@@ -261,11 +271,10 @@
               </label>
             </div>
             <div class="tw-w-full">
-              <label
-                class="tw-cursor-pointer"
-              >
+              <label class="tw-cursor-pointer">
                 <div
-                  class="product_variant_1 tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none  tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity" style="opacity: 0.85;"
+                  class="product_variant_1 tw-h-[5rem] tw-flex tw-items-center tw-justify-center tw-select-none tw-rounded-[0.84613em] tw-border tw-border-white tw-bg-chuug-rackley tw-py-[0.62em] tw-w-full tw-transition-opacity"
+                  style="opacity: 0.85;"
                   onclick="setEngraving(1);"
                 >
                   <span class="tw-text-center tw-text-base tw-leading-4 tw-tracking-tighter tw-font-bold">YES</span>
@@ -289,7 +298,6 @@
           {% for i in (1..3) %}
             <div
               class="tw-flex tw-flex-col tw-gap-y-1 vessel_number_{{ forloop.index }}"
-
               {% if forloop.index == 3 %}
                 style="display: none;"
               {% endif %}
@@ -301,7 +309,7 @@
                   variant_id=""
                   variant_monogram_initials_id=""
                   variant_index="0"
-                  product_amount="3"
+                  product_amount="1"
                   monogram_initials=""
                 >
                   <div
@@ -314,28 +322,75 @@
                     </div>
 
                     <div class="wood-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
-                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer">
-                        <input type="radio" name="wood_material" value="DUSK" class="tw-hidden js-option">
-                        <span class="wood-type-name tw-uppercase">DUSK</span>
+                      <label
+                        class="wood-type-label tw-flex tw-items-center tw-justify-between tw-gap-x-3 tw-px-4 tw-py-2 {% if dusk_manual_oos %}is-disabled tw-opacity-50 tw-cursor-not-allowed tw-bg-gray-100{% else %}tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow{% endif %}"
+                        data-material="dusk"
+                      >
+                        <div class="tw-flex tw-items-center tw-gap-x-3">
+                          <input
+                            type="radio"
+                            name="wood_material_{{ forloop.index }}"
+                            value="DUSK"
+                            class="tw-hidden js-option"
+                            {% if dusk_manual_oos %}disabled{% endif %}
+                          >
+                          <span class="wood-type-name tw-uppercase">DUSK</span>
+                          <span class="out-of-stock-badge tw-hidden tw-text-[11px] tw-font-bold tw-uppercase tw-text-red-600">Out of Stock</span>
+                        </div>
                         {% if section.settings.wood_finish_dusk_wood != blank %}
-                          <img src="{{ section.settings.wood_finish_dusk_wood | image_url }}" width="180" height="48">
+                          <img
+                            class="lazyload wood-option-image {% if dusk_manual_oos %}tw-grayscale tw-opacity-60{% endif %}"
+                            data-src="{{ section.settings.wood_finish_dusk_wood | image_url }}"
+                            width="180"
+                            height="48"
+                          >
                         {% endif %}
                       </label>
 
-                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
-                        <input type="radio" name="wood_material" value="DAWN" class="tw-hidden js-option">
-                        <span class="wood-type-name tw-uppercase">DAWN</span>
+                      <label
+                        class="wood-type-label tw-flex tw-items-center tw-justify-between tw-gap-x-3 tw-px-4 tw-py-2 {% if dawn_manual_oos %}is-disabled tw-opacity-50 tw-cursor-not-allowed tw-bg-gray-100{% else %}tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow{% endif %}"
+                        data-material="dawn"
+                      >
+                        <div class="tw-flex tw-items-center tw-gap-x-3">
+                          <input
+                            type="radio"
+                            name="wood_material_{{ forloop.index }}"
+                            value="DAWN"
+                            class="tw-hidden js-option"
+                            {% if dawn_manual_oos %}disabled{% endif %}
+                          >
+                          <span class="wood-type-name tw-uppercase">DAWN</span>
+                          <span class="out-of-stock-badge tw-hidden tw-text-[11px] tw-font-bold tw-uppercase tw-text-red-600">Out of Stock</span>
+                        </div>
                         {% if section.settings.wood_finish_dawn_wood != blank %}
-                          <img src="{{ section.settings.wood_finish_dawn_wood | image_url }}" width="180" height="48">
+                          <img
+                            class="lazyload wood-option-image {% if dawn_manual_oos %}tw-grayscale tw-opacity-60{% endif %}"
+                            data-src="{{ section.settings.wood_finish_dawn_wood | image_url }}"
+                            width="180"
+                            height="48"
+                          >
                         {% endif %}
                       </label>
 
-                      <label class="wood-type-label tw-flex tw-items-center tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
-                        <input type="radio" name="wood_material" value="MIDNIGHT" class="tw-hidden js-option">
-                        <span class="wood-type-name tw-uppercase">MIDNIGHT</span>
+                      <label
+                        class="wood-type-label tw-flex tw-items-center tw-justify-between tw-gap-x-3 tw-px-4 tw-py-2 {% if midnight_manual_oos %}is-disabled tw-opacity-50 tw-cursor-not-allowed tw-bg-gray-100{% else %}tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow{% endif %}"
+                        data-material="midnight"
+                      >
+                        <div class="tw-flex tw-items-center tw-gap-x-3">
+                          <input
+                            type="radio"
+                            name="wood_material_{{ forloop.index }}"
+                            value="MIDNIGHT"
+                            class="tw-hidden js-option"
+                            {% if midnight_manual_oos %}disabled{% endif %}
+                          >
+                          <span class="wood-type-name tw-uppercase">MIDNIGHT</span>
+                          <span class="out-of-stock-badge tw-hidden tw-text-[11px] tw-font-bold tw-uppercase tw-text-red-600">Out of Stock</span>
+                        </div>
                         {% if section.settings.wood_finish_midnight_wood != blank %}
                           <img
-                            src="{{ section.settings.wood_finish_midnight_wood | image_url }}"
+                            class="lazyload wood-option-image {% if midnight_manual_oos %}tw-grayscale tw-opacity-60{% endif %}"
+                            data-src="{{ section.settings.wood_finish_midnight_wood | image_url }}"
                             width="180"
                             height="48"
                           >
@@ -355,19 +410,23 @@
                     </div>
 
                     <div class="rope-type-modal tw-absolute tw-w-full tw-bg-white tw-border tw-border-white tw-rounded-2xl tw-hidden tw-z-10 js-dropdown">
-                      <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2">
-                        <input type="radio" name="rope_material" value="CHARCOAL" class="tw-hidden js-option">
-                        <span class="rope-type-name tw-uppercase">CHARCOAL</span>
+                      <label class="rope-type-label tw-flex tw-items-center tw-justify-between tw-gap-x-3 tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
+                        <div class="tw-flex tw-items-center tw-gap-x-3">
+                          <input type="radio" name="rope_material_{{ forloop.index }}" value="CHARCOAL" class="tw-hidden js-option">
+                          <span class="rope-type-name tw-uppercase">CHARCOAL</span>
+                        </div>
                         {% if section.settings.charcoal_rope != blank %}
-                          <img src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
+                          <img class="lazyload rope-option-image" data-src="{{ section.settings.charcoal_rope | image_url }}" width="180" height="48">
                         {% endif %}
                       </label>
 
-                      <label class="rope-type-label tw-flex tw-items-center tw-px-4 tw-py-2 hover:tw-bg-chuug-pastel-yellow">
-                        <input type="radio" name="rope_material" value="NATURAL" class="tw-hidden js-option">
-                        <span class="rope-type-name tw-uppercase">NATURAL</span>
+                      <label class="rope-type-label tw-flex tw-items-center tw-justify-between tw-gap-x-3 tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-chuug-pastel-yellow">
+                        <div class="tw-flex tw-items-center tw-gap-x-3">
+                          <input type="radio" name="rope_material_{{ forloop.index }}" value="NATURAL" class="tw-hidden js-option">
+                          <span class="rope-type-name tw-uppercase">NATURAL</span>
+                        </div>
                         {% if section.settings.natural_rope != blank %}
-                          <img src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
+                          <img class="lazyload rope-option-image" data-src="{{ section.settings.natural_rope | image_url }}" width="180" height="48">
                         {% endif %}
                       </label>
                     </div>
@@ -377,16 +436,27 @@
                 <input
                   class="monogram_initials tw-hidden tw-w-full tw-h-[4.8rem] tw-text-center input tw-uppercase tw-bg-chuug-rackley tw-mx-auto tw-rounded-2xl tw-px-4 tw-py-2 tw-border tw-border-white tw-appearance-none tw-placeholder-white hover:tw-cursor-pointer focus:tw-outline-none focus:tw-ring-0 active:tw-outline-none active:tw-ring-0 md:tw-w-1/3 lg:!tw-w-[15.5rem] xl:!tw-w-[18.5rem]"
                   type="text"
-                  maxlength="3"
-                  placeholder="ENTER Initials"
-                  name="properties[Monogram Initials]"
+                  maxlength="1"
+                  placeholder="ENTER Initial"
+                  name="properties[PERSONALISED INITIAL]"
                   disabled
-                >
+                  autocapitalize="characters"
+                />
               </div>
             </div>
           {% endfor %}
         </div>
         <div class="tw-flex tw-flex-col">
+
+{% if cart.currency.iso_code == "USD" %}
+  <div class="tw-flex tw-justify-center tw-mt-[0.5rem]">
+    <div class="duties-box" role="status" aria-label="Duties and Taxes Paid">
+      <span class="duties-box__dot"></span>
+      <span>Duties and Taxes Paid</span>
+    </div>
+  </div>
+{% endif %}
+
           <button
             id="add-multiple-products"
             onclick="handleATCbutton()"
@@ -396,9 +466,7 @@
             class="product-form__submit tw-whitespace-nowrap tw-flex tw-justify-center tw-items-center tw-gap-x-[0.8rem] cta-button tw-mt-[2rem] tw-uppercase tw-text-white tw-text-[2rem] tw-font-bold tw-w-full tw-bg-no-repeat tw-h-[7rem] tw-rounded-[1.25em] lg:tw-mt-[4rem]"
           >
             {{ section.settings.button_text }} |
-            <div
-              class="cta-product-price tw-whitespace-nowrap"
-            ></div>
+            <div class="cta-product-price tw-whitespace-nowrap"></div>
           </button>
           <p class="incompleted-inputs-text">All fields must be filled out before adding products to the cart.</p>
 
@@ -433,8 +501,8 @@
               {%- when 'bottom_carousel_image' -%}
                 <div class="swiper-slide tw-py-[1.5rem] tw-h-full tw-flex tw-items-center">
                   <img
-                    src="{{ block.settings.bottom_carousel_image | image_url}}"
-                    class="tw-w-full tw-h-full tw-object-contain"
+                    data-src="{{ block.settings.bottom_carousel_image | image_url}}"
+                    class="lazyload tw-w-full tw-h-full tw-object-contain"
                     alt="{{ section.settings.botttom_image_alt }}"
                     width="100%"
                     height="100%"
@@ -506,12 +574,10 @@
     summary {
       list-style-type: none;
       font-size: 16px;
-      /* Firefox */
     }
 
     summary::-webkit-details-marker {
       display: none;
-      /* Chrome */
     }
   }
 
@@ -529,6 +595,49 @@
   .product_amount_label_3::before {
     content: "{{ section.settings.third_product_label_text }}";
   }
+
+  .wood-type-label.is-disabled,
+  .rope-type-label.is-disabled {
+    pointer-events: none;
+  }
+
+  .wood-type-label.is-disabled .out-of-stock-badge,
+  .rope-type-label.is-disabled .out-of-stock-badge {
+    display: inline-block !important;
+  }
+</style>
+
+<style>
+  .duties-box{
+    display:inline-flex;align-items:center;justify-content:center;
+    background-color:#e6f4ea;
+    color:#137333;
+    font-size:.9rem;font-weight:600;
+    padding:.4em .8em;border-radius:.5em;
+    border:1px solid #c3e6cb;max-width:100%;
+    box-sizing:border-box;gap:.5em
+  }
+  .duties-box__dot{
+    width:.45em;height:.45em;border-radius:9999px;background:#137333;flex:0 0 auto
+  }
+</style>
+
+<style>
+  .duties-box{
+    font-size: 1.05rem;
+    padding: .55em 1em;
+    border-radius: .6em;
+    font-weight: 700;
+  }
+  .duties-box__dot{
+    width: .6em;
+    height: .6em;
+  }
+
+  @media (min-width: 1024px){
+    .duties-box{ font-size: 1.15rem; padding: .6em 1.1em; }
+    .duties-box__dot{ width: .65em; height: .65em; }
+  }
 </style>
 
 <script>
@@ -539,16 +648,25 @@
     const options = container.querySelectorAll('.js-option');
 
     trigger.addEventListener('click', () => {
-      if (trigger.parentElement.hasAttribute('disabled')) return;
+      if (container.hasAttribute('disabled')) return;
       dropdown.classList.toggle('tw-hidden');
       trigger.classList.toggle('active');
     });
 
     options.forEach((option) => {
       option.addEventListener('click', () => {
-        if (option.hasAttribute('disabled')) return;
+        if (option.disabled) return;
         const label = option.closest('label');
-        const nameSpan = label.querySelector('span');
+        const nameSpan = label.querySelector('.wood-type-name, .rope-type-name');
+        selectedText.textContent = nameSpan.textContent;
+        dropdown.classList.add('tw-hidden');
+        trigger.classList.remove('active');
+      });
+
+      option.addEventListener('change', () => {
+        if (option.disabled) return;
+        const label = option.closest('label');
+        const nameSpan = label.querySelector('.wood-type-name, .rope-type-name');
         selectedText.textContent = nameSpan.textContent;
         dropdown.classList.add('tw-hidden');
         trigger.classList.remove('active');
@@ -570,6 +688,7 @@
     addEventListenerToMonogramInitialsInput();
     setProductAmount('2');
     disableUnavailableMaterials();
+    reorderWoodOptions();
     setEngraving('0');
 
     setTimeout(function () {
@@ -580,105 +699,237 @@
     }, 1000);
   });
 
-  function disableUnavailableMaterials() {
-    const options = [];
-  
-    for (let i = 1; i <= 3; i++) {
-      const materialType = document.getElementById(`select_${i}_material`);
-  
-      if (materialType) {
-        const option = {
-          dusk: materialType.querySelector(`input[value="DUSK"]`),
-          dawn: materialType.querySelector(`input[value="DAWN"]`),
-          midnight: materialType.querySelector(`input[value="MIDNIGHT"]`)
-        };
-        options.push(option);
+  function getWoodAvailabilityMap() {
+    return {
+      dusk: {
+        enabled: !duskManualOutOfStock && (duskCharcoalAvailable || duskNaturalAvailable),
+        charcoal: !duskManualOutOfStock && duskCharcoalAvailable,
+        natural: !duskManualOutOfStock && duskNaturalAvailable
+      },
+      dawn: {
+        enabled: !dawnManualOutOfStock && (dawnCharcoalAvailable || dawnNaturalAvailable),
+        charcoal: !dawnManualOutOfStock && dawnCharcoalAvailable,
+        natural: !dawnManualOutOfStock && dawnNaturalAvailable
+      },
+      midnight: {
+        enabled: !midnightManualOutOfStock && (midnightCharcoalAvailable || midnightNaturalAvailable),
+        charcoal: !midnightManualOutOfStock && midnightCharcoalAvailable,
+        natural: !midnightManualOutOfStock && midnightNaturalAvailable
       }
-    }
-  
-    const availability = {
-      dusk: { charcoal: duskCharcoalAvailable, natural: duskNaturalAvailable },
-      dawn: { charcoal: dawnCharcoalAvailable, natural: dawnNaturalAvailable },
-      midnight: { charcoal: midnightCharcoalAvailable, natural: midnightNaturalAvailable }
     };
-  
-    options.forEach(optionGroup => {
-      Object.entries(availability).forEach(([key, materials]) => {
-        const option = optionGroup[key];
-        if (option && (!materials.charcoal && !materials.natural)) {
-          option.disabled = true;
-          option.closest("label").classList.add("tw-opacity-50", "tw-pointer-events-none"); 
+  }
+
+  function markOptionDisabled(label, input) {
+    if (!label || !input) return;
+    input.disabled = true;
+    input.checked = false;
+    label.classList.add('is-disabled', 'tw-opacity-50', 'tw-cursor-not-allowed', 'tw-bg-gray-100');
+    label.classList.remove('tw-cursor-pointer', 'hover:tw-bg-chuug-pastel-yellow');
+    const badge = label.querySelector('.out-of-stock-badge');
+    if (badge) badge.classList.remove('tw-hidden');
+    const img = label.querySelector('img');
+    if (img) img.classList.add('tw-grayscale', 'tw-opacity-60');
+  }
+
+  function markOptionEnabled(label, input) {
+    if (!label || !input) return;
+    input.disabled = false;
+    label.classList.remove('is-disabled', 'tw-opacity-50', 'tw-cursor-not-allowed', 'tw-bg-gray-100', 'tw-grayscale', 'tw-opacity-60');
+    label.classList.add('tw-cursor-pointer', 'hover:tw-bg-chuug-pastel-yellow');
+    const badge = label.querySelector('.out-of-stock-badge');
+    if (badge) badge.classList.add('tw-hidden');
+    const img = label.querySelector('img');
+    if (img) img.classList.remove('tw-grayscale', 'tw-opacity-60');
+  }
+
+  function reorderWoodOptions() {
+    for (let i = 1; i <= 3; i++) {
+      const materialContainer = document.getElementById(`select_${i}_material`);
+      const dropdown = materialContainer?.querySelector('.js-dropdown');
+
+      if (!dropdown) continue;
+
+      const labels = Array.from(dropdown.querySelectorAll('.wood-type-label'));
+
+      labels.sort((a, b) => {
+        const aDisabled = a.classList.contains('is-disabled') ? 1 : 0;
+        const bDisabled = b.classList.contains('is-disabled') ? 1 : 0;
+        return aDisabled - bDisabled;
+      });
+
+      labels.forEach(label => dropdown.appendChild(label));
+    }
+  }
+
+  function resetRopeDropdown(ropeSelect) {
+    if (!ropeSelect) return;
+
+    ropeSelect.setAttribute('disabled', 'disabled');
+
+    const selectedText = ropeSelect.querySelector('.js-selected-option');
+    if (selectedText) selectedText.textContent = 'ROPE TYPE';
+
+    ropeSelect.querySelectorAll('input[type="radio"]').forEach((input) => {
+      input.checked = false;
+    });
+
+    ropeSelect.querySelectorAll('.rope-type-label').forEach((label) => {
+      label.classList.remove('is-disabled', 'tw-opacity-50', 'tw-cursor-not-allowed', 'tw-bg-gray-100');
+      label.classList.add('tw-cursor-pointer');
+      const badge = label.querySelector('.out-of-stock-badge');
+      if (badge) badge.classList.add('tw-hidden');
+      const img = label.querySelector('img');
+      if (img) img.classList.remove('tw-grayscale', 'tw-opacity-60');
+    });
+  }
+
+  function disableUnavailableMaterials() {
+    const availability = getWoodAvailabilityMap();
+
+    for (let i = 1; i <= 3; i++) {
+      const materialContainer = document.getElementById(`select_${i}_material`);
+      if (!materialContainer) continue;
+
+      ['dusk', 'dawn', 'midnight'].forEach((materialKey) => {
+        const input = materialContainer.querySelector(`input[value="${materialKey.toUpperCase()}"]`);
+        const label = input ? input.closest('label') : null;
+
+        if (!input || !label) return;
+
+        if (!availability[materialKey].enabled) {
+          markOptionDisabled(label, input);
+        } else {
+          markOptionEnabled(label, input);
         }
       });
-    });
-  }  
+    }
+  }
 
   function addEventListenerToMaterialAndRopeInputs() {
     for (let i = 1; i <= 3; i++) {
       const materialInputs = document.querySelectorAll(`#select_${i}_material input[type="radio"]`);
-      const ropeSelect = document.getElementById(`select_${i}_rope`);
-  
+      const ropeInputs = document.querySelectorAll(`#select_${i}_rope input[type="radio"]`);
+
       materialInputs.forEach(input => {
-        input.addEventListener("change", (event) => {
+        input.addEventListener('change', (event) => {
+          if (event.target.disabled) return;
           updateAvailableRopes(event.target);
+          disableCTAbutton(document.querySelector('.inputs').getAttribute('product_amount'));
         });
       });
-  
-      if (ropeSelect) {
-        ropeSelect.addEventListener("change", (event) => {
+
+      ropeInputs.forEach(input => {
+        input.addEventListener('change', (event) => {
+          if (event.target.disabled) return;
           updateSelectedProduct(event.target);
+          disableCTAbutton(document.querySelector('.inputs').getAttribute('product_amount'));
         });
-      }
+      });
     }
   }
-  
+
   function updateAvailableRopes(selectedMaterial) {
-    const materialContainer = selectedMaterial.closest(".js-dropdown-container.material");
+    const materialContainer = selectedMaterial.closest('.js-dropdown-container.material');
     const ropeSelect = materialContainer?.nextElementSibling;
 
     if (!ropeSelect) return;
-  
-    populateAvailableRopes(ropeSelect, selectedMaterial.value);
-  
-    if (ropeSelect.hasAttribute("disabled")) {
-      ropeSelect.removeAttribute("disabled");
+
+    populateAvailableRopes(ropeSelect, selectedMaterial.value.toLowerCase());
+
+    if (ropeSelect.hasAttribute('disabled')) {
+      ropeSelect.removeAttribute('disabled');
     }
   }
-  
+
   function populateAvailableRopes(ropeSelect, materialValue) {
-    const optionCharcoal = ropeSelect.querySelector(`option[value="charcoal"]`);
-    const optionNatural = ropeSelect.querySelector(`option[value="natural"]`);
-  
-    [optionCharcoal, optionNatural].forEach(option => option?.setAttribute("disabled", "true"));
-  
-    const availability = {
-      dusk: { charcoal: false, natural: false },
-      dawn: { charcoal: dawnCharcoalAvailable, natural: dawnNaturalAvailable },
-      midnight: { charcoal: midnightCharcoalAvailable, natural: midnightNaturalAvailable }
-    };
-  
-    const currentAvailability = availability[materialValue];
-  
-    if (currentAvailability) {
+    const availabilityMap = getWoodAvailabilityMap();
+    const currentAvailability = availabilityMap[materialValue];
+
+    resetRopeDropdown(ropeSelect);
+
+    if (!currentAvailability || !currentAvailability.enabled) {
+      return;
+    }
+
+    ropeSelect.removeAttribute('disabled');
+
+    const charcoalInput = ropeSelect.querySelector(`input[value="CHARCOAL"]`);
+    const naturalInput = ropeSelect.querySelector(`input[value="NATURAL"]`);
+    const charcoalLabel = charcoalInput ? charcoalInput.closest('label') : null;
+    const naturalLabel = naturalInput ? naturalInput.closest('label') : null;
+
+    if (charcoalInput && charcoalLabel) {
       if (currentAvailability.charcoal) {
-        optionCharcoal?.removeAttribute("disabled");
-      }
-      if (currentAvailability.natural) {
-        optionNatural?.removeAttribute("disabled");
+        markOptionEnabled(charcoalLabel, charcoalInput);
+      } else {
+        markOptionDisabled(charcoalLabel, charcoalInput);
       }
     }
-  }  
+
+    if (naturalInput && naturalLabel) {
+      if (currentAvailability.natural) {
+        markOptionEnabled(naturalLabel, naturalInput);
+      } else {
+        markOptionDisabled(naturalLabel, naturalInput);
+      }
+    }
+
+    const selectedText = ropeSelect.querySelector('.js-selected-option');
+    if (selectedText) selectedText.textContent = 'ROPE TYPE';
+  }
 
   function addEventListenerToMonogramInitialsInput() {
-    const monogram_initials = document.querySelectorAll('.monogram_initials');
-    for (let i = 0; i < monogram_initials.length && i < 3; i++) {
-      monogram_initials[i].addEventListener('change', updateMonogramInitials);
-    }
+    const fields = document.querySelectorAll('.monogram_initials');
+
+    const enforceUppercaseLettersOnly = (el) => {
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const clean = el.value.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 1);
+
+      if (el.value !== clean) {
+        el.value = clean;
+        try { el.setSelectionRange(start, end); } catch (e) {}
+      }
+    };
+
+    fields.forEach((field, i) => {
+      if (i >= 3) return;
+
+      field.addEventListener('input', () => {
+        enforceUppercaseLettersOnly(field);
+        updateMonogramInitials();
+      });
+
+      field.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+        const insert = text.replace(/[^A-Za-z]/g, '').toUpperCase();
+
+        const start = field.selectionStart;
+        const end = field.selectionEnd;
+        const before = field.value.slice(0, start);
+        const after = field.value.slice(end);
+
+        const max = field.maxLength && field.maxLength > 0 ? field.maxLength : Infinity;
+        const spaceLeft = Math.max(0, max - before.length - after.length);
+        const clipped = insert.slice(0, spaceLeft);
+
+        field.value = before + clipped + after;
+        const caret = before.length + clipped.length;
+        try { field.setSelectionRange(caret, caret); } catch (err) {}
+
+        updateMonogramInitials();
+      });
+
+      field.addEventListener('blur', () => {
+        enforceUppercaseLettersOnly(field);
+        updateMonogramInitials();
+      });
+    });
   }
 
   function setProductAmount(productAmount) {
     const cta_product_price = document.querySelector('.cta-product-price');
- 
     changeProductAmount(productAmount, cta_product_price);
     hideInputs(productAmount);
     updateCarouselsImages();
@@ -692,24 +943,22 @@
     if (!thereAreNoIncompleteInputs(productAmount)) {
       cta_button.setAttribute('disabled', true);
       if (incompleted_inputs_text && incompleted_inputs_text.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.remove('tw-hidden');
+        incompleted_inputs_text.classList.remove('tw-hidden');
       }
     } else {
       cta_button.removeAttribute('disabled');
       if (incompleted_inputs_text && !incompleted_inputs_text.classList.contains('tw-hidden')) {
-          incompleted_inputs_text.classList.add('tw-hidden');
+        incompleted_inputs_text.classList.add('tw-hidden');
       }
     }
   }
 
-
-
   function setEngraving(index) {
     const inputs = document.querySelectorAll('.inputs');
     const currentVariantIndex = parseInt(inputs[0].getAttribute('variant_index'), 10);
-  
+
     if (parseInt(index, 10) === currentVariantIndex) return;
-  
+
     inputs.forEach(input => {
       input.setAttribute('variant_index', index);
 
@@ -717,10 +966,10 @@
         input.setAttribute('monogram_initials', '');
       }
     });
-  
+
     const variant0 = document.querySelector('.product_variant_0');
     const variant1 = document.querySelector('.product_variant_1');
-  
+
     if (index === 0) {
       variant0.classList.add('active');
       variant1.classList.remove('active');
@@ -728,41 +977,40 @@
       variant0.classList.remove('active');
       variant1.classList.add('active');
     }
-  
+
     toggleClass('monogram_initials', 'tw-hidden', true);
     updateCarouselsImages();
     updatePrices(index);
   }
 
   function handleATCbutton() {
-  const inputs = document.querySelectorAll('.inputs');
-  const variant_index = inputs[0].getAttribute('variant_index');
-  const product_amount = parseInt(inputs[0].getAttribute('product_amount'), 10);
+    const inputs = document.querySelectorAll('.inputs');
+    const product_amount = parseInt(inputs[0].getAttribute('product_amount'), 10);
 
-  const variant_ids = Array.from(inputs).map((input) => ({
-    variant_id: input.getAttribute('variant_id'),
-    variant_monogram_initials_id: input.getAttribute('variant_monogram_initials_id')
-  }));
-  const monogram_initials = Array.from(inputs).map((input) => input.getAttribute('monogram_initials'));
+    const variant_ids = Array.from(inputs).map((input) => ({
+      variant_id: input.getAttribute('variant_id'),
+      variant_monogram_initials_id: input.getAttribute('variant_monogram_initials_id')
+    }));
+    const monogram_initials = Array.from(inputs).map((input) => input.getAttribute('monogram_initials'));
 
-  const products = [];
+    const products = [];
 
-  for (let i = 0; i < product_amount; i++) {
-    const initials = monogram_initials[i] && monogram_initials[i].trim() !== '' ? monogram_initials[i].trim() : 'NONE';
+    for (let i = 0; i < product_amount; i++) {
+      const initials = monogram_initials[i] && monogram_initials[i].trim() !== '' ? monogram_initials[i].trim().slice(0, 1) : 'NONE';
 
-    const product = {
-      id: initials === 'NONE' ? variant_ids[i].variant_id : variant_ids[i].variant_monogram_initials_id,
-      quantity: 1,
-      properties: {
-        "Monogram Initials": initials
-      }
-    };
+      const product = {
+        id: initials === 'NONE' ? variant_ids[i].variant_id : variant_ids[i].variant_monogram_initials_id,
+        quantity: 1,
+        properties: {
+          "PERSONALISED INITIAL": initials
+        }
+      };
 
-    products.push(product);
+      products.push(product);
+    }
+
+    addProductsToCart(products);
   }
-
-  addProductsToCart(products);
-}
 
   function addProductsToCart(products){
     fetch('/cart/add.js', {
@@ -774,7 +1022,7 @@
         if (!response.ok) throw new Error('Error adding products');
         return response.json();
       })
-      .then((data) => {
+      .then(() => {
         window.location.href = '/cart';
       })
       .catch((error) => {
@@ -782,7 +1030,6 @@
         alert('There was a problem adding products to the cart.');
       });
   }
-
 
   function handleToggleHeroSwiperState(elm) {
     if (bottom_autoplay_carousel.autoplay.running) {
@@ -819,31 +1066,31 @@
   function changeProductAmount(productAmount, cta_product_price) {
     removeActiveClass();
     const variant_index = parseInt(document.querySelector('.inputs').getAttribute('variant_index'), 10);
-    
+
     const one_product_no_engraving_price = "{{ section.settings.one_chuug_product.price | money }}";
     const one_product_engraving_price = "{{ section.settings.one_chuug_product.variants[1].price | money }}";
-  
+
     const two_products_no_engraving_price = "{{ section.settings.two_chuug_product.price | money }}";
     const two_products_engraving_price = "{{ section.settings.two_chuug_product.variants[1].price | money }}";
-  
+
     const three_products_no_engraving_price = "{{ section.settings.three_chuug_product.price | money }}";
     const three_products_engraving_price = "{{ section.settings.three_chuug_product.variants[1].price | money }}";
-  
+
     if (productAmount === '1') {
-        cta_product_price.innerHTML = variant_index === 0 ? one_product_no_engraving_price : one_product_engraving_price;
-        changeProductAmountInputValue('1');
-        document.querySelector('.product_amount_label_1').classList.add('active');
+      cta_product_price.innerHTML = variant_index === 0 ? one_product_no_engraving_price : one_product_engraving_price;
+      changeProductAmountInputValue('1');
+      document.querySelector('.product_amount_label_1').classList.add('active');
     } else if (productAmount === '2') {
-        cta_product_price.innerHTML = variant_index === 0 ? two_products_no_engraving_price : two_products_engraving_price;
-        changeProductAmountInputValue('2');
-        document.querySelector('.product_amount_label_2').classList.add('active');
+      cta_product_price.innerHTML = variant_index === 0 ? two_products_no_engraving_price : two_products_engraving_price;
+      changeProductAmountInputValue('2');
+      document.querySelector('.product_amount_label_2').classList.add('active');
     } else if (productAmount === '3') {
-        cta_product_price.innerHTML = variant_index === 0 ? three_products_no_engraving_price : three_products_engraving_price;
-        changeProductAmountInputValue('3');
-        document.querySelector('.product_amount_label_3').classList.add('active');
+      cta_product_price.innerHTML = variant_index === 0 ? three_products_no_engraving_price : three_products_engraving_price;
+      changeProductAmountInputValue('3');
+      document.querySelector('.product_amount_label_3').classList.add('active');
     }
   }
-  
+
   function removeActiveClass() {
     document.querySelector('.product_amount_label_1').classList.remove('active');
     document.querySelector('.product_amount_label_2').classList.remove('active');
@@ -854,35 +1101,33 @@
     const inputs = document.querySelectorAll('.inputs');
     inputs.forEach(input => input.setAttribute('product_amount', product_amount));
   }
-  
-  function updateSelectedProduct(elementId) {
+
+  function updateSelectedProduct(element) {
     const inputs = document.querySelectorAll('.inputs');
     const productAmount = parseInt(inputs[0].getAttribute('product_amount'), 10);
     const selectedValues = addSelectedValues(productAmount);
     const cta_button = document.querySelector('.cta-button');
     const incompleted_inputs_text = document.querySelector('.incompleted-inputs-text');
-  
-    const updateInputAttributes = (input, selectedProduct) => {
-      if (selectedProduct) {
-        input.setAttribute('variant_id', selectedProduct.variants[0].id);
-        input.setAttribute('variant_monogram_initials_id', selectedProduct.variants[1].id);
-      }
-    };
-    
-    const monogram_initials = elementId.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
 
-    if (monogram_initials?.hasAttribute('disabled')) {
-      monogram_initials.removeAttribute('disabled');
+    const ropeContainer = element.closest('.js-dropdown-container.rope');
+    const inputWrapper = ropeContainer ? ropeContainer.closest('.inputs') : null;
+    const monogram_input = inputWrapper ? inputWrapper.parentElement.querySelector('.monogram_initials') : null;
+
+    if (monogram_input?.hasAttribute('disabled')) {
+      monogram_input.removeAttribute('disabled');
     }
 
     inputs.forEach((input, index) => {
       if (index < productAmount) {
         const selectedProduct = getSelectedProduct(selectedValues[index]);
-        updateInputAttributes(input, selectedProduct);
+        if (selectedProduct && selectedProduct.variants) {
+          input.setAttribute('variant_id', selectedProduct.variants[0].id);
+          input.setAttribute('variant_monogram_initials_id', selectedProduct.variants[1].id);
+        }
       }
     });
 
-    if (thereAreNoIncompleteInputs(productAmount)){
+    if (thereAreNoIncompleteInputs(productAmount)) {
       if (cta_button?.hasAttribute('disabled')) {
         cta_button.removeAttribute('disabled');
         if (!incompleted_inputs_text?.classList.contains('tw-hidden')) {
@@ -890,34 +1135,34 @@
         }
       }
     }
-  }  
+  }
 
   function thereAreNoIncompleteInputs(productAmount) {
     const inputs = document.querySelectorAll('.inputs');
     for (let i = 0; i < productAmount; i++) {
       const input = inputs[i];
-      const materialText = input.querySelector('.wood-type')?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
-      const ropeText = input.querySelector('.rope-type')?.textContent.trim().toLowerCase().replace(/\s+/g, '-');      
+      const materialText = input.querySelector('.wood-type .js-selected-option')?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+      const ropeText = input.querySelector('.rope-type .js-selected-option')?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
 
-      if (materialText === 'wood-finish' || ropeText === 'rope-type' ) {
+      if (materialText === 'wood-finish' || ropeText === 'rope-type') {
         return false;
       }
     }
     return true;
-  }  
-  
+  }
+
   function addSelectedValues(productAmount){
     let selectedValues = [];
     for (let i = 1; i <= parseInt(productAmount); i++) {
       const materialContainer = document.getElementById(`select_${i}_material`);
       const ropeContainer = document.getElementById(`select_${i}_rope`);
-      
-      const materialSelect = materialContainer?.querySelector('.wood-type span');
-      const ropeSelect = ropeContainer?.querySelector('.rope-type span');
-      
+
+      const materialSelect = materialContainer?.querySelector('.wood-type .js-selected-option');
+      const ropeSelect = ropeContainer?.querySelector('.rope-type .js-selected-option');
+
       const materialText = materialSelect?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
       const ropeText = ropeSelect?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
-      
+
       if (materialText && ropeText) {
         selectedValues.push([materialText, ropeText]);
       }
@@ -931,7 +1176,7 @@
       vessel.style.display = i <= parseInt(productAmount) ? 'flex' : 'none';
     }
   }
-  
+
   function updateMonogramInitials() {
     const inputs = document.querySelectorAll('.inputs');
     const monogram_initials = document.querySelectorAll('.monogram_initials');
@@ -953,30 +1198,30 @@
 
   function getSelectedProduct(selectedValues) {
     let selected_product;
-  
+
     for (let i = 0; i < possible_product_values.length; i++) {
-      if (selectedValues[0] !== "" && selectedValues[1] !== "") {
+      if (selectedValues && selectedValues[0] !== "" && selectedValues[1] !== "") {
         if (
           possible_product_values[i][0] === selectedValues[0] &&
           possible_product_values[i][1] === selectedValues[1]
         ) {
-          if(i == '0'){
+          if (i == '0') {
             return {{ dusk_charcoal | json }};
-            }else if(i == '1'){
-              return {{ dusk_natural | json }};
-            }else if(i == '2'){
-              return {{ dawn_charcoal | json }};
-            }else if(i == '3'){
-              return {{ dawn_natural | json }};
-            }else if(i == '4'){
-              return {{ midnight_charcoal | json }};
-            }else if(i == '5'){
-              selected_product = {{ midnight_natural | json }};
-              if(selected_product.error) return null
-              return selected_product;
-            }else if(i == '6'){
-              return undefined;
-            }
+          } else if (i == '1') {
+            return {{ dusk_natural | json }};
+          } else if (i == '2') {
+            return {{ dawn_charcoal | json }};
+          } else if (i == '3') {
+            return {{ dawn_natural | json }};
+          } else if (i == '4') {
+            return {{ midnight_charcoal | json }};
+          } else if (i == '5') {
+            selected_product = {{ midnight_natural | json }};
+            if (selected_product.error) return null;
+            return selected_product;
+          } else if (i == '6') {
+            return undefined;
+          }
         }
       }
     }
@@ -989,7 +1234,7 @@
     const product_amount = parseInt(input.getAttribute('product_amount'), 10);
     const images_src = window.pdp_chuug_vessel.src;
     let image_index;
-  
+
     if (product_amount === 1) {
       image_index = variant_index === 0 ? 1 : 0;
     } else if (product_amount === 2) {
@@ -997,8 +1242,8 @@
     } else if (product_amount === 3) {
       image_index = variant_index === 0 ? 5 : 4;
     }
-  
-    if(images_src[image_index]){
+
+    if (images_src[image_index]) {
       document.querySelector('.main_carousel_first_image').src = images_src[image_index];
       document.querySelector('.thumbnails_carousel_first_image').src = images_src[image_index];
     }
@@ -1007,7 +1252,7 @@
   function updatePrices(index) {
     const cta_product_price = document.querySelector('.cta-product-price');
     const product_amount = parseInt(document.querySelector('.inputs').getAttribute('product_amount'), 10);
-  
+
     const labels = [
       {
         compare: document.querySelector('.product_amount_label_1_compare_at_price'),
@@ -1022,11 +1267,11 @@
         price: document.querySelector('.product_amount_label_3_price')
       }
     ];
-  
+
     function getTextContentFromHTML(htmlString) {
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = htmlString;
-      
+
       const dualPriceElement = tempDiv.querySelector('.dualPrice');
       if (dualPriceElement && dualPriceElement.textContent) {
         return dualPriceElement.textContent;
@@ -1034,15 +1279,15 @@
         return htmlString;
       }
     }
-  
+
     function updateLabelPrices(label, engravingType) {
       label.compare.innerHTML = getTextContentFromHTML(label.compare.getAttribute(`${engravingType}_compare_at_price`));
       label.price.innerHTML = getTextContentFromHTML(label.price.getAttribute(`${engravingType}_price`));
     }
-  
+
     const engravingType = index === 0 ? 'no_engraving' : 'engraving';
     labels.forEach(label => updateLabelPrices(label, engravingType));
-  
+
     const selectedLabel = product_amount === 1 ? labels[0] : product_amount === 2 ? labels[1] : labels[2];
     cta_product_price.innerHTML = selectedLabel.price.innerHTML;
   }
@@ -1051,7 +1296,7 @@
 <script>
   var bottom_autoplay_carousel;
 
-  document.addEventListener('DOMContentLoaded', (event) => {
+  document.addEventListener('DOMContentLoaded', () => {
     const thumbs_swiper = new Swiper('.thumbsSlider', {
       slidesPerView: 5.5,
       freeMode: true,
@@ -1094,6 +1339,22 @@
         },
       },
     });
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    fetch("https://ipapi.co/json/")
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.country_code === "US") {
+          const badge = document.getElementById("duties-badge");
+          if (badge) badge.style.display = "flex";
+        }
+      })
+      .catch(err => {
+        console.error("Geo lookup failed:", err);
+      });
   });
 </script>
 
@@ -1230,6 +1491,24 @@
       "label": "Wood finish dusk wood image"
     },
     {
+      "type": "checkbox",
+      "id": "wood_finish_dusk_out_of_stock",
+      "label": "Mark DUSK as out of stock",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "wood_finish_dawn_out_of_stock",
+      "label": "Mark DAWN as out of stock",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "wood_finish_midnight_out_of_stock",
+      "label": "Mark MIDNIGHT as out of stock",
+      "default": false
+    },
+    {
       "type": "image_picker",
       "id": "charcoal_rope",
       "label": "Charcoal rope image"
@@ -1275,7 +1554,7 @@
       "label": "Midnight Natural",
       "info": "This is the product from which we will retrieve the information."
     },
-      {
+    {
       "type": "text",
       "id": "second_product_label_text",
       "label": "Second product label text",

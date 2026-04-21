@@ -1,0 +1,40 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "context": {
+    "market": "canada"
+  },
+  "parent": "product.chuug-vessel.json",
+  "sections": {
+    "pdp_chuug_vessel_8y8pAk": {
+      "settings": {
+        "product_title": "The Chuug V3 (24oz/660ml)",
+        "one_chuug_product": "the-dusk-charcoal-chuug®-v3-660ml-with-gift-bag",
+        "two_chuug_product": "can-set-of-2-chuug®-v3-660ml-with-gift-bags",
+        "three_chuug_product": "can-set-of-3-chuug®-v3-660ml-with-gift-bags",
+        "dusk_charcoal": "the-dusk-charcoal-chuug®-v3-660ml-with-gift-bag",
+        "dusk_natural": "the-dusk-natural-chuug®-v3-660ml-with-gift-bag",
+        "dawn_charcoal": "the-dawn-charcoal-chuug®-v3-660ml-with-gift-bag",
+        "dawn_natural": "the-dawn-natural-chuug®-v3-660ml-with-gift-bag",
+        "midnight_charcoal": "the-midnight-charcoal-chuug®-v3-660ml-with-gift-bag",
+        "midnight_natural": "the-midnight-natural-chuug®-v3-660ml-with-gift-bag",
+        "second_product_label_text": "Only $74 each!",
+        "third_product_label_text": "Extra $78 Off!"
+      },
+      "blocks": {
+        "accordion_pzWYme": {
+          "settings": {
+            "accordion_text": "<ol><li><strong>Capacity:</strong> 24oz (enough for a pint or 2 of your favourite 12oz cans)</li><li><strong>Materials: </strong>Premium acacia wood exterior with food grade stainless steel interior.  The handle is made from synthetic hemp meaning it’s water resistant and anti-bacterial.</li><li><strong>Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</li></ol>"
+          }
+        }
+      }
+    }
+  }
+}

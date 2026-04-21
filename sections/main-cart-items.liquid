@@ -1,27 +1,30 @@
 <!-- Add this HTML at the beginning of your cart.liquid file or inside the cart page -->
-<div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #dfdfd9; display: flex; justify-content: center; align-items: center; z-index: 9999; display: none;">
+<div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.3); display: flex; justify-content: center; align-items: center; z-index: 9999; display: none;">
   <div style="text-align: center;">
     <!-- Replace 'loading.gif' with the path to your GIF in the Shopify Assets folder -->
-    <img src="{{ 'loading.gif' | asset_url }}" alt="Loading" style="width: 100px; height: auto;">
-    <h3 style="margin-top: 10px; font-size: 20px; font-weight: bold; color: #122025;">Checking Availability...</h3>
+    <img src="{{ 'loading.gif' | asset_url }}" alt="Loading" style="width: 50px; height: auto; margin:0 auto;">
   </div>
 </div>
 
 <!-- JavaScript to show loading screen if user comes from Add to Cart -->
 <script>
+  document.querySelector('body').style.overflow = 'hidden';
+  document.getElementById('loading-screen').style.display = 'flex';
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      document.querySelector('body').style.overflow = '';
+      document.getElementById('loading-screen').style.display = 'none';
+    }, 1000);
+  });
+
   document.addEventListener('DOMContentLoaded', function() {
-    // Check if the user just added an item to the cart
     if (sessionStorage.getItem('itemAddedToCart') === 'true') {
-      // Show the loading screen
-      document.getElementById('loading-screen').style.display = 'flex';
-      
-      // After 4 seconds, hide the loading screen and clear the sessionStorage flag
       setTimeout(function() {
-        document.getElementById('loading-screen').style.display = 'none';
         sessionStorage.removeItem('itemAddedToCart');
       }, 4000);
     }
   });
+
 </script>
 
 <!-- Rest of your cart.liquid page content goes here -->

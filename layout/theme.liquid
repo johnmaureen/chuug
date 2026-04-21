@@ -1,3 +1,28 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+
+  <head>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {% render 'meta-tags' %}
+    <link rel="preload" href="{{ 'base.css' | asset_url }}" as="style">
+    <link rel="preload" href="{{ 'application.css' | asset_url }}" as="style">
+    <link rel="preload" href="https://cdn.shopify.com/extensions/019cea50-277d-741f-a775-4d055fbb7456/product-label-590/assets/bss-pl-style.min.css" as="style">
+    <link rel="preload" href="https://cdn.shopify.com/extensions/3bbd6335-7e47-4a1e-a8b2-20dc39027ab1/video-loop-hero-15/assets/np-video-loop.css" as="style">
+    <link rel="preload" href="https://cdn.shopify.com/extensions/21278b5d-8962-4657-bb2f-ae69795e84c7/covet-instagram-feed-reviews-10/assets/covet-pics-app-block.css" as="style">
+    <link rel="preload" as="style" media="screen" href="https://chuug.com/cdn/shopifycloud/portable-wallets/latest/accelerated-checkout-backwards-compat.css" crossorigin="anonymous">
+    <link rel="preload" href="https://cdn.intelligems.io/esm/6e8f75bc535a/bundle.js" as="script">
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -53,11 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-{% include 'shogun-content-handler' %}
-{% capture bsscommerce_login_require_template %}{% include 'bsscommerce_login_require' %}{% endcapture %}{% unless bsscommerce_login_require_template contains "Liquid error" %}{{ bsscommerce_login_require_template }}{% endunless %}<!doctype html>
-<html class="no-js" lang="{{ request.locale.iso_code }}">
 
-  <script type="text/javascript">
+    <script type="text/lazyload">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
@@ -65,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })(window, document, "clarity", "script", "ncxwve3mkx");
 </script>
 
-  <head>
+
     <meta name="google-site-verification" content="i1ONLj-5MY4jTAM_uyh3Y-C7_ORYBVkiDmWKlmUfLK0" />
     {% render 'opts' %}
     <script>
@@ -88,14 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
   <script type="module" blocking="render" fetchpriority="high" src="https://cdn.intelligems.io/esm/6e8f75bc535a/bundle.js" async></script>
 
-    
-<script>
-var head = document.head;
-var script = document.createElement('script');
-script.type = 'text/javascript';
-script.src = "https://t.chuug.com/v1/lst/universal-script?ph=c68d29bc4514588797b0d14f78ebea781dbea6e12602d20b382f9f9b2ba1b63a&tag=!clicked&origin=SHOPIFY&ref_url=" + encodeURI(document.URL) ;
-head.appendChild(script);
-</script>
     <script
       async
       data-environment="production"
@@ -112,19 +126,10 @@ head.appendChild(script);
   <!-- End Google Tag Manager -->  
 
 <!-- TrustBox script -->
-<script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+<script type="text/javascript" data-src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"></script>
 <!-- End TrustBox script -->
     
-{{ 'tiny.content.min.css' | asset_url | stylesheet_tag }}
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
-
-    {%- if settings.favicon != blank -%}
-      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
-    {%- endif -%}
 
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
@@ -138,14 +143,8 @@ head.appendChild(script);
     </title>
 
     <!-- begin Convert Experiences code-->
-      <script type="text/javascript" src="//cdn-4.convertexperiments.com/v1/js/10007840-10007748.js?environment=production"></script>
+      <script type="text/javascript" data-src="//cdn-4.convertexperiments.com/v1/js/10007840-10007748.js?environment=production"></script>
     <!-- end Convert Experiences code -->
-
-    {% if page_description %}
-      <meta name="description" content="{{ page_description | escape }}">
-    {% endif %}
-
-    {% render 'meta-tags' %}
 
     <script src="{{ 'constants.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'pubsub.js' | asset_url }}" defer="defer"></script>
@@ -385,18 +384,32 @@ head.appendChild(script);
       }
     </script>
   
-  {% include "trackify_x" %}
 
-<script type="text/javascript">
+
+<script type="text/lazyload">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "l4pnvju86i");
 </script>
-  
+<script type="text/lazyload">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "trxdn9gdri");
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-16693967632"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-16693967632');
+</script>
 
-  {% render 'shogun-head' %}
+
     
   {{ 'application.css' | asset_url | stylesheet_tag }}    
 {% include 'hulk_po_vd' %}</head>
@@ -496,8 +509,7 @@ head.appendChild(script);
     {% sections 'header-group' %}
 
     <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
-      {{ content_for_layout }}
-    {% capture bsscommerce_passcode_to_see_price_product_custom %}{% render 'bss-passcode-to-see-price-js.liquid' %}{% endcapture %}{% unless bsscommerce_passcode_to_see_price_product_custom contains "Liquid error" %}{% render 'bss-passcode-to-see-price-js.liquid' %}{% endunless %}{% capture bsscommerce_login_to_see_price_product_custom %}{% render 'bsscommerce-login-to-see-price-custom-js.liquid' %}{% endcapture %}{% unless bsscommerce_login_to_see_price_product_custom contains "Liquid error" %}{% render 'bsscommerce-login-to-see-price-custom-js.liquid' %}{% endunless %}{% capture bss_ltap_fl_redirect %}{% render 'bss-ltap-fl-redirect.liquid' %}{% endcapture %}{% unless bss_ltap_fl_redirect contains "Liquid error" %}{% render 'bss-ltap-fl-redirect.liquid' %}{% endunless %}</main>
+     {% capture layout %} {{ content_for_layout }} {% endcapture %} {{ layout | replace: "<img","<img loading='lazy' " }}
 
     {% sections 'footer-group' %}
 
@@ -550,6 +562,8 @@ head.appendChild(script);
     {%- if settings.predictive_search_enabled -%}
       <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
+    <link rel="preload" href="{{ 'splide.min.js' | asset_url }}" as="script"><script src="{{ 'splide.min.js' | asset_url }}"></script>
+
   <!-- WPD Start -->
     {% if customer.tags.size > 0 and template != 'cart' %}
     <script>
@@ -713,7 +727,7 @@ head.appendChild(script);
     <script type="text/javascript">
   var _learnq = _learnq || [];
 
-  _learnq.push(['account', TujLdz]);
+  _learnq.push(['account', 'TujLdz']);
 
   (function () {
   var b = document.createElement('script'); b.type = 'text/javascript'; b.async = true;

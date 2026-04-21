@@ -21,11 +21,11 @@
             {% if block.settings.block_image != blank %}
               <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
                 <img
-                  src="{{ block.settings.block_image | image_url }}"
+                  data-src="{{ block.settings.block_image | image_url }}"
                   alt="Chuug Vessel"
                   width="80"
                   height="80"
-                  class="tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain"
+                  class="lazyload tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain"
                 >
                 <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
                   {{ block.settings.block_title }}
@@ -41,20 +41,20 @@
         {% if section.settings.main_image != blank %}
           <div class="tw-relative tw-h-fit tw-w-fit ">
             <img
-              src="{{ section.settings.main_image | image_url }}"
+              data-src="{{ section.settings.main_image | image_url }}"
               alt="Chuug Vessel"
               width="100%"
               height="100%"
-              class="main-image tw-w-[28rem] tw-h-[27rem] md:tw-w-full md:tw-h-full"
+              class="lazyload main-image tw-w-[28rem] tw-h-[27rem] md:tw-w-full md:tw-h-full"
             >
             <div class="badge-container tw-absolute tw-top-0 tw-right-0 tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]">
               <div class="tw-relative md:!tw-flex md:tw-justify-center md:tw-items-center">
                 <img
-                  src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/badge.png?v=1729107293"
+                  data-src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/badge.png?v=1729107293"
                   alt="Badge"
                   width="100%"
                   height="100%"
-                  class="tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]"
+                  class="lazyload tw-w-[6rem] tw-h-[6rem] md:tw-w-[8rem] md:tw-h-[8rem]"
                 >
                 <p class="tw-absolute tw-text-center tw-text-black tw-top-[0.7rem] tw-leading-[1.8rem] tw-font-bold tw-text-[1.4rem] md:tw-mt-[0.8rem] md:tw-w-[6rem] ">
                   UP TO <span class="discount">{{ section.settings.discount_number }}%</span> OFF
@@ -70,11 +70,11 @@
             {% if block.settings.block_image != blank %}
               <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
                 <img
-                  src="{{ block.settings.block_image | image_url }}"
+                  data-src="{{ block.settings.block_image | image_url }}"
                   alt="Chuug Vessel"
                   width="80"
                   height="80"
-                  class="tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
+                  class="lazyload tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
                 >
                 <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
                   {{ block.settings.block_title }}
@@ -88,11 +88,11 @@
             {% if block.settings.block_image != blank %}
               <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
                 <img
-                  src="{{ block.settings.block_image | image_url }}"
+                  data-src="{{ block.settings.block_image | image_url }}"
                   alt="Chuug Vessel"
                   width="80"
                   height="80"
-                  class="tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
+                  class="lazyload tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
                 >
                 <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
                   {{ block.settings.block_title }}
@@ -106,11 +106,11 @@
             {% if block.settings.block_image != blank %}
               <div class="tw-hidden tw-w-full tw-max-w-[31rem] tw-mx-auto md:tw-block">
                 <img
-                  src="{{ block.settings.block_image | image_url }}"
+                  data-src="{{ block.settings.block_image | image_url }}"
                   alt="Chuug Vessel"
                   width="80"
                   height="80"
-                  class="tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
+                  class="lazyload tw-hidden tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain md:tw-block"
                 >
                 <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
                   {{ block.settings.block_title }}
@@ -129,11 +129,11 @@
         {% for block in section.blocks %}
           <div class="swiper-slide">
             <img
-              src="{{ block.settings.block_image | image_url }}"
+              data-src="{{ block.settings.block_image | image_url }}"
               alt="Chuug Vessel"
               width="80"
               height="80"
-              class="tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain"
+              class="lazyload tw-h-[8rem] tw-w-[8rem] tw-mx-auto tw-object-contain"
             >
             <h2 class="tw-text-white tw-text-center tw-font-bold tw-text-[2.8rem] tw-leading-[1.1] tw-mt-[2rem]">
               {{ block.settings.block_title }}

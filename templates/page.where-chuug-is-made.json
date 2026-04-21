@@ -1,0 +1,324 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 76
+      }
+    },
+    "image_banner_7TgQRd": {
+      "type": "image-banner",
+      "blocks": {
+        "heading_n3B3nX": {
+          "type": "heading",
+          "disabled": true,
+          "settings": {
+            "heading": "Image banner",
+            "heading_size": "h1"
+          }
+        },
+        "text_RAPMgP": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "Give customers details about the banner image(s) or content on the template.",
+            "text_style": "body"
+          }
+        },
+        "buttons_kGzbgf": {
+          "type": "buttons",
+          "disabled": true,
+          "settings": {
+            "button_label_1": "Button label",
+            "button_link_1": "",
+            "button_style_secondary_1": false,
+            "button_label_2": "Button label",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_n3B3nX",
+        "text_RAPMgP",
+        "buttons_kGzbgf"
+      ],
+      "name": "t:sections.image-banner.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/hero-1.jpg",
+        "image_overlay_opacity": 0,
+        "image_height": "medium",
+        "desktop_content_position": "middle-center",
+        "show_text_box": true,
+        "desktop_content_alignment": "center",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "stack_images_on_mobile": true,
+        "show_text_below": true
+      }
+    },
+    "rich_text_XDFGbQ": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_BcLN3E": {
+          "type": "heading",
+          "settings": {
+            "heading": "Where CHUUG Is Made",
+            "heading_size": "h1"
+          }
+        },
+        "text_eipjBh": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": ""
+          }
+        },
+        "button_ckXqP6": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_BcLN3E",
+        "text_eipjBh",
+        "button_ckXqP6"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "inverse",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "multirow_VYAkwk": {
+      "type": "multirow",
+      "blocks": {
+        "row_pj9chm": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/19-1.jpg",
+            "caption": "Crafted by expert hands",
+            "heading": "",
+            "text": "<p>When we set out to build CHUUG, we looked for the right place in the world to make it.</p><p>The tankard combines <strong>solid hardwood, stainless steel and rope </strong>- which means it requires real craftsmanship across multiple materials.</p><p>That search led us to <strong>Moradabad, India</strong>.</p><p>Moradabad has been making metal goods for the world for centuries. But what really makes it special is something else: a deep network of skilled craftspeople working across <strong>wood, metal and finishing</strong>.</p><p>In other words - a city built for making things properly.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_aAnkKF": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/13-1.jpg",
+            "caption": "Wood: The Soul of CHUUG",
+            "heading": "",
+            "text": "<p>While stainless steel forms the inner cup, <strong>wood is the heart of a CHUUG</strong>.</p><p>Each tankard begins as solid blocks of hardwood which is shaped on a lathe by skilled hands.</p><p>Northern India has access to beautiful hardwoods used around the world in furniture and homeware - woods like <strong>Sheesham, Acacia and Mango wood</strong>.</p><p>Turning these blocks into perfectly balanced vessels takes patience, experience and a good eye for the grain.</p><p>And because wood is a natural material, every CHUUG ends up with its <strong>own unique character</strong>.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_LjprnQ": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/5-1.jpg",
+            "caption": "Stainless Steel Precision",
+            "heading": "",
+            "text": "<p>Inside every CHUUG sits a <strong>stainless steel inner cup</strong>.</p><p>It keeps the drinking surface hygienic, durable and easy to clean - while protecting the natural wood exterior.</p><p>Moradabad’s long history of metalwork means the region has incredible expertise in metal fabrication and finishing.</p><p>So when wood craftsmanship meets precision stainless steel, you get something pretty special.<br/></p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_HJXBWx": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/14-1.jpg",
+            "caption": "SmartRope — Manufactured in Germany",
+            "heading": "",
+            "text": "<p>The handle is the final ingredient.</p><p>Every CHUUG uses a <strong>SmartRope handle</strong>, chosen for its strength, comfort and durability.</p><p>Our rope is manufactured in <strong>Germany</strong>, where specialist rope makers produce some of the finest rope in the world. We ship it to our workshop in Moradabad to be fitted to every tankard.</p><p>Why go to the trouble?</p><p>Because there simply isn’t a better rope.</p><p>It won’t rot.<br/>It won’t stretch.</p><p>And it adds a distinctive character to the tankard.</p><p>Wood. Steel. Rope.<br/><br/><strong>We don’t compromise on any of them.</strong></p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_iyhbcf": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/15-1.jpg",
+            "caption": "Three Materials. One Tankard.",
+            "heading": "",
+            "text": "<p>A CHUUG is simple in concept, but it takes several stages to bring it together.</p><p><strong>Wood</strong><br/>Turned from solid hardwood.</p><p><strong>Stainless Steel</strong><br/>Precision formed for durability.</p><p><strong>SmartRope</strong><br/>Strong, comfortable and built to last.</p><p>Our workshop is one of the few places in the world where specialists in all three can work side by side.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_fXBLa7": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/16-1.jpg",
+            "caption": "Handmade at Scale",
+            "heading": "",
+            "text": "<p>Lots of places can make handmade goods.</p><p>Very few can do it <strong>consistently at scale</strong>.</p><p>At our workshop, skilled craftspeople shape, drill and finish every CHUUG by hand - using techniques that take years to master.</p><p>Their experience allows us to combine real craftsmanship with reliable production.</p><p>It means CHUUG keeps the character of something handmade, while delivering the consistency our customers expect.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_GbUFDV": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/17-1.jpg",
+            "caption": "Responsible Craftsmanship",
+            "heading": "",
+            "text": "<p>Craftsmanship only matters if the people behind it are treated with respect.</p><p>Our manufacturing partners operate in full compliance with Indian labour and workplace safety regulations, maintaining fair employment practices and safe working conditions.</p><p>We’re proud to work with a team that values both skilled work and responsible manufacturing.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_AibqLf": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/18-1.jpg",
+            "caption": "A Proper Partnership",
+            "heading": "",
+            "text": "<p>We work very closely with our partners and visit regularly.</p><p>Together we develop products, refine designs and make sure every product meets our standards.</p><p>It’s not just a supplier relationship.</p><p>It’s a long-term partnership built on a shared belief in <strong>making things well</strong>.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_gY4jJe": {
+          "type": "row",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/11.jpg",
+            "caption": "Britain × India",
+            "heading": "",
+            "text": "<p>Britain and India have shared centuries of trade and craftsmanship.</p><p>From textiles and metalwork to engineering and manufacturing, both countries have long traditions of building products that travel the world.</p><p>CHUUG continues that story.<br/><br/>Designed in Britain.<br/><br/>Crafted in Moradabad.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_kgrhfP": {
+          "type": "row",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/12.jpg",
+            "caption": "One Tankard. Many Hands.",
+            "heading": "",
+            "text": "<p>From the shaping of hardwood to the finishing of stainless steel, every CHUUG passes through multiple stages of skilled work.</p><p>Each step adds something.</p><p>And together those steps produce a tankard built to last.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "row_6tcXcd": {
+          "type": "row",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/4.1.jpg",
+            "caption": "A City That Knows How to Make Things",
+            "heading": "",
+            "text": "<p>Moradabad is often called <strong>“The Brass City.”</strong> Metalwork has been part of life here for generations.</p><p>But the wider region has something even more powerful - a huge community of craftspeople who work across materials.</p><p>Woodworkers. Metalworkers. Finishers. Assemblers.</p><p>Many of the products exported from this region combine materials in exactly the same way CHUUG does.</p><p>Which makes it a pretty perfect place to build our tankard.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "row_pj9chm",
+        "row_aAnkKF",
+        "row_LjprnQ",
+        "row_HJXBWx",
+        "row_iyhbcf",
+        "row_fXBLa7",
+        "row_GbUFDV",
+        "row_AibqLf",
+        "row_gY4jJe",
+        "row_kgrhfP",
+        "row_6tcXcd"
+      ],
+      "settings": {
+        "image_height": "adapt",
+        "desktop_image_width": "medium",
+        "heading_size": "h0",
+        "text_style": "body",
+        "button_style": "secondary",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "image_layout": "alternate-left",
+        "section_color_scheme": "",
+        "row_color_scheme": "inverse",
+        "mobile_content_alignment": "left",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "rich_text_QBUgDx": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_wUngFX": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>CHUUG</strong>",
+            "heading_size": "h1"
+          }
+        },
+        "text_wT4M4r": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Designed in Britain<br/>Crafted in Moradabad, India</p>"
+          }
+        },
+        "button_HGeCYn": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "button_label": "Button label",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_wUngFX",
+        "text_wT4M4r",
+        "button_HGeCYn"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "inverse",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_banner_7TgQRd",
+    "rich_text_XDFGbQ",
+    "multirow_VYAkwk",
+    "rich_text_QBUgDx"
+  ]
+}

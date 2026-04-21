@@ -8,9 +8,16 @@
  * ------------------------------------------------------------
  */
 {
-  "parent": "product.chuug-vessel.json",
   "context": {
-    "market": "eu"
+    "market": "canada"
   },
-  "sections": {}
+  "parent": "collection.json",
+  "sections": {
+    "image_banner_dK9BN3": {
+      "settings": {
+        "image": "shopify://shop_images/auto-30-aud-off.jpg"
+      },
+      "blocks": {}
+    }
+  }
 }

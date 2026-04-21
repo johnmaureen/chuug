@@ -1,0 +1,884 @@
+{% comment %}
+  Mini ATC Modal - Checkout View
+  
+  Semantic checkout summary view with order details and progression indicators.
+{% endcomment %}
+
+<!-- Step Process Indicator -->
+<section class="step-process-section" aria-labelledby="{{ modal_id }}-progress-heading">
+  <h3 id="{{ modal_id }}-progress-heading" class="visually-hidden">Checkout Progress</h3>
+  
+  <div class="step-process-indicator" role="progressbar" aria-valuenow="2" aria-valuemin="1" aria-valuemax="3">
+    <h4 class="step-process-indicator__header" data-progress-header>
+      {%- comment -%} Dynamic header - will be updated by JavaScript based on cart total and currency {%- endcomment -%}
+      🔥 You're only 1 CHUUG away to unlock <span>EXTRA £30 OFF</span>
+    </h4>
+    
+    <div class="step-process-indicator__progress-bar" aria-hidden="true">
+      <div class="step-process-indicator__progress-fill"></div>
+    </div>
+    
+    <ol class="step-process-indicator__steps">
+      <li class="step-process-indicator__step step-process-indicator__step--completed">
+        <div class="step-process-indicator__step-icon" aria-hidden="true">
+          <div class="step-process-indicator__step-circle">
+            <svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step-process-indicator__step-text">Buy More & Save</div>
+      </li>
+      
+      <li class="step-process-indicator__step step-process-indicator__step--active" data-step="shipping">
+        <div class="step-process-indicator__step-icon" aria-hidden="true">
+          <div class="step-process-indicator__step-circle step-free-shipping" data-shipping-icon>
+            <svg class="step-process-indicator__truck-icon" fill="#fff" width="15" height="15" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 0 6 L 0 8 L 19 8 L 19 23 L 12.84375 23 C 12.398438 21.28125 10.851563 20 9 20 C 7.148438 20 5.601563 21.28125 5.15625 23 L 4 23 L 4 18 L 2 18 L 2 25 L 5.15625 25 C 5.601563 26.71875 7.148438 28 9 28 C 10.851563 28 12.398438 26.71875 12.84375 25 L 21.15625 25 C 21.601563 26.71875 23.148438 28 25 28 C 26.851563 28 28.398438 26.71875 28.84375 25 L 32 25 L 32 16.84375 L 31.9375 16.6875 L 29.9375 10.6875 L 29.71875 10 L 21 10 L 21 6 Z M 1 10 L 1 12 L 10 12 L 10 10 Z M 21 12 L 28.28125 12 L 30 17.125 L 30 23 L 28.84375 23 C 28.398438 21.28125 26.851563 20 25 20 C 23.148438 20 21.601563 21.28125 21.15625 23 L 21 23 Z M 2 14 L 2 16 L 8 16 L 8 14 Z M 9 22 C 10.117188 22 11 22.882813 11 24 C 11 25.117188 10.117188 26 9 26 C 7.882813 26 7 25.117188 7 24 C 7 22.882813 7.882813 22 9 22 Z M 25 22 C 26.117188 22 27 22.882813 27 24 C 27 25.117188 26.117188 26 25 26 C 23.882813 26 23 25.117188 23 24 C 23 22.882813 23.882813 22 25 22 Z"></path>
+            </svg>
+            <svg class="step-process-indicator__checkmark" width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+              <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step-process-indicator__step-text">Free Shipping</div>
+      </li>
+      
+      <li class="step-process-indicator__step step-process-indicator__step--active" data-step="discount">
+        <div class="step-process-indicator__step-icon" aria-hidden="true">
+          <div class="step-process-indicator__step-circle" data-discount-icon>
+            <span class="step-process-indicator__pound-symbol">£</span>
+            <svg class="step-process-indicator__checkmark" width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+              <path d="M1 5L5 9L14 1" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="step-process-indicator__step-text" data-currency-text="Unlock Extra {amount} OFF" data-amount="3000">Unlock Extra {{ 3000 | money }} OFF</div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- Progress Header Dynamic Update Script -->
+<script>
+(function() {
+  'use strict';
+  
+  // ========================================
+  // FREE SHIPPING CONFIGURATION
+  // ========================================
+  const FREE_SHIPPING_THRESHOLDS = {
+    GBP: {
+      threshold: 7500,        // £75.00 in cents
+      shippingCost: 349,      // £3.49 in cents
+      symbol: '£',
+      message: '🔥 You\'re only {amount} away from <span>FREE Shipping!</span>'
+    },
+    AUD: {
+      threshold: 20000,       // $200.00 in cents
+      shippingCost: 1495,     // $14.95 in cents
+      symbol: '$',
+      message: '🔥 You\'re only {amount} away <span>FREE Shipping!</span>'
+    },
+    USD: {
+      threshold: 1495,        // $14.95 in cents
+      shippingCost: 0,        // Free shipping
+      symbol: '$',
+      message: '🔥 You\'re only {amount} away <span>FREE Shipping!</span>'
+    }
+  };
+  
+  // ========================================
+  // HELPER FUNCTIONS
+  // ========================================
+  
+  /**
+   * Get current currency from multiple sources
+   */
+  function getCurrentCurrency() {
+    // Try CURRENT_CURRENCY first (most reliable)
+    if (window.CURRENT_CURRENCY) {
+      return window.CURRENT_CURRENCY;
+    }
+    
+    // Try Shopify currency
+    if (window.Shopify?.currency?.active) {
+      return window.Shopify.currency.active;
+    }
+    
+    // Try shop currency
+    if (window.Shopify?.shop?.currency) {
+      return window.Shopify.shop.currency;
+    }
+    
+    // Default to GBP
+    return 'GBP';
+  }
+  
+  /**
+   * Get free shipping configuration for currency
+   */
+  function getFreeShippingConfig(currency) {
+    return FREE_SHIPPING_THRESHOLDS[currency] || FREE_SHIPPING_THRESHOLDS.GBP;
+  }
+  
+  /**
+   * Calculate amount needed for free shipping
+   */
+  function calculateAmountNeeded(cartTotal, currency) {
+    const config = getFreeShippingConfig(currency);
+    const amountNeeded = config.threshold - cartTotal;
+    
+    return {
+      amountNeeded: Math.max(0, amountNeeded),
+      thresholdReached: amountNeeded <= 0,
+      config: config
+    };
+  }
+  
+  /**
+   * Format currency amount
+   */
+  function formatAmount(amountInCents, symbol) {
+    const amount = (amountInCents / 100).toFixed(2);
+    return symbol + amount;
+  }
+  
+  /**
+   * Format progress message based on cart state
+   */
+  function formatProgressMessage(amountNeeded, config, thresholdReached, currency, itemCount) {
+    if (thresholdReached) {
+      const discountSymbol = config.symbol;
+      
+      // Check if discount is fully unlocked (2+ CHUUGs)
+      if (itemCount >= 2) {
+        // Step 3: Discount unlocked (100%)
+        return `🔥 You've unlock <span>EXTRA ${discountSymbol}30 OFF</span>`;
+      } else {
+        // Step 2: Free shipping unlocked, working toward discount (50%)
+        return `🔥 You're only 1 CHUUG away to unlock <span>EXTRA ${discountSymbol}30 OFF</span>`;
+      }
+    }
+    
+    // Step 1: Still working toward free shipping - show Step 1 message
+    const formattedAmount = formatAmount(amountNeeded, config.symbol);
+    return config.message.replace('{amount}', formattedAmount);
+  }
+  
+  /**
+   * Count non-gift-box items in cart (vessels/CHUUGs only)
+   */
+  function countNonGiftBoxItems(cartData) {
+    if (!cartData || !cartData.items) {
+      return 0;
+    }
+    
+    const vessels = cartData.items.filter(item => {
+      // Method 1: Check properties for 'Add-on' marker
+      if (item.properties && item.properties['Add-on'] === 'Premium Gift Box') {
+        console.log('🎁 Excluded gift box (by property):', item.title || item.product_title);
+        return false;
+      }
+      
+      // Method 2: Check product title for gift box keywords
+      const title = (item.title || item.product_title || '').toLowerCase();
+      if (title.includes('gift box') || title.includes('tissue wrap')) {
+        console.log('🎁 Excluded gift box (by title):', item.title || item.product_title);
+        return false;
+      }
+      
+      // Method 3: Check product type
+      const productType = (item.product_type || '').toLowerCase();
+      if (productType.includes('gift') || productType.includes('add-on')) {
+        console.log('🎁 Excluded add-on (by type):', item.title || item.product_title);
+        return false;
+      }
+      
+      // This is a vessel/CHUUG
+      console.log('🍺 Counted vessel:', item.title || item.product_title);
+      return true;
+    });
+    
+    console.log(`📊 Item Count: ${vessels.length} vessels (excluded ${cartData.items.length - vessels.length} gift boxes/add-ons)`);
+    return vessels.length;
+  }
+  
+  /**
+   * Update the shipping step icon (truck or checkmark) and step state
+   */
+  function updateShippingStepIcon(isCompleted) {
+    const shippingStep = document.querySelector('[data-step="shipping"]');
+    const shippingIcon = document.querySelector('[data-shipping-icon]');
+    
+    if (!shippingIcon) {
+      console.warn('⚠️ Shipping icon element not found');
+      return;
+    }
+    
+    const truckIcon = shippingIcon.querySelector('.step-process-indicator__truck-icon');
+    const checkmark = shippingIcon.querySelector('.step-process-indicator__checkmark');
+    
+    if (isCompleted) {
+      // Show checkmark, hide truck
+      if (truckIcon) truckIcon.style.display = 'none';
+      if (checkmark) checkmark.style.display = 'block';
+      
+      // Add completed class to step
+      if (shippingStep) {
+        shippingStep.classList.add('step-process-indicator__step--completed');
+        shippingStep.classList.remove('step-process-indicator__step--active');
+      }
+      
+      console.log('✓ Shipping step icon: Checkmark (completed)');
+    } else {
+      // Show truck, hide checkmark
+      if (truckIcon) truckIcon.style.display = '';
+      if (checkmark) checkmark.style.display = 'none';
+      
+      // Remove completed class, keep active
+      if (shippingStep) {
+        shippingStep.classList.remove('step-process-indicator__step--completed');
+        shippingStep.classList.add('step-process-indicator__step--active');
+      }
+      
+      console.log('🚚 Shipping step icon: Truck (pending)');
+    }
+  }
+  
+  /**
+   * Update the discount step icon (£ or checkmark) and step state
+   */
+  function updateDiscountStepIcon(isCompleted) {
+    const discountStep = document.querySelector('[data-step="discount"]');
+    const discountIcon = document.querySelector('[data-discount-icon]');
+    
+    if (!discountIcon) {
+      console.warn('⚠️ Discount icon element not found');
+      return;
+    }
+    
+    const poundSymbol = discountIcon.querySelector('.step-process-indicator__pound-symbol');
+    const checkmark = discountIcon.querySelector('.step-process-indicator__checkmark');
+    
+    if (isCompleted) {
+      // Show checkmark, hide pound symbol
+      if (poundSymbol) poundSymbol.style.display = 'none';
+      if (checkmark) checkmark.style.display = 'block';
+      
+      // Add completed class to step
+      if (discountStep) {
+        discountStep.classList.add('step-process-indicator__step--completed');
+        discountStep.classList.remove('step-process-indicator__step--active');
+      }
+      
+      console.log('✓ Discount step icon: Checkmark (completed)');
+    } else {
+      // Show pound symbol, hide checkmark
+      if (poundSymbol) poundSymbol.style.display = '';
+      if (checkmark) checkmark.style.display = 'none';
+      
+      // Remove completed class, keep active
+      if (discountStep) {
+        discountStep.classList.remove('step-process-indicator__step--completed');
+        discountStep.classList.add('step-process-indicator__step--active');
+      }
+      
+      console.log('£ Discount step icon: Currency symbol (pending)');
+    }
+  }
+  
+  /**
+   * Update the progress bar fill based on threshold progress and item count
+   */
+  function updateProgressBar(thresholdReached, cartTotal, threshold, itemCount) {
+    const progressFill = document.querySelector('.step-process-indicator__progress-fill');
+    
+    if (!progressFill) {
+      console.warn('⚠️ Progress bar element not found');
+      return;
+    }
+    
+    // Remove all progress classes first
+    progressFill.classList.remove('progress-full', 'progress-half');
+    
+    if (!thresholdReached) {
+      // Step 1: Below shipping threshold - 0% progress
+      updateShippingStepIcon(false); // Show truck icon
+      updateDiscountStepIcon(false); // Show £ symbol
+      console.log('📊 Progress Bar: Step 1 - Working towards free shipping (0%)');
+    } else if (itemCount >= 2) {
+      // Step 3: Threshold reached + 2+ CHUUGs - 100% progress
+      progressFill.classList.add('progress-full');
+      updateShippingStepIcon(true);  // Show checkmark
+      updateDiscountStepIcon(true);  // Show checkmark
+      console.log('📊 Progress Bar: Step 3 - Discount Unlocked! (100%)', { itemCount });
+    } else {
+      // Step 2: Threshold reached + 1 CHUUG - 50% progress
+      progressFill.classList.add('progress-half');
+      updateShippingStepIcon(true);  // Show checkmark
+      updateDiscountStepIcon(false); // Show £ symbol (not yet unlocked)
+      console.log('📊 Progress Bar: Step 2 - Free Shipping Unlocked (50%)', { itemCount });
+    }
+  }
+  
+  /**
+   * Update the progress header with dynamic message
+   */
+  async function updateProgressHeader(cartTotal, currency, cartData = null) {
+    const header = document.querySelector('[data-progress-header]');
+    if (!header) {
+      console.warn('⚠️ Progress header element not found');
+      return;
+    }
+    
+    // Fetch cart data if not provided
+    if (!cartData) {
+      try {
+        cartData = await getCart();
+      } catch (error) {
+        console.error('Failed to fetch cart data:', error);
+        cartData = { items: [] };
+      }
+    }
+    
+    // Count non-gift-box items
+    const itemCount = countNonGiftBoxItems(cartData);
+    
+    const result = calculateAmountNeeded(cartTotal, currency);
+    const message = formatProgressMessage(
+      result.amountNeeded, 
+      result.config, 
+      result.thresholdReached,
+      currency,
+      itemCount
+    );
+    
+    header.innerHTML = message;
+    
+    // Also update the progress bar with item count
+    updateProgressBar(result.thresholdReached, cartTotal, result.config.threshold, itemCount);
+    
+    console.log('📊 Progress Header & Bar Updated:', {
+      currency: currency,
+      cartTotal: formatAmount(cartTotal, result.config.symbol),
+      threshold: formatAmount(result.config.threshold, result.config.symbol),
+      amountNeeded: formatAmount(result.amountNeeded, result.config.symbol),
+      thresholdReached: result.thresholdReached,
+      itemCount: itemCount,
+      percentage: ((cartTotal / result.config.threshold) * 100).toFixed(1) + '%',
+      message: message.replace(/<[^>]*>/g, '') // Log without HTML tags
+    });
+  }
+  
+  /**
+   * Get full cart data from multiple sources
+   */
+  function getCart() {
+    return new Promise((resolve, reject) => {
+      // Try cart manager first
+      if (window.cartManager && window.cartManager.getCart) {
+        window.cartManager.getCart()
+          .then(cartData => {
+            resolve(cartData);
+          })
+          .catch(() => {
+            // Fallback to fetch
+            fetchCart().then(resolve).catch(reject);
+          });
+      } else {
+        // Fallback to fetch
+        fetchCart().then(resolve).catch(reject);
+      }
+    });
+  }
+  
+  /**
+   * Get cart total from cart data
+   */
+  function getCartTotal() {
+    return getCart()
+      .then(cartData => cartData.total_price || 0)
+      .catch(error => {
+        console.error('❌ Failed to get cart total:', error);
+        return 0;
+      });
+  }
+  
+  /**
+   * Fetch cart data via Shopify API
+   */
+  function fetchCart() {
+    return fetch('/cart.js')
+      .then(response => response.json())
+      .catch(error => {
+        console.error('❌ Failed to fetch cart:', error);
+        return { items: [], total_price: 0 };
+      });
+  }
+  
+  /**
+   * Initialize progress header on load
+   */
+  async function initProgressHeader() {
+    const currency = getCurrentCurrency();
+    
+    try {
+      const cartData = await getCart();
+      const cartTotal = cartData.total_price || 0;
+      await updateProgressHeader(cartTotal, currency, cartData);
+    } catch (error) {
+      console.error('❌ Failed to initialize progress header:', error);
+    }
+  }
+  
+  // ========================================
+  // EVENT LISTENERS
+  // ========================================
+  
+  /**
+   * Hook into modal instance when available
+   */
+  function hookIntoModalInstance() {
+    // Find modal instances (they're stored globally)
+    const modalInstances = window.MiniATCModal?.getAllInstances();
+    
+    if (modalInstances && modalInstances.size > 0) {
+      modalInstances.forEach((instance, modalId) => {
+        console.log('🔗 Hooking into modal instance:', modalId);
+        
+        // Listen to the modal's viewChanged event
+        instance.on('viewChanged', async function(viewName) {
+          console.log('📍 View changed to:', viewName);
+          if (viewName === 'checkout') {
+            // Small delay to ensure DOM is updated
+            setTimeout(async () => {
+              await initProgressHeader();
+              // Setup DOM observer when checkout view is active
+              setupCartDOMObserver();
+            }, 100);
+          }
+        });
+        
+        // Listen to modal opened event
+        instance.on('modalOpened', async function() {
+          console.log('📍 Modal opened');
+          // If checkout view is active, initialize
+          const checkoutView = document.querySelector('[data-view="checkout"]');
+          if (checkoutView && checkoutView.classList.contains('mini-atc-modal__view--active')) {
+            setTimeout(async () => {
+              await initProgressHeader();
+              // Setup DOM observer
+              setupCartDOMObserver();
+            }, 100);
+          }
+        });
+        
+        // Listen to cart updates from the modal
+        instance.on('cartUpdated', async function() {
+          console.log('📍 Cart updated via modal');
+          setTimeout(async () => await initProgressHeader(), 100);
+        });
+      });
+      
+      console.log('✅ Successfully hooked into modal instance(s)');
+      return true;
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Wait for modal to be ready and hook into it
+   */
+  function waitForModal() {
+    const maxAttempts = 50; // 5 seconds max
+    let attempts = 0;
+    
+    const checkInterval = setInterval(() => {
+      attempts++;
+      
+      if (hookIntoModalInstance()) {
+        clearInterval(checkInterval);
+        console.log('✅ Modal integration complete');
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkInterval);
+        console.warn('⚠️ Modal instance not found after 5 seconds, falling back to document events');
+        useFallbackEvents();
+      }
+    }, 100);
+  }
+  
+  /**
+   * Fallback to document-level events if modal instance not available
+   */
+  function useFallbackEvents() {
+    // Update when cart changes
+    document.addEventListener('cart:updated', async function(event) {
+      console.log('📍 cart:updated event received');
+      const currency = getCurrentCurrency();
+      const cartTotal = event.detail?.total_price || 0;
+      const cartData = event.detail?.cart || null;
+      await updateProgressHeader(cartTotal, currency, cartData);
+    });
+    
+    // Check periodically when checkout view is visible
+    setInterval(async () => {
+      const checkoutView = document.querySelector('[data-view="checkout"]');
+      if (checkoutView && checkoutView.classList.contains('mini-atc-modal__view--active')) {
+        await initProgressHeader();
+      }
+    }, 2000);
+  }
+  
+  /**
+   * Setup global cart event listeners
+   * Catches cart updates from any source (product page, cart page, etc.)
+   */
+  function setupGlobalCartListeners() {
+    // Listen to various cart update events
+    const cartEvents = [
+      'cart:updated',
+      'cart:change', 
+      'cart:refresh',
+      'cartUpdated',
+      'cartChanged'
+    ];
+    
+    cartEvents.forEach(eventName => {
+      document.addEventListener(eventName, async function(event) {
+        console.log(`📍 Global cart event received: ${eventName}`);
+        
+        // Check if checkout view is active
+        const checkoutView = document.querySelector('[data-view="checkout"]');
+        if (checkoutView && checkoutView.classList.contains('mini-atc-modal__view--active')) {
+          await initProgressHeader();
+        }
+      });
+    });
+    
+    console.log('🎧 Global cart event listeners registered');
+  }
+  
+  /**
+   * Setup MutationObserver to watch for cart item changes
+   * This catches when items are added/removed from the checkout view
+   */
+  function setupCartDOMObserver() {
+    const checkoutContainer = document.querySelector('.checkout-products-container');
+    
+    if (!checkoutContainer) {
+      console.warn('⚠️ Checkout container not found for DOM observer');
+      return;
+    }
+    
+    const observer = new MutationObserver(async (mutations) => {
+      // Check if checkout view is active
+      const checkoutView = document.querySelector('[data-view="checkout"]');
+      if (!checkoutView || !checkoutView.classList.contains('mini-atc-modal__view--active')) {
+        return;
+      }
+      
+      // Check if mutations involve cart item changes
+      const hasCartChanges = mutations.some(mutation => {
+        return mutation.type === 'childList' || 
+               (mutation.target.classList && mutation.target.classList.contains('checkout-products-wrap'));
+      });
+      
+      if (hasCartChanges) {
+        console.log('📍 Cart DOM change detected via MutationObserver');
+        // Add small delay to ensure cart is updated
+        setTimeout(async () => await initProgressHeader(), 200);
+      }
+    });
+    
+    observer.observe(checkoutContainer, {
+      childList: true,
+      subtree: true,
+      attributes: false
+    });
+    
+    console.log('👁️ Cart DOM observer activated');
+  }
+  
+  // ========================================
+  // INITIALIZATION
+  // ========================================
+  
+  // Setup global cart event listeners immediately
+  setupGlobalCartListeners();
+  
+  // Wait for modal system to be ready
+  if (window.MiniATCModal && window.MiniATCModal.getAllInstances) {
+    // Modal already initialized
+    hookIntoModalInstance();
+  } else {
+    // Wait for modal to initialize
+    document.addEventListener('miniATCModalReady', function() {
+      console.log('📢 Mini ATC Modal Ready event received');
+      setTimeout(waitForModal, 100);
+    });
+    
+    // Also try waiting for it
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', waitForModal);
+    } else {
+      waitForModal();
+    }
+  }
+  
+  console.log('✅ Progress Header Dynamic Update Script Loaded (with item count tracking + global cart listeners + DOM observer)');
+  
+})();
+</script>
+
+<!-- Countdown Timer -->
+<section class="countdown-section" aria-labelledby="{{ modal_id }}-countdown-heading" data-countdown-section style="display: none;">
+  <h3 id="{{ modal_id }}-countdown-heading" class="visually-hidden">Limited Time Offer</h3>
+  
+  <div class="countdown-timer chuug-countdown" role="timer" aria-live="polite" aria-atomic="true">
+    <span class="countdown-timer__text">
+      {%- liquid
+        assign countdown_default_text = 'Extra £30 off ends in'
+        assign countdown_raw_text = settings.mini_atc_countdown_text | default: countdown_default_text
+        assign countdown_display_text = countdown_raw_text | replace: '{amount}', '£30'
+      -%}
+      <span data-countdown-text data-currency-text="⏰ {{ countdown_display_text }}:" data-amount="3000">⏰ {{ countdown_display_text }}:</span> 
+      <time class="countdown-timer__time" id="mini-atc-countdown-timer">
+        <span data-countdown-hours>00</span>:<span data-countdown-minutes>00</span>:<span data-countdown-seconds>00</span>
+      </time>
+    </span>
+  </div>
+</section>
+
+<script>
+  // Show countdown section when checkout view is active
+  // Countdown timer logic is handled by global system in theme.liquid
+  (function() {
+    const countdownSection = document.querySelector('[data-countdown-section]');
+    
+    if (countdownSection) {
+      countdownSection.style.display = '';
+      console.log('✅ Mini-ATC countdown section displayed (using global countdown)');
+    }
+    
+    // Re-initialize global countdown when modal opens or view changes
+    document.addEventListener('viewChanged', function(event) {
+      if (event.detail === 'checkout' && window.chuugCountdown) {
+        window.chuugCountdown.init();
+      }
+    });
+  })();
+</script>
+
+<!-- Order Summary -->
+<section class="checkout-summary-section" aria-labelledby="{{ modal_id }}-summary-heading">
+  <h3 id="{{ modal_id }}-summary-heading" class="visually-hidden">Order Summary</h3>
+  
+  <div class="checkout-products-container" data-checkout-items>
+    {% comment %} Dynamic cart items will be populated here {% endcomment %}
+    {% for item in cart.items %}
+      {% render 'checkout-products-wrap', item: item, modal_id: modal_id %}
+    {% endfor %}
+    
+    {% comment %} Placeholder for when no items {% endcomment %}
+    <div class="checkout-empty-state" data-empty-state style="display: none;">
+    </div>
+  </div>
+</section>
+
+<!-- Additional Recommendations -->
+{% comment %} <section class="additional-recommendations-section" aria-labelledby="{{ modal_id }}-additional-heading">
+  <div class="recommendation-separator" role="separator">
+    <h4 id="{{ modal_id }}-additional-heading" class="recommendation-separator-text">
+      Last Chance Add-Ons
+    </h4>
+  </div>
+  
+  <article class="mini-atc-modal__personalization mini-atc-modal__add-extra-cups" data-personalization="extra-cups">
+    <header class="mini-atc-modal__personalization-header">
+      <div class="mini-atc-modal__personalization-header-content">
+        <div class="mini-atc-modal__personalization-icon" aria-hidden="true">
+          {% render 'personalization-icon', icon_type: 'cup' %}
+        </div>
+        <h5>Add Extra Insulated Cups?</h5>
+      </div>
+      
+      <div class="mini-atc-modal__personalization-header-content_right">
+        <a href="#" class="mini-atc-modal__design-link" aria-describedby="{{ modal_id }}-extra-preview-tooltip">
+          See preview
+        </a>
+        {% render 'icon-question-mark-tooltip', 
+          tooltip_text: 'Toggle ON if you would like to personalise your CHUUG with your initials.',
+          tooltip_id: modal_id | append: '-extra-preview-tooltip' 
+        %}
+        
+        <div class="mini-atc-modal__toggle-container">
+          <label class="mini-atc-modal__toggle" for="{{ modal_id }}-extra-cups-toggle">
+            <input 
+              type="checkbox" 
+              id="{{ modal_id }}-extra-cups-toggle"
+              data-personalization-toggle="extra-cups"
+              aria-describedby="{{ modal_id }}-extra-cups-description"
+            >
+            <span class="mini-atc-modal__toggle-slider" aria-hidden="true"></span>
+            <span class="visually-hidden">Enable extra cups at checkout</span>
+          </label>
+        </div>
+      </div>
+    </header>
+    
+    <div id="{{ modal_id }}-extra-cups-description" class="visually-hidden">
+      Toggle to add extra insulated cups to your final order
+    </div>
+  </article>
+</section> {% endcomment %}
+
+<!-- Checkout Actions -->
+{% comment %} <nav class="checkout-actions-section" aria-labelledby="{{ modal_id }}-actions-heading">
+  <h3 id="{{ modal_id }}-actions-heading" class="visually-hidden">Checkout Actions</h3>
+  
+  <button 
+    type="button"
+    class="mini-atc-modal__back-btn"
+    data-modal-action="back-to-personalize"
+    aria-describedby="{{ modal_id }}-back-description"
+  >
+    ← Back to Personalization
+  </button>
+  
+  <div id="{{ modal_id }}-back-description" class="visually-hidden">
+    Return to the personalization view to modify your selections
+  </div>
+</nav> {% endcomment %}
+
+<script>
+// Log cart data for debugging - runs once when checkout view loads
+(function() {
+  // Prevent multiple executions
+  if (window.checkoutDebugScriptLoaded) {
+    return;
+  }
+  window.checkoutDebugScriptLoaded = true;
+  
+  // Log Liquid cart data that was available at render time
+  const liquidCartData = {
+    itemCount: {{ cart.items.size }},
+    note: {{ cart.note | json }},
+    attributes: {{ cart.attributes | json }},
+    items: [
+      {% for debug_item in cart.items %}
+        {
+          id: {{ debug_item.id }},
+          title: {{ debug_item.product.title | json }},
+          variant_title: {{ debug_item.variant.title | json }},
+          quantity: {{ debug_item.quantity }},
+          price: {{ debug_item.price }},
+          final_price: {{ debug_item.final_price }},
+          properties: {{ debug_item.properties | json }},
+          product_type: {{ debug_item.product.type | json }},
+          vendor: {{ debug_item.product.vendor | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  };
+  
+  // Console log the cart data for debugging
+  console.log('🛒 LIQUID CART DATA:', liquidCartData);
+  console.log('🛒 Cart items count:', liquidCartData.itemCount);
+  console.log('🛒 Cart note:', liquidCartData.note);
+  console.log('🛒 Cart attributes:', liquidCartData.attributes);
+  console.log('🛒 All cart items:', liquidCartData.items);
+  
+  
+  // Check for gift box items in Liquid data
+  const giftBoxItems = liquidCartData.items.filter(item => {
+    const title = (item.title || '').toLowerCase();
+    return title.includes('gift') || title.includes('box');
+  });
+  
+  console.log('🛒 Gift box items in Liquid data:', giftBoxItems);
+  
+
+  // Gift box state management - allow enabled state to persist
+  // Removed forced disabling logic to allow gift box to display when enabled
+  
+  // Force update pricing display elements directly as backup
+  function forceUpdatePricingDisplay() {
+    // Look for pricing placeholder elements
+    const pricingPlaceholders = document.querySelectorAll('.pricing-placeholder');
+    const currentPriceElements = document.querySelectorAll('[data-current-price], .mini-atc-modal__current-price');
+
+    // Check if we can get the correct price from POMC system
+    if (window.pomcSystem && window.pomcSystem.getSelectedProductAmountData) {
+      try {
+        const productData = window.pomcSystem.getSelectedProductAmountData();
+
+        if (productData && productData.price) {
+          const correctPrice = (productData.price / 100).toFixed(2);
+          const formattedPrice = `£${correctPrice}`;
+
+          pricingPlaceholders.forEach(el => {
+            if (el.textContent !== formattedPrice) {
+              el.textContent = formattedPrice;
+            }
+          });
+
+          currentPriceElements.forEach(el => {
+            const placeholder = el.querySelector('.pricing-placeholder');
+            if (placeholder && placeholder.textContent !== formattedPrice) {
+              placeholder.textContent = formattedPrice;
+            }
+          });
+        }
+      } catch (error) {
+      }
+    }
+  }
+  
+  // Force update pricing display immediately if systems are ready
+  forceUpdatePricingDisplay();
+  
+  // Watch for dynamic price changes
+  function watchForPriceChanges() {
+    const targetNodes = document.querySelectorAll('.pricing-placeholder, [data-current-price]');
+
+    if (targetNodes.length > 0) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'childList' || mutation.type === 'characterData') {
+            const target = mutation.target;
+            const element = target.nodeType === Node.TEXT_NODE ? target.parentElement : target;
+
+            // Monitor price changes
+            if (element && (element.classList.contains('pricing-placeholder') || element.hasAttribute('data-current-price'))) {
+              // Price change detected - could add logic here if needed
+            }
+          }
+        });
+      });
+
+      targetNodes.forEach(node => {
+        observer.observe(node, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+      });
+    }
+  }
+  
+  // Start watching for price changes
+  watchForPriceChanges();
+  
+  // Gift box items are now allowed to remain in cart
+  // Removed auto-removal logic to allow gift box display
+  
+  // Cart debugging moved to new progress header system
+  // The new updateProgressHeader() function handles all cart updates with currency-aware logic
+  
+  // Legacy function removed - now using updateProgressHeader() with currency-aware threshold logic
+
+})();
+</script>
+
