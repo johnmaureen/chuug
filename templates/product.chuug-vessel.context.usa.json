@@ -15,6 +15,7 @@
   "sections": {
     "pdp_chuug_vessel_8y8pAk": {
       "settings": {
+        "product_title": "The Chuug V3 (24oz/660ml)",
         "one_chuug_product": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag-2",
         "two_chuug_product": "us-set-of-2-chuug®-v2-660ml-with-gift-bags",
         "three_chuug_product": "us-set-of-3-chuug®-v2-660ml-with-gift-bags",
@@ -30,7 +31,12 @@
       "blocks": {
         "accordion_mCpagc": {
           "settings": {
-            "accordion_text": "<p>Free express shipping on orders over $120, otherwise just $9.95</p><ul><li>For all US orders, shipping is 2-11 business days</li><li>Free replacements, no questions asked.</li></ul>"
+            "accordion_text": "<p>Express shipping to the US from $14.95 with all Taxes and Duties Paid ✔</p><ul><li>For all US orders, shipping is 2-11 business days</li></ul>"
+          }
+        },
+        "accordion_pzWYme": {
+          "settings": {
+            "accordion_text": "<ol><li><strong>Capacity:</strong> 24oz (enough for a pint or 2 of your favourite 12oz cans)</li><li><strong>Materials: </strong>Premium acacia wood exterior with food grade stainless steel interior.  The handle is made from synthetic hemp meaning it’s water resistant and anti-bacterial.</li><li><strong>Insulation:</strong> Enjoy cold or hot beverages for up to 2 hours</li></ol>"
           }
         }
       }

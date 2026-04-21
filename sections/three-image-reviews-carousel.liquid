@@ -18,25 +18,25 @@
             <div class="swiper-slide !tw-flex tw-items-center tw-justify-center lg:tw-items-start hover:tw-cursor-pointer">
               <div class="tw-relative tw-h-[20.44469em] !tw-w-[21.1405em] tw-select-none lg:tw-flex lg:tw-items-center">
                 <img
-                  src="{{ block.settings.background_image | image_url }}"
+                  data-src="{{ block.settings.background_image | image_url }}"
                   width="100%"
-                  class="background-image tw-w-[28rem] tw-h-[24rem] lg:tw-w-[30rem] lg:tw-h-[29rem]"
+                  class="lazyload background-image tw-w-[28rem] tw-h-[24rem] lg:tw-w-[30rem] lg:tw-h-[29rem]"
                   height="auto"
                   alt="background image"
                 >
                 <div class="text-container tw-absolute tw-flex tw-flex-col tw-justify-center tw-items-center tw-gap-y-[1.2rem] tw-text-white tw-top-[2em] tw-w-[16rem] tw-left-[1.5rem] md:tw-left-[2rem] lg:tw-right-[10em] lg:tw-w-[17rem] lg:tw-top-[8rem]">
                   {% if block.settings.stars == 'five' %}
                     <img
-                      class="tw-w-[9rem] tw-h-[1.5rem] lg:tw-w-[9rem] lg:tw-h-[1.5rem]"
-                      src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/five-stars.png?v=1728937309"
+                      class="lazyload tw-w-[9rem] tw-h-[1.5rem] lg:tw-w-[9rem] lg:tw-h-[1.5rem]"
+                      data-src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/five-stars.png?v=1728937309"
                       alt="Five stars"
                       height="15"
                       width="90"
                     >
                   {% else %}
                     <img
-                      class="tw-w-[9rem] tw-h-[1.5rem] lg:tw-w-[9rem] lg:tw-h-[1.5rem]"
-                      src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/four-stars.png?v=1728937309"
+                      class="lazyload tw-w-[9rem] tw-h-[1.5rem] lg:tw-w-[9rem] lg:tw-h-[1.5rem]"
+                      data-src="https://cdn.shopify.com/s/files/1/0799/4307/4111/files/four-stars.png?v=1728937309"
                       alt="Four stars"
                       height="15"
                       width="90"

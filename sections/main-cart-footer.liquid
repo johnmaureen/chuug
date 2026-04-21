@@ -210,13 +210,19 @@ document.addEventListener('DOMContentLoaded', function () {
   // Only run this on the cart page
   if (!window.location.pathname.includes('/cart')) return;
 
-  // Utility: Add working days to a date
+  /* ================================
+     EDITABLE VARIABLES (at a glance)
+     ================================ */
+  const DESPATCH_LEAD_WORKING_DAYS = 9; // Mon–Fri only
+
+  // Utility: Add working days (Mon–Fri)
   function addWorkingDays(date, days) {
-    var currentDate = new Date(date);
-    var addedDays = 0;
+    const currentDate = new Date(date);
+    let addedDays = 0;
     while (addedDays < days) {
       currentDate.setDate(currentDate.getDate() + 1);
-      if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+      const dow = currentDate.getDay(); // 0 Sun, 6 Sat
+      if (dow !== 0 && dow !== 6) {
         addedDays++;
       }
     }
@@ -242,42 +248,43 @@ document.addEventListener('DOMContentLoaded', function () {
     return `${month} ${day}${suffix}`;
   }
 
-  // Calculate and update cart attribute if needed
-  function ensureEstimatedDeliveryDate() {
-    // Wait for Shopify.country to be defined
-    const country = Shopify && Shopify.country ? Shopify.country : "GB";
-    const isOutsideUK = country !== "GB";
-    const workingDays = isOutsideUK ? 11 : 6;
-    const expectedDate = formatDateWithSuffix(addWorkingDays(new Date(), workingDays));
+  // Calculate and update only 'Despatch Date' cart attribute if needed
+  function ensureDespatchDate() {
+    // Despatch Date = today + N working days (Mon–Fri)
+    const despatchDateObj = addWorkingDays(new Date(), DESPATCH_LEAD_WORKING_DAYS);
+    const despatchDate = formatDateWithSuffix(despatchDateObj);
 
+    // Read cart and upsert attribute
     fetch('/cart.js')
       .then(res => res.json())
       .then(cart => {
-        const existing = cart.attributes && cart.attributes['Estimated Delivery Date'];
+        const attrs = (cart && cart.attributes) || {};
+        const existingDespatch = attrs['Despatch Date'];
 
-        // Only update if missing or outdated
-        if (existing !== expectedDate) {
+        if (existingDespatch !== despatchDate) {
           return fetch('/cart/update.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               attributes: {
-                'Estimated Delivery Date': expectedDate
+                'Despatch Date': despatchDate
               }
             })
           }).then(() => {
-            console.log('✅ Cart delivery date updated:', expectedDate);
+            console.log('✅ Cart despatch date updated:', { 'Despatch Date': despatchDate });
           });
         } else {
-          console.log('🟢 Delivery date already set correctly:', existing);
+          console.log('🟢 Despatch date already set correctly:', { 'Despatch Date': existingDespatch });
         }
       })
-      .catch(err => console.error('Error checking or updating delivery date:', err));
+      .catch(err => console.error('Error checking or updating despatch date:', err));
   }
 
-  ensureEstimatedDeliveryDate();
+  ensureDespatchDate();
 });
 </script>
+
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -288,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(res => res.json())
     .then(cart => {
       const needsFix = cart.items.some(item =>
-        !item.properties || !item.properties["Monogram Initials"]
+        !item.properties || !item.properties["PERSONALISED INITIAL"]
       );
 
       if (!needsFix) {
@@ -300,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
         quantity: item.quantity,
         properties: {
           ...(item.properties || {}),
-          "Monogram Initials": item.properties && item.properties["Monogram Initials"] ? item.properties["Monogram Initials"] : "N/A"
+          "PERSONALISED INITIAL": item.properties && item.properties["PERSONALISED INITIAL"] ? item.properties["PERSONALISED INITIAL"] : "N/A"
         }
       }));
 
@@ -321,18 +328,18 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error('Failed to patch cart items:', err);
     });
 });
-</script>
+</script> 
 
 <script>
   document.addEventListener('custom:upsell:chuug', function (event) {
     console.log("📦 Upsell callback event received:", event);
 
-    // Attach Monogram Initials = N/A to the upsell product
+    // PERSONALISED INITIAL = N/A to the upsell product
     if (event.detail && typeof event.detail === 'object') {
       event.detail.properties = {
         ...(event.detail.properties || {}),
-        "Monogram Initials": "N/A"
+        "PERSONALISED INITIAL": "N/A"
       };
     }
   });
-</script>
+</script> 

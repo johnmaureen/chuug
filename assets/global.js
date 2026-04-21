@@ -984,9 +984,9 @@ class VariantSelects extends HTMLElement {
     const mes =  document.getElementById("custom-message");
     if(varTitle.includes('Personalised')){
     mes.innerHTML = `<form><p class="line-item-property__field">
-  <label class="form__label" for="monogram-initials">Monogram Initials (Max 3 Characters, no numbers or symbols)<span style="color:red;">*</span></label>
+  <label class="form__label" for="monogram-initials">PERSONALISED INITIAL (1 Letter Only)<span style="color:red;">*</span></label>
  
-  <input id="monogram" form="product-form-${this.dataset.section}" style="padding-top: 8px;padding-right: 10px;border: 1px solid;background-color: white;" required class="required search__input field__input" maxlength="3" id="monogram-initials" type="text" name="properties[Monogram Initials]" oninput="lettersOnly(this)">
+  <input id="monogram" form="product-form-${this.dataset.section}" style="padding-top: 8px;padding-right: 10px;border: 1px solid;background-color: white;" required class="required search__input field__input" maxlength="1" id="monogram-initials" type="text" name="properties[PERSONALISED INITIAL]" oninput="lettersOnly(this)">
 </p></form>`;
     }else{ 
       mes.innerHTML = '';

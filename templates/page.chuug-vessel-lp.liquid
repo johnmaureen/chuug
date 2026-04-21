@@ -353,7 +353,7 @@
 <select class="tw-flex-1 input" style="background-color: #6093a3;">
   <option>asda</option>
 </select>
-    <input class="tw-flex-1 input tw-uppercase" type="text" maxlength="2" placeholder="ENTER Initials">
+    <input class="tw-flex-1 input tw-uppercase initial-input" type="text" maxlength="1" placeholder="ENTER Initials">
   </div>
 </div>
 {% endfor %}
@@ -376,7 +376,38 @@
         </div>
       </form>
 
-      <script></script>
+      <script>
+        // Enforce 1 character max for initial inputs
+        document.addEventListener('DOMContentLoaded', function() {
+          const initialInputs = document.querySelectorAll('.initial-input');
+          
+          initialInputs.forEach(function(input) {
+            // As-you-type: enforce uppercase letters only and max 1 character
+            input.addEventListener('input', function() {
+              const clean = this.value.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 1);
+              if (this.value !== clean) {
+                this.value = clean;
+              }
+            });
+            
+            // Handle paste: enforce uppercase letters only and max 1 character
+            input.addEventListener('paste', function(e) {
+              e.preventDefault();
+              const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+              const clean = text.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 1);
+              this.value = clean;
+            });
+            
+            // Final check on blur
+            input.addEventListener('blur', function() {
+              const clean = this.value.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 1);
+              if (this.value !== clean) {
+                this.value = clean;
+              }
+            });
+          });
+        });
+      </script>
 
       <div class="tw-rounded-xl tw-w-full tw-overflow-hidden tw-select-none tw-border tw-border-white tw-bg-chuug-gainsboro">
         <details
