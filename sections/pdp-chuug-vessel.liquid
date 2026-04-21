@@ -780,6 +780,24 @@
     }, 1000);
   });
 
+  function getWoodAvailabilityMap() {
+    const createMaterialAvailability = (charcoalAvailable, naturalAvailable, isManuallyOutOfStock) => {
+      const charcoal = charcoalAvailable && !isManuallyOutOfStock;
+      const natural = naturalAvailable && !isManuallyOutOfStock;
+      return {
+        charcoal,
+        natural,
+        enabled: charcoal || natural
+      };
+    };
+
+    return {
+      dusk: createMaterialAvailability(duskCharcoalAvailable, duskNaturalAvailable, duskManualOutOfStock),
+      dawn: createMaterialAvailability(dawnCharcoalAvailable, dawnNaturalAvailable, dawnManualOutOfStock),
+      midnight: createMaterialAvailability(midnightCharcoalAvailable, midnightNaturalAvailable, midnightManualOutOfStock)
+    };
+  }
+
   function disableUnavailableMaterials() {
     const options = [];
   
