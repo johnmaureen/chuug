@@ -15,70 +15,91 @@
         "main_carousel_image_nEV9T7": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/CHUU5684-Chugg5256-1.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "The Chuug V2+ 660ml"
           }
         },
         "main_carousel_image_dGxYrd": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/dishwasher-safe.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "Beer warm is beer wasted"
           }
         },
         "main_carousel_image_Lmngit": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "video",
             "carousel_image": "shopify://shop_images/4c89517c08b65565a17f0023f6984876.gif",
+            "carousel_video": "shopify://files/videos/chuug-personalised-engraving-upgrade-resized-and-crunched (1).mp4",
+            "thumbnail_media_type": "video",
             "image_alt": "Boring beer | The coolest vessel"
           }
         },
         "main_carousel_image_bGEDdV": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/Chuug_Full_Alphabet_Image_1.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "Nature's gift forged into perfect"
           }
         },
         "main_carousel_image_bmLUD9": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/CHUU5684-Chugg5281-1_copy_2.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "I'm gonna drink a beer"
           }
         },
         "main_carousel_image_nU76hM": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/midnight-charcoal-words.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "Top 3 reasons to enjoy a cold one"
           }
         },
         "main_carousel_image_FbDCEg": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/dawn-charcoal_words.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "Drinking beer just got cooler"
           }
         },
         "main_carousel_image_hLa47R": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/dusk-natural-words.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "A little bit of special"
           }
         },
         "main_carousel_image_igcP88": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/midnight-natural-words_1_08a6fbf9-0dbd-48e9-b15f-c0e18cdb67ab.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "Bundle and save"
           }
         },
         "main_carousel_image_NGqe3P": {
           "type": "main_carousel_image",
           "settings": {
+            "media_type": "image",
             "carousel_image": "shopify://shop_images/dawn-natural-words.jpg",
+            "thumbnail_media_type": "image",
             "image_alt": "Free cotton bag included with each purchase"
           }
         },
