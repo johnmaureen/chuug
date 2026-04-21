@@ -65,28 +65,54 @@
           class="swiper pdp-chuug-vessel-main-swiper tw-w-[35.5rem] tw-h-[37.5rem] md:tw-w-[52rem] md:tw-h-[52rem]"
         >
           <div class="swiper-wrapper">
+{% assign main_carousel_slide_i = 0 %}
 {% for block in section.blocks %}
   {%- case block.type -%}
     {%- when 'main_carousel_image' -%}
+      {%- liquid
+        assign media_type = block.settings.media_type | default: 'image'
+        assign main_poster = blank
+        if block.settings.carousel_image != blank
+          assign main_poster = block.settings.carousel_image
+        elsif block.settings.carousel_video != blank
+          assign main_poster = block.settings.carousel_video.preview_image
+        endif
+      -%}
       <div class="swiper-slide tw-cursor-pointer tw-rounded-2xl">
-        {% if forloop.first %}
-          <img
-            src="{{ block.settings.carousel_image | image_url }}"
-            class="main_carousel_first_image tw-w-full tw-h-full tw-rounded-2xl"
-            alt="{{ section.settings.hero_image_alt }}"
-            width="100%"
-            height="100%"
+        {%- if media_type == 'video' and block.settings.carousel_video != blank -%}
+          <video
+            class="tw-w-full tw-h-full tw-rounded-2xl tw-object-cover"
+            playsinline
+            preload="{% if main_carousel_slide_i == 0 %}metadata{% else %}none{% endif %}"
+            {% if main_poster != blank %}
+              poster="{{ main_poster | image_url: width: 1200 }}"
+            {% endif %}
           >
-        {% else %}
-          <img
-            data-src="{{ block.settings.carousel_image | image_url }}"
-            class="lazyload tw-w-full tw-h-full tw-rounded-2xl"
-            alt="{{ section.settings.hero_image_alt }}"
-            width="100%"
-            height="100%"
-          >
-        {% endif %}
+            {%- for source in block.settings.carousel_video.sources -%}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {%- endfor -%}
+          </video>
+        {%- elsif block.settings.carousel_image != blank -%}
+          {% if main_carousel_slide_i == 0 %}
+            <img
+              src="{{ block.settings.carousel_image | image_url }}"
+              class="main_carousel_first_image tw-w-full tw-h-full tw-rounded-2xl tw-object-cover"
+              alt="{{ block.settings.image_alt | default: section.settings.hero_image_alt }}"
+              width="100%"
+              height="100%"
+            >
+          {% else %}
+            <img
+              data-src="{{ block.settings.carousel_image | image_url }}"
+              class="lazyload tw-w-full tw-h-full tw-rounded-2xl tw-object-cover"
+              alt="{{ block.settings.image_alt | default: section.settings.hero_image_alt }}"
+              width="100%"
+              height="100%"
+            >
+          {% endif %}
+        {%- endif -%}
       </div>
+      {% assign main_carousel_slide_i = main_carousel_slide_i | plus: 1 %}
   {%- endcase -%}
 {% endfor %}
           </div>
@@ -109,18 +135,57 @@
 
       <div class="swiper thumbsSlider tw-w-[35.5rem] tw-h-[5rem] md:tw-w-[52rem] md:tw-h-[7rem]">
         <div class="swiper-wrapper">
+          {% assign main_carousel_thumb_i = 0 %}
           {% for block in section.blocks %}
             {%- case block.type -%}
               {%- when 'main_carousel_image' -%}
-                <div class="swiper-slide tw-cursor-pointer tw-rounded">
-                  <img
-                    data-src="{{ block.settings.carousel_image | image_url }}"
-                    class="{%- if forloop.first -%}thumbnails_carousel_first_image{% endif %} lazyload  tw-cursor-pointer tw-w-[5rem] tw-h-[5rem] tw-rounded md:tw-w-[7rem] md:tw-h-[7rem]"
-                    alt="{{ block.settings.image_alt }}"
-                    width="100%"
-                    height="100%"
-                  >
+                {%- liquid
+                  assign media_type = block.settings.media_type | default: 'image'
+                  assign thumb_type = block.settings.thumbnail_media_type | default: 'image'
+                  assign thumb_video = block.settings.thumbnail_video | default: block.settings.carousel_video
+                  assign thumb_poster = blank
+                  if block.settings.carousel_image != blank
+                    assign thumb_poster = block.settings.carousel_image
+                  elsif thumb_video != blank
+                    assign thumb_poster = thumb_video.preview_image
+                  endif
+                -%}
+                <div class="swiper-slide tw-cursor-pointer tw-rounded tw-overflow-hidden">
+                  {%- if media_type == 'video' and thumb_type == 'video' and thumb_video != blank -%}
+                    <video
+                      class="tw-pointer-events-none tw-w-[5rem] tw-h-[5rem] tw-rounded tw-object-cover md:tw-w-[7rem] md:tw-h-[7rem]"
+                      autoplay
+                      muted
+                      playsinline
+                      loop
+                      preload="metadata"
+                      {% if thumb_poster != blank %}
+                        poster="{{ thumb_poster | image_url: width: 400 }}"
+                      {% endif %}
+                    >
+                      {%- for source in thumb_video.sources -%}
+                        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                      {%- endfor -%}
+                    </video>
+                  {%- elsif block.settings.carousel_image != blank -%}
+                    <img
+                      data-src="{{ block.settings.carousel_image | image_url }}"
+                      class="{%- if main_carousel_thumb_i == 0 -%}thumbnails_carousel_first_image {% endif %}lazyload tw-cursor-pointer tw-w-[5rem] tw-h-[5rem] tw-rounded tw-object-cover md:tw-w-[7rem] md:tw-h-[7rem]"
+                      alt="{{ block.settings.image_alt }}"
+                      width="100%"
+                      height="100%"
+                    >
+                  {%- elsif media_type == 'video' and block.settings.carousel_video != blank and thumb_type == 'image' -%}
+                    <img
+                      data-src="{{ block.settings.carousel_video.preview_image | image_url }}"
+                      class="{%- if main_carousel_thumb_i == 0 -%}thumbnails_carousel_first_image {% endif %}lazyload tw-cursor-pointer tw-w-[5rem] tw-h-[5rem] tw-rounded tw-object-cover md:tw-w-[7rem] md:tw-h-[7rem]"
+                      alt="{{ block.settings.image_alt }}"
+                      width="100%"
+                      height="100%"
+                    >
+                  {%- endif -%}
                 </div>
+                {% assign main_carousel_thumb_i = main_carousel_thumb_i | plus: 1 %}
             {%- endcase -%}
           {% endfor %}
         </div>
@@ -1244,8 +1309,10 @@
     }
 
     if (images_src[image_index]) {
-      document.querySelector('.main_carousel_first_image').src = images_src[image_index];
-      document.querySelector('.thumbnails_carousel_first_image').src = images_src[image_index];
+      const mainImg = document.querySelector('.main_carousel_first_image');
+      const thumbImg = document.querySelector('.thumbnails_carousel_first_image');
+      if (mainImg) mainImg.src = images_src[image_index];
+      if (thumbImg) thumbImg.src = images_src[image_index];
     }
   }
 
@@ -1570,12 +1637,46 @@
   "blocks": [
     {
       "type": "main_carousel_image",
-      "name": "Carousel Image",
+      "name": "Carousel image or video",
       "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video", "label": "Video" }
+          ],
+          "default": "image"
+        },
         {
           "type": "image_picker",
           "id": "carousel_image",
-          "label": "Image"
+          "label": "Image",
+          "info": "Main slide image, thumbnail when thumbnail is Image, and poster for video when set."
+        },
+        {
+          "type": "video",
+          "id": "carousel_video",
+          "label": "Video",
+          "info": "Shown on the main slide when Media type is Video."
+        },
+        {
+          "type": "select",
+          "id": "thumbnail_media_type",
+          "label": "Thumbnail",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video", "label": "Video" }
+          ],
+          "default": "image",
+          "info": "Video thumbnails autoplay muted. Only applies when Media type is Video."
+        },
+        {
+          "type": "video",
+          "id": "thumbnail_video",
+          "label": "Thumbnail video (optional)",
+          "info": "If set, used for the video thumbnail instead of the main video."
         },
         {
           "type": "text",
