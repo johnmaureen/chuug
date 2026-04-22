@@ -318,8 +318,8 @@
           "type": "text_and_image",
           "settings": {
             "block_image": "shopify://shop_images/hand-crafted-in-britain.png",
-            "block_title": "Crafted by Hand, Built In Britain",
-            "block_text": "We source the finest materials and components from across the world, selecting only the best for our beer vessels. Every CHUUG is then meticulously assembled by hand in Britain, ensuring skilled craftsmanship and rock-solid quality. Because your drink deserves nothing less."
+            "block_title": "Crafted from Wood, Built by Hand",
+            "block_text": "We source the finest materials and components from across the world, selecting only the best for our beer vessels. Every CHUUG is then meticulously assembled by hand, ensuring skilled craftsmanship and rock-solid quality. Because your drink deserves nothing less."
           }
         },
         "text_and_image_nJRfHq": {
@@ -357,8 +357,8 @@
           "type": "image_block",
           "settings": {
             "block_image": "shopify://shop_images/british-flag.png",
-            "block_title": "Built in Britain",
-            "block_subtitle": "Because why get it made anywhere else?"
+            "block_title": "Great British Business",
+            "block_subtitle": "Design born from our rich cultural history"
           }
         },
         "image_block_h9rgVK": {
