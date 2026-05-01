@@ -215,14 +215,28 @@ document.addEventListener('DOMContentLoaded', function () {
      ================================ */
   const DESPATCH_LEAD_WORKING_DAYS = {{ shop.metafields.chuug.processing_days | default: 3 }}; // Mon–Fri only
 
-  // Utility: Add working days (Mon–Fri)
+  // UK Bank Holidays 2026-2027 (England & Wales)
+  const UK_BANK_HOLIDAYS = [
+    '2026-05-04', '2026-05-25', '2026-08-31', '2026-12-25', '2026-12-28',
+    '2027-01-01', '2027-03-26', '2027-03-29', '2027-05-03', '2027-05-31',
+    '2027-08-30', '2027-12-27', '2027-12-28'
+  ];
+
+  // Utility: Check if date is a UK bank holiday
+  function isBankHoliday(date) {
+    const dateStr = date.toISOString().split('T')[0];
+    return UK_BANK_HOLIDAYS.includes(dateStr);
+  }
+
+  // Utility: Add working days (Mon-Fri, excluding UK bank holidays)
   function addWorkingDays(date, days) {
     const currentDate = new Date(date);
     let addedDays = 0;
     while (addedDays < days) {
       currentDate.setDate(currentDate.getDate() + 1);
       const dow = currentDate.getDay(); // 0 Sun, 6 Sat
-      if (dow !== 0 && dow !== 6) {
+      const isWeekend = dow === 0 || dow === 6;
+      if (!isWeekend && !isBankHoliday(currentDate)) {
         addedDays++;
       }
     }
