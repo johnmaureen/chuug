@@ -1,12 +1,12 @@
 {%- comment -%}
   CHUUG Lead Time Sync Snippet
   Auto-syncs shop.metafields.chuug.processing_days to a cart attribute.
-  Updated by update-lead-time.js on 2026-05-01T14:38:15.449Z
+  Updated by update-lead-time.js on 2026-05-01T14:46:58.357Z
 {%- endcomment -%}
 
 {%- assign processing_days = shop.metafields.chuug.processing_days | plus: 0 -%}
 {%- if processing_days == 0 -%}
-  {%- assign processing_days = 5 -%}
+  {%- assign processing_days = 3 -%}
 {%- endif -%}
 
 <script>
