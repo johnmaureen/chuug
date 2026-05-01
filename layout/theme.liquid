@@ -431,7 +431,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
   {{ 'application.css' | asset_url | stylesheet_tag }}    
-{% include 'hulk_po_vd' %}</head>
+{% include 'hulk_po_vd' %}
+{% render 'chuug-lead-time-sync' %}
+</head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
 
