@@ -1,0 +1,45 @@
+{%- comment -%}
+  CHUUG Lead Time Sync Snippet
+  Automatically syncs shop.metafields.chuug.processing_days to a cart attribute.
+  This ensures Checkout Blocks can read {{ checkout.attributes._processing_days }}
+  Updated by: Charlie (automated via update-lead-time.js)
+{%- endcomment -%}
+
+{%- assign processing_days = shop.metafields.chuug.processing_days | plus: 0 -%}
+{%- if processing_days == 0 -%}
+  {%- assign processing_days = 3 -%}
+{%- endif -%}
+
+<script>
+(function() {
+  var LEAD_DAYS = {{ processing_days }};
+  var STORAGE_KEY = 'chuug_lead_days';
+  
+  // Only update cart if value has changed (avoid unnecessary API calls)
+  try {
+    var cached = localStorage.getItem(STORAGE_KEY);
+    if (cached === String(LEAD_DAYS)) return; // No change needed
+    
+    // Update cart attributes with current lead time
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        attributes: {
+          '_processing_days': String(LEAD_DAYS),
+          '_chuug_lead_time': String(LEAD_DAYS)
+        }
+      })
+    }).then(function(r) {
+      if (r.ok) {
+        localStorage.setItem(STORAGE_KEY, String(LEAD_DAYS));
+        console.log('[CHUUG] Lead time synced to cart:', LEAD_DAYS, 'days');
+      }
+    }).catch(function(e) {
+      console.warn('[CHUUG] Lead time sync failed:', e);
+    });
+  } catch(e) {
+    // localStorage may be blocked in some contexts - silently fail
+  }
+})();
+</script>
