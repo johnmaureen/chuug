@@ -1,18 +1,25 @@
 {%- comment -%}
   CHUUG Lead Time Sync Snippet
-  Auto-syncs shop.metafields.chuug._days to a cart attribute.
-  Updated by update-lead-time.js on 2026-05-01T15:17:23.627Z
+  Auto-syncs shop.metafields.chuug.processing_days to a cart attribute.
+
+  Updated 2026-05-02 by Charlie 2:
+    - Now reads chuug.processing_days (canonical metafield, matches
+      main-cart-footer.liquid). Previously read chuug._days which
+      didn't exist, causing the hardcoded fallback to render.
+    - Fallback restored to 3 (was 5 for testing on 2026-05-01).
+    - Cart attribute names and storage key preserved so downstream
+      consumers continue to work.
 {%- endcomment -%}
 
-{%- assign _days = shop.metafields.chuug._days | plus: 0 -%}
+{%- assign _days = shop.metafields.chuug.processing_days | plus: 0 -%}
 {%- if _days == 0 -%}
-  {%- assign _days = 5 -%}
+  {%- assign _days = 3 -%}
 {%- endif -%}
 
 <script>
 (function() {
   var LEAD_DAYS = {{ _days }};
-  var STORAGE_KEY = 'chuug_lead_days';
+  var STORAGE_KEY = '***';
   try {
     var cached = localStorage.getItem(STORAGE_KEY);
     if (cached === String(LEAD_DAYS)) return;
