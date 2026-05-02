@@ -1,17 +1,17 @@
 {%- comment -%}
   CHUUG Lead Time Sync Snippet
-  Auto-syncs shop.metafields.chuug.processing_days to a cart attribute.
+  Auto-syncs shop.metafields.chuug._days to a cart attribute.
   Updated by update-lead-time.js on 2026-05-01T15:17:23.627Z
 {%- endcomment -%}
 
-{%- assign processing_days = shop.metafields.chuug.processing_days | plus: 0 -%}
-{%- if processing_days == 0 -%}
-  {%- assign processing_days = 5 -%}
+{%- assign _days = shop.metafields.chuug._days | plus: 0 -%}
+{%- if _days == 0 -%}
+  {%- assign _days = 5 -%}
 {%- endif -%}
 
 <script>
 (function() {
-  var LEAD_DAYS = {{ processing_days }};
+  var LEAD_DAYS = {{ _days }};
   var STORAGE_KEY = 'chuug_lead_days';
   try {
     var cached = localStorage.getItem(STORAGE_KEY);
@@ -21,7 +21,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         attributes: {
-          '_processing_days': String(LEAD_DAYS),
+          '__days': String(LEAD_DAYS),
           '_chuug_lead_time': String(LEAD_DAYS)
         }
       })
