@@ -402,6 +402,41 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+
+
+<script>
+(() => {
+  const PRODUCT_ID = '15086555496827';
+  const setIfMissing = (el, attr, val) => {
+    if (el.getAttribute(attr) !== val) el.setAttribute(attr, val);
+  };
+  const inject = () => {
+    document.querySelectorAll('wrapped-extension').forEach(el => {
+      const span = el.querySelector('span[part="pricing"]');
+      if (!span) return;
+      setIfMissing(el, 'data-product-id', PRODUCT_ID);
+      setIfMissing(span, 'data-product-id', PRODUCT_ID);
+      const tr = el.closest('tr.cart-item');
+      if (tr) setIfMissing(tr, 'data-product-id', PRODUCT_ID);
+    });
+  };
+  inject();
+  if (!window.__giftBoxIdInjector) {
+    const mo = new MutationObserver(mutations => {
+      const relevant = mutations.some(m =>
+        Array.from(m.addedNodes).some(n =>
+          n.nodeType === 1 &&
+          ((n.matches && n.matches('wrapped-extension')) ||
+           (n.querySelector && n.querySelector('wrapped-extension')))
+        )
+      );
+      if (relevant) inject();
+    });
+    mo.observe(document.body, { childList: true, subtree: true, attributes: false });
+    window.__giftBoxIdInjector = mo;
+  }
+})();
+</script>
   
 
 
