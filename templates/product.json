@@ -128,6 +128,7 @@
         },
         "text_wgDyrb": {
           "type": "text",
+          "disabled": true,
           "settings": {
             "text": "We are building the next batch. We sell out fast.",
             "text_style": "body"
@@ -142,12 +143,13 @@
         },
         "3b37bfbd-2c95-4bc3-8838-44d0402ce90e": {
           "type": "icon-with-text",
+          "disabled": true,
           "settings": {
             "layout": "horizontal",
             "icon_1": "truck",
             "heading_1": "Express Delivery",
             "icon_2": "box",
-            "heading_2": "FREE Gift Pouch",
+            "heading_2": "Great Gift",
             "icon_3": "map_pin",
             "heading_3": "Built In Britain"
           }
@@ -173,7 +175,24 @@
           "settings": {
             "product": "{{product}}",
             "template": "shopify",
-            "margin": 0
+            "margin": 0,
+            "enable_skeleton": false,
+            "skeleton_adjust_to_container": false,
+            "skeleton_padding_top": 0,
+            "skeleton_padding_bottom": 0,
+            "skeleton_unit": "px",
+            "skeleton_height_px": 900,
+            "skeleton_height_vh": 80,
+            "skeleton_mobile_unit": "viewport",
+            "skeleton_mobile_height_px": 900,
+            "skeleton_mobile_height_vh": 100,
+            "skeleton_max_width_px": 1600,
+            "skeleton_max_width_vw": 100,
+            "skeleton_panel_width": 380,
+            "skeleton_border_radius": 4,
+            "skeleton_bg_color": "#f4f4f4",
+            "skeleton_bone_color": "#e4e5e7",
+            "skeleton_shimmer_color": "#ffffffb3"
           }
         }
       },
