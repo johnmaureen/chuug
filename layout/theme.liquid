@@ -468,6 +468,40 @@ document.addEventListener('DOMContentLoaded', function() {
   {{ 'application.css' | asset_url | stylesheet_tag }}    
 {% include 'hulk_po_vd' %}
 {% render 'chuug-lead-time-sync' %}
+
+  {% comment %} Kbite Back-In-Stock button safety net — keeps the Notify Me button visible on PDPs where dynamic checkout is hidden or the product has a single Default Title variant {% endcomment %}
+  <style>
+    .product-form__buttons {
+      display: flex !important;
+      flex-direction: column;
+      gap: 1rem;
+      overflow: visible !important;
+    }
+    .product-form__buttons > * {
+      width: 100%;
+    }
+    /* Common Kbite / cartbite injected wrappers */
+    .product-form__buttons .cartbite-back-in-stock-wrapper,
+    .product-form__buttons .cartbite-notifyme-button,
+    .product-form__buttons .cartbite-button-wrapper,
+    .product-form__buttons [class*="cartbite"],
+    .product-form__buttons [class*="kbite"],
+    .product-form__buttons [id*="cartbite"],
+    .product-form__buttons [id*="kbite"],
+    .product-form__buttons [id*="notify-me"],
+    .product-form__buttons [class*="notify-me"] {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      height: auto !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      position: static !important;
+      pointer-events: auto !important;
+    }
+  </style>
 </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
