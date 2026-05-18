@@ -227,6 +227,11 @@
         "type": "shopify://apps/uppromote-affiliate/blocks/core-script/64c32457-930d-4cb9-9641-e24c0d9cf1f4",
         "disabled": false,
         "settings": {}
+      },
+      "6614979280454233053": {
+        "type": "shopify://apps/preorder-now-pre-order-pq/blocks/app-embed/551fab2c-3af6-4a8f-ba21-736a71cb4540",
+        "disabled": false,
+        "settings": {}
       }
     },
     "color_schemes": {
