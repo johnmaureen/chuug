@@ -106,7 +106,7 @@
     "badge_position": "top right",
     "badge_corner_radius": 0,
     "sale_badge_color_scheme": "background-2",
-    "sold_out_badge_color_scheme": "accent-2",
+    "sold_out_badge_color_scheme": "background-2",
     "brand_headline": "The Chuug Mug: A Handcrafted Masterpiece for Discerning Gentlemen",
     "brand_description": "<p>Discover the allure of the Nordic aesthetic through our premium Chuug Mug - an emblem of sophistication and masculinity.</p>",
     "brand_image": "shopify://shop_images/chuug-logo-5-wood.png",
