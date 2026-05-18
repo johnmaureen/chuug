@@ -324,6 +324,7 @@
         "text_Hfw9EC",
         "button_D6EPf3"
       ],
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/smart-rope-chuug-rope-handle-tankard_2f2ff26b-53f4-4b31-a1ef-1b4ba8815fad.png",
         "height": "adapt",
@@ -344,6 +345,7 @@
       "blocks": {
         "covet_instagram_feed_reviews_app_block_standard_WAngBe": {
           "type": "shopify://apps/covet-instagram-feed-reviews/blocks/app-block-standard/577480e8-b5be-4890-968c-06ccfb458c74",
+          "disabled": true,
           "settings": {
             "gallery_embed_id": 241132,
             "show_text": true,
@@ -454,6 +456,7 @@
         "collapsible_row_EDtCrK",
         "bc2d7b27-4026-4116-aada-d39a7402fe6b"
       ],
+      "disabled": true,
       "settings": {
         "caption": "",
         "heading": "Your Questions Answered",
@@ -519,6 +522,7 @@
         "template--20128198459711__a7aec682-041b-4979-87be-e016fc7626e2-column-3",
         "3cf81b33-2d94-42df-931f-8f696c102271"
       ],
+      "disabled": true,
       "settings": {
         "title": "Recent Reviews",
         "heading_size": "h2",
@@ -567,6 +571,7 @@
     },
     "related-products": {
       "type": "related-products",
+      "disabled": true,
       "settings": {
         "heading": "You may also like",
         "heading_size": "h2",
