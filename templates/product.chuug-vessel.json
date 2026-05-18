@@ -290,7 +290,7 @@
         "wood_finish_dusk_wood": "shopify://shop_images/dusk-wood.png",
         "wood_finish_dusk_out_of_stock": false,
         "wood_finish_dawn_out_of_stock": false,
-        "wood_finish_midnight_out_of_stock": false,
+        "wood_finish_midnight_out_of_stock": true,
         "charcoal_rope": "shopify://shop_images/charcoal-rope.png",
         "natural_rope": "shopify://shop_images/natural-rope.png",
         "dusk_charcoal": "the-dusk-charcoal-chuug®-v2-660ml-with-gift-bag",
