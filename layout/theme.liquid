@@ -891,3 +891,14 @@ for (var i = 0; i < atcButtons.length; i++) {
                    </body>
 </html>
 
+
+{% comment %} chuug-preview-guard (Claude 2026-08-29): customers were being
+served stale unpublished themes via lingering preview sessions. Non-staff
+visitors on ANY non-live theme get bounced to the live theme. Staff: open any
+preview link once with ?chuug_staff=1 (flag persists in that browser).
+Theme-editor previews (design_mode) are never bounced. {% endcomment %}
+{% if request.design_mode != true and theme.role != 'main' %}
+<script>
+(function(){try{var q=new URLSearchParams(location.search);if(q.get('chuug_staff')==='1'){localStorage.setItem('chuug_staff','1');}if(localStorage.getItem('chuug_staff')==='1')return;}catch(e){}location.replace('https://chuug.com/?preview_theme_id=182050849147');})();
+</script>
+{% endif %}
